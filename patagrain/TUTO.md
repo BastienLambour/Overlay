@@ -99,6 +99,8 @@ Pour la webcam, le jeu ou une capture, sous un overlay :
 4. **Taille de la zone de délimitation** : la largeur et la hauteur de la fiche.
 5. Coche **Rogner à la zone de délimitation**, puis **Fermer**.
 
+> 💡 **Voir les chiffres directement dans OBS** : `reglages.html` › **Options des scènes** › coche **Afficher la taille et la position des zones**, puis **Enregistrer** et actualise. Chaque zone (webcam, contenu, jeu) affiche sa taille et sa position : tu les recopies dans Ctrl + E. Décoche ensuite. (Ou, pour une seule source : `?zones=1` dans l'adresse, geste C.)
+
 La source remplit alors tout le cadre, sans bande noire : ce qui dépasse est coupé.
 
 ### 2.5 Geste C — ajouter une option dans l'adresse
@@ -162,7 +164,7 @@ Tu peux aussi lui donner un **raccourci clavier** : **Paramètres › Raccourcis
 3. Geste A avec `scenes/demarrage.html`, case **Actualiser le navigateur quand la scène devient active** cochée (le compte à rebours repart à chaque fois).
 4. Ordre final : `Global — Alertes` puis `Écran`.
 
-**Options** (geste C) : `?minutes=10` (durée, 5 min par défaut) · `?heure=20:30` (heure fixe) · `?titre=…` · `?titreDuJour=…` · `?bouffon=0`
+**Options** (geste C) : `?minutes=10` (durée, 5 min par défaut) · `?heure=20:30` (heure fixe : le compteur arrive à zéro à 20 h 30 ; aussi dans `reglages.html` › **… ou heure fixe**, prioritaire sur les minutes) · `?titre=…` · `?titreDuJour=…` · `?bouffon=0`
 **Vérifier** : ouvre `scenes/demarrage.html?minutes=0.2` dans ton navigateur : 12 s plus tard, le bouffon lance le dé.
 
 ### 3.2 🔥 Pause — `scenes/pause.html`
@@ -500,6 +502,14 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 1. Ouvre `reglages.html` › section **Couleurs** (le logo, le chapeau posé sur les cams et l'emblème sont des images : ils gardent leurs couleurs).
 2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
 3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
+
+#### Créer ta propre ambiance (ex. Batman) et la garder
+
+1. Dans `reglages.html` › **Couleurs**, règle les couleurs comme tu veux (nuancier ou code).
+2. Sous **Mes ambiances**, tape un nom (ex. `Batman`) puis clique **💾 Sauvegarder ces couleurs** : l'ambiance est écrite tout de suite dans `config.js`, avec son nom et ses couleurs. Même nom qu'une ambiance existante = elle est remplacée (la page demande confirmation).
+3. Elle apparaît ensuite en bouton : **un clic** remet toutes ses couleurs, puis **Enregistrer** pour que l'overlay les prenne. **×** la supprime.
+
+Sauvegarder une ambiance ne change pas les couleurs de l'overlay : seul **Enregistrer** le fait.
 
 Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
 

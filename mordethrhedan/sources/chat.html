@@ -10,6 +10,9 @@
 <!--
   Chat seul, dans son cadre « verre ».
   Taille et position réglables : chat.html?x=40&y=75&l=430&h=930
+  Placé pile dans une scène : chat.html?place=petite (case du bas des scènes Contenu / Speedrun,
+  par-dessus LiveSplit : l'œil d'OBS ou un raccourci l'affiche / le cache)
+  ou chat.html?place=grande (colonne de droite des scènes Démarrage / Pause / Fin / Cam seule)
   Sans cadre (messages seuls) : chat.html?nu=1   ·   Disparition après 60 s : ?disparition=60
   Faux messages : ?test=1
 -->
@@ -22,10 +25,12 @@
 <script src="../js/fond.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
 <script>
   Commun.demarrer();
   const ecran = document.getElementById('ecran');
-  const z = Composants.zoneURL({ x: 40, y: 75, l: 430, h: 930 });
+  const place = { petite: Scenes.PETITE.bas, grande: Scenes.GRANDE.chat }[Commun.params.get('place')];
+  const z = Composants.zoneURL(place || { x: 40, y: 75, l: 430, h: 930 });
   const disparition = parseFloat(Commun.params.get('disparition') || 0);
   if (Commun.params.has('nu')) Chat.monter(Composants.creer(ecran, 'chat-boite', '', z), { disparition });
   else Composants.chat(ecran, z, { disparition });

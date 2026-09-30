@@ -119,11 +119,11 @@
   </div>
 
   <h2 data-num="07">Les scènes</h2>
-  <p class="sous">Les zones grisées sont les emplacements de tes sources OBS (webcam, jeu, contenu, ton image) ; les pointillés sont libres pour tes propres widgets (succès, manette, splits).</p>
+  <p class="sous">Trois dispositions. <b>Grande</b> (démarrage, pause, fin, cam seule) : pseudo en haut, grand cadre, derniers événements en bas, chat à droite. <b>Petite</b> (contenu, speedrun) : manette/cam et LiveSplit (ou chat) à gauche. <b>Jeu</b> : cadre au ras des bords, pseudo sur le cadre, cadre de cam en source séparée. Les zones grisées sont les emplacements de tes sources OBS ; sans source, on y voit le fond, synchronisé.</p>
   <div class="grille">
-    <div class="carte"><div class="ecran"><iframe data-src="../scenes/jeu.html?apercu=1"></iframe></div><h4>Jeu + cam</h4><p><code>scenes/jeu.html</code> · cam dans un autre coin : <code>?cam=bas-droite</code></p></div>
-    <div class="carte"><div class="ecran"><iframe data-src="../scenes/speedrun.html?apercu=1"></iframe></div><h4>Speedrun</h4><p><code>scenes/speedrun.html</code></p></div>
-    <div class="carte"><div class="ecran"><iframe data-src="../scenes/contenu.html?test=1"></iframe></div><h4>Contenu + chat</h4><p><code>scenes/contenu.html</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/jeu.html?apercu=1&cam=bas-gauche"></iframe><iframe data-src="../sources/cam.html?cam=bas-gauche"></iframe></div><h4>Jeu + cadre de cam</h4><p><code>scenes/jeu.html</code> + <code>sources/cam.html</code> · coin de la cam dans les réglages : le pseudo suit</p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/speedrun.html?apercu=1"></iframe></div><h4>Speedrun</h4><p><code>scenes/speedrun.html</code> · LiveSplit en bas à gauche</p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/contenu.html?test=1"></iframe></div><h4>Contenu + chat</h4><p><code>scenes/contenu.html</code> · chat en bas à gauche</p></div>
     <div class="carte"><div class="ecran"><iframe data-src="../scenes/cam-seule.html?test=1"></iframe></div><h4>Cam seule</h4><p><code>scenes/cam-seule.html</code></p></div>
     <div class="carte"><div class="ecran"><iframe data-src="../scenes/demarrage.html?test=1&minutes=10"></iframe></div><h4>Démarrage</h4><p><code>scenes/demarrage.html?minutes=10</code></p></div>
     <div class="carte"><div class="ecran"><iframe data-src="../scenes/pause.html?test=1"></iframe></div><h4>Pause</h4><p><code>scenes/pause.html</code></p></div>

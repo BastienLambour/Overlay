@@ -145,16 +145,19 @@
   document.getElementById('lignes').innerHTML = html;
   Commun.etoiles(document.getElementById('etoiles-hublot'), 45, { l: 400, h: 400, x0: -200, y0: -200, taille: [0.6, 1.8] });
 
-  // Chronomètre de pause
-  const debut = Date.now();
-  setInterval(() => document.getElementById('chrono').textContent = Commun.mmss((Date.now() - debut) / 1000), 500);
-
-  // Valeurs de télémétrie qui fluctuent
+  // Chronomètre de pause + télémétrie : repartent de zéro à chaque passage à l'antenne
+  const T = Commun.minuteries();
   const fmt = n => n.toLocaleString('fr-FR');
-  setInterval(() => {
+  let debut;
+  const majChrono = () => document.getElementById('chrono').textContent = Commun.mmss((Date.now() - debut) / 1000);
+  const majTelemetrie = () => {
     document.getElementById('vitesse').textContent = fmt(27550 + Math.round(Math.random() * 100)) + ' km/h';
     document.getElementById('altitude').textContent = (407.6 + Math.random() * 0.8).toFixed(1).replace('.', ',') + ' km';
-  }, 900);
+  };
+  Commun.cycle({
+    lancer() { T.tout(); debut = Date.now(); majChrono(); T.interval(majChrono, 500); T.interval(majTelemetrie, 900); },
+    arreter: () => T.tout(),
+  });
 </script>
 </body>
 </html>

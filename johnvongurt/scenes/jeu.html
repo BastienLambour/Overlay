@@ -48,6 +48,7 @@
     Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu plein écran', true);
   ecran.prepend(...[...ecran.querySelectorAll('.apercu-zone')]);   // l'aperçu du jeu reste au fond
 
+  Composants.etiquetteZone(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu (plein écran)');
   if (!sansCam) Composants.cadre(ecran, CAM, { nom: false });
   Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
   Composants.bandeau(ecran, { x: 510, y: 990, l: 900, h: 66 }, { compact: true });

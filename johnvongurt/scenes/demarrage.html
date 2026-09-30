@@ -29,6 +29,13 @@
   .avertissement { display: flex; align-items: center; gap: 12px; margin-top: 26px; font: 600 20px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; }
   .avertissement svg { width: 30px; height: 30px; }
 
+  #filantes { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+  /* ----- Le panneau « Préparation au lancement » se ferme, la fusée se centre ----- */
+  .panneau { transition: transform 1.3s cubic-bezier(.6,0,.4,1), opacity 1s; }
+  .panneau.ferme { transform: translateX(-760px); opacity: 0; }
+  #scene { transition: transform 1.8s cubic-bezier(.6,0,.3,1); }
+  #scene.centre { transform: translate(-310px, 60px); }
+
   /* ----- Scène du pas de tir ----- */
   #scene { position: absolute; left: 680px; top: 180px; width: 1180px; height: 700px; }
   .balise { fill: var(--alerte); animation: clignote 1.4s steps(2) infinite; }
@@ -60,6 +67,9 @@
   .fumee { fill: var(--fond-2); stroke: var(--trait); stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
   .allumage-on .fumee.petite { animation: bouffee var(--d) ease-out var(--r) infinite; }
   @keyframes bouffee { 0% { opacity: .5; transform: translate(0,0) scale(.4); } 100% { opacity: 0; transform: translate(var(--dx), -30px) scale(1.6); } }
+  /* Après le décollage : plus aucune fumée ni vapeur qui reste au sol, la lueur des moteurs s'éteint */
+  .decolle .fumee.petite, .decolle .vapeur { animation: none; opacity: 0; }
+  .decolle .lueur { opacity: 0; transition: opacity 2.5s ease-in 1.5s; }
   .decolle .fumee.grosse { animation: nuage-fumee var(--d) cubic-bezier(.1,.6,.3,1) var(--r) forwards; }
   @keyframes nuage-fumee {
     0% { opacity: 1; transform: translate(0, 0) scale(.3); }
@@ -67,19 +77,52 @@
     100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(var(--s)); }
   }
 
-  /* ----- Zone d'annonces (à droite de la fusée) ----- */
-  .annonces { position: absolute; left: 1400px; top: 250px; width: 440px; height: 380px; }
-  .annonce { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px;
-    opacity: 0; transform: translateY(20px) scale(.96); transition: opacity .5s, transform .6s cubic-bezier(.34,1.4,.64,1); }
-  .annonce.visible { opacity: 1; transform: none; }
-  .annonce .gros-label { white-space: nowrap; background: var(--accent); color: var(--fond); font: 600 26px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 12px 24px; }
-  .annonce .coche { width: 90px; height: 90px; border: 4px solid var(--ok); border-radius: 50%; display: grid; place-items: center; color: var(--ok); }
-  .annonce .coche svg { width: 52px; height: 52px; }
-  .chiffre { font: 600 300px/0.9 var(--f-mono); color: var(--accent); }
-  .chiffre.tic { animation: tic .9s cubic-bezier(.2,.7,.3,1); }
-  @keyframes tic { from { transform: scale(1.35); opacity: .5; } }
-  .annonce .titre-geant { color: var(--accent); font-size: 112px; white-space: nowrap; }
-  .annonce .titre-geant.blanc { color: var(--trait); font-size: 88px; }
+  /* ----- Pop-up « Ravitaillement terminé » : sous la fusée, quelques secondes seulement ----- */
+  .annonces { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
+  .annonce { position: absolute; left: 1270px; top: 836px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; transition: opacity .5s; }
+  .annonce.visible { opacity: 1; }
+  #a-termine > * { transform: translateY(10px); transition: transform .6s cubic-bezier(.34,1.4,.64,1); }
+  #a-termine.visible > * { transform: none; }
+  .annonce .rangee { display: flex; align-items: center; gap: 16px; background: var(--accent); padding: 8px 28px 8px 10px; }
+  .annonce .gros-label { white-space: nowrap; color: var(--fond); font: 600 30px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; }
+  .annonce .coche { flex: none; width: 52px; height: 52px; border: 4px solid var(--fond); border-radius: 50%; display: grid; place-items: center; color: var(--fond); }
+  .annonce .coche svg { width: 30px; height: 30px; }
+  .annonce .label { font-size: 22px; background: rgba(8,11,15,.75); padding: 4px 14px; }
+  /* ----- Statut système : se replie au décollage, seule l'heure locale reste (la fusée passe devant) ----- */
+  .statut .statut-item { max-width: 330px; overflow: hidden; white-space: nowrap; transition: max-width .8s ease-in-out, min-width .8s ease-in-out, padding .8s ease-in-out, opacity .5s; }
+  .statut.replie .statut-item:not(:last-child) { max-width: 0; min-width: 0; padding-left: 0; padding-right: 0; opacity: 0; border-left-width: 0; }
+  .statut.replie .statut-item:last-child { border-left-width: 0; }
+  .statut .boite { width: fit-content; margin: 0 auto; }
+  .statut.replie .statut-titre::before, .statut.replie .statut-titre::after { width: 30px; }
+  .statut .statut-titre::before, .statut .statut-titre::after { transition: width .8s; }
+
+  /* ----- Annonce du décollage : remplace le compteur T+ dans le panneau ----- */
+  .compteur.cache { display: none; }
+  .compteur-annonce { display: none; height: 124px; margin: 6px 0 22px; align-items: center; justify-content: center; }
+  .compteur-annonce.visible { display: flex; }
+  .compteur-annonce span { flex: none; white-space: nowrap; font: 700 104px/1 var(--f-titre); text-transform: uppercase; letter-spacing: .01em;
+    color: var(--accent); animation: apparait .5s cubic-bezier(.34,1.4,.64,1); }
+  .compteur-annonce span.blanc { color: var(--trait); }
+  @keyframes apparait { from { opacity: 0; transform: scale(.85); } }
+  /* ----- Ligne d'activité (bas du panneau) : suit la vérification en cours ----- */
+  #activite-texte { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #activite-texte.maj { animation: apparait .4s ease-out; }
+  /* ----- Réglage de la durée : invisible à l'antenne, apparaît dès qu'on bouge la souris dans « Interagir » ----- */
+  .reglage { position: fixed; left: 12px; top: 12px; z-index: 50; opacity: 0; pointer-events: none; transition: opacity .2s;
+    font: 500 15px var(--f-texte); color: var(--trait); }
+  .reglage.visible { opacity: 1; pointer-events: auto; }
+  .reglage .roue { display: inline-block; font: 600 22px var(--f-mono); padding: 10px 16px; background: #0B0E13; border: 2px solid var(--accent); color: var(--accent); cursor: pointer; }
+  .reglage .corps { display: none; background: #0B0E13; border: 2px solid var(--trait); padding: 14px 16px; margin-top: 8px; width: 330px; }
+  .reglage.ouvert .corps { display: block; }
+  .reglage b { display: block; font: 600 14px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+  .reglage .ligne { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .reglage input { width: 90px; font: 600 20px var(--f-mono); padding: 4px 8px; background: #11151C; color: var(--trait); border: 2px solid var(--doux); }
+  .reglage button { font: 600 14px var(--f-mono); padding: 6px 10px; background: #11151C; color: var(--trait); border: 2px solid var(--doux); cursor: pointer; }
+  .reglage button:hover { border-color: var(--accent); color: var(--accent); }
+  .reglage .presets { display: flex; gap: 6px; margin-bottom: 12px; }
+  .reglage .actions { display: flex; gap: 8px; }
+  .reglage small { display: block; margin-top: 10px; color: var(--doux); font-size: 12px; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -87,6 +130,9 @@
   <div class="calque grille"></div>
   <div class="calque vignette"></div>
   <div class="cadre marge"></div>
+
+  <!-- Traînées d'étoiles (visibles pendant le suivi de la fusée) : derrière tous les panneaux -->
+  <svg id="filantes" viewBox="0 0 1920 1080"></svg>
 
   <!-- En-tête -->
   <div class="entete">
@@ -109,9 +155,10 @@
   </div>
 
   <!-- Séquence de lancement -->
-  <div class="panneau boite"><div class="interieur">
+  <div class="panneau boite" id="panneau"><div class="interieur">
     <div class="panneau-tete"><span class="label" data-texte="demarrage.titre">Préparation au lancement</span><span class="hachures"></span></div>
     <div class="compteur" id="compteur"><span class="t">T-</span><span id="temps">05:00</span></div>
+    <div class="compteur-annonce" id="compteur-annonce"><span id="annonce-texte"></span></div>
 
     <div class="ligne-info"><span class="label doux">Ravitaillement</span><span class="mono" id="pourcent">0 %</span></div>
     <div class="jauge" id="jauge"></div>
@@ -119,7 +166,7 @@
     <div class="label doux">Vérifications</div>
     <ul class="verifs" id="verifs"></ul>
 
-    <div class="avertissement attention"><span data-icone="alerte"></span>Attention : ergols cryogéniques</div>
+    <div class="avertissement attention" id="activite"><span data-icone="pouls"></span><span id="activite-texte">Injection des ergols</span></div>
   </div></div>
 
   <!-- Pas de tir -->
@@ -135,6 +182,9 @@
       </linearGradient>
     </defs>
     <g id="ciel"></g>
+
+    <!-- Décor du sol : descend et s'efface quand la caméra suit la fusée -->
+    <g id="monde">
 
     <!-- Projecteurs -->
     <polygon points="-378,-58 -40,175 -250,175" fill="url(#cone-g)"/>
@@ -187,30 +237,23 @@
       <rect class="plein" x="100" y="-12" width="12" height="24"/>
     </g></g>
 
+    </g>
+
     <!-- Fusée -->
     <g id="fusee-vol"><g id="fusee-place"></g></g>
 
     <!-- Fumée d'allumage et nuage du décollage -->
-    <g id="fumees"></g>
+    <g id="monde-fumees"><g id="fumees"></g></g>
   </svg>
 
-  <!-- Annonces : ravitaillement terminé, décompte, décollage -->
+  <!-- Pop-up « Ravitaillement terminé » : sous la fusée, quelques secondes seulement. Le décompte et le décollage ne sont que dans le panneau (compteur T-). -->
   <div class="annonces">
     <div class="annonce" id="a-termine">
-      <div class="coche"><svg viewBox="0 0 32 32" class="icone" style="stroke-width:3"><path d="M7 17 L13 23 L25 9"/></svg></div>
-      <div class="gros-label" data-texte="demarrage.ravitaillementTermine">Ravitaillement terminé</div>
+      <div class="rangee">
+        <div class="coche"><svg viewBox="0 0 32 32" class="icone" style="stroke-width:3.5"><path d="M7 17 L13 23 L25 9"/></svg></div>
+        <div class="gros-label" data-texte="demarrage.ravitaillementTermine">Ravitaillement terminé</div>
+      </div>
       <div class="label doux" data-texte="demarrage.sequenceFinale">Séquence finale engagée</div>
-    </div>
-    <div class="annonce" id="a-decompte">
-      <div class="label doux" data-texte="demarrage.decompte">Décollage dans</div>
-      <div class="chiffre" id="chiffre">10</div>
-    </div>
-    <div class="annonce" id="a-decollage">
-      <h2 class="titre-geant" data-texte="demarrage.decollage">Décollage !</h2>
-    </div>
-    <div class="annonce" id="a-reussi">
-      <span class="hachures"></span>
-      <h2 class="titre-geant blanc" data-texte="demarrage.lancementReussi">Lancement réussi</h2>
     </div>
   </div>
 
@@ -219,6 +262,18 @@
     <div class="pied-circuit"><span class="label doux" data-texte="decor.protocole">Protocole v1.2</span><span data-icone="circuit" style="color:var(--doux)"></span><span class="label doux" data-texte="decor.capteurs">Capteurs externes</span></div>
     <div class="etiquette" id="statut-bas" data-texte="demarrage.statut">Ravitaillement en cours</div>
     <div class="label doux">+ &nbsp;<span data-texte="decor.exploration">Exploration spatiale profonde</span>&nbsp; +</div>
+  </div>
+</div>
+
+<!-- Réglage de la durée (invisible à l'antenne) : clic droit sur la source dans OBS > Interagir, puis bouge la souris -->
+<div class="reglage" id="reglage">
+  <span class="roue" id="reg-roue">⚙ DURÉE</span>
+  <div class="corps">
+    <b>Durée du compte à rebours</b>
+    <div class="ligne"><input id="reg-min" type="text" inputmode="decimal" autocomplete="off"><span>minutes</span></div>
+    <div class="presets"><button data-m="5">5</button><button data-m="10">10</button><button data-m="15">15</button><button data-m="20">20</button><button data-m="30">30</button></div>
+    <div class="actions"><button id="reg-ok">Appliquer + relancer</button><button id="reg-raz" title="Reprendre la valeur de config.js">Défaut</button></div>
+    <small>Mémorisé sur ce PC. L'adresse ?minutes=… reste prioritaire.</small>
   </div>
 </div>
 
@@ -249,6 +304,18 @@
   });
   document.getElementById('vapeurs').innerHTML = vap;
 
+  // --- Traînées d'étoiles (effet de vitesse pendant que la caméra suit la fusée) ---
+  const NB_FIL = 70, fil = [];
+  let filHtml = '';
+  for (let i = 0; i < NB_FIL; i++) {
+    const x = Math.random() * 1920, y0 = Math.random() * 1200, l = 20 + Math.random() * 60;
+    fil.push({ y0 });
+    filHtml += `<line x1="${x.toFixed(0)}" x2="${x.toFixed(0)}" y1="0" y2="${l.toFixed(0)}" stroke="var(--trait)" stroke-width="${(1 + Math.random() * 1.8).toFixed(1)}" stroke-linecap="round" opacity="0"/>`;
+  }
+  const gFil = document.getElementById('filantes');
+  gFil.innerHTML = filHtml;
+  const traitsFil = [...gFil.children];
+
   // --- Jauge & vérifications ---
   const jauge = document.getElementById('jauge');
   jauge.innerHTML = '<i></i>'.repeat(24);
@@ -272,14 +339,64 @@
   document.getElementById('fumees').innerHTML = fum;
 
   // --- Séquence : ravitaillement (jusqu'à T-30) > séquence finale > décompte (T-10) > décollage (T-0) ---
-  const minutes = parseFloat(Commun.params.get('minutes') ?? C.minutes ?? 5);
-  const duree = Math.max(5, minutes * 60);
-  const finCarburant = duree > 40 ? duree - 30 : duree * 0.4;   // instant où le plein est fait
-  const debut = Date.now();
   const $ = id => document.getElementById(id);
   const scene = $('scene'), carb = $('f1-carb'), niveau = $('f1-niveau');
   const HAUT = 272; // hauteur du corps de la fusée
-  let phase = '', dernierChiffre = null;
+  const T = Commun.minuteries();
+  const CLE_MIN = `overlay-${Commun.C.id || 'defaut'}-demarrage-minutes`;
+  let duree, finCarburant, debut, phase, derniereActivite, termineAffiche;
+
+  // Durée : ?minutes= dans l'adresse  >  heure fixe (?heure=20:30, puis config.js › demarrage.heure)
+  //         >  valeur réglée avec la roue ⚙  >  config.js › demarrage.minutes
+  // Heure fixe « 20:30 » → minutes restantes (0 si elle est déjà passée)
+  const minutesJusqua = h => { const [H, M] = String(h).split(':').map(Number); const c = new Date(); c.setHours(H, M || 0, 0, 0); return Math.max(0, (c - Date.now()) / 60000); };
+  function dureeMinutes() {
+    const url = parseFloat(Commun.params.get('minutes'));
+    if (url > 0) return url;
+    const heure = Commun.params.get('heure') || C.heure;
+    if (heure) return Math.max(minutesJusqua(heure), 0.02);
+    try { const m = parseFloat(localStorage.getItem(CLE_MIN)); if (m > 0) return m; } catch (e) {}
+    const c = parseFloat(C.minutes);
+    return c > 0 ? c : 5;
+  }
+
+  // Textes de la ligne d'activité (bas du panneau) — modifiables dans config.js
+  const ACT = C.activites || [];
+  const TXT = {
+    finale: C.sequenceFinale || 'Séquence finale engagée',
+    termine: C.ravitaillementTermine || 'Ravitaillement terminé',
+    allumage: C.activiteAllumage || 'Allumage des moteurs',
+    decollage: C.activiteDecollage || 'Poussée maximale',
+    reussi: C.activiteReussi || 'Trajectoire nominale',
+  };
+  function definirActivite(texte) {
+    if (texte === derniereActivite) return;
+    derniereActivite = texte;
+    const el = $('activite-texte');
+    el.textContent = texte;
+    el.classList.remove('maj'); void el.offsetWidth; el.classList.add('maj');
+  }
+
+  // Annonce dans le panneau : remplace le compteur T+ (texte réduit automatiquement pour tenir dans la largeur)
+  const boiteAnnonce = $('compteur-annonce'), texteAnnonce = $('annonce-texte');
+  function annoncePanneau(texte, blanc) {
+    $('compteur').classList.add('cache');
+    boiteAnnonce.classList.add('visible');
+    texteAnnonce.textContent = texte;
+    texteAnnonce.classList.toggle('blanc', !!blanc);
+    texteAnnonce.style.animation = 'none'; void texteAnnonce.offsetWidth; texteAnnonce.style.animation = '';
+    let taille = 104;
+    texteAnnonce.style.fontSize = taille + 'px';
+    while (texteAnnonce.offsetWidth > boiteAnnonce.clientWidth && taille > 30) texteAnnonce.style.fontSize = (taille -= 2) + 'px';
+  }
+
+  // Pop-up « Ravitaillement terminé » : affiché une seule fois, quelques secondes, puis il disparaît
+  function popupTermine() {
+    if (termineAffiche) return;
+    termineAffiche = true;
+    annonce('a-termine');
+    T.timeout(() => annonce(''), Math.max(1, parseFloat(C.popupSecondes) || 3) * 1000);
+  }
 
   function annonce(id) {
     document.querySelectorAll('.annonce').forEach(a => a.classList.toggle('visible', a.id === id));
@@ -310,17 +427,15 @@
     // Phases
     if (reste <= 0) { if (phase !== 'decollage') decollage(); return; }
 
+    // Ligne d'activité : suit la vérification en cours, puis la séquence finale
+    const n = lignes.length, q = Math.min(1, p / 0.97), k = Math.min(n - 1, Math.floor(q * n));
+    definirActivite(reste <= 3 ? TXT.allumage : (reste <= 10 || p >= 1) ? TXT.finale : q >= 1 ? TXT.termine : (ACT[k] || verifs[k] || ''));
+
     if (reste <= 10) {
       if (phase !== 'decompte') {
-        phase = 'decompte'; annonce('a-decompte'); $('compteur').classList.add('zero');
+        phase = 'decompte'; popupTermine(); $('compteur').classList.add('zero');
         scene.classList.add('retrait');
         $('statut-bas').textContent = C.statutSequenceFinale || '';
-      }
-      const n = Math.ceil(reste);
-      if (n !== dernierChiffre) {
-        dernierChiffre = n;
-        const c = $('chiffre'); c.textContent = n;
-        c.classList.remove('tic'); void c.offsetWidth; c.classList.add('tic');
       }
       if (reste <= 3 && !scene.classList.contains('allumage-on')) {
         scene.classList.add('allumage-on');
@@ -329,7 +444,7 @@
     } else if (p >= 1 && phase !== 'finale') {
       phase = 'finale';
       scene.classList.add('retrait');
-      annonce('a-termine');
+      popupTermine();
       $('statut-bas').textContent = C.statutSequenceFinale || '';
     }
   }
@@ -338,25 +453,96 @@
   function decollage() {
     phase = 'decollage';
     scene.classList.add('retrait', 'allumage-on', 'decolle');
+    document.querySelector('.statut').classList.add('replie');
     $('fusee-place').classList.add('secousse');
     $('compteur').classList.remove('zero');
-    annonce('a-decollage');
+    annonce('');
+    annoncePanneau(C.decollage || 'Décollage !', false);
+    definirActivite(TXT.decollage);
     const vol = $('fusee-vol');
+    const monde = [$('monde'), $('monde-fumees')];
+    const LIMITE = 70;          // hauteur à laquelle la caméra se met à suivre la fusée
     const t0 = performance.now();
-    const envol = setInterval(() => {
+    const envol = T.interval(() => {
       const t = (performance.now() - t0) / 1000 - 0.7;   // les moteurs montent en puissance
       if (t <= 0) return;
-      const y = -(0.5 * 95 * t * t + 8 * t);
-      vol.setAttribute('transform', `translate(0,${y.toFixed(1)})`);
-      if (y < -1200) { clearInterval(envol); $('fusee-place').classList.remove('secousse'); }
+      const vitesse = 95 * t + 8;
+      const y = -(0.5 * 95 * t * t + 8 * t);              // altitude réelle (négatif = haut)
+      const yr = Math.max(y, -LIMITE);                    // la fusée se fige à l'écran : la caméra la suit
+      const dy = yr - y;                                  // de combien le décor est descendu
+      vol.setAttribute('transform', `translate(0,${yr.toFixed(1)})`);
+      monde.forEach(g => {
+        g.setAttribute('transform', `translate(0,${dy.toFixed(1)})`);
+        g.setAttribute('opacity', Math.max(0, 1 - dy / 420).toFixed(2));
+      });
+      // Traînées d'étoiles qui défilent vers le bas : de plus en plus rapides
+      if (dy > 0) {
+        const fond = Math.min(1, dy / 150), v = Math.min(vitesse, 620);
+        traitsFil.forEach((l, i) => {
+          const f = fil[i];
+          const yy = ((f.y0 + v * t * 1.2) % 1200) - 80;
+          l.setAttribute('transform', `translate(0,${yy.toFixed(1)}) scale(1,${(0.5 + v / 300).toFixed(2)})`);
+          l.setAttribute('opacity', (fond * 0.7).toFixed(2));
+        });
+      }
+      if (t > 3.5) $('fusee-place').classList.remove('secousse');   // les vibrations s'apaisent en altitude
     }, 16);
-    setTimeout(() => {
-      annonce('a-reussi');
+    T.timeout(() => {
+      annoncePanneau(C.lancementReussi || 'Lancement réussi', true);
+      definirActivite(TXT.reussi);
       $('statut-bas').textContent = C.statutDecollage || '';
+      // Quelques secondes après « Lancement réussi » : le panneau se ferme et la fusée se centre
+      T.timeout(() => { $('panneau').classList.add('ferme'); scene.classList.add('centre'); },
+        Math.max(0, parseFloat(C.fermeturePanneauSecondes) || 3) * 1000);
     }, 4500);
   }
 
-  tic(); setInterval(tic, 100);
+  // --- Départ / remise à zéro : appelé à chaque passage à l'antenne ---
+  function lancer() {
+    T.tout();
+    derniereActivite = null; termineAffiche = false;
+    duree = Math.max(5, dureeMinutes() * 60);
+    finCarburant = duree > 40 ? duree - 30 : duree * 0.4;   // instant où le plein est fait
+    debut = Date.now(); phase = '';
+    Commun.remiseAZero(() => {
+      scene.classList.remove('retrait', 'allumage-on', 'decolle', 'centre');
+      $('panneau').classList.remove('ferme');
+      document.querySelector('.statut').classList.remove('replie');
+      $('fusee-place').classList.remove('secousse');
+      $('compteur').classList.remove('zero', 'cache');
+      boiteAnnonce.classList.remove('visible');
+      $('fusee-vol').removeAttribute('transform');
+      [$('monde'), $('monde-fumees')].forEach(g => { g.removeAttribute('transform'); g.removeAttribute('opacity'); });
+      traitsFil.forEach(l => { l.setAttribute('opacity', '0'); l.removeAttribute('transform'); });
+      annonce('');
+      $('statut-bas').textContent = C.statut || '';
+    });
+    $('reg-min').value = String(dureeMinutes()).replace('.', ',');
+    tic(); T.interval(tic, 100);
+  }
+
+  // Hors antenne : tout s'arrête, le compte à rebours ne défile plus en arrière-plan.
+  const cycle = Commun.cycle({ lancer, arreter: () => T.tout() });
+
+  // --- Réglage de la durée ---
+  const reg = $('reglage');
+  let masquer;
+  // Bouger la souris fait apparaître le bouton ; il se cache 4 s après (sauf panneau ouvert)
+  addEventListener('mousemove', () => {
+    reg.classList.add('visible');
+    clearTimeout(masquer);
+    masquer = setTimeout(() => { if (!reg.classList.contains('ouvert')) reg.classList.remove('visible'); }, 4000);
+  });
+  $('reg-roue').onclick = () => reg.classList.toggle('ouvert');
+  document.querySelectorAll('#reglage [data-m]').forEach(b => b.onclick = () => { $('reg-min').value = b.dataset.m; });
+  $('reg-ok').onclick = () => {
+    const m = parseFloat(String($('reg-min').value).replace(',', '.'));
+    if (!(m > 0)) return;
+    try { localStorage.setItem(CLE_MIN, String(m)); } catch (e) {}
+    reg.classList.remove('ouvert');
+    cycle.relancer();
+  };
+  $('reg-raz').onclick = () => { try { localStorage.removeItem(CLE_MIN); } catch (e) {} reg.classList.remove('ouvert'); cycle.relancer(); };
 </script>
 </body>
 </html>

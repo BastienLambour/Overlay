@@ -122,6 +122,48 @@ const Commun = (() => {
     document.querySelectorAll('[data-icone]').forEach(el => (el.innerHTML = icones[el.dataset.icone] || ''));
   }
 
+  // --- Minuteries regroupées : tout s'arrête d'un coup (voir cycle) ---
+  function minuteries() {
+    const iv = new Set(), to = new Set();
+    return {
+      interval(fn, ms) { const id = setInterval(fn, ms); iv.add(id); return id; },
+      timeout(fn, ms) { const id = setTimeout(fn, ms); to.add(id); return id; },
+      tout() { iv.forEach(clearInterval); to.forEach(clearTimeout); iv.clear(); to.clear(); },
+    };
+  }
+
+  // --- Remise à zéro sans animation de retour (les transitions CSS sont coupées le temps du reset) ---
+  function remiseAZero(fn) {
+    const e = document.getElementById('ecran');
+    e.classList.add('sans-transition');
+    fn();
+    void e.offsetWidth;
+    requestAnimationFrame(() => requestAnimationFrame(() => e.classList.remove('sans-transition')));
+  }
+
+  // --- Cycle de vie d'une scène animée --------------------------------------------------
+  // lancer()  : appelée quand la scène passe à l'antenne. Elle doit tout remettre à zéro et démarrer.
+  // arreter() : appelée quand la scène n'est plus à l'écran. Elle doit stopper les minuteries.
+  // Tant que la scène est hors antenne, les animations CSS sont aussi figées (classe .en-pause).
+  // Fonctionne dans OBS (événements obsSourceActiveChanged / obsSourceVisibleChanged)
+  // et dans un navigateur normal (onglet visible / masqué).
+  function cycle({ lancer, arreter = () => {} }) {
+    const ecran = document.getElementById('ecran');
+    let visible = document.visibilityState !== 'hidden', actif = null, tourne = false;
+    const demarrer = () => { ecran.classList.remove('en-pause'); tourne = true; lancer(); };
+    const couper = () => { if (tourne) { tourne = false; arreter(); } ecran.classList.add('en-pause'); };
+    const evaluer = () => { if (visible && actif !== false) { if (!tourne) demarrer(); } else couper(); };
+    document.addEventListener('visibilitychange', () => { visible = document.visibilityState !== 'hidden'; evaluer(); });
+    addEventListener('obsSourceVisibleChanged', e => { visible = !!(e.detail && e.detail.visible); evaluer(); });
+    addEventListener('obsSourceActiveChanged', e => {
+      actif = !!(e.detail && e.detail.active);
+      if (actif && visible) demarrer();      // à chaque passage à l'antenne : on repart de zéro
+      else evaluer();
+    });
+    evaluer();
+    return { relancer: demarrer };
+  }
+
   function demarrer() {
     const theme = params.get('theme');
     if (theme) document.documentElement.dataset.theme = theme;
@@ -133,5 +175,5 @@ const Commun = (() => {
     addEventListener('resize', ajuster);
   }
 
-  return { C, params, lire, etoiles, mmss, fusee, icones, demarrer };
+  return { C, params, lire, etoiles, mmss, fusee, icones, demarrer, cycle, minuteries, remiseAZero };
 })();

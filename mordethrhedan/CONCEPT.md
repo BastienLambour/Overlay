@@ -11,7 +11,7 @@
 | Identifiant Twitch | `mordethrhedan` — **à confirmer** |
 | Ce qui est streamé | Jeux, dont du **speedrun** (ex. Beyond Good & Evil, Moonlighter 2) |
 | Écran / canevas OBS | 1920×1080 (supposé) |
-| Alertes | Streamer.bot, à installer |
+| Alertes | **Streamlabs** (ses propres alertes : pas de bot). Clé Streamlabs seulement pour le « dernier follow » |
 
 ## Direction artistique
 
@@ -25,18 +25,22 @@
 
 ## Ce qui est demandé
 
-- **Scènes** : Jeu + cam (cam dans un coin, **zone libre pour son widget de succès**), **Speedrun** (zones libres pour **sa manette et ses splits LiveSplit**, cadres optionnels), Contenu + chat, Cam seule.
-- **Écrans** : Démarrage (compte à rebours), Pause (« Petite pause en cours »), Fin — le titre se pose sur **son image**, avec un léger voile.
+- **Trois dispositions** (refonte d'après ses 3 croquis) :
+  - **Grande** — Démarrage (compte à rebours), Pause, Fin, Cam seule : pseudo en haut, grand cadre troué (cam, image, contenu), message au centre facile à changer, **ligne des derniers événements** en bas (follow · sub · raid · série de visionnage), chat à droite.
+  - **Petite** — Contenu, Speedrun : manette ou cam en haut à gauche, LiveSplit en bas à gauche (ou le chat, désactivable d'un clic), pseudo + grand cadre + derniers à droite.
+  - **Jeu** — cadre au ras des bords, coins bouchés par le fond, pseudo dans un encadré posé sur le cadre (au-dessus / en dessous de la cam), **cadre de cam + pseudo en source séparée** (`sources/cam.html`) à grouper avec la cam et son compteur de morts : tout disparaît d'un raccourci OBS (pseudo compris).
+- **Fond synchronisé** : `sources/fond.html` tout en bas de chaque scène, calé sur l'horloge → raccord avec le fond de l'overlay là où il n'y a pas de source.
 - **Sources** : alertes, chat, objectif, **cadre néon à la taille voulue** (pour encadrer ses propres widgets), compte à rebours seul, fond seul.
 - **Transitions** : balayage et volets néon (simples).
 - **Chaîne Twitch** : bannière, écran hors-ligne, panneaux de bio, emotes, badges d'abonné — fait (`chaine/`), à valider.
-- **Contraintes** : ses widgets de succès / speedrun, il les gère lui-même → on leur laisse la place, sans les dessiner.
+- **Contraintes** : son widget de succès, il le gère lui-même (non pris en compte). Manette et LiveSplit : des trous encadrés.
 
 ## Décisions prises
 
 - 2026-09-29 — Fond généré (graine réglable) plutôt que l'image Chrome d'origine.
 - 2026-09-29 — Mises en page regroupées dans `js/scenes.js`.
 - 2026-09-30 — Dossier `Overlay/mordethrhedan/`, police dans `assets/polices/`, accueil et moodboard remis au format commun, flou de la barre du moodboard retiré (écran noir).
+- 2026-09-30 — Refonte en 3 dispositions (Grande / Petite / Jeu). Derniers événements sans bot : sub, raid, série via les annonces du chat Twitch ; follow via la Socket API Streamlabs (clé dans `config.js › streamlabs.jeton`). Module propre à l'overlay : `js/derniers.js`.
 
 ## État d'avancement
 
@@ -44,17 +48,19 @@
 |---|---|
 | Moodboard | ✅ |
 | Écrans et scènes | ✅ |
-| Sources (pas de `bandeau` ni de `cam` seule : non demandés) | ✅ |
+| Sources (dont `cam` : cadre de la cam de la scène Jeu, à grouper) | ✅ |
 | Transitions (vidéos Stinger : balayage et volets, 800 ms) | ✅ |
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
 | TUTO.md | ✅ |
-| Testé dans OBS / avec Streamer.bot | ⬜ |
+| Refonte des scènes (3 dispositions, derniers événements, fond synchronisé) | ✅ vérifiée en navigateur |
+| Testé dans OBS / annonces Twitch et Streamlabs en vrai live | ⬜ |
 
 ## À faire / questions ouvertes
 
 - [ ] Déposer `Dyer.ttf` dans `assets/polices/`.
 - [ ] Confirmer l'identifiant Twitch, remplir `objectif.depart`.
-- [ ] Installer Streamer.bot.
+- [ ] Coller la clé Streamlabs (« Socket API Token ») dans `reglages.html` › Derniers événements, pour le dernier follow.
+- [ ] Refaire ses scènes OBS avec les nouvelles fiches (TUTO §3), dont le groupe « Cam » + raccourci.
 - [ ] Valider le kit de chaîne Twitch (`chaine/kit.html`) puis l'envoyer sur Twitch (TUTO §7).
 
 ## Journal
@@ -73,3 +79,9 @@
 - **2026-09-30** — TUTO mis à jour : section « Les scripts » (installer Node.js et ffmpeg, lancer un script, tableau de tous les scripts dont actualiser-obs.lua), section 6 complète (chat, Streamer.bot pas à pas, journal ?journal=1, événements, dons, objectif, tests), réglages via reglages.html partout, options ?journal=1 / ?chat=0.
 - **2026-09-30** — Demande : une option `?cam=0` (pas de webcam) → ajoutée (plus de cadre de cam). Puis « cam et tout, on devrait pouvoir le régler depuis les réglages » → `config.js › options` + `js/options.js` (commun) ; `reglages.html` › **Options des scènes** : le coin de la webcam de la scène Jeu (ou « Pas de webcam ») et le chat de chaque écran. Une option écrite dans l'adresse d'une source OBS passe avant.
 - **2026-09-30** — Bug signalé : en Cam seule, remettre le chat (et les couleurs) dans les réglages ne marchait pas après actualisation → `js/options.js` ajoutait `?chat=0` à l'adresse, et l'actualisation d'OBS rechargeait cette adresse modifiée. Corrigé : les options ajoutées par les réglages sont notées (`depuisReglages=…`) et retirées au chargement suivant. Couleurs : l'écriture et l'affichage vérifiés (Halloween puis couleurs d'origine) ; pas testé dans OBS.
+- **2026-09-30** — Réglages : **« Mes ambiances »** (section Couleurs) — nommer les couleurs affichées puis 💾, gardées dans `config.js › ambiances` (ex. Batman) ; un clic les remet, × les supprime. TUTO §9 mis à jour. Aperçu des alertes dans reglages.html au vrai style de l'overlay (`apercuAlerte`, comme Patagrain).
+- **2026-09-30** — **Refonte des scènes demandée (3 croquis)** : ① « grande scène » (démarrage/pause/fin/cam/contenu) : trou dans le grand cadre, message facile à changer, pseudo en haut, cadre central un peu plus bas, ligne en bas « dernier follow / sub / raid / série de visionnage » ; ② « petite scène » (contenu/speedrun) : trous grand cadre (jeu/fenêtre), haut gauche (manette/cam), bas gauche (LiveSplit, ou chat désactivable) + pseudo et derniers ; ③ Jeu : cadre au plus près des bords, coins bouchés par le fond, cam dans les 4 coins, pseudo dans un petit encadré sur le cadre (au-dessus si cam en haut, en dessous si cam en bas), **cadre de cam = source séparée** (à grouper avec la cam pour la masquer d'un raccourci). Partout : **fond synchronisé** visible quand il n'y a pas de source. **Alertes : Streamlabs** (pas de bot) ; widget de succès géré par lui.
+- **2026-09-30** — Refonte faite : `js/scenes.js` (3 dispositions), `js/derniers.js` (nouveau), `sources/cam.html` (nouveau), `chat.html?place=petite|grande`, fond calé sur l'horloge (`js/fond.js`), réglages (Derniers événements, chat du Speedrun), TUTO §3 réécrit + 4.7 + 6.1 bis, vitrine et moodboard. Vérifié : toutes les pages sans erreur, normal et `?test=1`. Pas testé : OBS, vraies annonces Twitch / Streamlabs.
+- **2026-09-30** — Choix : le pseudo de la scène Jeu **disparaît avec la cam** → déplacé de `scenes/jeu.html` vers `sources/cam.html` (`?pseudo=0` pour l'enlever) ; sans webcam (`?cam=0`), l'overlay Jeu l'affiche en haut à gauche. Vérifié en navigateur (cam en haut, en bas, sans cam).
+- **2026-09-30** — Standardisé dans les 4 overlays : **heure fixe** du compte à rebours (`demarrage.heure` / `?heure=20:30`, réglages › Démarrage › « … ou heure fixe ») et **étiquettes de placement** (`afficherZones` / `?zones=1`, réglages › Options des scènes). TUTO §2 et §3.1 mis à jour.
+- **2026-09-30** — Pseudo du cadre de cam réglable aussi dans `reglages.html` › Options des scènes (`config.js › options.cam.pseudo`).

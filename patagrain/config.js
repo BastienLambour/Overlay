@@ -17,6 +17,10 @@ window.CONFIG = {
   // Ce que tu fais aujourd'hui (écrans d'attente et bandeau)
   titreDuJour: "Donjons & Dragons — La quête du grelot perdu",
 
+  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
+  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  afficherZones: false,
+
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
   // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
@@ -165,4 +169,5 @@ window.CONFIG = {
   test: {
     noms: ["SirMachin", "DameTruc", "Bob_le_Nain", "Ysolde", "Merlin_Pinpin", "Gwendal", "LaDameDuLac", "Perceval"],
   },
+  ambiances: [],
 };

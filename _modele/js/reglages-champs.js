@@ -12,6 +12,11 @@
              apercuAlerte(type, { titre, nom, message }) → HTML d'une alerte aux couleurs de l'overlay
    ===================================================================== */
 window.ReglagesChamps = {
+  // logo: 'assets/logo.svg',                 // image en haut de la page (si l'overlay a un logo)
+  // Pour l'aperçu des alertes au vrai style de l'overlay (voir apercuAlerte en bas)
+  scripts: ['js/commun.js'],
+  styles: ['css/composants.css'],
+
   // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
   ambiances: [
     { nom: '🎃 Halloween', valeurs: { 'couleurs.accent': '#FF7A1A', 'couleurs.fond': '#140B1A' } },
@@ -23,6 +28,15 @@ window.ReglagesChamps = {
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
     ] },
+    { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
+      { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite', 'En bas à droite'], ['bas-gauche', 'En bas à gauche'], ['haut-droite', 'En haut à droite'], ['haut-gauche', 'En haut à gauche'], ['aucune', 'Pas de webcam']] },
+      { cle: 'options.jeu.chat', type: 'case', label: 'Jeu : le chat' },
+      { cle: 'options.jeu.bandeau', type: 'case', label: 'Jeu : le bandeau' },
+      { cle: 'options.contenu.cam', type: 'case', label: 'Contenu : une webcam' },
+      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat' },
+      { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
+      { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
+    ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
       { cle: 'couleurs.accent', type: 'couleur', label: 'Couleur principale', defaut: '#FF9F1C' },
       { cle: 'couleurs.fond', type: 'couleur', label: 'Fond', defaut: '#101418' },
@@ -30,6 +44,7 @@ window.ReglagesChamps = {
     { titre: 'Démarrage', icone: '⏳', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },
       { cle: 'demarrage.minutes', type: 'nombre', label: 'Compte à rebours (minutes)', min: 0 },
+      { cle: 'demarrage.heure', type: 'heure', label: '… ou heure fixe', aide: 'Si elle est remplie, elle passe avant les minutes (ex. 20:30 : le compteur arrive à zéro à 20 h 30). Vide = compte à rebours en minutes.' },
       { cle: 'demarrage.texteFin', type: 'texte', label: 'Quand le compteur arrive à zéro' },
     ] },
     { titre: 'Pause', icone: '☕', champs: [
@@ -89,4 +104,12 @@ window.ReglagesChamps = {
     ['🎮 Jeu', 'scenes/jeu.html?test=1'],
     ['👋 Fin', 'scenes/fin.html?test=1'],
   ],
+
+  // Aperçu d'une alerte dans reglages.html : reprendre le HTML de sources/alertes.html (mêmes classes, mêmes icônes),
+  // réduit avec zoom. Sans cette fonction, la page affiche une carte générique.
+  apercuAlerte(type, { titre, nom, message }) {
+    const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    return `<div class="alerte" style="position:relative;zoom:.42;width:100%">
+      <div class="alerte-titre">${e(titre)}</div><div class="alerte-nom">${e(nom)}</div><div class="alerte-msg">${e(message)}</div></div>`;
+  },
 };

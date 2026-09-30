@@ -6,11 +6,21 @@
            paires (« A | B » par ligne) · choix · secret · heure
    ===================================================================== */
 window.ReglagesChamps = {
-  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  // Pour l'aperçu des alertes aux couleurs de l'overlay (icônes et styles des vraies alertes)
+  scripts: ['js/commun.js'],
+  styles: ['css/composants.css'],
+
+  // Ambiances en un clic (section Couleurs) : chacune règle les 9 couleurs ; '' = la couleur d'origine du thème
   ambiances: [
-    { nom: '🎃 Halloween', valeurs: { 'couleurs.accent': '#FF6A00', 'couleurs.flamme': '#B57CFF', 'couleurs.fond': '#0E0812', 'couleurs.fond-2': '#180D1E', 'couleurs.trait': '#F3E8FF', 'couleurs.doux': '' } },
-    { nom: '🎄 Noël', valeurs: { 'couleurs.accent': '#E63946', 'couleurs.flamme': '#F5C542', 'couleurs.fond': '#06130C', 'couleurs.fond-2': '#0C1F14', 'couleurs.trait': '#EEF6EF', 'couleurs.doux': '' } },
-    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.accent': '', 'couleurs.flamme': '', 'couleurs.fond': '', 'couleurs.fond-2': '', 'couleurs.trait': '', 'couleurs.doux': '' } },
+    { nom: '❄️ Bleu glace', valeurs: { 'couleurs.accent': '#4CC9F0', 'couleurs.flamme': '#B8F0FF', 'couleurs.trait': '#E4F1FA', 'couleurs.doux': '#7A8FA3', 'couleurs.fond': '#08101A', 'couleurs.fond-2': '#0E1926', 'couleurs.coque': '#101C2A', 'couleurs.ok': '#5BD69A', 'couleurs.alerte': '#FF4D4D' } },
+    { nom: '💚 Vert terminal', valeurs: { 'couleurs.accent': '#39FF88', 'couleurs.flamme': '#C8FFD9', 'couleurs.trait': '#DFF5E6', 'couleurs.doux': '#6B8A75', 'couleurs.fond': '#050A07', 'couleurs.fond-2': '#0A130D', 'couleurs.coque': '#0E1A12', 'couleurs.ok': '#7CFFB2', 'couleurs.alerte': '#FF5C5C' } },
+    { nom: '🌌 Violet nébuleuse', valeurs: { 'couleurs.accent': '#B388FF', 'couleurs.flamme': '#F0D9FF', 'couleurs.trait': '#EEE8F8', 'couleurs.doux': '#8A7FA0', 'couleurs.fond': '#0D0A16', 'couleurs.fond-2': '#150F22', 'couleurs.coque': '#1A1329', 'couleurs.ok': '#5BD69A', 'couleurs.alerte': '#FF4D4D' } },
+    { nom: '🔴 Rouge Mars', valeurs: { 'couleurs.accent': '#FF5A36', 'couleurs.flamme': '#FFC48A', 'couleurs.trait': '#F3E7E2', 'couleurs.doux': '#94807A', 'couleurs.fond': '#120A09', 'couleurs.fond-2': '#1B0F0D', 'couleurs.coque': '#211311', 'couleurs.ok': '#5BD69A', 'couleurs.alerte': '#FFD23F' } },
+    { nom: '💗 Rose néon', valeurs: { 'couleurs.accent': '#FF4FA3', 'couleurs.flamme': '#FFC2E2', 'couleurs.trait': '#F6E9F2', 'couleurs.doux': '#8F7FA0', 'couleurs.fond': '#0E0912', 'couleurs.fond-2': '#170F1D', 'couleurs.coque': '#1D1325', 'couleurs.ok': '#5BD69A', 'couleurs.alerte': '#FF4D4D' } },
+    { nom: '☀️ Clair', valeurs: { 'couleurs.accent': '#E07B00', 'couleurs.flamme': '#FFE08A', 'couleurs.trait': '#1D242B', 'couleurs.doux': '#6F7880', 'couleurs.fond': '#E4E6E1', 'couleurs.fond-2': '#D8DBD5', 'couleurs.coque': '#EEF0EC', 'couleurs.ok': '#2E9E6B', 'couleurs.alerte': '#E03A3A' } },
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.accent': '#FF6A00', 'couleurs.flamme': '#B57CFF', 'couleurs.trait': '#F3E8FF', 'couleurs.doux': '', 'couleurs.fond': '#0E0812', 'couleurs.fond-2': '#180D1E', 'couleurs.coque': '', 'couleurs.ok': '', 'couleurs.alerte': '' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.accent': '#E63946', 'couleurs.flamme': '#F5C542', 'couleurs.trait': '#EEF6EF', 'couleurs.doux': '', 'couleurs.fond': '#06130C', 'couleurs.fond-2': '#0C1F14', 'couleurs.coque': '', 'couleurs.ok': '', 'couleurs.alerte': '' } },
+    { nom: '↺ Couleurs d’origine (orange)', valeurs: { 'couleurs.accent': '', 'couleurs.flamme': '', 'couleurs.trait': '', 'couleurs.doux': '', 'couleurs.fond': '', 'couleurs.fond-2': '', 'couleurs.coque': '', 'couleurs.ok': '', 'couleurs.alerte': '' } },
   ],
 
   sections: [
@@ -29,6 +39,7 @@ window.ReglagesChamps = {
       { cle: 'options.contenu.bandeau', type: 'case', label: 'Contenu : le bandeau' },
       { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
       { cle: 'options.cam-seule.bandeau', type: 'case', label: 'Cam seule : le bandeau' },
+      { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
       { cle: 'couleurs.accent', type: 'couleur', label: 'Accent (orange « attention »)', defaut: '#FF9F1C' },
@@ -37,19 +48,28 @@ window.ReglagesChamps = {
       { cle: 'couleurs.fond-2', type: 'couleur', label: 'Fond des cadres', defaut: '#11151C' },
       { cle: 'couleurs.trait', type: 'couleur', label: 'Traits et texte', defaut: '#E6EAEE' },
       { cle: 'couleurs.doux', type: 'couleur', label: 'Texte secondaire', defaut: '#7C8793' },
+      { cle: 'couleurs.coque', type: 'couleur', label: 'Décors (pas de tir, réservoirs…)', defaut: '#141920' },
+      { cle: 'couleurs.ok', type: 'couleur', label: 'Validé (vert)', defaut: '#5BD69A' },
+      { cle: 'couleurs.alerte', type: 'couleur', label: 'Alerte (rouge : balises, REC)', defaut: '#FF4D4D' },
     ] },
     { titre: 'Démarrage (la fusée sur le pas de tir)', icone: '⏱️', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },
       { cle: 'demarrage.statut', type: 'texte', label: 'Statut pendant le ravitaillement' },
-      { cle: 'demarrage.minutes', type: 'nombre', label: 'Compte à rebours (minutes)', min: 0, aide: 'Le ravitaillement se termine à T-30 s, puis décompte final de 10 s et décollage.' },
+      { cle: 'demarrage.minutes', type: 'nombre', label: 'Compte à rebours (minutes)', min: 0, aide: 'Le ravitaillement se termine à T-30 s, puis décompte final de 10 s et décollage. Se change aussi dans OBS : Interagir › bouton ⚙ DURÉE.' },
+      { cle: 'demarrage.heure', type: 'heure', label: '… ou heure fixe', aide: 'Si elle est remplie, elle passe avant les minutes (ex. 20:30 : le compteur arrive à zéro à 20 h 30). Vide = compte à rebours en minutes.' },
       { cle: 'demarrage.verifications', type: 'liste', label: 'Liste des vérifications', aide: 'Une vérification par ligne ; elles se cochent pendant le ravitaillement.' },
+      { cle: 'demarrage.activites', type: 'liste', label: 'Ligne d’activité (bas du panneau)', aide: 'Une ligne par vérification, dans le même ordre : ce qui s’affiche pendant qu’elle est en cours. Reste court.' },
+      { cle: 'demarrage.popupSecondes', type: 'nombre', label: 'Durée du message « Ravitaillement terminé » (secondes)', min: 1 },
       { cle: 'demarrage.ravitaillementTermine', type: 'texte', label: 'Fin du ravitaillement' },
       { cle: 'demarrage.sequenceFinale', type: 'texte', label: 'Séquence finale' },
       { cle: 'demarrage.statutSequenceFinale', type: 'texte', label: 'Statut pendant la séquence finale' },
-      { cle: 'demarrage.decompte', type: 'texte', label: 'Au-dessus du décompte final' },
       { cle: 'demarrage.decollage', type: 'texte', label: 'Au décollage' },
       { cle: 'demarrage.lancementReussi', type: 'texte', label: 'Après le décollage' },
       { cle: 'demarrage.statutDecollage', type: 'texte', label: 'Statut après le décollage' },
+      { cle: 'demarrage.fermeturePanneauSecondes', type: 'nombre', label: 'Secondes avant que le panneau se ferme et que la caméra suive la fusée', min: 0 },
+      { cle: 'demarrage.activiteAllumage', type: 'texte', label: 'Activité à l’allumage' },
+      { cle: 'demarrage.activiteDecollage', type: 'texte', label: 'Activité au décollage' },
+      { cle: 'demarrage.activiteReussi', type: 'texte', label: 'Activité après le décollage' },
     ] },
     { titre: 'Pause', icone: '📡', champs: [
       { cle: 'pause.titre', type: 'texte', label: 'Titre' },
@@ -117,4 +137,16 @@ window.ReglagesChamps = {
     ['🎮 Jeu', 'scenes/jeu.html?test=1'],
     ['🌙 Fin', 'scenes/fin.html'],
   ],
+
+  // Aperçu d'une alerte, avec les mêmes styles et icônes que la vraie source (sources/alertes.html)
+  apercuAlerte(type, { titre, nom, message }) {
+    const ICONES = { follow: 'casque', sub: 'fusee', resub: 'fusee', giftsub: 'groupe', giftbomb: 'groupe', bits: 'carburant', raid: 'radar', don: 'coeur', objectif: 'cible' };
+    const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const ico = typeof Commun !== 'undefined' ? (Commun.icones[ICONES[type]] || '') : '';
+    return `<div class="alerte" style="position:relative;zoom:.42;width:100%">
+      <div class="alerte-icone"><span>${ico}</span></div>
+      <div class="alerte-corps"><div class="alerte-tete"><span>Transmission entrante</span><span class="hachures"></span></div>
+        <div class="alerte-titre">${e(titre)}</div><div class="alerte-nom">${e(nom)}</div>
+        <div class="alerte-msg visible">${e(message)}</div></div></div>`;
+  },
 };

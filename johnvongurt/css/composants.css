@@ -44,6 +44,13 @@ html.transparent, html.transparent body, html.transparent #ecran { background: t
   background: linear-gradient(160deg, #4b5563, #252b33); }
 .apercu-zone.jeu { background: linear-gradient(160deg, #3d4a5c 0%, #1d2632 60%, #10151c 100%); }
 
+/* Étiquette de zone (taille + position à saisir dans OBS) : texte seul, la cam reste visible autour */
+.zone-info { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 18px; background: rgba(8,11,15,.72); border: 2px dashed var(--accent); color: #fff; text-align: center; white-space: nowrap;
+  font: 600 20px/1.35 var(--f-mono); z-index: 40; }
+.zone-info b { color: var(--accent); font-size: 22px; letter-spacing: .1em; text-transform: uppercase; }
+.zone-info small { font: 500 13px var(--f-mono); color: #ffffffa0; margin-top: 4px; }
+
 /* ---------- Chat ---------- */
 .panneau-chat { position: absolute; }
 .panneau-chat .interieur { display: flex; flex-direction: column; padding: 18px 22px; }
@@ -56,8 +63,6 @@ html.transparent, html.transparent body, html.transparent #ecran { background: t
 .chat-ligne.part { animation: part .6s ease-in forwards; }
 @keyframes arrive { from { opacity: 0; transform: translateX(-24px); clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes part { to { opacity: 0; transform: translateX(-20px); } }
-.chat-invite { border-top: 2px solid var(--faible); padding-top: 12px; margin-top: 12px; font: 500 17px var(--f-mono); color: var(--doux); }
-.chat-invite::after { content: "▌"; color: var(--accent); animation: clignote-c .9s steps(2) infinite; margin-left: 4px; }
 
 /* Chat transparent (scène jeu) : bulles lisibles sur le jeu */
 .chat-flottant { position: absolute; display: flex; flex-direction: column; justify-content: flex-end; }

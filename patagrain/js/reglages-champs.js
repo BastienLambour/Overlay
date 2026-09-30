@@ -40,6 +40,7 @@ window.ReglagesChamps = {
       { cle: 'options.pause.bouffon', type: 'case', label: 'Pause : le bouffon au coin du feu' },
       { cle: 'options.demarrage.bouffon', type: 'case', label: 'Starting soon : le bouffon' },
       { cle: 'options.fin.bouffon', type: 'case', label: 'Fin : le bouffon' },
+      { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. Le logo, le chapeau posé sur les cams et l\'emblème sont des images : ils gardent leurs couleurs.', champs: [
       { cle: 'couleurs.primaire', type: 'couleur', label: 'Couleur principale (le bleu)', defaut: '#3A9AD9' },

@@ -15,6 +15,10 @@ window.CONFIG = {
   // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "<pseudo>",
 
+  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
+  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  afficherZones: false,
+
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
   // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
   options: {
@@ -30,6 +34,9 @@ window.CONFIG = {
     accent: "",          // <couleur principale du thème>
     fond: "",            // fond
   },
+  // Mes ambiances (créées dans reglages.html › Couleurs › « Sauvegarder ces couleurs ») :
+  // un nom et les couleurs qu'elle remet, ex. { nom: "Batman", valeurs: { "couleurs.accent": "#F5C518", "couleurs.fond": "#0B0B0D" } }
+  ambiances: [],
 
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
@@ -47,6 +54,7 @@ window.CONFIG = {
     titre: "Ça commence bientôt",
     // Durée du compte à rebours en minutes (ou dans l'URL : demarrage.html?minutes=10)
     minutes: 5,
+    heure: "",            // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
     texteFin: "C'est parti !",
   },
 

@@ -74,7 +74,7 @@ Conventions :
   Le TUTO donne les coordonnées exactes (et en 2560×1440 si l'écran du streamer l'est).
 - **Objet JS global** : `Commun` (dans `commun.js`) ; un objet par fichier, du nom du fichier
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
-- **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `streamerbot`, `demarrage`,
+- **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamerbot`, `demarrage` (dont `minutes` et `heure`),
   `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
@@ -82,7 +82,9 @@ Conventions :
   voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
   compteur), `?apercu=1` (montre les zones cam/jeu), `?reinitialiser` (remet l'objectif à zéro),
-  `?minutes=10` (compte à rebours), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite|0` (0 = pas de webcam :
+  `?minutes=10` (compte à rebours), `?heure=20:30` (heure fixe ; `?minutes=` passe avant, puis `?heure=`, puis
+  `demarrage.heure`, puis `demarrage.minutes`), `?zones=1|0` (étiquettes taille + position posées sur chaque zone,
+  par défaut `config.js › afficherZones`), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite|0` (0 = pas de webcam :
   pas de cadre, le chat récupère la place), `?chat=0`, `?bandeau=0`. Toutes réglables aussi dans `config.js › options`.
 - Fichiers en UTF-8, fins de ligne LF.
 
@@ -100,8 +102,14 @@ Conventions :
   couleurs du thème, aperçu des alertes, qui modifie `config.js` en ne remplaçant QUE les valeurs changées (commentaires
   gardés, réglages inconnus jamais effacés ; refuse le config.js d'un autre overlay). Edge/Chrome : écriture directe
   (`showOpenFilePicker`, fichier retenu dans IndexedDB) ; sinon téléchargement. Propre à l'overlay :
-  `js/reglages-champs.js` (libellés, aides, rangement, liens de test ; gabarit dans `_modele/js/`). Tout réglage de
+  `js/reglages-champs.js` (libellés, aides, rangement, liens de test ; gabarit dans `_modele/js/`). Chaque overlay y
+  fournit `apercuAlerte(type, { titre, nom, message })` (+ `styles` / `scripts` de ses vraies alertes) : l'aperçu du
+  vocabulaire des alertes a le vrai rendu de l'overlay, pas une carte générique. `logo` (image en haut) si l'overlay en a un. Tout réglage de
   config.js non décrit apparaît dans « Autres réglages ».
+  **Mes ambiances** (section Couleurs, `ambiances: true`) : le streamer nomme les couleurs affichées et clique
+  💾 → `config.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
+  les autres changements en attente ; un clic remet toutes les valeurs de la section (couleur non citée = d'origine),
+  × supprime. Une ambiance retient TOUS les champs des sections Couleurs (aussi un `choix` comme `couleur: "vert"`).
 - **`design/moodboard.html`** : barre de réglages en haut (sans `backdrop-filter` : il bloque le
   rendu au-dessus des iframes animées → écran noir), en-tête, puis `01 Couleurs` · `02 Typographies` ·
   `03 <élément signature>` · `04 Motifs & symboles` · `05 Composants` (alertes + tableau du

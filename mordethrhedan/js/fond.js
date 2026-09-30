@@ -1,6 +1,7 @@
 /* =====================================================================
    Générateur du fond « cristal » : facettes sombres + éclats lumineux
-   dans la couleur d'accent. Même graine = même motif.
+   dans la couleur d'accent. Même graine = même motif, et même instant
+   d'animation d'une page à l'autre (voir « Respiration calée sur l'horloge »).
    ===================================================================== */
 function fondNeon({ graine = 7, colonnes = 9, lignes = 6 } = {}) {
   const W = 1920, H = 1080;
@@ -90,7 +91,10 @@ function fondNeon({ graine = 7, colonnes = 9, lignes = 6 } = {}) {
       <stop offset="${(.35 + alea() * .3).toFixed(2)}" style="stop-color:var(--accent);stop-opacity:1"/>
       <stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient>`;
     const d = 'M' + chemin.map(c => { const p = pt(c); return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join('L');
-    const style = `--d:${(7 + alea() * 6).toFixed(1)}s;--r:${(-alea() * 8).toFixed(1)}s`;
+    // Respiration calée sur l'horloge : toutes les pages (overlay, source fond…) sont au même
+    // instant de l'animation, où qu'elles en soient de leur chargement → fonds raccord.
+    const duree = 7 + alea() * 6, decalage = -alea() * 8;
+    const style = `--d:${duree.toFixed(1)}s;--r:${(decalage - (Date.now() / 1000) % +duree.toFixed(1)).toFixed(3)}s`;
     eclats += `<g class="eclat" style="${style}">
       <path d="${d}" stroke="url(#${g})" stroke-width="16" fill="none" filter="url(#flou)" opacity=".9"/>
       <path d="${d}" stroke="url(#${g})" stroke-width="4" fill="none" stroke-linejoin="round"/>`;

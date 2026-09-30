@@ -136,8 +136,6 @@
   .chat-ligne { font-size: 19px; animation: arrive .45s cubic-bezier(.2,.7,.3,1) both; }
   .chat-ligne b { font: 600 17px var(--f-mono); color: var(--c); margin-right: 6px; }
   @keyframes arrive { from { opacity: 0; transform: translateX(-24px); clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-  .chat-invite { border-top: 2px solid var(--faible); padding-top: 12px; font: 500 16px var(--f-mono); color: var(--doux); }
-  .chat-invite::after { content: "▌"; color: var(--accent); animation: clignote .9s steps(2) infinite; margin-left: 4px; }
 
   /* ===== Bandeau ===== */
   .bandeau { width: 100%; max-width: 960px; --c: 18px; }
@@ -324,7 +322,6 @@
         <div class="boite chat"><div class="interieur">
           <div class="cam-tete"><span class="label">Canal de communication</span><span class="hachures" style="width:70px;height:12px"></span></div>
           <div class="chat-lignes" id="chat"></div>
-          <div class="chat-invite">&gt; transmission</div>
         </div></div>
       </div>
     </div>

@@ -12,7 +12,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 1. Ce qu'il y a dans le dossier
 2. Avant de commencer (config, police Dyer, réglages OBS, les 3 gestes de base)
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu · Speedrun
-4. Les sources à la carte : Alertes · Chat · Objectif · Cadre néon · Compte à rebours · Fond
+4. Les sources à la carte : Alertes · Chat · Objectif · Cadre néon · Compte à rebours · Fond · Cadre de la cam
 5. Les transitions : Balayage · Volets
 6. Brancher le chat et les alertes (Streamer.bot, journal, objectif)
 7. Habiller la chaîne Twitch
@@ -89,6 +89,8 @@ Dépose le fichier de la police de *Beyond Good & Evil* dans `assets/polices/`, 
 4. **Taille de la zone de délimitation** : largeur et hauteur de la fiche.
 5. Coche **Rogner à la zone de délimitation**, puis **Fermer**.
 
+> 💡 **Voir les chiffres directement dans OBS** : `reglages.html` › **Options des scènes** › coche **Afficher la taille et la position des zones**, puis **Enregistrer** et actualise. Chaque zone (webcam, contenu, jeu) affiche sa taille et sa position : tu les recopies dans Ctrl + E. Décoche ensuite. (Ou, pour une seule source : `?zones=1` dans l'adresse, geste C.)
+
 ### 2.6 Geste C — ajouter une option dans l'adresse
 
 1. Dans la source Navigateur, **décoche** *Fichier local*.
@@ -105,11 +107,11 @@ file:///G:/Projets/Overlay/mordethrhedan/scenes/jeu.html?cam=bas-droite&couleur=
 1. **Scènes › +** : crée une scène **« Global — Alertes »** et ajoutes-y `sources/alertes.html` (fiche 4.1).
 2. Dans chaque autre scène : **Sources › + › Scène** › « Global — Alertes », tout **en haut** de la liste.
 
-> 🔑 **Règle d'or** : dans OBS, ce qui est **en haut** de la liste s'affiche **par-dessus**. L'overlay est au-dessus de la webcam et du jeu ; **tes widgets** (succès, manette, splits) sont **au-dessus** de l'overlay.
+> 🔑 **Règle d'or** : dans OBS, ce qui est **en haut** de la liste s'affiche **par-dessus**. L'overlay est **au-dessus** de la webcam, du jeu, de la manette et de LiveSplit (il les encadre et arrondit leurs coins) ; le **fond** est tout en bas. Ton widget de succès, lui, se met au-dessus de l'overlay.
 
 ### 2.8 Le chat : déjà dans les scènes
 
-Les scènes contiennent **déjà** leur chat, placés pile à côté des zones de la cam et du jeu : **tu n'as rien à ajouter.**
+Les scènes Démarrage, Pause, Fin, Cam seule et Contenu contiennent **déjà** leur chat : **tu n'as rien à ajouter.** En Speedrun, il est coupé par défaut pour laisser voir LiveSplit (voir 3.7 pour l'afficher d'un clic).
 La source séparée `sources/chat.html` sert seulement pour une scène à toi, ou pour placer le chat autrement : dans ce cas, ajoute `?chat=0` à l'adresse de la scène pour retirer celui qui est intégré, puis ajoute la source séparée.
 
 Quand tu changes de scène, le chat **réaffiche les derniers messages** (ceux des 10 dernières minutes, réglable dans `reglages.html` › **Le chat**) : il ne repart pas à vide.
@@ -128,104 +130,131 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 ## 3. Les scènes, fiche par fiche
 
-### 3.1 ⏳ Démarrage — `scenes/demarrage.html`
+Trois dispositions, toutes avec le **même fond** qui se voit là où tu n'as mis aucune source :
 
-**À quoi ça sert** : « Ça commence bientôt » et le compte à rebours, posés sur **ton image** (« C'est parti ! » à zéro).
+| Disposition | Pages | En bref |
+|---|---|---|
+| **Grande** | Démarrage · Pause · Fin · Cam seule | pseudo en haut, grand cadre, ligne des **derniers événements** en bas, chat à droite |
+| **Petite** | Contenu · Speedrun | manette ou cam en haut à gauche, LiveSplit (ou chat) en bas à gauche, pseudo + grand cadre + derniers à droite |
+| **Jeu** | Jeu | jeu plein écran, cadre au ras des bords, pseudo dans un petit encadré ; **le cadre de la cam est une source à part** |
+
+> 💎 **Le fond, tout en bas de chaque scène** : ajoute `sources/fond.html` en **dernière** position (geste A). Il est **synchronisé** avec celui de l'overlay (même motif, mêmes éclats au même instant) : là où tu ne mets pas de source, on voit le fond, parfaitement raccord.
+
+> 🏷️ **La ligne des derniers événements** (dernier follow, dernier sub, dernier raid, série de visionnage) se remplit toute seule : voir **6.1 bis**.
+
+### 3.1 ⏳ Démarrage — `scenes/demarrage.html` (disposition Grande)
+
+**À quoi ça sert** : « Ça commence bientôt » et le compte à rebours dans le grand cadre (« C'est parti ! » à zéro), posés sur ta source (image, cam…).
 
 **Dans OBS :**
 1. **Scènes › +** : « Démarrage ».
-2. **+ › Scène** › « Global — Alertes ».
+2. **+ › Scène** › « Global — Alertes » (si tu utilises les alertes de l'overlay ; avec Streamlabs, mets plutôt ta source d'alertes Streamlabs).
 3. Geste A avec `scenes/demarrage.html`, case **Actualiser le navigateur quand la scène devient active** cochée.
-4. **+ › Image** › « Ton image », choisis ton image. Geste B : position `505`, `149` · taille `1380` × `776`.
-5. Ordre final : `Global — Alertes` · `Overlay` · `Ton image`.
+4. **+ › Image** (ou ta webcam) › « Ta source ». Geste B : position `45`, `130` · taille `1380` × `776`.
+5. Geste A avec `sources/fond.html` › « Fond ».
+6. Ordre final : `Alertes` · `Overlay` · `Ta source` · `Fond`.
 
-**Options** : `?minutes=5` (10 min par défaut) · `?couleur=rouge`
+**Changer le texte** : `reglages.html` › **Écrans avec un grand titre** (ou `?message=Je%20arrive` dans l'adresse).
+**Options** : `?minutes=5` (10 min par défaut) · `?heure=20:30` (heure fixe : le compteur arrive à zéro à 20 h 30 ; aussi dans `reglages.html` › **… ou heure fixe**, prioritaire sur les minutes) · `?chat=0` · `?derniers=0` · `?couleur=rouge`
 
-### 3.2 ☕ Pause — `scenes/pause.html`
+### 3.2 ☕ Pause — `scenes/pause.html` (disposition Grande)
 
-**À quoi ça sert** : « Petite pause en cours » posé sur ton image, le chat à gauche.
+**À quoi ça sert** : « Petite pause en cours » dans le grand cadre, posé sur ta source.
 
-**Dans OBS :**
-1. **Scènes › +** : « Pause ».
-2. **+ › Scène** › « Global — Alertes ».
-3. Geste A avec `scenes/pause.html`.
-4. **+ › Image** › « Ton image ». Geste B : position `505`, `149` · taille `1380` × `776`.
-5. Ordre final : `Global — Alertes` · `Overlay` · `Ton image`.
+**Dans OBS :** comme le Démarrage (étapes 1 à 6) avec `scenes/pause.html` ; ta source en `45`, `130` · `1380` × `776`.
+**Changer le texte** : `reglages.html` › **Écrans avec un grand titre** › Pause.
 
-### 3.3 👋 Fin — `scenes/fin.html`
+### 3.3 👋 Fin — `scenes/fin.html` (disposition Grande)
 
-**À quoi ça sert** : « Merci d'être passés ! » posé sur ton image, le chat à gauche.
+**À quoi ça sert** : « Merci d'être passés ! » dans le grand cadre.
 
-**Dans OBS :** comme la Pause, avec `scenes/fin.html` (image en `505`, `149` · `1380` × `776`).
+**Dans OBS :** comme le Démarrage avec `scenes/fin.html` ; ta source en `45`, `130` · `1380` × `776`.
 
-### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
+### 3.4 🎙 Cam seule — `scenes/cam-seule.html` (disposition Grande, sans message)
 
-**À quoi ça sert** : ta webcam en grand, le chat à droite.
+**À quoi ça sert** : le « blabla » : ta webcam (ou n'importe quel contenu) dans le grand cadre, le chat à droite.
 
 **Dans OBS :**
 1. **Scènes › +** : « Cam seule ».
-2. **+ › Scène** › « Global — Alertes ».
+2. Tes alertes en haut (voir 3.1, étape 2).
 3. Geste A avec `scenes/cam-seule.html`.
-4. **+ › Périphérique de capture vidéo** › « Webcam ». Geste B : position `45`, `95` · taille `1370` × `770`.
-5. Ordre final : `Global — Alertes` · `Overlay` · `Webcam`.
+4. **+ › Périphérique de capture vidéo** › « Webcam » (ou une capture de fenêtre). Geste B : position `45`, `130` · taille `1380` × `776`.
+5. Geste A avec `sources/fond.html` › « Fond ».
+6. Ordre final : `Alertes` · `Overlay` · `Webcam` · `Fond`.
 
-### 3.5 🖥 Contenu — `scenes/contenu.html`
+### 3.5 🖥 Contenu — `scenes/contenu.html` (disposition Petite)
 
-**À quoi ça sert** : le chat à gauche, le contenu (16:9) à droite.
+**À quoi ça sert** : une fenêtre ou un jeu dans le grand cadre, ta webcam (ou ta manette) en haut à gauche, le chat en bas à gauche.
 
 **Dans OBS :**
 1. **Scènes › +** : « Contenu ».
-2. **+ › Scène** › « Global — Alertes ».
+2. Tes alertes en haut.
 3. Geste A avec `scenes/contenu.html`.
-4. **+ › Capture de fenêtre** (ou *Capture d'écran*, *Navigateur*…) › « Contenu ». Geste B : position `505`, `149` · taille `1380` × `776`.
-5. Ordre final : `Global — Alertes` · `Overlay` · `Contenu`.
-
-### 3.6 🎮 Jeu — `scenes/jeu.html`
-
-**À quoi ça sert** : le jeu en plein écran, ta cam dans un coin, une place libre pour ton widget de succès.
-
-**Dans OBS :**
-1. **Scènes › +** : « Jeu ».
-2. **+ › Scène** › « Global — Alertes ».
-3. Ajoute ton **widget de succès** (ta source habituelle). Geste B : position `1440`, `45` · taille `420` × `250`.
-4. Geste A avec `scenes/jeu.html`.
-5. **+ › Périphérique de capture vidéo** › « Webcam ». Geste B : taille `320` × `300`, position selon le coin :
-
-| Coin (option `cam`) | Position de la webcam (x, y) |
-|---|---|
-| `haut-gauche` *(défaut)* | `60`, `55` |
-| `haut-droite` | `1540`, `55` |
-| `bas-gauche` | `60`, `725` |
-| `bas-droite` | `1540`, `725` |
-
-Quand la cam est à droite, la zone du widget succès passe à gauche (`60`, `45`).
-
-6. **+ › Capture de jeu** › « Jeu ». Geste B : `0`, `0` · `1920` × `1080`.
-7. Ordre final : `Global — Alertes` · `Widget succès` · `Overlay` · `Webcam` · `Jeu`.
-
-**Options** : `?cam=bas-droite` · `?cadre=0` (sans le grand cadre extérieur) · `?couleur=rouge` · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
-
-### 3.7 ⏱ Speedrun — `scenes/speedrun.html`
-
-**À quoi ça sert** : ta manette et tes splits à gauche, le jeu à droite.
-
-**Dans OBS :**
-1. **Scènes › +** : « Speedrun ».
-2. **+ › Scène** › « Global — Alertes ».
-3. Ajoute ton **widget manette** et ta **capture LiveSplit** (tes sources habituelles).
-4. Geste A avec `scenes/speedrun.html`.
-5. **+ › Capture de jeu** › « Jeu ».
-6. Geste B :
+4. Ajoute tes sources, puis geste B pour chacune :
 
 | Source | Position (x, y) | Taille (l × h) |
 |---|---|---|
-| Manette | `40`, `40` | `380` × `290` |
-| LiveSplit | `40`, `355` | `380` × `685` |
-| Jeu | `450`, `122` | `1440` × `810` |
+| Fenêtre / jeu | `460`, `128` | `1415` × `796` |
+| Webcam ou manette (en haut à gauche) | `45`, `45` | `380` × `285` |
 
-7. Ordre final : `Global — Alertes` · `Manette` · `LiveSplit` · `Overlay` · `Jeu`.
+5. Geste A avec `sources/fond.html` › « Fond ».
+6. Ordre final : `Alertes` · `Overlay` · `Webcam` · `Fenêtre` · `Fond`.
 
-**Options** : cadres autour de la manette et des splits réglables dans `reglages.html` › **Scène speedrun** (ou `config.js` › `speedrun.cadreManette` / `cadreSplits`).
+**Le chat** : en bas à gauche par défaut. Pour mettre autre chose à sa place : `reglages.html` › **Options des scènes** › « Contenu : le chat » décoché (la case devient un trou, comme pour LiveSplit en 3.7).
+
+### 3.6 🎮 Jeu — `scenes/jeu.html` + `sources/cam.html`
+
+**À quoi ça sert** : le jeu en plein écran, un cadre au ras des bords (ses coins arrondis sont bouchés par le fond, raccord avec le reste), ton pseudo dans un petit encadré posé sur le cadre, et ta cam dans un coin.
+**Le cadre de la cam et ton pseudo sont une source à part** (`sources/cam.html`) : tu la mets dans un **groupe** avec ta webcam (et ton compteur de morts, etc.) pour tout masquer d'un seul raccourci pendant une cinématique : cam, cadre et pseudo disparaissent ensemble.
+
+**Dans OBS :**
+1. **Scènes › +** : « Jeu ».
+2. Tes alertes en haut.
+3. **Le groupe de la cam** :
+   1. Geste A avec `sources/cam.html` › « Cadre cam ».
+   2. **+ › Périphérique de capture vidéo** › « Webcam ». Geste B : taille `320` × `300`, position selon le coin (tableau ci-dessous).
+   3. Ajoute tes autres widgets à masquer en même temps (compteur de morts…).
+   4. Sélectionne-les tous (Ctrl + clic), **clic droit › Grouper la sélection**, nomme le groupe « Cam ». Dans le groupe, `Cadre cam` doit être **au-dessus** de `Webcam`.
+4. Geste A avec `scenes/jeu.html` › « Overlay ».
+5. **+ › Capture de jeu** › « Jeu ». Geste B : `0`, `0` · `1920` × `1080`.
+6. Geste A avec `sources/fond.html` › « Fond ».
+7. Ordre final : `Alertes` · `Cam` (le groupe) · `Overlay` · `Jeu` · `Fond`.
+8. **Le raccourci** : **Paramètres › Raccourcis clavier**, cherche « Cam » : règle une touche pour **Afficher « Cam »** et une pour **Masquer « Cam »** (ou la même pour les deux). La cam, son cadre, ton pseudo et tes widgets disparaissent ensemble.
+
+**Changer de coin** : `reglages.html` › **Options des scènes** › « Jeu : la webcam ». Le cadre de la cam **et** le pseudo suivent (pseudo au-dessus quand la cam est en haut, en dessous quand elle est en bas). Déplace ensuite ta webcam :
+
+| Coin | Position de la webcam (x, y) |
+|---|---|
+| `haut-gauche` *(défaut)* | `56`, `56` |
+| `haut-droite` | `1544`, `56` |
+| `bas-gauche` | `56`, `724` |
+| `bas-droite` | `1544`, `724` |
+
+> ⚠️ Si tu écris le coin dans l'adresse (`?cam=bas-droite`) au lieu des réglages, mets **le même** sur `scenes/jeu.html` et sur `sources/cam.html`.
+
+**Options** : `?cam=0` sur `scenes/jeu.html` (pas de webcam : pas de groupe, le pseudo est alors affiché par l'overlay, en haut à gauche) · cadre sans le pseudo : `reglages.html` › **Options des scènes** › « Jeu : ton pseudo sur le cadre de la cam » décoché (ou `?pseudo=0` sur `sources/cam.html`) · `?couleur=rouge`
+
+### 3.7 ⏱ Speedrun — `scenes/speedrun.html` (disposition Petite)
+
+**À quoi ça sert** : comme le Contenu, pour le speedrun : ta manette (ou ta cam) en haut à gauche, **LiveSplit** en bas à gauche, le jeu dans le grand cadre.
+
+**Dans OBS :**
+1. **Scènes › +** : « Speedrun ».
+2. Tes alertes en haut.
+3. Geste A avec `scenes/speedrun.html` › « Overlay ».
+4. Ajoute tes sources, puis geste B pour chacune :
+
+| Source | Position (x, y) | Taille (l × h) |
+|---|---|---|
+| Jeu | `460`, `128` | `1415` × `796` |
+| Manette ou webcam | `45`, `45` | `380` × `285` |
+| LiveSplit | `45`, `360` | `380` × `675` |
+
+5. Geste A avec `sources/fond.html` › « Fond ».
+6. Ordre final : `Alertes` · `Overlay` · `Manette` · `LiveSplit` · `Jeu` · `Fond`.
+
+**Le chat à la place de LiveSplit, d'un clic** : ajoute `sources/chat.html` **au-dessus** de l'overlay, avec l'adresse `…/sources/chat.html?place=petite` (geste C). Il se pose pile dans la case du bas : l'**œil** d'OBS (ou un raccourci, comme en 3.6 étape 8) l'affiche par-dessus LiveSplit ou le cache.
+Pour l'avoir toujours : `reglages.html` › **Options des scènes** › « Speedrun : le chat ».
 
 ---
 
@@ -272,8 +301,13 @@ Quand la cam est à droite, la zone du widget succès passe à gauche (`60`, `45
 
 ### 4.6 💎 Fond — `sources/fond.html`
 
-**À quoi ça sert** : le fond à facettes seul, **tout en bas** d'une scène à toi.
-**Options** : `?couleur=rouge` · `?graine=12` (autre motif) · `?fixe` (sans animation)
+**À quoi ça sert** : le fond à facettes seul, **tout en bas de chaque scène** (fiches 3.x) : il se voit là où il n'y a pas de source. Il est synchronisé avec le fond des overlays (même motif, même respiration au même instant).
+**Options** : `?couleur=rouge` · `?graine=12` (autre motif) · `?fixe` (sans animation). Si tu mets une option sur l'overlay d'une scène, mets la même sur son fond.
+
+### 4.7 🎥 Cadre de la cam — `sources/cam.html`
+
+**À quoi ça sert** : le cadre néon de la webcam de la scène Jeu **et ton pseudo** (dans son petit encadré sur le grand cadre), en source séparée, pour les mettre dans un **groupe** avec la webcam et les masquer d'un raccourci (fiche 3.6). Ses coins sont bouchés : la webcam, rectangulaire, ne dépasse pas du cadre arrondi.
+**Options** : `?cam=bas-droite` (même coin que la scène Jeu ; par défaut celui des réglages) · `?x=56&y=56&l=320&h=300` (taille libre) · `?pseudo=0` (sans le pseudo) · `?apercu=1`
 
 ---
 
@@ -308,6 +342,8 @@ Deux choses différentes :
 | **Le chat** | l'overlay lit ton chat Twitch directement | **rien** : ton identifiant Twitch dans les réglages suffit |
 | Les alertes et l'objectif (follows, abonnements, bits, raids, dons) | par **Streamer.bot**, un logiciel gratuit qui tourne sur ton PC | Streamer.bot, une fois (6.2) |
 
+> 🔔 **Tu utilises les alertes de Streamlabs ?** Alors tu n'as **pas besoin** de Streamer.bot ni de `sources/alertes.html` : garde ta source d'alertes Streamlabs en haut de chaque scène. Seule la clé de 6.1 bis est utile (pour le dernier follow).
+
 ### 6.1 Le chat
 
 1. `reglages.html` › **La chaîne** › **Identifiant Twitch** : celui de ton adresse `twitch.tv/…`. Enregistre.
@@ -315,6 +351,26 @@ Deux choses différentes :
 
 Les **emotes Twitch** s'affichent en image ; les **bots** (liste dans `reglages.html` › **Le chat**) et les **commandes** qui commencent par `!` sont cachés ; un message **supprimé par un modo**, ou ceux d'un spectateur **banni**, disparaissent aussi de l'overlay ; en changeant de scène, les messages des 10 dernières minutes sont réaffichés.
 Il ne montre pas les messages envoyés **avant** l'ouverture d'OBS, ni les emotes des extensions 7TV, BTTV ou FFZ.
+
+### 6.1 bis La ligne des derniers événements
+
+| Case | D'où ça vient | À régler |
+|---|---|---|
+| Dernier sub | annonces du chat Twitch (abonnement, réabonnement, cadeau) | **rien** |
+| Dernier raid (pseudo · nombre de viewers) | annonces du chat Twitch | **rien** |
+| Série de visionnage (pseudo · nombre de streams d'affilée) | annonces du chat Twitch, quand un spectateur partage sa série | **rien** |
+| Dernier follow | **Streamlabs** (un follow ne passe pas dans le chat) | ta clé Streamlabs, une fois |
+
+**La clé Streamlabs** :
+1. Sur **streamlabs.com**, connecte-toi, puis **Paramètres** (roue dentée) › **API Settings** › onglet **API Tokens**.
+2. Copie **Your Socket API Token** (bouton *Copy*).
+3. `reglages.html` › **Derniers événements** › **Clé Streamlabs** : colle-la, **Enregistrer**.
+
+> 🔒 C'est une clé **privée** : ne l'affiche pas en live, et ne partage pas `config.js` une fois rempli.
+
+Les cases se souviennent de leur valeur d'un live à l'autre, et toutes les scènes affichent la même chose. Les titres des cases se changent dans `reglages.html` › **Derniers événements**. Pour enlever la ligne sur une scène : `?derniers=0`.
+
+> ⚠️ **Pas encore vérifié sur un vrai live** (les annonces Twitch et Streamlabs n'ont été testées qu'en simulation, `?test=1`).
 
 ### 6.2 Installer Streamer.bot (une seule fois)
 
@@ -446,6 +502,14 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 1. Ouvre `reglages.html` › section **Couleurs** — la couleur des cadres et des éclats y est aussi, dans « Couleur et fond ».
 2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
 3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
+
+#### Créer ta propre ambiance (ex. Batman) et la garder
+
+1. Dans `reglages.html` › **Couleurs**, règle les couleurs comme tu veux (nuancier ou code).
+2. Sous **Mes ambiances**, tape un nom (ex. `Batman`) puis clique **💾 Sauvegarder ces couleurs** : l'ambiance est écrite tout de suite dans `config.js`, avec son nom et ses couleurs. Même nom qu'une ambiance existante = elle est remplacée (la page demande confirmation).
+3. Elle apparaît ensuite en bouton : **un clic** remet toutes ses couleurs, puis **Enregistrer** pour que l'overlay les prenne. **×** la supprime.
+
+Sauvegarder une ambiance ne change pas les couleurs de l'overlay : seul **Enregistrer** le fait.
 
 Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
 
