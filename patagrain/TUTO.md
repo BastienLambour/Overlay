@@ -26,7 +26,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 ```
 patagrain/
-├── reglages.html        ← LA page pour changer les textes et réglages (elle réécrit config.js)
+├── reglages.html        ← LA page pour changer les textes et réglages (elle modifie config.js)
 ├── config.js            ← les réglages eux-mêmes (modifiables aussi à la main)
 ├── index.html           ← la vitrine : aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
@@ -51,18 +51,20 @@ Toutes les pages sont dessinées en **1920 × 1080** et **s'adaptent toutes seul
 
 ### 2.1 Remplir les réglages avec `reglages.html`
 
-1. Dans le dossier `patagrain`, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
-2. Vérifie au minimum, dans **La chaîne** : le **nom affiché**, ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`) et **ce que tu fais aujourd'hui**.
+1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
+2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`) et **ce que tu fais aujourd'hui**.
 3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
 4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
-5. **La première fois**, une fenêtre « Enregistrer sous » s'ouvre : va dans le dossier `patagrain`, clique sur **`config.js`**, puis **Enregistrer** et **Oui** pour le remplacer. Si le navigateur demande l'autorisation de modifier le fichier, clique **Modifier le fichier** (ou **Autoriser**). Les fois suivantes, la page s'en souvient et enregistre directement.
+5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
+   La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
 6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
 
-Un **point doré** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
+Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
+La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
 
-> ℹ️ Avec **Firefox**, la page ne peut pas réécrire le fichier : elle **télécharge** un nouveau `config.js`. Mets-le à la place de l'ancien, dans le dossier `patagrain`.
+> ℹ️ Avec **Firefox**, la page ne peut pas modifier un fichier : elle **télécharge** un nouveau `config.js` (sans les commentaires), à mettre à la place de l'ancien. Préfère Edge ou Chrome.
 
-**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, puis enregistre.
+**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS.
 
 ### 2.2 Régler le canevas d'OBS (une seule fois)
 
@@ -468,10 +470,10 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 → Dans OBS : clic droit sur la source › **Propriétés** › **Actualiser le cache de la page actuelle**.
 
 **Rien ne s'affiche / page blanche**
-→ Vérifie la taille de la source (celle du canevas), puis clic droit › **Actualiser**. Si tu as modifié `config.js` à la main, cherche un guillemet ou une virgule manquant — ou rouvre `reglages.html` et enregistre : la page réécrit un fichier propre.
+→ Vérifie la taille de la source (celle du canevas), puis clic droit › **Actualiser**. Si tu as modifié `config.js` à la main, cherche un guillemet ou une virgule manquant.
 
 **`reglages.html` n'enregistre pas / je ne vois pas mes changements**
-→ Utilise **Edge** ou **Chrome**. La première fois, il faut bien choisir le fichier **`config.js`** du dossier `patagrain` (pas un autre). Avec Firefox, le nouveau `config.js` est téléchargé : remplace l'ancien par celui-ci. Puis **Actualiser** les sources dans OBS.
+→ Utilise **Edge** ou **Chrome**. La première fois, il faut bien choisir le fichier **`config.js`** du dossier `patagrain` (la page refuse celui d'un autre overlay), puis accepter qu'elle le modifie. Avec Firefox, le nouveau `config.js` est téléchargé : remplace l'ancien par celui-ci. Puis **Actualiser** les sources dans OBS.
 
 **L'overlay est décalé ou trop petit**
 → La source doit faire **exactement** la taille du canevas. Clic droit › *Transformer* › *Réinitialiser la transformation*.

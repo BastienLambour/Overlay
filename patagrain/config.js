@@ -1,6 +1,6 @@
 /* =====================================================================
    PATAGRAIN — Configuration de l'overlay : c'est ici qu'on modifie les textes.
-   Le plus simple : ouvre reglages.html (un formulaire qui réécrit ce fichier).
+   Le plus simple : ouvre reglages.html (un formulaire qui modifie ce fichier).
    Ou modifie-le à la main : enregistre, puis actualise la source dans OBS
    (clic droit > Actualiser).
    ===================================================================== */

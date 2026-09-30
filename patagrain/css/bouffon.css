@@ -8,7 +8,9 @@
 .bouffon-svg.bouffon-pied g { transform-box: view-box; }
 .bouffon-svg.bouffon-pied .bf-oeil-d,
 .bouffon-svg.bouffon-pied .bf-oeil-g { transform-box: fill-box; transform-origin: 50% 50%; }
-.bouffon-svg.bouffon-pied .bf-chapeau { transform-origin: 200px 196px; }
+/* Le chapeau pivote autour du milieu de sa couronne (buste ET personnage en pied) : sinon, quand ses grelots
+   tintent, il tourne autour du coin du dessin et glisse de la tête */
+.bouffon-svg .bf-chapeau { transform-box: view-box; transform-origin: 200px 196px; }
 .bouffon-svg .bf-oeil-d, .bouffon-svg .bf-oeil-g { transform-box: fill-box; transform-origin: 50% 50%; }
 #ecran .bouffon-svg { position: static; display: block; width: 100%; height: 100%; }
 

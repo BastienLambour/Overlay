@@ -63,3 +63,4 @@
 - **2026-09-29** — Socle (fond, cadres, config), moodboard, puis construction complète sur le modèle Espace, vidéos Stinger, tuto.
 - **2026-09-30** — Harmonisation : dossier renommé, fichiers communs, accueil et moodboard au format commun.
 - **2026-09-30** — Kit de chaîne Twitch créé (profil, bannière, hors-ligne, 4 panneaux, 6 emotes, 5 badges). TUTO réécrit fiche par fiche, en PDF ; `index.html` devient une vitrine.
+- **2026-09-30** — Ajout de `reglages.html` (page commune à tous les overlays, aux couleurs du thème) : un formulaire qui modifie `config.js` sans toucher au reste du fichier ; libellés propres à l'overlay dans `js/reglages-champs.js`. TUTO §2.1 mis à jour. Outils communs mis à jour (variable `NAVIGATEUR`, polices locales du thème dans les PDF). PDF à régénérer sur le PC (`node outils/generer-pdf.mjs`).

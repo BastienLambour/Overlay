@@ -52,7 +52,8 @@ G:\Projets\Overlay\
 <pseudo>/
 ├── CONCEPT.md / .pdf   ← résumé vivant de la demande (modèle : _modele/CONCEPT.md)
 ├── config.js           ← textes et réglages (voir _modele/config.js pour les clés standard)
-├── index.html          ← vitrine : liens (tuto, concept, moodboard, kit) + aperçu de chaque page
+├── index.html          ← vitrine : liens (tuto, concept, moodboard, kit, réglages) + aperçu de chaque page
+├── reglages.html       ← formulaire qui modifie config.js (commun) ; libellés dans js/reglages-champs.js
 ├── TUTO.md / .pdf      ← tutoriel complet, une fiche OBS par page (modèle : _modele/TUTO.md)
 ├── chaine/             ← kit de chaîne Twitch : kit.html + elements.js, export/ (PNG)
 ├── css/  theme.css (variables) · composants.css · [transitions.css]
@@ -91,10 +92,12 @@ Conventions :
   `node outils/generer-pdf.mjs` produit `TUTO.pdf` et `CONCEPT.pdf` (mise en page aux couleurs du
   thème). Les régénérer après chaque modification d'un `.md`. Vérification visuelle :
   `APERCU=<dossier> node outils/generer-pdf.mjs` enregistre une capture PNG de chaque document.
-- **`reglages.html` — réglages sans code** (fait pour Patagrain, à reprendre ailleurs) : formulaire par écran, avec
-  aperçu des alertes, qui réécrit tout `config.js` (Edge/Chrome : écriture directe via `showSaveFilePicker`, sinon
-  téléchargement). Le modèle du fichier, commentaires compris, est dans `js/reglages.js` (`Reglages.ecrire`) : un
-  nouveau réglage s'ajoute là ET dans `SECTIONS`, sinon la page l'effacerait.
+- **`reglages.html` — réglages sans code** (FICHIER COMMUN, avec `js/reglages.js`) : formulaire par écran, aux
+  couleurs du thème, aperçu des alertes, qui modifie `config.js` en ne remplaçant QUE les valeurs changées (commentaires
+  gardés, réglages inconnus jamais effacés ; refuse le config.js d'un autre overlay). Edge/Chrome : écriture directe
+  (`showOpenFilePicker`, fichier retenu dans IndexedDB) ; sinon téléchargement. Propre à l'overlay :
+  `js/reglages-champs.js` (libellés, aides, rangement, liens de test ; gabarit dans `_modele/js/`). Tout réglage de
+  config.js non décrit apparaît dans « Autres réglages ».
 - **`design/moodboard.html`** : barre de réglages en haut (sans `backdrop-filter` : il bloque le
   rendu au-dessus des iframes animées → écran noir), en-tête, puis `01 Couleurs` · `02 Typographies` ·
   `03 <élément signature>` · `04 Motifs & symboles` · `05 Composants` (alertes + tableau du
@@ -132,6 +135,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `chaine/kit.js` + `chaine/kit.css` : moteur de la page kit (galerie, ou un seul élément avec
   `?seul=<id>&taille=<px>` pour l'export).
 - `config.js` : gabarit avec toutes les clés standard.
+- `reglages.html` + `js/reglages.js` : la page de réglages (identiques partout) ; `js/reglages-champs.js` : gabarit
+  des libellés, à adapter dans chaque overlay (un réglage ajouté à config.js → l'ajouter là aussi, dans la bonne section).
 - `CONCEPT.md`, `TUTO.md` : gabarits des documents.
 
 Pour `chat.js`, `son.js`, `transition.js`, `commun.js` : partir de la version d'un overlay
@@ -176,7 +181,7 @@ existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitc
    liste des scènes voulues, écran du streamer (1080p/1440p), outil d'alertes.
 2. Créer `<pseudo>/` + entrée `launch.json` + **`CONCEPT.md`** (dès la première demande),
    puis le **moodboard** ; attendre les choix.
-3. Construire : `theme.css`, `config.js` (depuis `_modele/`), copier les fichiers communs,
+3. Construire : `theme.css`, `config.js` + `js/reglages-champs.js` (depuis `_modele/`), copier les fichiers communs,
    scènes, sources, transitions, `index.html`, `TUTO.md`, kit `chaine/`.
 4. Vérifier chaque page (normal + `?test=1`), générer les vidéos de transition et les PNG du kit.
 5. Récapituler : ce qui est fait, ce qui n'est pas testé, ce qu'il reste à faire au streamer.

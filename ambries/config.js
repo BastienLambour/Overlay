@@ -1,5 +1,6 @@
 /* =====================================================================
    AMBRIES_ — Configuration de l'overlay : c'est ici qu'on modifie les textes.
+   Le plus simple : ouvre reglages.html (un formulaire qui modifie ce fichier).
    Pas besoin de toucher au reste : enregistre, puis actualise la source
    dans OBS (clic droit > Actualiser).
    Règles : garde les guillemets "…" autour des textes et la virgule en fin de ligne.

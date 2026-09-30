@@ -33,8 +33,22 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 ## 2. Avant de commencer
 
-### 2.1 Remplir `config.js`
-<nomChaine, chaineTwitch, objectif.depart + règles guillemets/virgules + « enregistre puis Actualiser »>
+### 2.1 Remplir les réglages avec `reglages.html`
+
+1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
+2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
+3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
+4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
+5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
+   La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
+6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
+
+Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
+La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
+
+> ℹ️ Avec **Firefox**, la page ne peut pas modifier un fichier : elle **télécharge** un nouveau `config.js` (sans les commentaires), à mettre à la place de l'ancien. Préfère Edge ou Chrome.
+
+**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS.
 
 ### 2.2 Régler le canevas d'OBS (une seule fois)
 <résolution de base / sortie ; si 1440p : les fiches donnent les deux colonnes>

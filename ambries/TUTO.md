@@ -26,6 +26,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 ```
 ambries/
+├── reglages.html       ← LA page pour changer les textes et réglages (elle modifie config.js)
 ├── config.js            ← LE fichier à modifier (textes, pseudo, objectif…)
 ├── index.html           ← aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
@@ -46,19 +47,22 @@ Toutes les pages font **1920 × 1080**, avec un fond transparent là où il faut
 
 ## 2. Avant de commencer
 
-### 2.1 Remplir `config.js`
+### 2.1 Remplir les réglages avec `reglages.html`
 
-Ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*) et modifie au minimum :
+1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
+2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
+3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
+4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
+5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
+   La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
+6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
 
-```js
-nomChaine: "Ambries_",             // le nom affiché sur l'overlay
-chaineTwitch: "ambries_",          // l'identifiant dans l'adresse twitch.tv/xxxx (en minuscules)
-objectif: { type: "follow", titre: "Objectif : 50 témoins", cible: 50,
-            depart: 0 },           // ← ton nombre ACTUEL de followers
-```
+Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
+La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
 
-⚠️ Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne. Les apostrophes ne posent pas de problème.
-Après chaque modification : **enregistre**, puis dans OBS **clic droit sur la source › Actualiser**.
+> ℹ️ Avec **Firefox**, la page ne peut pas modifier un fichier : elle **télécharge** un nouveau `config.js` (sans les commentaires), à mettre à la place de l'ancien. Préfère Edge ou Chrome.
+
+**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS.
 
 ### 2.2 Régler le canevas d'OBS (une seule fois)
 
