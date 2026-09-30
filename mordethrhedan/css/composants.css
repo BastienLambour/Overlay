@@ -40,6 +40,24 @@
 .grand-titre { position: absolute; display: grid; place-items: center; text-align: center; }
 .grand-titre p { margin: 0; }
 
+/* ---------- Derniers événements (ligne du bas) ---------- */
+.dernier { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 0 24px; overflow: hidden; }
+.dernier small { font: 800 15px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.dernier b { font: 900 30px/1.15 var(--f-texte); color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dernier.nouveau b { animation: dernier-nouveau 1.6s ease-out; }
+@keyframes dernier-nouveau { from { color: var(--accent); text-shadow: 0 0 18px var(--accent-halo); } }
+
+/* ---------- Pseudo dans un encadré posé sur le grand cadre (scène Jeu) ---------- */
+.etiquette-pseudo {
+  position: absolute; transform: translateX(-50%); padding: 3px 28px 5px; white-space: nowrap;
+  background: rgba(8, 10, 11, .94); border: 4px solid var(--accent); border-radius: 14px;
+  box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 calc(14px * var(--halo)) var(--accent-halo), inset 0 0 0 2px var(--accent-fonce);
+}
+.etiquette-pseudo span { display: block; font-size: 34px; }
+
+/* ---------- Coins bouchés de la webcam (le cadre est arrondi, la cam non) ---------- */
+.coins-bouches { position: absolute; background: var(--accent-fonce); }
+
 /* ---------- Objectif ---------- */
 .objectif { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
 .obj-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
@@ -50,3 +68,10 @@
   box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 calc(14px * var(--halo)) var(--accent-halo);
 }
 .obj-plein { height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width 1.2s ease-out; box-shadow: 0 0 12px var(--accent-halo); }
+
+/* ---------- Étiquettes de placement (config.js › afficherZones, ?zones=1) ---------- */
+.zone-info { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 18px; background: rgba(7,9,10,.75); border: 3px dashed var(--accent); border-radius: 14px; color: #fff; text-align: center; white-space: nowrap;
+  font: 700 20px/1.35 var(--f-texte); z-index: 40; }
+.zone-info b { color: var(--accent); font-size: 22px; letter-spacing: .08em; text-transform: uppercase; }
+.zone-info small { font: 600 13px var(--f-texte); color: #ffffffa0; margin-top: 4px; }

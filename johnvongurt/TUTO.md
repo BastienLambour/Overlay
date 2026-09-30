@@ -88,6 +88,8 @@ C'est la même manipulation pour **tous** les fichiers `.html` :
 4. **Taille de la zone de délimitation** : largeur et hauteur de la fiche.
 5. Coche **Rogner à la zone de délimitation**, puis **Fermer**.
 
+> 💡 **Voir les chiffres directement dans OBS** : `reglages.html` › **Options des scènes** › coche **Afficher la taille et la position des zones**, puis **Enregistrer** et actualise. Chaque zone (webcam, contenu, jeu) affiche sa taille et sa position : tu les recopies dans Ctrl + E. Décoche ensuite. (Ou, pour une seule source : `?zones=1` dans l'adresse, geste C.)
+
 ### 2.5 Geste C — ajouter une option dans l'adresse
 
 1. Dans la source Navigateur, **décoche** *Fichier local*.
@@ -125,20 +127,23 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 > ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
 
+> ✅ **Plus besoin de cocher « Actualiser le navigateur quand la scène devient active »** : le démarrage, la pause, la fin et les transitions **repartent tout seuls de zéro à chaque fois que leur scène passe à l'antenne**, et se mettent en pause quand elle n'est plus à l'écran. Cocher la case ne gêne pas.
+
 ---
 
 ## 3. Les scènes, fiche par fiche
 
 ### 3.1 🚀 Démarrage — `scenes/demarrage.html`
 
-**À quoi ça sert** : la fusée se ravitaille sur le pas de tir au rythme du compte à rebours. À T-30 : « Ravitaillement terminé » ; de T-10 à T-1, le décompte ; à T-0, **décollage** !
+**À quoi ça sert** : la fusée se ravitaille sur le pas de tir au rythme du compte à rebours, pendant que les vérifications se cochent (la ligne du bas du panneau dit ce qui est en cours). À T-30, un message « Ravitaillement terminé » apparaît quelques secondes sous la fusée ; de T-10 à T-1, le décompte dans le panneau ; à T-0, **décollage** ! « Décollage ! » puis « Lancement réussi » s'affichent dans le panneau, qui se ferme ensuite : la caméra **suit la fusée** dans l'espace.
 
 **Dans OBS :**
 1. **Scènes › +** : « Démarrage ».
 2. **+ › Scène** › « Global — Alertes ».
-3. Geste A avec `scenes/demarrage.html`, case **Actualiser le navigateur quand la scène devient active** cochée.
+3. Geste A avec `scenes/demarrage.html`.
 
-**Options** : `?minutes=10` (durée, 5 min par défaut)
+**Changer la durée sans rien ouvrir** : dans OBS, clic droit sur la source › **Interagir**, bouge la souris : un bouton **⚙ DURÉE** apparaît en haut à gauche (invisible à l'antenne). Choisis la durée, elle est gardée pour les fois suivantes.
+**Options** : `?minutes=10` (passe avant le bouton ⚙ DURÉE ; 5 min par défaut, réglable dans `reglages.html` › Démarrage, avec tous les textes) · `?heure=20:30` (heure fixe : le compteur arrive à zéro à 20 h 30 ; aussi dans `reglages.html` › **… ou heure fixe**, prioritaire sur les minutes)
 **Vérifier** : ouvre `scenes/demarrage.html?minutes=0.5` dans ton navigateur, le décollage arrive en 30 s.
 
 ### 3.2 ⏸ Pause — `scenes/pause.html`
@@ -150,13 +155,15 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 2. **+ › Scène** › « Global — Alertes ».
 3. Geste A avec `scenes/pause.html`.
 
+Le chrono « En pause depuis » repart de zéro à chaque passage à l'antenne.
+
 ### 3.3 🌙 Fin — `scenes/fin.html`
 
 **À quoi ça sert** : l'alunissage (jambes déployées, poussière, drapeau), puis « Mission accomplie ».
 
 **Dans OBS :**
 1. **Scènes › +** : « Fin ».
-2. Geste A avec `scenes/fin.html`, case **Actualiser le navigateur quand la scène devient active** cochée.
+2. Geste A avec `scenes/fin.html` (l'alunissage rejoue à chaque passage à l'antenne).
 
 ### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
 
@@ -192,6 +199,7 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Contenu`.
 
 **Options** : `?cam=0` (pas de webcam : le chat prend toute la hauteur ; n'ajoute pas la source Webcam).
+Le voyant REC n'est que sur la cam : le cadre du contenu n'en a pas.
 
 ### 3.6 🎮 Jeu — `scenes/jeu.html`
 
@@ -254,6 +262,8 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 **À quoi ça sert** : le cadre « Flux caméra » seul (voyant REC, plaque de nom), pour une cam placée où tu veux.
 
+Le chrono REC est **le même dans toutes les scènes** : changer de scène ne le remet pas à zéro. Il repart de 0 quand OBS lance le stream ou l'enregistrement (ou après 10 minutes sans aucune page de l'overlay ouverte).
+
 **Dans OBS :**
 1. Place ta webcam et note sa position et sa taille (Ctrl + E).
 2. Geste A avec `sources/cam.html` **au-dessus** de la webcam, puis geste C avec les mêmes chiffres : `?x=1456&y=735&l=400&h=225`.
@@ -277,7 +287,7 @@ Les vidéos sont **déjà prêtes** dans `transitions/videos/` (fond transparent
 | 🚀 Passage (la fusée traverse l'écran) | `passage.webm` | `1000 ms` |
 
 **Une transition par scène** : clic droit sur la scène › **Remplacer la transition**.
-**Sans vidéo** : ajoute `transitions/sas.html` tout en haut de la scène, case *Actualiser…* cochée, transition d'OBS sur **Coupure**.
+**Sans vidéo** : ajoute `transitions/sas.html` tout en haut de la scène, transition d'OBS sur **Coupure** : le sas s'ouvre à chaque arrivée sur la scène.
 
 **Refaire les vidéos** (après un changement de couleurs), dans PowerShell :
 
@@ -452,17 +462,25 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`, voir « Les scripts ») |
 | Le coin de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
-| Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) |
+| Les couleurs, une ambiance (Bleu glace, Rouge Mars, Halloween…) | `reglages.html` › Couleurs (voir ci-dessous) |
 | Les couleurs d'origine, les polices | début de `css/theme.css` |
 | Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
 
-### Changer d'ambiance (Halloween, Noël…) en un clic
+### Changer d'ambiance en un clic
 
 1. Ouvre `reglages.html` › section **Couleurs**.
-2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
+2. Clique une ambiance toute prête — **❄️ Bleu glace**, **💚 Vert terminal**, **🌌 Violet nébuleuse**, **🔴 Rouge Mars**, **💗 Rose néon**, **☀️ Clair**, **🎃 Halloween**, **🎄 Noël** — ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
 3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
+
+#### Créer ta propre ambiance (ex. Batman) et la garder
+
+1. Dans `reglages.html` › **Couleurs**, règle les couleurs comme tu veux (nuancier ou code).
+2. Sous **Mes ambiances**, tape un nom (ex. `Batman`) puis clique **💾 Sauvegarder ces couleurs** : l'ambiance est écrite tout de suite dans `config.js`, avec son nom et ses couleurs. Même nom qu'une ambiance existante = elle est remplacée (la page demande confirmation).
+3. Elle apparaît ensuite en bouton : **un clic** remet toutes ses couleurs, puis **Enregistrer** pour que l'overlay les prenne. **×** la supprime.
+
+Sauvegarder une ambiance ne change pas les couleurs de l'overlay : seul **Enregistrer** le fait.
 
 Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
 
@@ -526,7 +544,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → Refais le geste B, et vérifie que la webcam est bien **sous** l'overlay.
 
 **Le compte à rebours ou l'alunissage ne repart pas de zéro**
-→ Coche **Actualiser le navigateur quand la scène devient active** sur la source.
+→ Ils repartent tout seuls quand leur scène passe à l'antenne. Si ce n'est pas le cas, coche **Actualiser le navigateur quand la scène devient active** sur la source.
 
 ---
 

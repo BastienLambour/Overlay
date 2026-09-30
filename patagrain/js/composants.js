@@ -36,9 +36,17 @@ const Composants = (() => {
       </svg>`);
   }
 
+  // Étiquettes de placement (config.js › afficherZones, ou ?zones=1 ; ?zones=0 les cache) : la taille et la position de
+  // chaque zone, posées PAR-DESSUS la source, pour la placer dans OBS en la voyant. Ignorées en mode aperçu.
+  const zones = !apercu && (params.has('zones') ? params.get('zones') !== '0' : C.afficherZones === true);
+  function etiquetteZone(parent, z, nom) {
+    const el = creer(parent, 'zone-info', `<b>${nom}</b><span>${z.l} × ${z.h} px</span><span>x ${z.x} · y ${z.y}</span><small>Bornes : à l'extérieur + limites de découpe</small>`);
+    Object.assign(el.style, { left: (z.x + z.l / 2) + 'px', top: (z.y + z.h / 2) + 'px', width: '', height: '' });
+  }
+
   // --- Zone de remplissage pour l'aperçu (?apercu=1 ou ?test=1) ---
   function zoneApercu(parent, z, titre, jeu = false) {
-    if (!apercu) return;
+    if (!apercu) { if (zones && titre) etiquetteZone(parent, z, titre); return; }
     creer(parent, 'apercu-zone' + (jeu ? ' jeu' : ''), `${titre}<br>${z.l} × ${z.h} px<br>x ${z.x} · y ${z.y}`, z);
   }
 
@@ -162,5 +170,5 @@ const Composants = (() => {
     return z;
   }
 
-  return { zoneURL, fondDecoupe, zoneApercu, entete, cadre, chat, bandeau, objectif, creer };
+  return { zones, zoneURL, fondDecoupe, zoneApercu, entete, cadre, chat, bandeau, objectif, creer };
 })();

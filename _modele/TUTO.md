@@ -58,7 +58,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
 <+ › Navigateur, Fichier local, taille du canevas, cases de la fiche>
 
 ### 2.4 Geste B — placer une source au pixel près
-<Ctrl+E, position, « Mettre à l'échelle à l'extérieur de la zone », taille, Rogner>
+<Ctrl+E, position, « Mettre à l'échelle à l'extérieur de la zone », taille, Rogner ; 💡 reglages.html › Options des scènes › « Afficher la taille et la position des zones » (ou ?zones=1)>
 
 ### 2.5 Geste C — ajouter une option dans l'adresse
 <décocher Fichier local, file:///G:/Projets/Overlay/<pseudo>/…?option=…>
@@ -110,7 +110,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
 
 ---
 
-## 6. Brancher les alertes avec Streamer.bot
+## 6. Brancher le chat et les alertes
 <tableau « Quoi / Comment ça arrive / À installer » (chat : rien ; alertes : Streamer.bot), puis :
  6.1 Le chat (identifiant Twitch ; emotes, bots, commandes, modération, mémoire ; limites)
  6.2 Installer Streamer.bot (Platforms › Twitch › Accounts › Broadcaster ; WebSocket Server 127.0.0.1:8080, Auto Start, Start Server ;
@@ -139,7 +139,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 <tableau « Je veux changer… / Où » : d'abord reglages.html › <section>>
 
 ### Changer d'ambiance (Halloween, Noël…) en un clic
-<reglages.html › Couleurs : ambiances en un clic, nuanciers, ↺ ; puis refaire vidéos et kit avec les scripts>
+<reglages.html › Couleurs : ambiances en un clic, nuanciers, ↺ ; « Mes ambiances » : nommer + 💾 Sauvegarder ces couleurs (écrit config.js › ambiances), clic = remettre, × = supprimer ; puis refaire vidéos et kit avec les scripts>
 
 ### Les scripts du dossier `outils/`
 <installer Node.js LTS (nodejs.org ou winget install OpenJS.NodeJS.LTS) + ffmpeg (winget install Gyan.FFmpeg) ; ouvrir le Terminal

@@ -6,7 +6,10 @@
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
    ===================================================================== */
 window.ReglagesChamps = {
-  scripts: ['js/son.js'],   // pour le bouton ▶ des sons
+  // Pour l'aperçu des alertes aux couleurs de l'overlay (icônes et styles des vraies alertes)
+  scripts: ['js/commun.js', 'js/son.js'],   // son.js : pour le bouton ▶ des sons
+  styles: ['css/composants.css'],
+
   // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
   ambiances: [
     { nom: '🎃 Halloween', valeurs: { 'couleurs.violet': '#FF7A1A', 'couleurs.mauve': '#FFB266', 'couleurs.accent': '#B57CFF', 'couleurs.lilas': '#FFE3CC', 'couleurs.fond': '#160A1E', 'couleurs.fond-2': '', 'couleurs.surface': '', 'couleurs.texte': '' } },
@@ -30,6 +33,7 @@ window.ReglagesChamps = {
       { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
       { cle: 'options.cam-seule.bandeau', type: 'case', label: 'Cam seule : le bandeau' },
       { cle: 'options.pause.chat', type: 'case', label: 'Pause : le chat' },
+      { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
       { cle: 'couleurs.violet', type: 'couleur', label: 'Néon principal (violet)', defaut: '#A855F7' },
@@ -44,6 +48,7 @@ window.ReglagesChamps = {
     { titre: 'Démarrage', icone: '⏳', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },
       { cle: 'demarrage.minutes', type: 'nombre', label: 'Compte à rebours (minutes)', min: 0 },
+      { cle: 'demarrage.heure', type: 'heure', label: '… ou heure fixe', aide: 'Si elle est remplie, elle passe avant les minutes (ex. 20:30 : le compteur arrive à zéro à 20 h 30). Vide = compte à rebours en minutes.' },
       { cle: 'demarrage.chargement', type: 'texte', label: 'La jauge qui plafonne à 90 %' },
       { cle: 'demarrage.texteFin', type: 'texte', label: 'Quand le compteur arrive à zéro' },
       { cle: 'demarrage.phrases', type: 'liste', label: 'Petites phrases pendant l\'attente', aide: 'Une phrase par ligne.' },
@@ -110,4 +115,19 @@ window.ReglagesChamps = {
     ['🎮 Jeu', 'scenes/jeu.html?test=1'],
     ['🎉 Fin', 'scenes/fin.html?test=1'],
   ],
+
+  // Aperçu d'une alerte, avec les mêmes styles et icônes que la vraie source (sources/alertes.html)
+  apercuAlerte(type, { titre, nom, message }) {
+    const ICONES = { follow: 'oeil', sub: 'coeur', resub: 'trophee', giftsub: 'cadeau', giftbomb: 'cadeau', bits: 'piece', raid: 'fusee', don: 'eclair', objectif: 'etoile' };
+    const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const ico = typeof Commun !== 'undefined' ? (Commun.icones[ICONES[type]] || '') : '';
+    const tache = (c, r1, r2, r3) => `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="${r1}" fill="${c}" stroke="var(--encre)" stroke-width="4"/>
+      <circle cx="9" cy="48" r="${r2}" fill="${c}" stroke="var(--encre)" stroke-width="3"/><circle cx="51" cy="9" r="${r3}" fill="${c}" stroke="var(--encre)" stroke-width="3"/></svg>`;
+    return `<div style="zoom:.42;padding:34px 30px"><div class="alerte">
+      <div class="eclabousse" style="left:-30px;top:-30px;width:70px;height:70px">${tache('#fff', 16, 7, 5)}</div>
+      <div class="eclabousse" style="right:-24px;bottom:-32px;width:64px;height:64px">${tache('var(--accent)', 13, 6, 4)}</div>
+      <div class="alerte-ic">${ico}</div>
+      <div class="alerte-corps"><div class="alerte-tete">Alerte !!</div><div class="alerte-titre">${e(titre)}</div>
+        <div class="alerte-nom">${e(nom)}</div><div class="alerte-msg">${e(message)}</div></div></div></div>`;
+  },
 };

@@ -26,6 +26,9 @@
   .entree .trainee::after { left: 0; right: auto; }
   .entree .vol { animation: vol-entree 1.4s cubic-bezier(.6,0,.3,1) both; }
   @keyframes devoile { 0%, 10% { left: 0; width: 100%; } 100% { left: 100%; width: 0; } }
+  /* Hors antenne : l'écran reste couvert, prêt pour le prochain passage */
+  .arret .trainee { left: 0; width: 100%; }
+  .arret .vol { transform: translateX(-560px); }
   @keyframes vol-entree { 0%, 10% { transform: translateX(-560px); } 100% { transform: translateX(2100px); } }
 </style>
 </head>

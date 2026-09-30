@@ -38,11 +38,34 @@ const Composants = (() => {
     creer(parent, 'apercu-zone' + (jeu ? ' jeu' : ''), `${titre}<br>${z.l} × ${z.h} px<br>x ${z.x} · y ${z.y}`, z);
   }
 
-  // --- Chronomètre partagé (REC) ---
-  const debut = Date.now();
+  // --- Étiquette permanente : rappelle dans OBS la taille et la position de l'image à mettre dans la zone ---
+  // Affichée par défaut (config.js > afficherZones). ?zones=0 la cache, ?zones=1 la force. Ignorée en mode ?apercu=1.
+  const zonesVisibles = params.has('zones') ? params.get('zones') !== '0' : C.afficherZones !== false;
+  function etiquetteZone(parent, z, nom) {
+    if (!zonesVisibles || apercu) return;
+    const el = creer(parent, 'zone-info',
+      `<b>${nom}</b><span>${z.l} × ${z.h} px</span><span>x ${z.x} · y ${z.y}</span><small>Bornes : à l'extérieur + limites de découpe</small>`);
+    Object.assign(el.style, { left: (z.x + z.l / 2) + 'px', top: (z.y + z.h / 2) + 'px' });
+    return el;
+  }
+
+  // --- Chronomètre REC : le MÊME dans toutes les scènes ---
+  // Le départ est mémorisé (localStorage) : changer de scène ne le remet pas à zéro.
+  // Il repart de 0 quand OBS lance le stream ou l'enregistrement, ou si plus aucune page
+  // de l'overlay n'avait tourné depuis 10 minutes (= nouveau live). ?reinitialiser force la remise à zéro.
+  const CLE_REC = `overlay-${C.id || 'defaut'}-rec`;
+  const lireRec = () => { try { return JSON.parse(localStorage.getItem(CLE_REC)) || {}; } catch (e) { return {}; } };
+  const ecrireRec = r => { try { localStorage.setItem(CLE_REC, JSON.stringify(r)); } catch (e) {} };
+  let rec = lireRec();
+  if (params.has('reinitialiser') || !rec.debut || Date.now() - (rec.vu || 0) > 10 * 60 * 1000) rec = { debut: Date.now() };
+  rec.vu = Date.now(); ecrireRec(rec);
+  ['obsStreamingStarted', 'obsRecordingStarted'].forEach(n => addEventListener(n, () => { rec = { debut: Date.now(), vu: Date.now() }; ecrireRec(rec); }));
   function chrono(el) {
-    const maj = () => { const s = Math.floor((Date.now() - debut) / 1000);
-      el.textContent = [s / 3600, s / 60 % 60, s % 60].map(n => String(Math.floor(n)).padStart(2, '0')).join(':'); };
+    const maj = () => {
+      rec.vu = Date.now(); ecrireRec(rec);
+      const s = Math.max(0, Math.floor((Date.now() - rec.debut) / 1000));
+      el.textContent = [s / 3600, s / 60 % 60, s % 60].map(n => String(Math.floor(n)).padStart(2, '0')).join(':');
+    };
     maj(); setInterval(maj, 1000);
   }
 
@@ -58,6 +81,7 @@ const Composants = (() => {
   // --- Cadre de caméra (ou de contenu) autour d'une zone transparente ---
   function cadre(parent, z, { titre = 'Flux caméra', nom = true, rec = true, leger = false } = {}) {
     zoneApercu(parent, z, titre, titre !== 'Flux caméra');
+    etiquetteZone(parent, z, titre === 'Flux caméra' ? 'Webcam' : 'Contenu (capture)');
     const S = C.scenes || {};
     const el = creer(parent, 'cam-cadre' + (leger ? ' leger' : ''), `
       <div class="cam-bord"></div>
@@ -76,8 +100,7 @@ const Composants = (() => {
       ? creer(parent, 'chat-flottant', '<div class="chat-lignes"></div>', z)
       : creer(parent, 'panneau-chat boite', `<div class="interieur">
           <div class="cam-tete"><span class="label">${titre}</span><span class="hachures"></span></div>
-          <div class="chat-lignes"></div>
-          <div class="chat-invite">&gt; transmission</div></div>`, z);
+          <div class="chat-lignes"></div></div>`, z);
     Chat.monter(el.querySelector('.chat-lignes'), { disparition });
     return el;
   }
@@ -135,5 +158,5 @@ const Composants = (() => {
     return z;
   }
 
-  return { zoneURL, fondDecoupe, zoneApercu, entete, cadre, chat, bandeau, objectif, creer };
+  return { zoneURL, fondDecoupe, zoneApercu, etiquetteZone, entete, cadre, chat, bandeau, objectif, creer };
 })();

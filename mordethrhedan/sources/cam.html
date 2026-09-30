@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Cadre de la webcam</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Cadre de la webcam de la scène Jeu, avec le pseudo, en source SÉPARÉE : dans OBS,
+  mets-la dans un GROUPE avec ta webcam (et ton compteur de morts, etc.), puis
+  masque/affiche tout le groupe d'un seul raccourci (cinématiques…) : cam, cadre
+  et pseudo disparaissent ensemble.
+  Coin : celui des réglages (Options des scènes › Jeu : la webcam), ou
+  cam.html?cam=haut-gauche, haut-droite, bas-gauche, bas-droite.
+  Sans le pseudo : cam.html?pseudo=0
+  Taille libre : cam.html?x=56&y=56&l=320&h=300
+  Les coins arrondis sont bouchés pour que la webcam ne dépasse pas du cadre.
+  Voir la zone : ?apercu=1
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/couleurs.js"></script>
+<script src="../js/options.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/derniers.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
+<script>
+  Commun.demarrer();
+  const ecran = document.getElementById('ecran');
+  const coin = Commun.params.get('cam') || (((Commun.C.options || {}).jeu || {}).cam) || 'haut-gauche';
+  const z = Composants.zoneURL(Scenes.zoneCam(coin === 'aucune' || coin === '0' ? 'haut-gauche' : coin));
+  Composants.zoneApercu(ecran, z, 'Webcam');
+  Composants.coinsBouches(ecran, z);
+  Composants.cadre(ecran, z);
+  // Le pseudo, sur le grand cadre : au-dessus si la cam est en haut, en dessous si elle est en bas
+  if (Commun.params.get('pseudo') !== '0')
+    Composants.etiquettePseudo(ecran, { centreX: z.x + z.l / 2, enHaut: z.y + z.h / 2 < 540 });
+</script>
+</body>
+</html>

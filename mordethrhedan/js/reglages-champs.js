@@ -6,7 +6,9 @@
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
    ===================================================================== */
 window.ReglagesChamps = {
-  scripts: ['js/son.js'],   // pour le bouton ▶ des sons
+  // Pour l'aperçu des alertes : la couleur d'accent de l'overlay (config.js › couleur)
+  scripts: ['js/commun.js', 'js/son.js'],   // son.js : pour le bouton ▶ des sons
+
   // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
   ambiances: [
     { nom: '🎃 Halloween', valeurs: { 'couleurs.fond': '#0A0508', 'couleurs.texte': '', 'couleurs.doux': '', 'couleur': 'orange' } },
@@ -21,11 +23,14 @@ window.ReglagesChamps = {
     ] },
     { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
       { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite','En bas à droite'],['bas-gauche','En bas à gauche'],['haut-droite','En haut à droite'],['haut-gauche','En haut à gauche'],['aucune','Pas de webcam']] },
+      { cle: 'options.cam.pseudo', type: 'case', label: 'Jeu : ton pseudo sur le cadre de la cam', aide: 'Il disparaît avec le groupe de la cam dans OBS. Décoché = cadre de cam sans pseudo.' },
       { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
-      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat' },
+      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat (case en bas à gauche)' },
+      { cle: 'options.speedrun.chat', type: 'case', label: 'Speedrun : le chat (décoché = ton LiveSplit visible)' },
       { cle: 'options.demarrage.chat', type: 'case', label: 'Démarrage : le chat' },
       { cle: 'options.pause.chat', type: 'case', label: 'Pause : le chat' },
       { cle: 'options.fin.chat', type: 'case', label: 'Fin : le chat' },
+      { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleur et fond', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. La couleur des cadres et des éclats se règle juste au-dessus (« Couleur des cadres et des éclats »).', champs: [
       { cle: 'couleur', type: 'texte', label: 'Couleur des cadres et des éclats', aide: 'vert, rouge, bleu, violet, orange, cyan, jaune, rose — ou un code couleur, ex. #FFD400. Aussi source par source : jeu.html?couleur=rouge' },
@@ -40,13 +45,18 @@ window.ReglagesChamps = {
     { titre: 'Écrans avec un grand titre', icone: '🖼️', aide: 'Pour aller à la ligne dans un titre, écris <br>.', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Démarrage : titre' },
       { cle: 'demarrage.minutes', type: 'nombre', label: 'Démarrage : compte à rebours (minutes)', min: 0 },
+      { cle: 'demarrage.heure', type: 'heure', label: '… ou heure fixe', aide: 'Si elle est remplie, elle passe avant les minutes (ex. 20:30 : le compteur arrive à zéro à 20 h 30). Vide = compte à rebours en minutes.' },
       { cle: 'demarrage.finCompte', type: 'texte', label: 'Démarrage : quand le compteur arrive à zéro' },
       { cle: 'pause.titre', type: 'texte', label: 'Pause : titre' },
       { cle: 'fin.titre', type: 'texte', label: 'Fin : titre' },
     ] },
-    { titre: 'Scène speedrun', icone: '⏱️', champs: [
-      { cle: 'speedrun.cadreManette', type: 'case', label: 'Un cadre autour de la zone manette' },
-      { cle: 'speedrun.cadreSplits', type: 'case', label: 'Un cadre autour de la zone des splits' },
+    { titre: 'Derniers événements (ligne du bas)', icone: '🏷️', aide: 'Sub, raid et série de visionnage arrivent tout seuls par le chat Twitch. Le dernier follow a besoin de ta clé Streamlabs.', champs: [
+      { cle: 'streamlabs.jeton', type: 'secret', label: 'Clé Streamlabs (pour le dernier follow)', aide: 'streamlabs.com › Paramètres › API Settings › API Tokens › « Your Socket API Token ». Clé privée : ne la montre pas en live.' },
+      { cle: 'derniers.follow', type: 'texte', label: 'Titre de la case « follow »' },
+      { cle: 'derniers.sub', type: 'texte', label: 'Titre de la case « sub »' },
+      { cle: 'derniers.raid', type: 'texte', label: 'Titre de la case « raid »' },
+      { cle: 'derniers.serie', type: 'texte', label: 'Titre de la case « série de visionnage »' },
+      { cle: 'derniers.vide', type: 'texte', label: 'Affiché tant qu\'il n\'y a personne' },
     ] },
     { titre: 'Le chat', icone: '💬', champs: [
       { cle: 'chat.maxMessages', type: 'nombre', label: 'Nombre de messages affichés', min: 1 },
@@ -95,4 +105,16 @@ window.ReglagesChamps = {
     ['🏁 Speedrun', 'scenes/speedrun.html?test=1'],
     ['👋 Fin', 'scenes/fin.html?test=1'],
   ],
+
+  // Aperçu d'une alerte, comme la vraie source (sources/alertes.html) : carte « verre » néon
+  apercuAlerte(type, { titre, nom, message }) {
+    const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    if (typeof Commun !== 'undefined' && !this.couleurAppliquee) { Commun.appliquerCouleur(Commun.C.couleur); this.couleurAppliquee = true; }
+    const grand = ['raid', 'giftbomb', 'objectif'].includes(type);
+    return `<div style="position:relative;zoom:.42;padding:26px 40px 30px;text-align:center;color:var(--texte)">
+      <div class="cadre verre" style="position:absolute;inset:0${grand ? ';box-shadow:0 0 0 2px var(--accent-fonce),0 0 40px var(--accent-halo),inset 0 0 0 2px var(--accent-fonce),inset 0 0 30px var(--accent-halo)' : ''}"></div>
+      <div class="titre-neon" style="position:relative;font-size:64px">${e(titre)}</div>
+      <div style="position:relative;font:900 56px/1.1 var(--f-texte);margin-top:12px;overflow-wrap:anywhere">${e(nom)}</div>
+      <div style="position:relative;font:700 30px var(--f-texte);color:var(--doux);margin-top:6px">${e(message)}</div></div>`;
+  },
 };

@@ -175,13 +175,22 @@
   const fmt = n => Math.round(n).toLocaleString('fr-FR');
   const txt = (id, v) => document.getElementById(id).textContent = v;
 
+  const T = Commun.minuteries();
+  const boucle = parseFloat(Commun.params.get('boucle'));
   let minuterie;
+
+  // Fusée hors champ, en haut, avant le début de la descente
+  const placer = y => pos.setAttribute('transform', `translate(960,${y.toFixed(1)})`);
+  placer(Y_DEBUT);
+
   function sequence() {
-    ecran.classList.remove('jambes-sorties', 'pose', 'drapeau-plante', 'fini');
-    txt('statut-bas', 'Alunissage en cours'); txt('etat', 'Descente');
+    Commun.remiseAZero(() => {
+      ecran.classList.remove('jambes-sorties', 'pose', 'drapeau-plante', 'fini');
+      txt('statut-bas', 'Alunissage en cours'); txt('etat', 'Descente');
+    });
     const t0 = performance.now();
     clearInterval(minuterie);
-    minuterie = setInterval(image, 16);
+    minuterie = T.interval(image, 16);
     function image() {
       const t = performance.now();
       const p = Math.min(1, (t - t0) / DUREE);
@@ -202,18 +211,25 @@
       clearInterval(minuterie);
       ecran.classList.add('pose');
       txt('etat', 'Alunissage confirmé');
-      setTimeout(() => ecran.classList.add('drapeau-plante'), 1400);
-      setTimeout(() => {
+      T.timeout(() => ecran.classList.add('drapeau-plante'), 1400);
+      T.timeout(() => {
         ecran.classList.add('fini');
         txt('statut-bas', C.statut || 'Retour au centre de contrôle');
       }, 1000);
     }
   }
 
-  setTimeout(sequence, 600);
+  // À chaque passage à l'antenne : l'alunissage repart du début (et s'arrête hors antenne).
   // Option : ?boucle=20 rejoue l'alunissage toutes les 20 secondes (pratique pour tester)
-  const boucle = parseFloat(Commun.params.get('boucle'));
-  if (boucle > 0) setInterval(sequence, boucle * 1000);
+  Commun.cycle({
+    lancer() {
+      T.tout();
+      Commun.remiseAZero(() => { ecran.classList.remove('jambes-sorties', 'pose', 'drapeau-plante', 'fini'); placer(Y_DEBUT); });
+      T.timeout(sequence, 600);
+      if (boucle > 0) T.interval(sequence, boucle * 1000);
+    },
+    arreter: () => T.tout(),
+  });
 </script>
 </body>
 </html>

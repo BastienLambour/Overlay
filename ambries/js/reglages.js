@@ -219,7 +219,7 @@ window.CONFIG = ${formater(config)};
       .filter(s => !s.sons || s.champs.length);
     const decrits = new Set(sections.flatMap(s => s.champs.map(c => c.cle)));
     const alertes = Object.keys(lire(enregistre, 'alertes.textes') || {});
-    const autres = feuilles(enregistre).filter(c => c !== 'id' && !decrits.has(c) && !c.startsWith('alertes.textes.') && typeDe(lire(enregistre, c)))
+    const autres = feuilles(enregistre).filter(c => c !== 'id' && c !== 'ambiances' && !decrits.has(c) && !c.startsWith('alertes.textes.') && typeDe(lire(enregistre, c)))
       .map(c => ({ cle: c, type: typeDe(lire(enregistre, c)), label: c }));
     if (autres.length) sections.push({ titre: 'Autres réglages', icone: '🧩', aide: 'Réglages propres à cet overlay, sans description (le nom est celui de config.js).', champs: autres });
 
@@ -289,14 +289,27 @@ window.CONFIG = ${formater(config)};
       }).join('');
     }
 
-    // Les ambiances toutes prêtes (reglages-champs.js › ambiances) : un clic remplit les couleurs
+    // Les ambiances : celles toutes prêtes (reglages-champs.js › ambiances), puis celles créées ici
+    // et gardées dans config.js › ambiances : [{ nom: "Batman", valeurs: { "couleurs.accent": "#F5C518", … } }]
+    const mesAmbiances = () => (Array.isArray(valeurs.ambiances) ? valeurs.ambiances : []);
+    // Les réglages qu'une ambiance retient : tous ceux des sections Couleurs
+    const champsAmbiance = () => sections.filter(s => s.ambiances).flatMap(s => s.champs);
     function ambiancesHTML() {
-      const pastilles = v => Object.values(v).filter(x => /^#[0-9a-f]{3,8}$/i.test(x)).slice(0, 5)
+      const pastilles = v => Object.values(v || {}).filter(x => /^#[0-9a-f]{3,8}$/i.test(x)).slice(0, 5)
         .map(x => `<i style="background:${x}"></i>`).join('');
-      return `<h3>En un clic</h3><div class="rg-ambiances">${RC.ambiances.map((a, i) =>
-        `<button type="button" class="rg-ambiance" data-ambiance="${i}">${echapper(a.nom)}<span>${pastilles(a.valeurs)}</span></button>`).join('')}</div>
-        <p class="rg-aide">Puis <b>Enregistrer</b> : toutes les pages de l'overlay prennent ces couleurs. Les vidéos de transition et les images du kit
-          de chaîne, elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
+      const pretes = (RC.ambiances || []).map((a, i) =>
+        `<button type="button" class="rg-ambiance" data-ambiance="${i}">${echapper(a.nom)}<span>${pastilles(a.valeurs)}</span></button>`).join('');
+      const miennes = mesAmbiances().map((a, i) => `<span class="rg-mienne">
+          <button type="button" class="rg-ambiance" data-mon-ambiance="${i}">${echapper(a.nom)}<span>${pastilles(a.valeurs)}</span></button>
+          <button type="button" class="rg-supprimer" data-supprimer-ambiance="${i}" title="Supprimer cette ambiance" aria-label="Supprimer ${echapper(a.nom)}">×</button></span>`).join('');
+      return `${pretes ? `<h3>En un clic</h3><div class="rg-ambiances">${pretes}</div>` : ''}
+        <h3>Mes ambiances</h3>
+        ${miennes ? `<div class="rg-ambiances">${miennes}</div>` : '<p class="rg-aide">Aucune pour l\'instant : règle les couleurs ci-dessus, donne un nom, puis 💾.</p>'}
+        <div class="rg-nouvelle"><input type="text" id="rg-nom-ambiance" placeholder="Nom de l'ambiance (ex. Batman)" maxlength="40">
+          <button type="button" id="rg-sauver-ambiance">💾 Sauvegarder ces couleurs</button></div>
+        <p class="rg-aide">Une ambiance retient les couleurs affichées ci-dessus et s'enregistre tout de suite dans config.js ; un clic dessus
+          les remet. Ensuite, <b>Enregistrer</b> pour que l'overlay les prenne. Les vidéos de transition et les images du kit de chaîne,
+          elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
     }
 
     function construire() {
@@ -304,7 +317,7 @@ window.CONFIG = ${formater(config)};
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
         <div class="rg-champs">${s.champs.map(champHTML).join('')}</div>
-        ${s.ambiances && (RC.ambiances || []).length ? ambiancesHTML() : ''}
+        ${s.ambiances ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();
     }
@@ -312,7 +325,7 @@ window.CONFIG = ${formater(config)};
     const statut = (t, classe = '') => { const s = document.getElementById('rg-statut'); s.textContent = t; s.className = classe; };
     const tousLesChamps = () => sections.flatMap(s => s.champs);
     // Les réglages modifiés depuis le dernier enregistrement
-    const changements = () => [...new Set([...tousLesChamps().map(c => c.cle), ...alertes.flatMap(a => [`alertes.textes.${a}.titre`, `alertes.textes.${a}.message`])])]
+    const changements = () => [...new Set([...tousLesChamps().map(c => c.cle), ...alertes.flatMap(a => [`alertes.textes.${a}.titre`, `alertes.textes.${a}.message`]), 'ambiances'])]
       .filter(c => !pareil(lire(valeurs, c), lire(enregistre, c))).map(chemin => ({ chemin, valeur: lire(valeurs, chemin) }));
 
     function relire() {
@@ -333,8 +346,10 @@ window.CONFIG = ${formater(config)};
     const garde = async (h) => { try { const db = await base(); const t = db.transaction('fichiers', h === undefined ? 'readonly' : 'readwrite').objectStore('fichiers');
       return await new Promise(ok => { const r = h === undefined ? t.get('config') : h === null ? t.delete('config') : t.put(h, 'config'); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }); } catch (e) { return null; } };
 
-    async function enregistrer() {
-      const liste = relire();
+    // seulement : liste de chemins à enregistrer (ex. ['ambiances']) ; sinon tout ce qui a changé
+    async function enregistrer(seulement = null, reussite = '✅ config.js enregistré. Dans OBS : clic droit sur les sources › Actualiser.') {
+      if (!Array.isArray(seulement)) seulement = null;   // appel depuis un bouton : l'argument est l'événement
+      const liste = relire().filter(c => !seulement || seulement.includes(c.chemin));
       if (!liste.length) return statut('Rien à enregistrer.', '');
       if (window.showOpenFilePicker) {
         try {
@@ -359,8 +374,8 @@ window.CONFIG = ${formater(config)};
           const w = await h.createWritable(); await w.write(nouveau); await w.close();
           await garde(h);
           liste.forEach(c => ecrireCle(enregistre, c.chemin, copie({ v: c.valeur }).v));
-          relire();
-          return statut('✅ config.js enregistré. Dans OBS : clic droit sur les sources › Actualiser.', 'rg-ok');
+          const reste = relire().length;
+          return statut(reussite + (reste ? ` (${reste} autre${reste > 1 ? 's' : ''} réglage${reste > 1 ? 's' : ''} pas encore enregistré${reste > 1 ? 's' : ''})` : ''), 'rg-ok');
         } catch (e) {
           if (e.name === 'AbortError') return statut('Enregistrement annulé.', 'rg-attention');
           console.error('[Réglages]', e);
@@ -369,7 +384,9 @@ window.CONFIG = ${formater(config)};
       }
       // Navigateur sans accès aux fichiers (Firefox…) : on télécharge un config.js complet
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([complet(valeurs, nom)], { type: 'text/javascript' }));
+      const aEcrire = copie(enregistre);                   // l'enregistré + ce qu'on enregistre maintenant (pas le reste)
+      liste.forEach(c => ecrireCle(aEcrire, c.chemin, copie({ v: c.valeur }).v));
+      a.href = URL.createObjectURL(new Blob([complet(aEcrire, nom)], { type: 'text/javascript' }));
       a.download = 'config.js'; a.click();
       statut('⬇️ Un nouveau config.js a été téléchargé : mets-le à la place de l\'ancien (ses commentaires ne sont pas gardés). Avec Edge ou Chrome, la page modifie directement le fichier.', 'rg-ok');
     }
@@ -405,13 +422,50 @@ window.CONFIG = ${formater(config)};
         relire();                                             // garde ce qui a déjà été tapé ailleurs
         Object.entries(RC.ambiances[bouton.dataset.ambiance].valeurs).forEach(([cle, v]) => { if (lire(enregistre, cle) !== undefined) ecrireCle(valeurs, cle, v); });
         construire(); relire();
+        return;
+      }
+      // Une de mes ambiances : remet toutes ses valeurs (une couleur qu'elle ne cite pas revient à celle d'origine)
+      const mienne = e.target.closest && e.target.closest('[data-mon-ambiance]');
+      if (mienne) {
+        relire();
+        const a = mesAmbiances()[mienne.dataset.monAmbiance];
+        champsAmbiance().forEach(c => {
+          const v = (a.valeurs || {})[c.cle];
+          if (v !== undefined) ecrireCle(valeurs, c.cle, v);
+          else if (c.type === 'couleur') ecrireCle(valeurs, c.cle, '');
+        });
+        construire(); relire();
+        return;
+      }
+      const supprimer = e.target.closest && e.target.closest('[data-supprimer-ambiance]');
+      if (supprimer) {
+        relire();
+        const i = Number(supprimer.dataset.supprimerAmbiance), a = mesAmbiances()[i];
+        if (!confirm(`Supprimer l'ambiance « ${a.nom} » ?`)) return;
+        valeurs.ambiances = mesAmbiances().filter((_, j) => j !== i);
+        construire(); enregistrer(['ambiances'], `🗑️ Ambiance « ${a.nom} » supprimée de config.js.`);
+        return;
+      }
+      if (e.target.id === 'rg-sauver-ambiance') {
+        relire();
+        const champNom = document.getElementById('rg-nom-ambiance');
+        const nomAmbiance = champNom.value.trim();
+        if (!nomAmbiance) { champNom.focus(); return statut('Donne d\'abord un nom à ton ambiance.', 'rg-attention'); }
+        const nouvelle = { nom: nomAmbiance, valeurs: Object.fromEntries(champsAmbiance().map(c => [c.cle, lire(valeurs, c.cle)])
+          .filter(([, v]) => v !== undefined && v !== '')) };
+        const liste = mesAmbiances().slice();
+        const deja = liste.findIndex(x => x.nom.toLowerCase() === nomAmbiance.toLowerCase());
+        if (deja >= 0 && !confirm(`L'ambiance « ${liste[deja].nom} » existe déjà : la remplacer par ces couleurs ?`)) return;
+        if (deja >= 0) liste[deja] = nouvelle; else liste.push(nouvelle);
+        valeurs.ambiances = liste;
+        construire(); enregistrer(['ambiances'], `✅ Ambiance « ${nomAmbiance} » enregistrée dans config.js : un clic dessus remet ses couleurs.`);
       }
     });
     document.addEventListener('input', relire);
     document.addEventListener('change', relire);
     addEventListener('beforeunload', e => { if (changements().length) e.preventDefault(); });
     addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); enregistrer(); } });
-    document.getElementById('rg-enregistrer').onclick = enregistrer;
+    document.getElementById('rg-enregistrer').onclick = () => enregistrer();
     document.getElementById('rg-annuler').onclick = () => { valeurs = copie(enregistre); construire(); relire(); };
     construire();
     relire();

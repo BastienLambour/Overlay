@@ -91,7 +91,11 @@
   $('eclat').setAttribute('points', Commun.eclat(16, 330, 200).split(' ').map(p => { const [x, y] = p.split(',').map(Number); return `${x},${(y * .64).toFixed(1)}`; }).join(' '));
 
   // Compte à rebours + jauge qui plafonne à 90 % (on ne rigole pas avec les excuses)
-  const minutes = parseFloat(Commun.params.get('minutes') ?? C.minutes ?? 5);
+  // ?minutes= dans l'adresse  >  heure fixe (?heure=20:30, puis config.js › demarrage.heure)  >  demarrage.minutes
+  // Heure fixe « 20:30 » → minutes restantes (0 si elle est déjà passée)
+  const minutesJusqua = h => { const [H, M] = String(h).split(':').map(Number); const c = new Date(); c.setHours(H, M || 0, 0, 0); return Math.max(0, (c - Date.now()) / 60000); };
+  const heure = !Commun.params.has('minutes') && (Commun.params.get('heure') || C.heure);
+  const minutes = heure ? minutesJusqua(heure) : parseFloat(Commun.params.get('minutes') ?? C.minutes ?? 5);
   const duree = Math.max(5, minutes * 60);
   const debut = Date.now();
   let fini = false;

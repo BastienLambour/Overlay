@@ -32,7 +32,7 @@
 
   Composants.fondDecoupe(ecran, sansCam ? [CONTENU] : [CAM, CONTENU]);
   Composants.entete(ecran);
-  Composants.cadre(ecran, CONTENU, { titre: 'Flux principal', nom: false });
+  Composants.cadre(ecran, CONTENU, { titre: 'Flux principal', nom: false, rec: false });   // un seul chrono REC : sur la cam
   if (!sansCam) Composants.cadre(ecran, CAM, { nom: false });
   // Sans cam, le chat prend toute la colonne de gauche
   Composants.chat(ecran, sansCam ? { x: 53, y: 190, l: 494, h: 726 } : { x: 53, y: 566, l: 494, h: 350 });

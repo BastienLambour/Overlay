@@ -28,13 +28,20 @@ window.CONFIG = {
     animation: true,    // éclats qui respirent très doucement (false = fond fixe)
   },
 
+  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
+  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  afficherZones: false,
+
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
   // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
+  // derniers : la ligne du bas (dernier follow / sub / raid / série). chat en Speedrun : false = LiveSplit visible.
   options: {
     jeu: { cam: "haut-gauche" },
+    cam: { pseudo: true },          // sources/cam.html : le pseudo sur le cadre de la cam (false = sans)
     "cam-seule": { chat: true },
     contenu: { chat: true },
+    speedrun: { chat: false },
     demarrage: { chat: true },
     pause: { chat: true },
     fin: { chat: true },
@@ -65,6 +72,7 @@ window.CONFIG = {
     titre: "Ça commence bientôt",
     // Durée du compte à rebours en minutes (ou dans l'URL : demarrage.html?minutes=10)
     minutes: 10,
+    heure: "",            // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
     finCompte: "C'est parti !",
   },
   pause: {
@@ -76,10 +84,22 @@ window.CONFIG = {
   // Assombrit légèrement ton image derrière les titres (0 = pas du tout, 0.6 = beaucoup)
   voile: 0.35,
 
-  // Scène speedrun : dessiner un cadre autour de la zone manette et de la zone splits
-  speedrun: {
-    cadreManette: true,
-    cadreSplits: true,
+  // --- Ligne du bas : derniers événements ---
+  // Sub, raid et série de visionnage arrivent tout seuls par le chat Twitch.
+  // Le follow a besoin de Streamlabs (voir « streamlabs » juste en dessous).
+  derniers: {
+    follow: "Dernier follow",
+    sub:    "Dernier sub",
+    raid:   "Dernier raid",
+    serie:  "Série de visionnage",
+    vide:   "—",                // affiché tant qu'il n'y a encore personne
+  },
+
+  // --- Streamlabs : pour afficher le dernier follow ---
+  // Streamlabs (site) › Paramètres › API Settings › API Tokens › « Your Socket API Token » : copie-le ici.
+  // C'est une clé privée : ne partage pas ce fichier une fois rempli.
+  streamlabs: {
+    jeton: "",
   },
 
   // Chat intégré

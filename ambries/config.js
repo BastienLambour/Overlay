@@ -18,6 +18,10 @@ window.CONFIG = {
   // Petite phrase fétiche, reprise sur les écrans et la bannière
   devise: "10 % skill · 90 % d'excuses",
 
+  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
+  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  afficherZones: false,
+
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
   // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
@@ -58,6 +62,7 @@ window.CONFIG = {
     titre: "Ça commence bientôt !",
     // Durée du compte à rebours en minutes (ou dans l'URL : demarrage.html?minutes=10)
     minutes: 5,
+    heure: "",            // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
     chargement: "Chargement des excuses…",   // la jauge qui plafonne à 90 %
     texteFin: "C'est parti… (courage)",
     // Petites phrases qui défilent pendant l'attente

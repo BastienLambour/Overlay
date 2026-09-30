@@ -14,6 +14,10 @@ window.CONFIG = {
   // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "johnvongurt",
 
+  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
+  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  afficherZones: false,
+
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
   // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
@@ -33,6 +37,9 @@ window.CONFIG = {
     "fond-2":         "",   // Fond des cadres
     trait:            "",   // Traits et texte
     doux:             "",   // Texte secondaire
+    coque:            "",   // Remplissage des décors (pas de tir, réservoirs…)
+    ok:               "",   // Validé (vert)
+    alerte:           "",   // Alerte (rouge : balises, REC)
   },
 
   // ---------------------------------------------------------------------
@@ -50,17 +57,36 @@ window.CONFIG = {
   demarrage: {
     titre: "Préparation au lancement",
     statut: "Ravitaillement en cours — lancement imminent",
-    // Durée du compte à rebours en minutes.
-    // Peut aussi se régler dans l'URL de la source OBS : demarrage.html?minutes=10
+    // Durée PAR DÉFAUT du compte à rebours, en minutes.
+    // Pas besoin de rouvrir ce fichier pour la changer : dans OBS, clic droit sur la source
+    // « démarrage » > Interagir, bouge la souris, clique sur le bouton « ⚙ DURÉE » en haut à gauche.
+    // Priorité : adresse ?minutes=10  >  bouton ⚙ DURÉE  >  cette valeur.
     // Le ravitaillement se termine à T-30 s, puis décompte final de 10 s et décollage.
     minutes: 5,
+    heure: "",            // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
+    // Pop-up « Ravitaillement terminé » : affiché sous la fusée, pendant ce nombre de secondes.
+    popupSecondes: 3,
     ravitaillementTermine: "Ravitaillement terminé",
     sequenceFinale: "Séquence finale engagée",
     statutSequenceFinale: "Ravitaillement terminé — séquence finale engagée",
-    decompte: "Décollage dans",
+    // Au décollage, ces deux textes remplacent le compteur T+ dans le panneau (l'un après l'autre)
     decollage: "Décollage !",
     lancementReussi: "Lancement réussi",
+    // Secondes pendant lesquelles « Lancement réussi » reste affiché avant que le panneau se ferme et que la fusée se centre.
+    fermeturePanneauSecondes: 3,
     statutDecollage: "Décollage confirmé — le stream commence !",
+    // Ligne du bas du panneau : elle affiche l'activité de la vérification en cours (même ordre que « verifications »)
+    // puis suit la séquence finale. Restez courts (une ligne).
+    activites: [
+      "Injection des ergols",
+      "Calibrage de la navigation",
+      "Test de la liaison radio",
+      "Contrôle de sécurité",
+      "Embarquement de l'équipage",
+    ],
+    activiteAllumage: "Allumage des moteurs",
+    activiteDecollage: "Poussée maximale",
+    activiteReussi: "Trajectoire nominale",
     verifications: [
       "Ergols cryogéniques",
       "Systèmes de navigation",
