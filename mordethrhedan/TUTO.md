@@ -35,7 +35,7 @@ mordethrhedan/
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat, cadre…)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
-├── assets/polices/      ← dépose ici la police Dyer
+├── assets/polices/      ← les polices (locales, sans internet) · dépose ici la police Dyer
 ├── outils/              ← scripts : vidéos de transition, images de la chaîne, PDF
 ├── design/moodboard.html
 └── css/  js/            ← le moteur (pas besoin d'y toucher)

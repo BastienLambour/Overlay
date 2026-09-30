@@ -129,6 +129,7 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `outils/exporter-chaine.mjs` : exporte chaque élément de `chaine/kit.html` en PNG
   (Edge headless, fond transparent, toutes les tailles demandées).
 - `outils/generer-pdf.mjs` : `TUTO.md` / `CONCEPT.md` → PDF (Edge headless, sans dépendance).
+- `outils/polices-locales.mjs` : Google Fonts de `theme.css` → fichiers dans `assets/polices/` + @font-face locales.
 - `outils/capturer.mjs` : capture PNG d'une page, figée à des instants donnés
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;
   signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut.
@@ -173,7 +174,9 @@ existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitc
     un `<g>` parent ;
   - dans les transitions, `#ecran * { position:absolute }` casse un `<svg>` inline → ajouter
     `#ecran .bouffon-svg { position:static; width:100%; height:100% }` (ou équivalent).
-- Polices : Google Fonts (connexion requise) ou fichiers locaux dans `assets/polices/`.
+- Polices : **toujours locales** dans `assets/polices/` (OBS hors ligne, PDF, kit). On choisit sur Google Fonts dans le
+  moodboard, puis `node outils/polices-locales.mjs` télécharge les .woff2 (latin + latin étendu) et remplace l'@import
+  de `theme.css` par des @font-face locales. Police non libre (ex. Dyer) : fichier déposé à la main + police de secours.
 
 ## Démarrer un nouvel overlay (checklist)
 

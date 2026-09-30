@@ -3,7 +3,29 @@
    La couleur d'accent est posée par js/commun.js (voir config.js).
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@600;700;800;900&display=swap');
+/* Polices LOCALES (assets/polices/, licences libres Google Fonts) : l'overlay n'a plus besoin d'internet pour s'écrire.
+   Refaites par : node outils/polices-locales.mjs — ancienne ligne, pour mémoire :
+   @import url('https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@600;700;800;900&display=swap'); */
+@font-face {
+  font-family: 'Nunito'; font-style: normal; font-weight: 600 900; font-display: swap;
+  src: url('../assets/polices/nunito-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Nunito'; font-style: normal; font-weight: 600 900; font-display: swap;
+  src: url('../assets/polices/nunito-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Righteous'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../assets/polices/righteous-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Righteous'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../assets/polices/righteous-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /* Police de Beyond Good & Evil : déposer le fichier dans le dossier assets/polices/
    (Dyer.woff2, Dyer.otf ou Dyer.ttf). En attendant, « Righteous » la remplace. */
