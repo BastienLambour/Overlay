@@ -42,13 +42,16 @@ const Numeros = (() => {
     return el;
   }
 
-  // Le bâton à chamallow, tenu dans la main droite (il prolonge l'avant-bras)
-  const BATON = `<g class="bfx-baton"><line x1="284" y1="552" x2="284" y2="770" stroke="#8B5A2B" stroke-width="8" stroke-linecap="round"/>
-    <rect class="bfx-guimauve" x="268" y="744" width="32" height="40" rx="12" fill="#fff" stroke="rgba(0,0,0,.15)" stroke-width="2"/></g>`;
+  // Le bâton à chamallow, tenu dans la main droite (il prolonge l'avant-bras) : assez long pour atteindre le feu
+  const BATON = `<g class="bfx-baton"><line class="bfx-tige" x1="284" y1="552" x2="284" y2="862" stroke="#8B5A2B" stroke-width="8" stroke-linecap="round"/>
+    <g class="bfx-guimauve" fill="#fff"><rect x="265" y="832" width="38" height="46" rx="15" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+      <rect x="271" y="839" width="8" height="30" rx="4" fill="#fff" opacity=".6"/></g></g>`;
 
   function feu(el, scene = el.parentElement) {
     dessiner(el, 'pied', {}, ['au-feu']);
     el.querySelector('.bf-coude-d').insertAdjacentHTML('beforeend', BATON);
+    // le bras droit passe DEVANT la tête : quand il croque, le chamallow est devant sa bouche (pas derrière ses cheveux)
+    el.querySelector('.bf-tout').appendChild(el.querySelector('.bf-epaule-d'));
     const reve = scene.querySelector('.bfx-reve'), chiffre = scene.querySelector('.bfx-chiffre');
     let roule;
     const rever = () => {

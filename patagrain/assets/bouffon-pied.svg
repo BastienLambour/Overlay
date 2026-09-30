@@ -35,7 +35,7 @@
         <circle class="bf-or" cx="271" cy="752" r="7"/>
       </g>
     </g>
-    <g class="bf-haut" style="transform-origin:200px 380px"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) -->
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
     <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#bf-gauche)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <path class="bf-habit" clip-path="url(#bf-droite)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>

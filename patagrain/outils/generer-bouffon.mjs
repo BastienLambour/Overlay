@@ -131,7 +131,7 @@ const buste = p => `<svg class="bouffon-svg" style="overflow:visible" viewBox="0
     <clipPath id="${p}-gauche"><rect x="0" y="300" width="200" height="300"/></clipPath>
     <clipPath id="${p}-droite"><rect x="200" y="300" width="200" height="300"/></clipPath></defs>
   <g class="bf-tout">
-    <path fill="${CHEVEUX_FONCE}" d="${CHEVEUX_DOS}"/>
+    <g class="bf-cheveux"><path fill="${CHEVEUX_FONCE}" d="${CHEVEUX_DOS}"/></g>   <!-- cheveux de dos : se balancent (css/bouffon.css) -->
     <path class="bf-bleu" clip-path="url(#${p}-gauche)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
     <path class="bf-habit" clip-path="url(#${p}-droite)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
     <path fill="${PEAU_OMBRE}" d="M178 300 L222 300 L226 386 L174 386 Z"/>
@@ -187,7 +187,7 @@ function pied(p, epee = false) {
   <g class="bf-tout" style="transform-origin:200px 790px">
     ${jambe('g', 'bf-habit')}
     ${jambe('d', 'bf-bleu')}
-    <g class="bf-haut" style="transform-origin:200px 380px"><path fill="${CHEVEUX_FONCE}" d="${CHEVEUX_DOS}"/></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) -->
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="${CHEVEUX_FONCE}" d="${CHEVEUX_DOS}"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
     <path fill="${PEAU_OMBRE}" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#${p}-gauche)" d="${tunique}"/>
     <path class="bf-habit" clip-path="url(#${p}-droite)" d="${tunique}"/>
@@ -236,7 +236,8 @@ const js = `/* =================================================================
      classe « sans-chapeau » sur un parent : cache son chapeau (scène Jeu : le chapeau de la cam se soulève)
    Bouffon noir et bleu : bleu du thème, noirs --bouffon-habit / --bouffon-noir, or du thème.
    Articulations animables : .bf-epaule-g/d, .bf-coude-g/d, .bf-hanche-g/d,
-   .bf-genou-g/d, .bf-haut (tête), .bf-chapeau, .bf-oeil-d (clin d'œil).
+   .bf-genou-g/d, .bf-haut (tête), .bf-cheveux (cheveux de dos),
+   .bf-chapeau, .bf-oeil-d (clin d'œil).
    Fichier généré — ne pas modifier à la main.
    ===================================================================== */
 const Bouffon = (() => {

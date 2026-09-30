@@ -11,7 +11,8 @@
      classe « sans-chapeau » sur un parent : cache son chapeau (scène Jeu : le chapeau de la cam se soulève)
    Bouffon noir et bleu : bleu du thème, noirs --bouffon-habit / --bouffon-noir, or du thème.
    Articulations animables : .bf-epaule-g/d, .bf-coude-g/d, .bf-hanche-g/d,
-   .bf-genou-g/d, .bf-haut (tête), .bf-chapeau, .bf-oeil-d (clin d'œil).
+   .bf-genou-g/d, .bf-haut (tête), .bf-cheveux (cheveux de dos),
+   .bf-chapeau, .bf-oeil-d (clin d'œil).
    Fichier généré — ne pas modifier à la main.
    ===================================================================== */
 const Bouffon = (() => {
@@ -36,7 +37,7 @@ const Bouffon = (() => {
     <clipPath id="__P__-gauche"><rect x="0" y="300" width="200" height="300"/></clipPath>
     <clipPath id="__P__-droite"><rect x="200" y="300" width="200" height="300"/></clipPath></defs>
   <g class="bf-tout">
-    <path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/>
+    <g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : se balancent (css/bouffon.css) -->
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
     <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
@@ -124,7 +125,7 @@ const Bouffon = (() => {
         <circle class="bf-or" cx="271" cy="752" r="7"/>
       </g>
     </g>
-    <g class="bf-haut" style="transform-origin:200px 380px"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) -->
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
     <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
@@ -234,7 +235,7 @@ const Bouffon = (() => {
         <circle class="bf-or" cx="271" cy="752" r="7"/>
       </g>
     </g>
-    <g class="bf-haut" style="transform-origin:200px 380px"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) -->
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
     <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
