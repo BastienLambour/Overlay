@@ -63,6 +63,7 @@ G:\Projets\Overlay\
 ├── sources/    alertes · chat · objectif · bandeau · cam            (+ sources propres)
 ├── transitions/  <nom>.html  +  videos/<nom>.webm (Stinger OBS)
 ├── outils/generer-transitions.mjs · exporter-chaine.mjs · generer-pdf.mjs · capturer.mjs
+├── sons/       ← sons d'alerte perso du streamer (facultatif ; LISEZMOI.txt)
 ├── design/moodboard.html
 └── assets/     images, logos, avatar · assets/polices/ (polices locales)
 ```
@@ -76,7 +77,7 @@ Conventions :
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `streamerbot`, `demarrage`,
   `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
-  [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`), `test.noms`,
+  [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
   voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
@@ -162,7 +163,10 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 Pour `chat.js`, `son.js`, `transition.js`, `commun.js` : partir de la version d'un overlay
 existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitch anonyme
 (sans mot de passe), masque bots et commandes `!`, gère CLEARMSG/CLEARCHAT.
-Il garde en mémoire ses derniers messages entre les scènes (localStorage `overlay-<id>-chat`,
+`son.js` : un son synthétisé (Web Audio) DIFFÉRENT par type d'alerte (table `SONS`, dans le thème), puis une partie
+commune identique partout (`jouer(type, fichier, essai)` : fichier perso de `alertes.sons`, résolu depuis le dossier de
+l'overlay ; « aucun » = silence) ; `reglages.html` le charge (`scripts`) pour les boutons ▶ (section `sons: true`, champ type `son`).
+Le chat garde en mémoire ses derniers messages entre les scènes (localStorage `overlay-<id>-chat`,
 `chat.memoireMinutes`). Les scènes intègrent chat et bandeau ; `?chat=0` / `?bandeau=0` les retirent (dans `Composants`).
 
 ## Savoir technique acquis

@@ -3,12 +3,12 @@
    rangés par écran, avec un libellé et une aide en français simple.
    Un réglage absent d'ici apparaît quand même, dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
-           paires (« A | B » par ligne) · choix · secret · heure
+           paires (« A | B » par ligne) · choix · secret · heure · couleur · son
    ===================================================================== */
 window.ReglagesChamps = {
   logo: 'assets/logo-couleur.svg',
   // Pour l'aperçu des alertes aux couleurs de l'overlay (icônes et styles des vraies alertes)
-  scripts: ['js/commun.js'],
+  scripts: ['js/son.js', 'js/commun.js'],
   styles: ['css/composants.css'],
 
   // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
@@ -99,6 +99,7 @@ window.ReglagesChamps = {
       { cle: 'alertes.volume', type: 'nombre', label: 'Volume (de 0 à 1)', min: 0, max: 1, pas: 0.05 },
       { cle: 'alertes.anonyme', type: 'texte', label: 'Nom quand Twitch ne donne pas le destinataire d\'un cadeau' },
     ] },
+    { titre: 'Sons des alertes', icone: '🔊', sons: true, aide: 'Chaque alerte a son propre son, pour la reconnaître à l\'oreille en jouant. ▶ pour écouter. Laisse vide pour garder le son de l\'overlay, écris « aucun » pour ne rien jouer, ou mets ton propre fichier (mp3, wav, ogg) dans le dossier sons/ et écris son nom : sons/follow.mp3.', champs: [] },
     { titre: 'Le bouffon', icone: '🃏', champs: [
       { cle: 'bouffon.actif', type: 'case', label: 'Le bouffon est de sortie (tous les écrans)' },
       { cle: 'bouffon.alertes', type: 'case', label: 'Il descend avec chaque alerte, accroché à sa corde' },

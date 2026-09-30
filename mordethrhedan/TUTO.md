@@ -14,7 +14,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu · Speedrun
 4. Les sources à la carte : Alertes · Chat · Objectif · Cadre néon · Compte à rebours · Fond
 5. Les transitions : Balayage · Volets
-6. Brancher le chat et les alertes (Streamer.bot, journal, objectif)
+6. Brancher le chat et les alertes (Streamer.bot, journal, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser (couleur selon le jeu…)
@@ -33,6 +33,7 @@ mordethrhedan/
 ├── CONCEPT.md / .pdf    ← le résumé du projet (DA, choix, ce qu'il reste à faire)
 ├── scenes/              ← les overlays de scène (une page = une scène OBS)
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat, cadre…)
+├── sons/                ← tes propres sons d'alerte, si tu veux (facultatif, voir 6.8)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
 ├── assets/polices/      ← les polices (locales, sans internet) · dépose ici la police Dyer
@@ -375,6 +376,33 @@ Twitch ne gère pas les dons en argent : ils passent par un service (StreamEleme
 > ⚠️ **Pas encore vérifié sur un vrai live** : si une alerte montre « Quelqu'un » ou « ? », fais une capture d'écran du journal (6.3) pour faire corriger l'overlay.
 ---
 
+### 6.8 Les sons des alertes
+
+Chaque alerte a **son propre son**, pour savoir ce qui se passe à l'oreille, même en pleine partie :
+
+| Alerte | Le son |
+|---|---|
+| Follow | deux notes de carillon |
+| Abonnement | trois notes qui montent |
+| Réabonnement | quatre notes en zigzag |
+| Abonnement offert | trois notes aiguës rapides |
+| Pluie d'abonnements | une cascade de huit notes |
+| Bits | deux petits « tling » cristallins |
+| Raid | une basse qui monte puis quatre notes |
+| Don | un accord doux et long |
+| Objectif atteint | quatre notes et un grand accord |
+
+**Les écouter** : `reglages.html` › **Sons des alertes**, bouton ▶ à côté de chaque alerte.
+
+**Mettre ton propre son** (un mp3, wav ou ogg, court de préférence) :
+
+1. Copie ton fichier dans le dossier `sons/` de l'overlay, par exemple `sons/follow.mp3`.
+2. `reglages.html` › **Sons des alertes** : dans la case de l'alerte, écris `sons/follow.mp3`. Clique ▶ pour vérifier.
+3. **Enregistrer**, puis dans OBS : clic droit sur la source des alertes › **Actualiser**.
+
+Écris `aucun` dans une case pour que cette alerte reste silencieuse ; vide la case pour revenir au son de l'overlay.
+Le volume général et le bouton « son » sont dans `reglages.html` › **Alertes** ; dans OBS, le volume se règle aussi dans le mélangeur audio (case **Contrôler l'audio via OBS** de la source des alertes).
+
 ## 7. Habiller la chaîne Twitch
 
 Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Les images prêtes à envoyer sont dans `chaine/export/`. Ils prennent la même couleur que l'overlay.
@@ -436,6 +464,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Le motif du fond / son animation | `reglages.html` › Couleur et fond |
 | Les titres des écrans | `reglages.html` › Écrans avec un grand titre |
 | Le vocabulaire des alertes (avec aperçu) | `reglages.html` › Alertes |
+| Le son de chaque alerte, ou ton propre fichier | `reglages.html` › Sons des alertes (voir 6.8) |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`, voir « Les scripts ») |
 | Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
 

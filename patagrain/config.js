@@ -125,6 +125,13 @@ window.CONFIG = {
     duree: 7,            // secondes d'affichage de chaque alerte
     son: true,
     volume: 0.5,         // de 0 à 1
+    // Un son par alerte. Vide = le son de l'overlay (chaque alerte a le sien) · "aucun" = pas de son ·
+    // sinon ton propre fichier, rangé dans le dossier sons/ : ex. "sons/follow.mp3" (mp3, wav ou ogg).
+    // Le plus simple : reglages.html › Sons des alertes (avec un bouton ▶ pour écouter).
+    sons: {
+      follow: "", sub: "", resub: "", giftsub: "", giftbomb: "",
+      bits: "", raid: "", don: "", objectif: "",
+    },
     anonyme: "un aventurier",   // nom affiché quand Twitch ne donne pas le destinataire d'un abonnement offert
     // {nom} {montant} {mois} {nombre} {destinataire} sont remplacés automatiquement
     textes: {

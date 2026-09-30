@@ -17,7 +17,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu (+ …)
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam (+ …)
 5. Les transitions : <noms>
-6. Brancher le chat et les alertes (Streamer.bot, journal, objectif)
+6. Brancher le chat et les alertes (Streamer.bot, journal, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser (couleurs et ambiances, les scripts)
@@ -117,6 +117,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
      reconnexion automatique, peu importe l'ordre de lancement)
  6.3 Vérifier avec le journal : ?journal=1 sur la source d'alertes (OBS n'a pas de F12) ; « ✅ Connecté » ; retirer ensuite
  6.4 Événement par événement (tableau du vocabulaire ; conditions affilié)
+ 6.8 Les sons des alertes (tableau : un son par alerte ; reglages.html › Sons des alertes, ▶ ; fichier perso dans sons/ ; « aucun »)
  6.5 Les dons (Integrations de Streamer.bot ; décocher la case du bandeau si pas de dons)
  6.6 L'objectif (Ton nombre ACTUEL ; compté seulement quand OBS est ouvert)
  6.7 Tester les vraies alertes (?test=1, un ami qui suit la chaîne)>

@@ -209,7 +209,14 @@ window.CONFIG = ${formater(config)};
     (RC.styles || []).forEach(href => document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" href="${href}">`));
 
     // Les sections : celles de reglages-champs.js, puis « Autres réglages » pour tout le reste
-    const sections = (RC.sections || []).map(s => ({ ...s, champs: (s.champs || []).filter(c => lire(enregistre, c.cle) !== undefined || c.ajouter) }));
+    // Section « sons: true » : un champ par alerte de config.js › alertes.sons (fichier + ▶ pour écouter)
+    const nomsAlertes = Object.fromEntries(ALERTES);
+    const champsSons = () => Object.keys(lire(enregistre, 'alertes.sons') || {}).map(k => {
+      const titre = lire(enregistre, `alertes.textes.${k}.titre`);
+      return { cle: `alertes.sons.${k}`, type: 'son', son: k, label: (nomsAlertes[k] || k) + (titre ? ` — « ${titre} »` : '') };
+    });
+    const sections = (RC.sections || []).map(s => ({ ...s, champs: [...(s.champs || []), ...(s.sons ? champsSons() : [])].filter(c => lire(enregistre, c.cle) !== undefined || c.ajouter) }))
+      .filter(s => !s.sons || s.champs.length);
     const decrits = new Set(sections.flatMap(s => s.champs.map(c => c.cle)));
     const alertes = Object.keys(lire(enregistre, 'alertes.textes') || {});
     const autres = feuilles(enregistre).filter(c => c !== 'id' && !decrits.has(c) && !c.startsWith('alertes.textes.') && typeDe(lire(enregistre, c)))
@@ -242,6 +249,9 @@ window.CONFIG = ${formater(config)};
             <input id="${id}" type="text" value="${echapper(v)}" placeholder="d'origine${c.defaut ? ' : ' + echapper(c.defaut) : ''}" spellcheck="false">
             <button type="button" class="rg-origine" data-pour="${id}" data-defaut="${echapper(c.defaut || '')}" title="Revenir à la couleur d'origine">↺</button></span>`; break;
         }
+        // Un son : vide = le son de l'overlay, « aucun », ou un fichier (sons/xxx.mp3) ; ▶ pour écouter
+        case 'son': saisie = `<span class="rg-son"><input id="${id}" type="text" value="${echapper(v)}" placeholder="le son de l'overlay" spellcheck="false">
+            <button type="button" class="rg-ecouter" data-son="${c.son}" data-pour="${id}" title="Écouter">▶</button></span>`; break;
         case 'secret': saisie = `<input id="${id}" type="password" value="${echapper(v)}" autocomplete="off">`; break;
         case 'choix': saisie = `<select id="${id}">${c.options.map(([val, lib]) => `<option value="${echapper(val)}" ${val === v ? 'selected' : ''}>${echapper(lib)}</option>`).join('')}</select>`; break;
         case 'liste': case 'paires': saisie = `<textarea id="${id}" rows="${Math.min(8, Math.max(3, (v || []).length + 1))}">${echapper(versChamp(c.type, v))}</textarea>`; break;
@@ -383,6 +393,12 @@ window.CONFIG = ${formater(config)};
         document.getElementById(origine.dataset.pour).value = '';
         if (origine.dataset.defaut) origine.parentElement.querySelector('input[type=color]').value = origine.dataset.defaut;
         return relire();
+      }
+      const ecoute = e.target.closest && e.target.closest('.rg-ecouter');
+      if (ecoute) {
+        e.preventDefault();
+        if (typeof Son === 'undefined') return statut('Écoute impossible : js/son.js n\'est pas chargé (reglages-champs.js › scripts).', 'rg-attention');
+        return Son.jouer(ecoute.dataset.son, document.getElementById(ecoute.dataset.pour).value, true);
       }
       const bouton = e.target.closest && e.target.closest('[data-ambiance]');
       if (bouton) {

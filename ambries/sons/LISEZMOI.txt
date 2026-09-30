@@ -1,0 +1,15 @@
+TES PROPRES SONS D'ALERTE
+=========================
+
+Par défaut, chaque alerte a déjà son propre son (fabriqué par l'overlay,
+aucun fichier nécessaire). Pour en remplacer un par le tien :
+
+1. Dépose ton fichier ici, dans ce dossier sons/ (mp3, wav ou ogg).
+   Exemple : sons/follow.mp3
+2. Ouvre reglages.html › « Sons des alertes », écris sons/follow.mp3
+   dans la case de l'alerte, clique ▶ pour écouter, puis Enregistrer.
+3. Dans OBS : actualise la source des alertes.
+
+Écris « aucun » dans une case pour que cette alerte ne fasse pas de bruit.
+Laisse la case vide pour revenir au son de l'overlay.
+Garde des sons courts (1 à 3 secondes) et pas trop forts.

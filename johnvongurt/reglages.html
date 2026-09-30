@@ -72,6 +72,10 @@
   .rg-page .rg-couleur input[type=text] { flex: 1; min-width: 0; font-family: ui-monospace, Consolas, monospace; }
   .rg-couleur button, .rg-ambiance { font: 800 16px var(--rg-police); color: var(--rg-texte); background: var(--rg-fond); cursor: pointer;
     border: 2px solid color-mix(in srgb, var(--rg-texte) 25%, transparent); border-radius: 10px; }
+  .rg-son { display: flex; gap: 8px; align-items: center; }
+  .rg-page .rg-son input[type=text] { flex: 1; min-width: 0; }
+  .rg-son button { font: 800 16px var(--rg-police); color: #111; background: var(--rg-accent); cursor: pointer; border: 0; border-radius: 10px; width: 46px; height: 46px; flex: none; }
+  .rg-son button:hover { filter: brightness(1.15); }
   .rg-couleur button { width: 46px; height: 46px; flex: none; }
   .rg-ambiances { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
   .rg-ambiance { padding: 10px 16px; display: flex; align-items: center; gap: 10px; }

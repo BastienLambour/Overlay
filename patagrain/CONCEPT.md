@@ -58,6 +58,7 @@
 | Écrans et scènes (avec le bouffon) | ✅ |
 | Page de réglages `reglages.html` | ✅ (écriture du fichier testée seulement en génération, pas le clic « Enregistrer » dans Edge) |
 | Options des scènes (webcam ou pas, coin, chat, bandeau, bouffon) dans `reglages.html` | ✅ (vérifié dans le navigateur, pas dans OBS) |
+| Un son par alerte + sons perso (`reglages.html` › Sons des alertes) | ✅ (vérifié dans le navigateur, pas dans OBS) |
 | Sources | ✅ |
 | Transitions bouffon (vidéos Stinger : rideau 1400 ms, épée 700 ms, dé 1750 ms) | ✅ |
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
@@ -100,3 +101,4 @@
 - **2026-09-30** — TUTO mis à jour : section « Les scripts » (installer Node.js et ffmpeg, lancer un script, tableau de tous les scripts dont actualiser-obs.lua).
 - **2026-09-30** — Demande : une option `?cam=0` (pas de webcam) → ajoutée (plus de cadre de cam, le chat récupère la place). Puis « cam et tout, on devrait pouvoir le régler depuis les réglages » → `config.js › options` + `js/options.js` (commun) ; `reglages.html` › **Options des scènes** : le coin de la webcam de la scène Jeu (ou « Pas de webcam »), la webcam de Contenu, le chat, le bandeau et le bouffon de chaque scène. Une option écrite dans l'adresse d'une source OBS passe avant.
 - **2026-09-30** — Bug signalé : en Cam seule, remettre le chat (et les couleurs) dans les réglages ne marchait pas après actualisation → `js/options.js` ajoutait `?chat=0` à l'adresse, et l'actualisation d'OBS rechargeait cette adresse modifiée. Corrigé : les options ajoutées par les réglages sont notées (`depuisReglages=…`) et retirées au chargement suivant. Couleurs : l'écriture et l'affichage vérifiés (Halloween puis couleurs d'origine) ; pas testé dans OBS.
+- **2026-09-30** — Demande : des sons différents selon l'alerte, pour les reconnaître en jouant → `js/son.js` : un son par alerte (follow, abonnement, réabonnement, abonnement offert, pluie d'abonnements, bits, raid, don, objectif), dans le thème (tableau dans TUTO 6.8). Et ses propres fichiers possibles : dossier `sons/` + `config.js › alertes.sons` ; `reglages.html` › **Sons des alertes** avec ▶ pour écouter (« aucun » = silence). Vérifié dans le navigateur (sons rendus hors ligne, fichier perso joué) ; pas écouté dans OBS.

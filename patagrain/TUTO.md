@@ -14,7 +14,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Starting soon · Pause · Fin · Cam seule · Contenu · Jeu
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam
 5. Les transitions : Rideau · Coup d'épée · Jet de dé
-6. Brancher le chat et les alertes (follows, abonnements, bits, raids, dons, objectif)
+6. Brancher le chat et les alertes (follows, abonnements, bits, raids, dons, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser
@@ -33,6 +33,7 @@ patagrain/
 ├── CONCEPT.md / .pdf    ← le résumé du projet (DA, choix, ce qu'il reste à faire)
 ├── scenes/              ← les écrans et overlays de scène (une page = une scène OBS)
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat…)
+├── sons/                ← tes propres sons d'alerte, si tu veux (facultatif, voir 6.8)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
 ├── outils/              ← les scripts (vidéos, images du kit, PDF, le bouffon) et actualiser-obs.lua pour OBS : voir 9
@@ -428,6 +429,33 @@ Le compteur avance à chaque follow (ou abonnement) reçu **pendant que OBS est 
 
 ---
 
+### 6.8 Les sons des alertes
+
+Chaque alerte a **son propre son**, pour savoir ce qui se passe à l'oreille, même en pleine partie :
+
+| Alerte | Le son |
+|---|---|
+| Follow | quelques grelots et deux clochettes (ding-ding) |
+| Abonnement | deux coups de tambour puis quatre clochettes qui montent |
+| Réabonnement | grelots et petit air de clochettes qui fait un aller-retour |
+| Abonnement offert | clochettes aiguës qui scintillent |
+| Pluie d'abonnements | plein de grelots, la grande fanfare et une pluie d'étincelles |
+| Bits | des pièces d'or qui tombent |
+| Raid | roulement de tambour puis la grande fanfare |
+| Don | une harpe qui monte |
+| Objectif atteint | grelots, fanfare et un grand accord final |
+
+**Les écouter** : `reglages.html` › **Sons des alertes**, bouton ▶ à côté de chaque alerte.
+
+**Mettre ton propre son** (un mp3, wav ou ogg, court de préférence) :
+
+1. Copie ton fichier dans le dossier `sons/` de l'overlay, par exemple `sons/follow.mp3`.
+2. `reglages.html` › **Sons des alertes** : dans la case de l'alerte, écris `sons/follow.mp3`. Clique ▶ pour vérifier.
+3. **Enregistrer**, puis dans OBS : clic droit sur la source des alertes › **Actualiser**.
+
+Écris `aucun` dans une case pour que cette alerte reste silencieuse ; vide la case pour revenir au son de l'overlay.
+Le volume général et le bouton « son » sont dans `reglages.html` › **Alertes** ; dans OBS, le volume se règle aussi dans le mélangeur audio (case **Contrôler l'audio via OBS** de la source des alertes).
+
 ## 7. Habiller la chaîne Twitch
 
 Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Les images prêtes à envoyer sont dans `chaine/export/`.
@@ -482,6 +510,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 |---|---|
 | Les textes, titres, messages, l'objectif | `reglages.html` |
 | Le vocabulaire des alertes (avec aperçu) | `reglages.html` › Alertes |
+| Le son de chaque alerte, ou ton propre fichier | `reglages.html` › Sons des alertes (voir 6.8) |
 | La durée, le volume ou le son des alertes | `reglages.html` › Alertes |
 | Les bots masqués, la mémoire du chat | `reglages.html` › Le chat |
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |

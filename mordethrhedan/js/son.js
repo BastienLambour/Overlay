@@ -1,9 +1,13 @@
 /* =====================================================================
    SON — petit carillon doux généré à la volée (aucun fichier audio).
+   Un son différent pour chaque alerte, pour les reconnaître à l'oreille
+   en jouant. On peut aussi mettre ses propres fichiers : config.js ›
+   alertes.sons (ou reglages.html › Sons des alertes).
    Dans OBS, coche « Contrôler l'audio via OBS » sur la source des alertes.
    ===================================================================== */
 const Son = (() => {
   const C = (window.CONFIG || {}).alertes || {};
+  const VOLUME = 0.3;       // niveau de base des sons fabriqués
   let ctx;
 
   function note(t, freq, duree, volume) {
@@ -18,17 +22,59 @@ const Son = (() => {
     o.start(t); o2.start(t); o.stop(t + duree + 0.05); o2.stop(t + duree + 0.05);
   }
 
-  function jouer(type) {
-    if (C.son === false) return;
+  // Basse qui monte (pour le raid)
+  function basse(t, duree, volume) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(55, t); o.frequency.exponentialRampToValueAtTime(110, t + duree);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(volume * 1.5, t + 0.1);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + duree + 0.2);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + duree + 0.25);
+  }
+
+  const suite = (t, notes, pas, duree, v) => notes.forEach((f, i) => note(t + i * pas, f, duree, v));
+
+  // Un son par alerte
+  const SONS = {
+    follow:   (t, v) => suite(t, [784, 1175], 0.11, 0.7, v),
+    sub:      (t, v) => suite(t, [659, 784, 988], 0.12, 0.8, v),
+    resub:    (t, v) => suite(t, [988, 784, 988, 1319], 0.11, 0.7, v),
+    giftsub:  (t, v) => suite(t, [1319, 988, 1175], 0.08, 0.6, v * 0.8),
+    giftbomb: (t, v) => suite(t, [523, 659, 784, 1047, 1319, 1568, 2093, 2637], 0.06, 0.6, v * 0.8),
+    bits:     (t, v) => { suite(t, [1568, 2093], 0.06, 0.25, v * 0.8); suite(t + 0.18, [1568, 2093], 0.06, 0.25, v * 0.6); },
+    raid:     (t, v) => { basse(t, 0.8, v); suite(t + 0.5, [659, 784, 988, 1319], 0.11, 0.9, v); },
+    don:      (t, v) => [523, 659, 784].forEach(f => note(t, f, 1.3, v * 0.6)),
+    objectif: (t, v) => { suite(t, [659, 784, 988, 1319], 0.11, 0.9, v); [1319, 1568, 1976].forEach(f => note(t + 0.5, f, 1.5, v * 0.5)); },
+  };
+
+  // ------------------------------------------------------------------
+  // Partie commune aux overlays : choisir le son, ou jouer un fichier.
+  // config.js › alertes.sons.<type> : "" = le son de l'overlay ci-dessus,
+  // "aucun" = pas de son pour cette alerte, sinon un fichier (ex. "sons/follow.mp3",
+  // chemin depuis le dossier de l'overlay, ou chemin complet "C:\…\son.mp3").
+  // ------------------------------------------------------------------
+  const RACINE = new URL('../', (document.currentScript && document.currentScript.src) || location.href);
+  const adresse = f => /^[a-z]:[\\/]/i.test(f) ? 'file:///' + f.replace(/\\/g, '/') : new URL(f.replace(/\\/g, '/'), RACINE).href;
+
+  // jouer(type) : pendant le live · jouer(type, fichier, true) : essai depuis reglages.html
+  function jouer(type, fichier, essai = false) {
+    if (C.son === false && !essai) return;
+    const perso = String(fichier ?? (C.sons || {})[type] ?? '').trim();
+    if (perso.toLowerCase() === 'aucun') return;
+    const volume = Math.max(0, Math.min(1, Number(C.volume ?? 0.5)));
+    if (perso) {
+      try {
+        const a = new Audio(adresse(perso));
+        a.volume = volume;
+        a.play().catch(e => console.warn('[Son] impossible de jouer', perso, '—', e.message));
+      } catch (e) { console.warn('[Son]', e.message); }
+      return;
+    }
     try {
       ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
       if (ctx.state === 'suspended') ctx.resume();
-      const v = (C.volume ?? 0.5) * 0.3, t = ctx.currentTime + 0.05;
-      const grand = ['raid', 'giftbomb', 'objectif'].includes(type);
-      const notes = grand ? [659, 784, 988, 1319] : [784, 1175];
-      notes.forEach((f, i) => note(t + i * 0.11, f, grand ? 0.9 : 0.7, v));
+      (SONS[type] || SONS.follow)(ctx.currentTime + 0.05, volume * VOLUME);
     } catch (e) { /* audio indisponible : on ignore */ }
   }
 
-  return { jouer };
+  return { jouer, types: Object.keys(SONS) };
 })();
