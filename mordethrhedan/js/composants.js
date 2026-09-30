@@ -63,6 +63,7 @@ const Composants = (() => {
 
   // --- Chat dans un cadre « verre » ---
   function chat(parent, z, { disparition = 0 } = {}) {
+    if (params.get('chat') === '0') return document.createElement('div');   // ?chat=0 : pas de chat intégré (source séparée à la place)
     cadre(parent, z, { verre: true });
     const el = creer(parent, 'chat-boite', '', z);
     Chat.monter(el, { disparition });

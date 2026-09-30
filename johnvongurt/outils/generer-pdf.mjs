@@ -27,6 +27,8 @@ const theme = existsSync(join(RACINE, 'css', 'theme.css')) ? readFileSync(join(R
 const variable = nom => (theme.match(new RegExp(`--${nom}:\\s*([^;]+);`)) || [])[1]?.trim();
 const accent = (variable('accent') || '#3A9AD9').split(/\s/)[0];
 const policeTitre = variable('f-titre') || 'sans-serif';
+// Texte en Nunito (chargée depuis internet) ; hors ligne, la police de texte du thème prend le relais (elle est locale)
+const policeTexte = `'Nunito', ${variable('f-texte') || 'sans-serif'}`;
 const importPolices = (theme.match(/@import url\([^)]+\);/) || [''])[0];
 // Polices locales déclarées dans theme.css (@font-face, fichiers dans assets/polices/) : chemins rendus
 // absolus, car la page du PDF est fabriquée dans un dossier temporaire (sinon titres en police de secours)
@@ -111,13 +113,13 @@ const page = (titre, corps) => `<!DOCTYPE html><html lang="fr"><head><meta chars
   @page { size: A4; margin: 18mm 16mm 20mm; }
   :root { --accent: ${accent}; }
   * { box-sizing: border-box; }
-  body { font: 500 10.5pt/1.55 'Nunito', 'Segoe UI', sans-serif; color: #1d232b; margin: 0; }
+  body { font: 500 10.5pt/1.55 ${policeTexte}, 'Segoe UI', sans-serif; color: #1d232b; margin: 0; }
   .couverture { border-left: 8px solid var(--accent); padding: 4px 0 4px 18px; margin-bottom: 26px; }
-  .couverture span { font: 800 9pt 'Nunito'; letter-spacing: .18em; text-transform: uppercase; color: #6b7480; }
+  .couverture span { font: 800 9pt ${policeTexte}; letter-spacing: .18em; text-transform: uppercase; color: #6b7480; }
   h1 { font: 800 26pt/1.1 ${policeTitre}; margin: 4px 0 0; color: #10151c; }
   h2 { font: 800 16pt/1.2 ${policeTitre}; margin: 26px 0 10px; padding-bottom: 5px; border-bottom: 3px solid var(--accent); break-after: avoid; }
-  h3 { font: 800 12.5pt 'Nunito'; margin: 18px 0 6px; color: #10151c; break-after: avoid; }
-  h4 { font: 800 11pt 'Nunito'; margin: 14px 0 4px; break-after: avoid; }
+  h3 { font: 800 12.5pt ${policeTexte}; margin: 18px 0 6px; color: #10151c; break-after: avoid; }
+  h4 { font: 800 11pt ${policeTexte}; margin: 14px 0 4px; break-after: avoid; }
   h2 + *, h3 + *, h4 + * { break-before: avoid; }
   p, li { margin: 5px 0; }
   ul, ol { padding-left: 20px; margin: 6px 0; }

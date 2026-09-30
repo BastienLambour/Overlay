@@ -66,6 +66,7 @@ window.CONFIG = {
     maxMessages: 12,
     ignorer: ["nightbot", "streamelements", "streamlabs", "moobot", "fossabot", "wizebot"],
     masquerCommandes: true,     // cache les messages qui commencent par « ! »
+    memoireMinutes: 10,      // en changeant de scène, le chat réaffiche les messages des 10 dernières minutes (0 = jamais)
   },
 
   // Objectif (source objectif.html)

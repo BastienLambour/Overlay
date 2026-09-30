@@ -2,6 +2,9 @@
    CHAT — lecture du chat Twitch en direct, sans compte ni mot de passe
    (connexion anonyme en lecture seule au serveur de chat de Twitch).
    Avec ?test=1, de faux messages défilent.
+   Mémoire : les derniers messages sont gardés (localStorage « overlay-<id>-chat »),
+   pour que le chat d'une scène ne reparte pas à vide quand on change de scène
+   ou qu'une page est actualisée (config.js › chat.memoireMinutes).
    ===================================================================== */
 const Chat = (() => {
   const C = window.CONFIG || {};
@@ -40,13 +43,26 @@ const Chat = (() => {
     return tags;
   }
 
+  // ---------- Mémoire partagée par toutes les pages de l'overlay (dédoublonnée par identifiant de message) ----------
+  const CLE = `overlay-${C.id || 'defaut'}-chat`;
+  const GARDE = (CC.memoireMinutes ?? 10) * 60000;
+  const memoire = {
+    lire() { try { return (JSON.parse(localStorage.getItem(CLE)) || []).filter(m => Date.now() - m.t < GARDE); } catch (e) { return []; } },
+    ecrire(liste) { try { localStorage.setItem(CLE, JSON.stringify(liste.slice(-40))); } catch (e) {} },
+    ajouter(m) { if (!m.id || !GARDE) return; const l = memoire.lire(); if (!l.some(x => x.id === m.id)) { l.push(m); memoire.ecrire(l); } },
+    retirer(test) { memoire.ecrire(memoire.lire().filter(m => !test(m))); },
+  };
+
   // ---------- Affichage ----------
   function monter(conteneur, { disparition = 0 } = {}) {
     const max = CC.maxMessages || 12;
     const ignorer = (CC.ignorer || []).map(n => n.toLowerCase());
 
-    function ajouter({ id = '', login = '', nom, couleur, html }) {
+    function ajouter({ id = '', login = '', nom, couleur, html }, depuis = 0) {
       if (ignorer.includes(login.toLowerCase())) return;
+      if (id && conteneur.querySelector(`[data-id="${CSS.escape(id)}"]`)) return;
+      const reste = disparition * 1000 - depuis;          // un message remis depuis la mémoire a déjà vécu « depuis » ms
+      if (disparition > 0 && reste <= 0) return;
       const ligne = document.createElement('div');
       ligne.className = 'chat-ligne';
       ligne.dataset.id = id; ligne.dataset.login = login.toLowerCase();
@@ -54,7 +70,7 @@ const Chat = (() => {
       ligne.innerHTML = `<b>${echapper(nom)}</b><span>${html}</span>`;
       conteneur.appendChild(ligne);
       while (conteneur.children.length > max) conteneur.firstElementChild.remove();
-      if (disparition > 0) setTimeout(() => { ligne.classList.add('part'); setTimeout(() => ligne.remove(), 600); }, disparition * 1000);
+      if (disparition > 0) setTimeout(() => { ligne.classList.add('part'); setTimeout(() => ligne.remove(), 600); }, reste);
     }
     const retirer = filtre => conteneur.querySelectorAll('.chat-ligne').forEach(l => { if (filtre(l)) l.remove(); });
 
@@ -63,6 +79,8 @@ const Chat = (() => {
       ajouter({ nom: 'Système', couleur: '#FF9F1C', html: 'Renseigne <b>chaineTwitch</b> dans config.js pour afficher le chat.' });
       return;
     }
+    // Les derniers messages déjà reçus (par cette page ou une autre scène)
+    memoire.lire().forEach(m => ajouter(m, Date.now() - m.t));
     connecter(ajouter, retirer);
   }
 
@@ -83,6 +101,8 @@ const Chat = (() => {
       if (!m) return;
       const [, brutTags, prefixe, commande, texte = ''] = m;
       const tags = brutTags ? lireTags(brutTags) : {};
+      if (commande === 'CLEARCHAT') memoire.retirer(m => !texte || (m.login || '').toLowerCase() === texte.toLowerCase());
+      if (commande === 'CLEARMSG') memoire.retirer(m => m.id === tags['target-msg-id']);
       if (commande === 'CLEARCHAT') return texte ? retirer(l => l.dataset.login === texte.toLowerCase()) : retirer(() => true);
       if (commande === 'CLEARMSG') return retirer(l => l.dataset.id === tags['target-msg-id']);
 
@@ -90,7 +110,9 @@ const Chat = (() => {
       const action = message.match(/^\u0001ACTION (.*)\u0001$/);
       if (action) message = action[1];
       if (CC.masquerCommandes && message.startsWith('!')) return;
-      ajouter({ id: tags.id, login: prefixe, nom: tags['display-name'] || prefixe, couleur: tags.color, html: avecEmotes(message, tags.emotes) });
+      const msg = { id: tags.id, login: prefixe, nom: tags['display-name'] || prefixe, couleur: tags.color, html: avecEmotes(message, tags.emotes) };
+      if (!(CC.ignorer || []).map(n => n.toLowerCase()).includes(prefixe.toLowerCase())) memoire.ajouter({ ...msg, t: Date.now() });
+      ajouter(msg);
     });
     ws.onclose = () => setTimeout(() => connecter(ajouter, retirer), 3000);
   }

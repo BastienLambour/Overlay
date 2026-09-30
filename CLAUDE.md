@@ -143,6 +143,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 Pour `chat.js`, `son.js`, `transition.js`, `commun.js` : partir de la version d'un overlay
 existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitch anonyme
 (sans mot de passe), masque bots et commandes `!`, gère CLEARMSG/CLEARCHAT.
+Il garde en mémoire ses derniers messages entre les scènes (localStorage `overlay-<id>-chat`,
+`chat.memoireMinutes`). Les scènes intègrent chat et bandeau ; `?chat=0` / `?bandeau=0` les retirent (dans `Composants`).
 
 ## Savoir technique acquis
 

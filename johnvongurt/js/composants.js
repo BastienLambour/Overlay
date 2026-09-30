@@ -70,6 +70,7 @@ const Composants = (() => {
 
   // --- Chat (panneau, ou flottant sur le jeu) ---
   function chat(parent, z, { flottant = false, disparition = 0 } = {}) {
+    if (params.get('chat') === '0') return document.createElement('div');   // ?chat=0 : pas de chat intégré (source séparée à la place)
     const titre = (C.chat || {}).titre || 'Canal de communication';
     const el = flottant
       ? creer(parent, 'chat-flottant', '<div class="chat-lignes"></div>', z)
@@ -83,6 +84,7 @@ const Composants = (() => {
 
   // --- Bandeau d'infos ---
   function bandeau(parent, z, { compact = false } = {}) {
+    if (params.get('bandeau') === '0') return document.createElement('div');   // ?bandeau=0 : pas de bandeau intégré
     const o = Evenements.objectif;
     const items = [
       ['recrue', 'groupe', 'Dernière recrue'],

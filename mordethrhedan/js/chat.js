@@ -2,6 +2,9 @@
    CHAT — lecture du chat Twitch en direct, sans compte ni mot de passe
    (connexion anonyme en lecture seule au serveur de chat de Twitch).
    Avec ?test=1, de faux messages défilent.
+   Mémoire : les derniers messages sont gardés (localStorage « overlay-<id>-chat »),
+   pour que le chat d'une scène ne reparte pas à vide quand on change de scène
+   ou qu'une page est actualisée (config.js › chat.memoireMinutes).
    ===================================================================== */
 const Chat = (() => {
   const C = window.CONFIG || {};
@@ -54,13 +57,26 @@ const Chat = (() => {
   }
   const badgesDe = brut => (brut || '').split(',').map(b => b.split('/')[0]).filter(b => BADGES[b]).map(b => BADGES[b]).join('');
 
+  // ---------- Mémoire partagée par toutes les pages de l'overlay (dédoublonnée par identifiant de message) ----------
+  const CLE = `overlay-${C.id || 'defaut'}-chat`;
+  const GARDE = (CC.memoireMinutes ?? 10) * 60000;
+  const memoire = {
+    lire() { try { return (JSON.parse(localStorage.getItem(CLE)) || []).filter(m => Date.now() - m.t < GARDE); } catch (e) { return []; } },
+    ecrire(liste) { try { localStorage.setItem(CLE, JSON.stringify(liste.slice(-40))); } catch (e) {} },
+    ajouter(m) { if (!m.id || !GARDE) return; const l = memoire.lire(); if (!l.some(x => x.id === m.id)) { l.push(m); memoire.ecrire(l); } },
+    retirer(test) { memoire.ecrire(memoire.lire().filter(m => !test(m))); },
+  };
+
   // ---------- Affichage ----------
   function monter(conteneur, { disparition = 0 } = {}) {
     const max = CC.maxMessages || 12;
     const ignorer = (CC.ignorer || []).map(n => n.toLowerCase());
 
-    function ajouter({ id = '', login = '', nom, couleur, badges = '', html }) {
+    function ajouter({ id = '', login = '', nom, couleur, badges = '', html }, depuis = 0) {
       if (ignorer.includes(login.toLowerCase())) return;
+      if (id && conteneur.querySelector(`[data-id="${CSS.escape(id)}"]`)) return;
+      const reste = disparition * 1000 - depuis;          // un message remis depuis la mémoire a déjà vécu « depuis » ms
+      if (disparition > 0 && reste <= 0) return;
       const carte = document.createElement('div');
       carte.className = 'msg';
       carte.dataset.id = id; carte.dataset.login = login.toLowerCase();
@@ -68,7 +84,7 @@ const Chat = (() => {
       carte.innerHTML = `<div class="msg-tete"><span class="msg-nom">${echapper(nom)}</span><span class="badges">${badges}</span></div><p>${html}</p>`;
       conteneur.appendChild(carte);
       while (conteneur.children.length > max) conteneur.firstElementChild.remove();
-      if (disparition > 0) setTimeout(() => { carte.classList.add('part'); setTimeout(() => carte.remove(), 600); }, disparition * 1000);
+      if (disparition > 0) setTimeout(() => { carte.classList.add('part'); setTimeout(() => carte.remove(), 600); }, reste);
     }
     const retirer = filtre => conteneur.querySelectorAll('.msg').forEach(l => { if (filtre(l)) l.remove(); });
 
@@ -77,6 +93,8 @@ const Chat = (() => {
       ajouter({ nom: 'Système', html: 'Renseigne <b>chaineTwitch</b> dans config.js pour afficher le chat.' });
       return;
     }
+    // Les derniers messages déjà reçus (par cette page ou une autre scène)
+    memoire.lire().forEach(m => ajouter(m, Date.now() - m.t));
     connecter(ajouter, retirer);
   }
 
@@ -97,6 +115,8 @@ const Chat = (() => {
       if (!m) return;
       const [, brutTags, prefixe, commande, texte = ''] = m;
       const tags = brutTags ? lireTags(brutTags) : {};
+      if (commande === 'CLEARCHAT') memoire.retirer(m => !texte || (m.login || '').toLowerCase() === texte.toLowerCase());
+      if (commande === 'CLEARMSG') memoire.retirer(m => m.id === tags['target-msg-id']);
       if (commande === 'CLEARCHAT') return texte ? retirer(l => l.dataset.login === texte.toLowerCase()) : retirer(() => true);
       if (commande === 'CLEARMSG') return retirer(l => l.dataset.id === tags['target-msg-id']);
 
@@ -104,7 +124,9 @@ const Chat = (() => {
       const action = message.match(/^\u0001ACTION (.*)\u0001$/);
       if (action) message = action[1];
       if (CC.masquerCommandes && message.startsWith('!')) return;
-      ajouter({ id: tags.id, login: prefixe, nom: tags['display-name'] || prefixe, couleur: tags.color, badges: badgesDe(tags.badges), html: avecEmotes(message, tags.emotes) });
+      const msg = { id: tags.id, login: prefixe, nom: tags['display-name'] || prefixe, couleur: tags.color, badges: badgesDe(tags.badges), html: avecEmotes(message, tags.emotes) };
+      if (!(CC.ignorer || []).map(n => n.toLowerCase()).includes(prefixe.toLowerCase())) memoire.ajouter({ ...msg, t: Date.now() });
+      ajouter(msg);
     });
     ws.onclose = () => setTimeout(() => connecter(ajouter, retirer), 3000);
   }

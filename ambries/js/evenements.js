@@ -35,12 +35,14 @@ const Evenements = (() => {
     if (e.type === 'don') etat.soutien = `${e.nom} · ${e.montant}`;
     if (e.type === 'bits') etat.soutien = `${e.nom} · ${e.montant} bits`;
 
-    const compte = (obj.type === 'follow' && e.type === 'follow') ||
-      (obj.type === 'sub' && ['sub', 'resub', 'giftsub'].includes(e.type));
+    // Combien ça ajoute à l'objectif : 1 par follow (ou par abonnement) ; une pluie d'abonnements offerts
+    // compte pour tous ses cadeaux (les cadeaux de la pluie, eux, ne sont pas émis un par un : voir GiftSub)
+    const ajout = obj.type === 'follow' ? (e.type === 'follow' ? 1 : 0)
+      : obj.type === 'sub' ? (['sub', 'resub', 'giftsub'].includes(e.type) ? 1 : e.type === 'giftbomb' ? (parseInt(e.nombre, 10) || 1) : 0) : 0;
     let atteint = false;
-    if (compte) {
+    if (ajout) {
       const avant = etat.compte;
-      etat.compte = (etat.compte || 0) + 1;
+      etat.compte = (etat.compte || 0) + ajout;
       atteint = avant < obj.cible && etat.compte >= obj.cible;
     }
     sauver();

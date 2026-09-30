@@ -105,6 +105,13 @@ file:///G:/Projets/Overlay/mordethrhedan/scenes/jeu.html?cam=bas-droite&couleur=
 
 > 🔑 **Règle d'or** : dans OBS, ce qui est **en haut** de la liste s'affiche **par-dessus**. L'overlay est au-dessus de la webcam et du jeu ; **tes widgets** (succès, manette, splits) sont **au-dessus** de l'overlay.
 
+### 2.8 Le chat : déjà dans les scènes
+
+Les scènes contiennent **déjà** leur chat, placés pile à côté des zones de la cam et du jeu : **tu n'as rien à ajouter.**
+La source séparée `sources/chat.html` sert seulement pour une scène à toi, ou pour placer le chat autrement : dans ce cas, ajoute `?chat=0` à l'adresse de la scène pour retirer celui qui est intégré, puis ajoute la source séparée.
+
+Quand tu changes de scène, le chat **réaffiche les derniers messages** (ceux des 10 dernières minutes, réglable dans `reglages.html` › **Le chat**) : il ne repart pas à vide.
+
 ---
 
 ## 3. Les scènes, fiche par fiche
