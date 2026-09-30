@@ -106,9 +106,11 @@ Conventions :
   vocabulaire, cam, chat, bandeau/objectif) · `06 Transitions` (jouables) · `07 Scènes`.
   Beaucoup d'iframes → ne charger que celles visibles (IntersectionObserver).
 - **`TUTO.md`** (modèle `_modele/TUTO.md`) : 1 Contenu du dossier · 2 Avant de commencer
-  (config.js, canevas OBS, méthode « ajouter une source Navigateur », méthode Ctrl+E, options
-  d'URL) · 3 **Fiches scènes, une par page** · 4 **Fiches sources, une par page** · 5 Fiches
-  transitions · 6 Streamer.bot · 7 Chaîne Twitch · 8 Tester · 9 Personnaliser · 10 Dépannage.
+  (reglages.html, canevas OBS, gestes A/B/C : source Navigateur, Ctrl+E, options d'URL ; chat intégré ; script
+  actualiser-obs.lua) · 3 **Fiches scènes, une par page** · 4 **Fiches sources, une par page** · 5 Fiches
+  transitions · 6 Chat et alertes (Streamer.bot pas à pas, journal `?journal=1`, événements, dons, objectif) · 7 Chaîne
+  Twitch · 8 Tester · 9 Personnaliser (reglages.html d'abord, ambiances de couleurs, « Les scripts » : installer Node.js
+  + ffmpeg, tableau des scripts) · 10 Dépannage.
   Chaque fiche = à quoi ça sert, **étapes OBS numérotées de A à Z** (créer la scène, chaque source
   dans l'ordre avec fichier, taille, cases à cocher, position Ctrl+E), options, vérification.
   Le streamer doit pouvoir suivre une fiche sans lire le reste.

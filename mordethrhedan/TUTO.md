@@ -14,7 +14,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu · Speedrun
 4. Les sources à la carte : Alertes · Chat · Objectif · Cadre néon · Compte à rebours · Fond
 5. Les transitions : Balayage · Volets
-6. Brancher les alertes avec Streamer.bot
+6. Brancher le chat et les alertes (Streamer.bot, journal, objectif)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser (couleur selon le jeu…)
@@ -36,7 +36,7 @@ mordethrhedan/
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
 ├── assets/polices/      ← les polices (locales, sans internet) · dépose ici la police Dyer
-├── outils/              ← scripts : vidéos de transition, images de la chaîne, PDF
+├── outils/              ← les scripts (vidéos, images du kit, PDF) et actualiser-obs.lua pour OBS : voir 9
 ├── design/moodboard.html
 └── css/  js/            ← le moteur (pas besoin d'y toucher)
 ```
@@ -223,7 +223,7 @@ Quand la cam est à droite, la zone du widget succès passe à gauche (`60`, `45
 
 7. Ordre final : `Global — Alertes` · `Manette` · `LiveSplit` · `Overlay` · `Jeu`.
 
-**Options** : cadres autour de la manette et des splits réglables dans `config.js` › `speedrun.cadreManette` / `cadreSplits`.
+**Options** : cadres autour de la manette et des splits réglables dans `reglages.html` › **Scène speedrun** (ou `config.js` › `speedrun.cadreManette` / `cadreSplits`).
 
 ---
 
@@ -297,17 +297,51 @@ Crée `balayage-rouge.webm` et `volets-rouge.webm`.
 
 ---
 
-## 6. Brancher les alertes avec Streamer.bot
+## 6. Brancher le chat et les alertes
 
-Le **chat** marche tout seul. Les **alertes** et l'**objectif** passent par **Streamer.bot**, un logiciel **gratuit** qui tourne sur ton PC pendant le live.
+Deux choses différentes :
 
-1. Télécharge Streamer.bot sur le site officiel **streamer.bot**, décompresse-le (ex. `C:\Streamer.bot\`) et lance `Streamer.bot.exe`.
-2. **Platforms › Twitch › Accounts** : connecte ton compte **Broadcaster**.
-3. **Servers/Clients › WebSocket Server** : Address `127.0.0.1`, Port `8080`, coche **Auto Start**, clique **Start Server**.
-4. Dans OBS, clic droit sur la source d'alertes › **Actualiser**.
+| Quoi | Comment ça arrive | À installer |
+|---|---|---|
+| **Le chat** | l'overlay lit ton chat Twitch directement | **rien** : ton identifiant Twitch dans les réglages suffit |
+| Les alertes et l'objectif (follows, abonnements, bits, raids, dons) | par **Streamer.bot**, un logiciel gratuit qui tourne sur ton PC | Streamer.bot, une fois (6.2) |
 
-✅ Streamer.bot doit être **lancé à chaque live**.
-**Dons** : StreamElements, Streamlabs, Ko-fi ou Tipeee se connectent dans l'onglet **Integrations** de Streamer.bot.
+### 6.1 Le chat
+
+1. `reglages.html` › **La chaîne** › **Identifiant Twitch** : celui de ton adresse `twitch.tv/…`. Enregistre.
+2. C'est tout : dans les scènes, le chat s'affiche dès qu'un message arrive.
+
+Les **emotes Twitch** s'affichent en image ; les **bots** (liste dans `reglages.html` › **Le chat**) et les **commandes** qui commencent par `!` sont cachés ; un message **supprimé par un modo**, ou ceux d'un spectateur **banni**, disparaissent aussi de l'overlay ; en changeant de scène, les messages des 10 dernières minutes sont réaffichés.
+Il ne montre pas les messages envoyés **avant** l'ouverture d'OBS, ni les emotes des extensions 7TV, BTTV ou FFZ.
+
+### 6.2 Installer Streamer.bot (une seule fois)
+
+1. Va sur le site officiel **streamer.bot**, télécharge la dernière version (un fichier `.zip`).
+2. Décompresse-le dans un dossier à toi (ex. `C:\Streamer.bot\`), puis lance **`Streamer.bot.exe`**.
+3. **Connecter ta chaîne** : onglet **Platforms › Twitch › Accounts**. Dans la partie **Broadcaster** (ton compte de streamer), clique **Connect**, connecte-toi à Twitch dans la fenêtre qui s'ouvre, puis **Autoriser**. *(La partie « Bot » est facultative.)*
+4. **Ouvrir la porte à l'overlay** : onglet **Servers/Clients › WebSocket Server** : **Address** `127.0.0.1` · **Port** `8080` · **Endpoint** `/` · coche **Auto Start** · clique **Start Server**.
+5. Dans OBS, **clic droit sur la source d'alertes › Actualiser**.
+
+✅ **À chaque live**, Streamer.bot doit être **lancé**. Avant ou après OBS, peu importe : l'overlay s'y reconnecte tout seul dès qu'il est là.
+
+> Si tu as changé le port ou mis un mot de passe dans Streamer.bot, reporte-les dans `reglages.html` › **Streamer.bot**.
+
+### 6.3 Vérifier que l'overlay est bien branché
+
+OBS n'a pas de console (F12) : l'overlay a donc son propre **journal**, affiché directement dans la source.
+
+1. Dans OBS, double-clic sur la source d'alertes (dans la scène « Global — Alertes »).
+2. Décoche **Fichier local** et colle dans **URL** l'adresse de la page suivie de `?journal=1` (geste C) :
+   `file:///G:/Projets/Overlay/mordethrhedan/sources/alertes.html?journal=1`
+3. **OK** : un panneau sombre apparaît en haut à gauche. Tu dois y lire **✅ Connecté à Streamer.bot**.
+   - « ⚠️ Déconnecté de Streamer.bot » : Streamer.bot n'est pas lancé, ou son serveur WebSocket n'est pas démarré (6.2).
+   - « ⚠️ Streamer.bot désactivé » : coche « Se connecter à Streamer.bot » dans `reglages.html`.
+4. Chaque événement reçu s'y ajoute (ex. `Twitch.Follow → follow · Pseudo`), avec **les données brutes** reçues en dessous.
+5. Une fois vérifié, **retire `?journal=1`** de l'adresse (sinon le panneau reste à l'écran pendant le live).
+
+### 6.4 Événement par événement
+
+Une fois Streamer.bot branché, **rien à régler par événement** : l'overlay les écoute tous. Les textes se changent dans `reglages.html` › **Alertes** (avec un aperçu).
 
 | Événement Twitch | Alerte |
 |---|---|
@@ -321,6 +355,22 @@ Le **chat** marche tout seul. Les **alertes** et l'**objectif** passent par **St
 | Don | **Merci pour le don !** — offre X |
 | Objectif atteint | **Objectif atteint !** *(le halo pulse)* |
 
+Abonnements, abonnements offerts et bits demandent une chaîne **affiliée** ou **partenaire**. Les alertes passent **une par une** (file d'attente) : rien n'est perdu pendant un raid.
+
+### 6.5 Les dons (facultatif)
+
+Twitch ne gère pas les dons en argent : ils passent par un service (StreamElements, Streamlabs, Ko-fi, Tipeee). Dans Streamer.bot, onglet **Integrations**, choisis ton service et suis ses indications (en général, coller une **clé** copiée depuis le tableau de bord du service, puis **Connect**).
+
+### 6.6 L'objectif
+
+`reglages.html` › **Objectif** : ce qu'on compte (**les follows** ou **les abonnements**), le nom, la cible et **ton nombre ACTUEL**. Le compteur avance à chaque follow (ou abonnement, une pluie d'abonnements comptant pour tous ses cadeaux) reçu **pendant que OBS est ouvert**, et s'en souvient d'un live à l'autre. De temps en temps, remets ton vrai nombre dans « Ton nombre ACTUEL ».
+
+### 6.7 Tester les vraies alertes
+
+- **Sans Twitch** : `?test=1` sur une page (fausses alertes toutes les 9 secondes, sans toucher au vrai compteur), ou `reglages.html` › **Tester**.
+- **Pour de vrai** : demande à un ami (ou à un deuxième compte) de suivre la chaîne, OBS et Streamer.bot ouverts.
+
+> ⚠️ **Pas encore vérifié sur un vrai live** : si une alerte montre « Quelqu'un » ou « ? », fais une capture d'écran du journal (6.3) pour faire corriger l'overlay.
 ---
 
 ## 7. Habiller la chaîne Twitch
@@ -342,7 +392,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 3. **Image** : choisis le PNG du panneau. **Description** : écris le texte (qui tu es, le planning, les règles du chat…).
 4. **Envoyer**, puis recommence pour les autres panneaux.
 
-**Refaire les images** (autre couleur, police Dyer installée, textes changés dans `config.js` › `chaine`), dans PowerShell :
+**Refaire les images** (autre couleur, police Dyer installée, textes changés dans `reglages.html` › **Kit de chaîne Twitch**), dans PowerShell :
 
 ```
 cd G:\Projets\Overlay\mordethrhedan
@@ -360,6 +410,8 @@ node outils/exporter-chaine.mjs
 |---|---|
 | `?test=1` | faux chat et fausses alertes qui défilent |
 | `?apercu=1` | affiche les zones des sources |
+| `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
+| `?chat=0` | retire le chat intégré à la scène |
 | `?minutes=0.5` | *(démarrage)* compte à rebours de 30 s |
 | `?couleur=rouge` | essaie une autre couleur |
 
@@ -369,17 +421,19 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif.
 
 ## 9. Personnaliser
 
+Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
+
 | Je veux changer… | Où |
 |---|---|
 | Une ambiance (Halloween, Noël…) | `reglages.html` › Couleur et fond (voir ci-dessous) |
 | La couleur partout | `reglages.html` › Couleur et fond, ou `config.js` › `couleur` (`vert`, `rouge`, `bleu`, `violet`, `orange`, `cyan`, `jaune`, `rose` ou `"#FFD400"`) |
 | La couleur d'une seule scène | `?couleur=rouge` dans l'adresse de l'overlay (pratique pour une scène « Jeu rouge ») |
-| Le halo | `config.js` › `halo` (`leger`, `moyen`, `fort`) |
-| Le motif du fond / son animation | `config.js` › `fond.graine` / `fond.animation` |
-| Les titres des écrans | `config.js` › `demarrage`, `pause`, `fin` |
-| Le vocabulaire des alertes | `config.js` › `alertes.textes` |
-| Les visuels de la chaîne | `config.js` › `chaine` (puis `node outils/exporter-chaine.mjs`) |
-| Remettre l'objectif à zéro | changer `objectif.depart` dans `config.js` |
+| Le halo | `reglages.html` › Couleur et fond (léger, moyen, fort) |
+| Le motif du fond / son animation | `reglages.html` › Couleur et fond |
+| Les titres des écrans | `reglages.html` › Écrans avec un grand titre |
+| Le vocabulaire des alertes (avec aperçu) | `reglages.html` › Alertes |
+| Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`, voir « Les scripts ») |
+| Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
 
@@ -389,7 +443,34 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
 3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
 
-Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les dans PowerShell, dans le dossier de l'overlay : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
+Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
+
+
+### Les scripts du dossier `outils/`
+
+Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, images du kit, PDF… On ne s'en sert qu'après un changement (couleurs, textes du kit, tuto modifié). Tout le reste (réglages, textes, alertes) se fait dans `reglages.html`, sans script.
+
+**Une seule fois : installer Node.js** (le programme qui lance les scripts `.mjs`)
+1. Va sur le site officiel **nodejs.org**, télécharge la version **LTS** et installe-la (tout laisser par défaut, *Suivant* jusqu'au bout).
+   Ou, dans PowerShell : `winget install OpenJS.NodeJS.LTS`
+2. Pour **refaire les vidéos de transition**, il faut aussi **ffmpeg** : dans PowerShell, `winget install Gyan.FFmpeg`.
+3. Ferme puis rouvre PowerShell.
+
+**Lancer un script**
+1. Ouvre le dossier `mordethrhedan` dans l'Explorateur Windows.
+2. Clic droit dans un espace vide du dossier › **Ouvrir dans le Terminal** (ou tape `powershell` dans la barre d'adresse du dossier, puis **Entrée**).
+3. Tape la commande du tableau, puis **Entrée**. Le script dit ce qu'il fait, puis rend la main.
+
+| Script | À quoi il sert | Quand | Commande |
+|---|---|---|---|
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand `config.js` change | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
+| `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
+| `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
+| `capturer.mjs` | fait une capture PNG d'une page (pour vérifier une animation, ou l'envoyer) | pour vérifier | `node outils/capturer.mjs "scenes/jeu.html?test=1"` |
+| `polices-locales.mjs` | copie dans `assets/polices/` les polices du thème (pour ne plus dépendre d'internet) | seulement si on change de police (déjà fait) | `node outils/polices-locales.mjs` *(internet nécessaire)* |
+
+Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec Windows) : rien d'autre à installer.
 
 ---
 
@@ -402,10 +483,13 @@ Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fa
 → Vérifie le nom du fichier dans `assets/polices/` (`Dyer.ttf`), puis actualise.
 
 **Le chat n'affiche rien**
-→ Vérifie `chaineTwitch` (identifiant exact, en minuscules). Le chat n'affiche que les messages envoyés **après** l'ouverture de la page.
+→ Vérifie l'identifiant Twitch dans `reglages.html` › **La chaîne** (l'identifiant exact, en minuscules). Le chat n'affiche que les messages envoyés **après** l'ouverture de la page, et il a besoin d'internet.
 
 **Les alertes ne s'affichent pas**
-→ Streamer.bot est-il lancé, serveur WebSocket **démarré** (port `8080`), compte Broadcaster connecté ? Actualise la source d'alertes.
+→ Streamer.bot est-il lancé, serveur WebSocket **démarré** (port `8080`), compte Broadcaster connecté ? Regarde le journal (6.3, `?journal=1`) : il dit ce qui coince.
+
+**Les réglages ne changent rien dans OBS**
+→ Après **Enregistrer** dans `reglages.html`, il faut actualiser les sources : clic droit › **Actualiser**, ou le script `actualiser-obs.lua` (section 2) qui le fait tout seul.
 
 **Pas de son sur les alertes**
 → Coche **Contrôler l'audio via OBS** sur la source d'alertes et vérifie son volume dans le mélangeur.

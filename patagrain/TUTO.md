@@ -35,7 +35,7 @@ patagrain/
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat…)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
-├── outils/              ← scripts : vidéos de transition, images de la chaîne, PDF, le bouffon, et actualiser-obs.lua (pour OBS, 2.8)
+├── outils/              ← les scripts (vidéos, images du kit, PDF, le bouffon) et actualiser-obs.lua pour OBS : voir 9
 ├── assets/              ← logo, emblèmes, épée, chapeau, le bouffon, polices/
 ├── design/              ← moodboard et pistes de logo
 └── css/  js/            ← le moteur (pas besoin d'y toucher)
@@ -473,6 +473,8 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple :
 
 ## 9. Personnaliser
 
+Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
+
 | Je veux changer… | Où |
 |---|---|
 | Les textes, titres, messages, l'objectif | `reglages.html` |
@@ -495,7 +497,35 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
 3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
 
-Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les dans PowerShell, dans le dossier de l'overlay : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
+Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
+
+
+### Les scripts du dossier `outils/`
+
+Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, images du kit, PDF… On ne s'en sert qu'après un changement (couleurs, textes du kit, tuto modifié). Tout le reste (réglages, textes, alertes) se fait dans `reglages.html`, sans script.
+
+**Une seule fois : installer Node.js** (le programme qui lance les scripts `.mjs`)
+1. Va sur le site officiel **nodejs.org**, télécharge la version **LTS** et installe-la (tout laisser par défaut, *Suivant* jusqu'au bout).
+   Ou, dans PowerShell : `winget install OpenJS.NodeJS.LTS`
+2. Pour **refaire les vidéos de transition**, il faut aussi **ffmpeg** : dans PowerShell, `winget install Gyan.FFmpeg`.
+3. Ferme puis rouvre PowerShell.
+
+**Lancer un script**
+1. Ouvre le dossier `patagrain` dans l'Explorateur Windows.
+2. Clic droit dans un espace vide du dossier › **Ouvrir dans le Terminal** (ou tape `powershell` dans la barre d'adresse du dossier, puis **Entrée**).
+3. Tape la commande du tableau, puis **Entrée**. Le script dit ce qu'il fait, puis rend la main.
+
+| Script | À quoi il sert | Quand | Commande |
+|---|---|---|---|
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand `config.js` change | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs ou du bouffon | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
+| `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
+| `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
+| `capturer.mjs` | fait une capture PNG d'une page (pour vérifier une animation, ou l'envoyer) | pour vérifier | `node outils/capturer.mjs "scenes/jeu.html?test=1"` |
+| `polices-locales.mjs` | copie dans `assets/polices/` les polices du thème (pour ne plus dépendre d'internet) | seulement si on change de police (déjà fait) | `node outils/polices-locales.mjs` *(internet nécessaire)* |
+| `generer-bouffon.mjs` | redessine le bouffon, son chapeau et le logo | seulement si on modifie le dessin (puis refaire vidéos et kit) | `node outils/generer-bouffon.mjs` |
+
+Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec Windows) : rien d'autre à installer.
 
 ---
 
