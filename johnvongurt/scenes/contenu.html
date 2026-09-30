@@ -19,20 +19,23 @@
 <script src="../js/streamerbot-client.js"></script>
 <script src="../config.js"></script>
 <script src="../js/couleurs.js"></script>
+<script src="../js/options.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
+  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
   const CAM = { x: 60, y: 250, l: 480, h: 270 };
   const CONTENU = { x: 580, y: 190, l: 1280, h: 720 };
 
-  Composants.fondDecoupe(ecran, [CAM, CONTENU]);
+  Composants.fondDecoupe(ecran, sansCam ? [CONTENU] : [CAM, CONTENU]);
   Composants.entete(ecran);
   Composants.cadre(ecran, CONTENU, { titre: 'Flux principal', nom: false });
-  Composants.cadre(ecran, CAM, { nom: false });
-  Composants.chat(ecran, { x: 53, y: 566, l: 494, h: 350 });
+  if (!sansCam) Composants.cadre(ecran, CAM, { nom: false });
+  // Sans cam, le chat prend toute la colonne de gauche
+  Composants.chat(ecran, sansCam ? { x: 53, y: 190, l: 494, h: 726 } : { x: 53, y: 566, l: 494, h: 350 });
   Composants.bandeau(ecran, { x: 53, y: 956, l: 1814, h: 76 });
 
   Commun.demarrer();

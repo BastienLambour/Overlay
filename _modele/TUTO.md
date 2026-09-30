@@ -62,6 +62,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
 
 ### 2.5 Geste C — ajouter une option dans l'adresse
 <décocher Fichier local, file:///G:/Projets/Overlay/<pseudo>/…?option=…>
+<plus simple et pour de bon : reglages.html › Options des scènes (config.js › options) ; l'adresse passe avant>
 
 ### 2.6 Astuce — une seule source d'alertes pour toutes les scènes
 <scène « Global — Alertes » + règle d'or de l'ordre des sources>
@@ -128,7 +129,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
 ---
 
 ## 8. Tester sans être en live
-<tableau des options ?test=1, ?apercu=1, ?journal=1, ?chat=0 / ?bandeau=0…>
+<tableau des options ?test=1, ?apercu=1, ?journal=1, ?chat=0 / ?bandeau=0 / ?cam=0…>
 
 ---
 

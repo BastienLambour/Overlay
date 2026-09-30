@@ -23,7 +23,7 @@
   Le chat se place automatiquement du côté opposé à la cam.
   Le chapeau posé sur la cam est celui du bouffon : de temps en temps (config.js › bouffon.jeuToutesLes)
   et à chaque follow, il se lève dessous, passe la tête, regarde à gauche, à droite, clin d'œil, et redescend.
-  Options : ?chat=0 · ?bandeau=0 · ?bouffon=0
+  Options : ?cam=0 (pas de webcam : ni cadre ni bouffon) · ?chat=0 · ?bandeau=0 · ?bouffon=0
   (ouvre jeu.html?apercu=1 pour voir les zones, ?test=1 pour de faux messages)
 -->
 <div id="ecran"></div>
@@ -31,6 +31,7 @@
 <script src="../js/streamerbot-client.js"></script>
 <script src="../config.js"></script>
 <script src="../js/couleurs.js"></script>
+<script src="../js/options.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
@@ -39,14 +40,15 @@
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const coin = Commun.params.get('cam') || 'bas-droite';
+  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
+  const coin = sansCam ? 'bas-droite' : Commun.params.get('cam') || 'bas-droite';
   const L = 420, H = 236;
   const droite = coin.includes('droite'), bas = coin.includes('bas');
   const CAM = { x: droite ? 1920 - 50 - L : 50, y: bas ? 1080 - 104 - H : 130, l: L, h: H };
   const CHAT = { x: droite ? 50 : 1920 - 50 - 440, y: 470, l: 440, h: 440 };
 
   const voir = cle => Commun.params.get(cle) !== '0';
-  const bouffon = Commun.bouffon();
+  const bouffon = Commun.bouffon() && !sansCam;
 
   Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu plein écran', true);
   if (bouffon) {
@@ -63,7 +65,7 @@
     if (CB.jeuAuFollow !== false) Evenements.ecouter(e => { if (e && e.type === 'follow') perso.sortir(); });
     if (Commun.params.has('test')) setTimeout(perso.sortir, 1500);    // en test : une sortie tout de suite
   }
-  Composants.cadre(ecran, CAM, { nom: false, chapeau: !bouffon });
+  if (!sansCam) Composants.cadre(ecran, CAM, { nom: false, chapeau: !bouffon });
   if (voir('chat')) Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
   if (voir('bandeau')) Composants.bandeau(ecran, { x: 560, y: 1000, l: 800, h: 64 }, { compact: true });
   // Petit logo discret en haut, du côté opposé à la cam

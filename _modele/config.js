@@ -15,6 +15,14 @@ window.CONFIG = {
   // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "<pseudo>",
 
+  // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
+  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
+  options: {
+    jeu: { cam: "bas-droite", chat: true, bandeau: true },
+    contenu: { cam: true, chat: true, bandeau: true },
+    "cam-seule": { chat: true, bandeau: true },
+  },
+
   // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
   // Un code couleur (ex. "#FF7A1A") remplace la variable du même nom de css/theme.css ; vide = la couleur d'origine.
   // Mettre ici les couleurs principales du thème (leurs noms dans theme.css, sans les « -- »).

@@ -28,6 +28,18 @@ window.CONFIG = {
     animation: true,    // éclats qui respirent très doucement (false = fond fixe)
   },
 
+  // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
+  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
+  // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
+  options: {
+    jeu: { cam: "haut-gauche" },
+    "cam-seule": { chat: true },
+    contenu: { chat: true },
+    demarrage: { chat: true },
+    pause: { chat: true },
+    fin: { chat: true },
+  },
+
   // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
   // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
   // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).

@@ -78,10 +78,12 @@ Conventions :
   `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
-  `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
+  `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
+  voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
   compteur), `?apercu=1` (montre les zones cam/jeu), `?reinitialiser` (remet l'objectif à zéro),
-  `?minutes=10` (compte à rebours), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite`.
+  `?minutes=10` (compte à rebours), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite|0` (0 = pas de webcam :
+  pas de cadre, le chat récupère la place), `?chat=0`, `?bandeau=0`. Toutes réglables aussi dans `config.js › options`.
 - Fichiers en UTF-8, fins de ligne LF.
 
 ## Pages et documents standard (même plan dans chaque overlay)
@@ -131,6 +133,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `js/couleurs.js` : applique `config.js › couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
   `reglages.html` › Couleurs). Chargé juste après `config.js` sur CHAQUE page (sauf le moodboard). Les images (logo SVG en
   `<img>`, PNG) ne suivent pas ; vidéos de transition et kit : à refaire avec les outils.
+- `js/options.js` : `config.js › options.<page>` (nom du fichier sans .html) ajouté à l'adresse de la page via
+  `history.replaceState`, comme si on l'avait écrit dans OBS (true = rien, false/"aucune" = 0) ; une option déjà dans
+  l'adresse passe avant. Chargé juste après `couleurs.js` sur CHAQUE page. Réglé dans `reglages.html` › Options des scènes.
 - `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
   les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,

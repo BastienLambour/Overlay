@@ -101,6 +101,8 @@ file:///G:/Projets/Overlay/ambries/scenes/demarrage.html?minutes=10
 
 Plusieurs options se séparent par `&` : `...jeu.html?cam=bas-gauche&test=1`
 
+**Plus simple, et pour de bon : `reglages.html` › Options des scènes.** Le coin de la webcam de la scène Jeu (ou « Pas de webcam »), le chat, le bandeau de chaque scène s'y règlent une fois pour toutes, sans toucher aux adresses dans OBS. Une option écrite dans l'adresse d'une source passe **avant** ce réglage (pratique pour une source particulière).
+
 ### 2.6 Astuce — une seule source d'alertes pour toutes les scènes
 
 1. **Scènes › +** : crée une scène **« Global — Alertes »** et ajoutes-y `sources/alertes.html` (fiche 4.1).
@@ -197,6 +199,8 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 **Vérifier** : `contenu.html?apercu=1` (geste C).
 
+**Options** : `?cam=0` (pas de webcam : le chat prend toute la hauteur ; n'ajoute pas la source Webcam).
+
 ### 3.6 🎮 Jeu — `scenes/jeu.html`
 
 **À quoi ça sert** : le jeu en plein écran, une petite cam néon dans un coin, le chat en bulles qui s'effacent toutes seules après 45 secondes, un bandeau discret.
@@ -218,7 +222,7 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Jeu`.
 
-**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté).
+**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
 
 ---
 
@@ -416,6 +420,7 @@ node outils/exporter-chaine.mjs
 | `?apercu=1` | affiche les zones de la cam et du jeu |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 | `?chat=0` · `?bandeau=0` | retire le chat ou le bandeau intégré à la scène |
+| `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
 | `?minutes=0.5` | *(démarrage)* compte à rebours de 30 s, pour voir la fin vite |
 | `?reinitialiser` | remet le compteur de l'objectif à sa valeur de départ |
 
@@ -438,6 +443,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`, voir « Les scripts ») |
 | L'avatar | remplace `assets/avatar.png` (carré, 800 × 800 conseillé), puis refais vidéos et images |
+| Le coin de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) |
 | Les couleurs d'origine, les polices | début de `css/theme.css` |
 | Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |

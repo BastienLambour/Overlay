@@ -29,13 +29,15 @@
 <script src="../js/streamerbot-client.js"></script>
 <script src="../config.js"></script>
 <script src="../js/couleurs.js"></script>
+<script src="../js/options.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const coin = Commun.params.get('cam') || 'bas-droite';
+  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
+  const coin = sansCam ? 'bas-droite' : Commun.params.get('cam') || 'bas-droite';
   const L = 400, H = 225;
   const droite = coin.includes('droite'), bas = coin.includes('bas');
   const CAM = { x: droite ? 1920 - 64 - L : 64, y: bas ? 1080 - 120 - H : 180, l: L, h: H };
@@ -46,7 +48,7 @@
     Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu plein écran', true);
   ecran.prepend(...[...ecran.querySelectorAll('.apercu-zone')]);   // l'aperçu du jeu reste au fond
 
-  Composants.cadre(ecran, CAM, { nom: false });
+  if (!sansCam) Composants.cadre(ecran, CAM, { nom: false });
   Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
   Composants.bandeau(ecran, { x: 510, y: 990, l: 900, h: 66 }, { compact: true });
 

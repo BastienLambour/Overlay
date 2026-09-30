@@ -18,6 +18,14 @@ window.ReglagesChamps = {
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
     ] },
+    { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
+      { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite','En bas à droite'],['bas-gauche','En bas à gauche'],['haut-droite','En haut à droite'],['haut-gauche','En haut à gauche'],['aucune','Pas de webcam']] },
+      { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
+      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat' },
+      { cle: 'options.demarrage.chat', type: 'case', label: 'Démarrage : le chat' },
+      { cle: 'options.pause.chat', type: 'case', label: 'Pause : le chat' },
+      { cle: 'options.fin.chat', type: 'case', label: 'Fin : le chat' },
+    ] },
     { titre: 'Couleur et fond', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. La couleur des cadres et des éclats se règle juste au-dessus (« Couleur des cadres et des éclats »).', champs: [
       { cle: 'couleur', type: 'texte', label: 'Couleur des cadres et des éclats', aide: 'vert, rouge, bleu, violet, orange, cyan, jaune, rose — ou un code couleur, ex. #FFD400. Aussi source par source : jeu.html?couleur=rouge' },
       { cle: 'couleurs.fond', type: 'couleur', label: 'Fond (autour de ton image)', defaut: '#050607' },

@@ -23,8 +23,10 @@ const Scenes = (() => {
       const { cam, droite } = coinCam();
       Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu (plein écran)', 'jeu');
       if (p.get('cadre') !== '0') Composants.exterieur(ecran);
-      Composants.zoneApercu(ecran, cam, 'Webcam');
-      Composants.cadre(ecran, cam);
+      if (p.get('cam') !== '0') {                   // ?cam=0 : pas de webcam, pas de cadre de cam
+        Composants.zoneApercu(ecran, cam, 'Webcam');
+        Composants.cadre(ecran, cam);
+      }
       Composants.zoneWidget(ecran, { x: droite ? 60 : 1440, y: 45, l: 420, h: 250 }, 'Ton widget (succès…)');
     },
 

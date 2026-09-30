@@ -98,6 +98,8 @@ Dépose le fichier de la police de *Beyond Good & Evil* dans `assets/polices/`, 
 file:///G:/Projets/Overlay/mordethrhedan/scenes/jeu.html?cam=bas-droite&couleur=rouge
 ```
 
+**Plus simple, et pour de bon : `reglages.html` › Options des scènes.** Le coin de la webcam de la scène Jeu (ou « Pas de webcam ») et le chat de chaque écran s'y règlent une fois pour toutes, sans toucher aux adresses dans OBS. Une option écrite dans l'adresse d'une source passe **avant** ce réglage (pratique pour une source particulière).
+
 ### 2.7 Astuce — une seule source d'alertes pour toutes les scènes
 
 1. **Scènes › +** : crée une scène **« Global — Alertes »** et ajoutes-y `sources/alertes.html` (fiche 4.1).
@@ -201,7 +203,7 @@ Quand la cam est à droite, la zone du widget succès passe à gauche (`60`, `45
 6. **+ › Capture de jeu** › « Jeu ». Geste B : `0`, `0` · `1920` × `1080`.
 7. Ordre final : `Global — Alertes` · `Widget succès` · `Overlay` · `Webcam` · `Jeu`.
 
-**Options** : `?cam=bas-droite` · `?cadre=0` (sans le grand cadre extérieur) · `?couleur=rouge`
+**Options** : `?cam=bas-droite` · `?cadre=0` (sans le grand cadre extérieur) · `?couleur=rouge` · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
 
 ### 3.7 ⏱ Speedrun — `scenes/speedrun.html`
 
@@ -412,6 +414,7 @@ node outils/exporter-chaine.mjs
 | `?apercu=1` | affiche les zones des sources |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 | `?chat=0` | retire le chat intégré à la scène |
+| `?cam=0` | *(Jeu)* pas de webcam : le cadre de la cam disparaît |
 | `?minutes=0.5` | *(démarrage)* compte à rebours de 30 s |
 | `?couleur=rouge` | essaie une autre couleur |
 
@@ -425,6 +428,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 
 | Je veux changer… | Où |
 |---|---|
+| Le coin de la webcam, pas de webcam, le chat d'un écran | `reglages.html` › Options des scènes |
 | Une ambiance (Halloween, Noël…) | `reglages.html` › Couleur et fond (voir ci-dessous) |
 | La couleur partout | `reglages.html` › Couleur et fond, ou `config.js` › `couleur` (`vert`, `rouge`, `bleu`, `violet`, `orange`, `cyan`, `jaune`, `rose` ou `"#FFD400"`) |
 | La couleur d'une seule scène | `?couleur=rouge` dans l'adresse de l'overlay (pratique pour une scène « Jeu rouge ») |

@@ -18,6 +18,16 @@ window.CONFIG = {
   // Petite phrase fétiche, reprise sur les écrans et la bannière
   devise: "10 % skill · 90 % d'excuses",
 
+  // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
+  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
+  // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
+  options: {
+    jeu: { cam: "bas-droite", chat: true, bandeau: true },
+    contenu: { cam: true, chat: true, bandeau: true },
+    "cam-seule": { chat: true, bandeau: true },
+    pause: { chat: true },
+  },
+
   // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
   // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
   // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).

@@ -57,6 +57,7 @@
 | Moodboard (+ pistes de logo `design/logos.html`) | ✅ |
 | Écrans et scènes (avec le bouffon) | ✅ |
 | Page de réglages `reglages.html` | ✅ (écriture du fichier testée seulement en génération, pas le clic « Enregistrer » dans Edge) |
+| Options des scènes (webcam ou pas, coin, chat, bandeau, bouffon) dans `reglages.html` | ✅ (vérifié dans le navigateur, pas dans OBS) |
 | Sources | ✅ |
 | Transitions bouffon (vidéos Stinger : rideau 1400 ms, épée 700 ms, dé 1750 ms) | ✅ |
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
@@ -97,3 +98,4 @@
 - **2026-09-30** — Retour : « le logo près de la cam c'est bien, mais le cadre jaune était bien » → le logo est maintenant DANS la plaque dorée sous la cam. Réglage du bandeau renommé avec des noms communs à tous les overlays (`bandeau.follow`, `abonne`, `soutien`, `objectif`, `ceSoir`).
 - **2026-09-30** — Demande : changer les couleurs depuis les réglages (ex. thème Halloween, orange à la place du bleu), sur tous les overlays → `config.js › couleurs` + `js/couleurs.js` (commun) ; `reglages.html` › Couleurs : nuanciers et ambiances en un clic (🎃 Halloween, 🎄 Noël, ↺ Couleurs d'origine). Limite : le logo, le chapeau des cams et l'emblème sont des images et gardent leurs couleurs. Vidéos de transition et kit à refaire après un changement de couleurs.
 - **2026-09-30** — TUTO mis à jour : section « Les scripts » (installer Node.js et ffmpeg, lancer un script, tableau de tous les scripts dont actualiser-obs.lua).
+- **2026-09-30** — Demande : une option `?cam=0` (pas de webcam) → ajoutée (plus de cadre de cam, le chat récupère la place). Puis « cam et tout, on devrait pouvoir le régler depuis les réglages » → `config.js › options` + `js/options.js` (commun) ; `reglages.html` › **Options des scènes** : le coin de la webcam de la scène Jeu (ou « Pas de webcam »), la webcam de Contenu, le chat, le bandeau et le bouffon de chaque scène. Une option écrite dans l'adresse d'une source OBS passe avant.

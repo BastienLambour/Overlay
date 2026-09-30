@@ -114,6 +114,8 @@ file:///G:/Projets/Overlay/patagrain/scenes/demarrage.html?minutes=10
 
 Plusieurs options se séparent par `&` : `...jeu.html?cam=bas-gauche&bouffon=0`
 
+**Plus simple, et pour de bon : `reglages.html` › Options des scènes.** Le coin de la webcam de la scène Jeu (ou « Pas de webcam »), le chat, le bandeau, le bouffon de chaque scène s'y règlent une fois pour toutes, sans toucher aux adresses dans OBS. Une option écrite dans l'adresse d'une source passe **avant** ce réglage (pratique pour une source particulière).
+
 ### 2.6 Astuce — une seule source d'alertes pour toutes les scènes
 
 1. **Scènes › +** : crée une scène **« Global — Alertes »**.
@@ -225,7 +227,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Contenu`.
 
-**Options** : `?titre=Mon%20titre` (étiquette au-dessus du contenu, `?titre=` pour la masquer) · `?chat=0` · `?bandeau=0` · `?bouffon=0`
+**Options** : `?titre=Mon%20titre` (étiquette au-dessus du contenu, `?titre=` pour la masquer) · `?cam=0` (pas de webcam : le chat prend toute la hauteur ; n'ajoute pas la source Webcam) · `?chat=0` · `?bandeau=0` · `?bouffon=0`
 
 ### 3.6 ⚔️ Jeu — `scenes/jeu.html`
 
@@ -250,7 +252,7 @@ Taille de la webcam : `560` × `315` en 1440p, `420` × `236` en 1080p.
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Jeu`.
 
-**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?chat=0` · `?bandeau=0` · `?bouffon=0`
+**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?chat=0` · `?bandeau=0` · `?bouffon=0` · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
 **Le rythme du bouffon** : `reglages.html` › **Le bouffon** (« environ toutes les … secondes » : 180 par défaut, et « à chaque follow »).
 
 ---
@@ -465,6 +467,7 @@ node outils/exporter-chaine.mjs
 | `?minutes=0.2` | *(Starting soon)* compte à rebours de 12 s, pour voir le lancer de d20 |
 | `?mode=complet` | *(transitions)* animation entière |
 | `?bouffon=0` · `?chat=0` · `?bandeau=0` | retire le bouffon, le chat ou le bandeau de la page |
+| `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 
 Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple : ouvre `index.html` (tout y tourne en mode test), ou `reglages.html` › **Tester**.
@@ -484,6 +487,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Le bouffon (le cacher, son rythme en scène Jeu, sa bulle de fin) | `reglages.html` › Le bouffon |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`) |
+| Le coin de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) ; les couleurs d'origine sont au début de `css/theme.css` (palette « Royal bleu & or ») |
 | Les polices | fichiers dans `assets/polices/` (déjà fournis : Grenze Gotisch et Nunito), déclarés au début de `css/theme.css` |
 | Le dessin du bouffon ou de son chapeau | `outils/generer-bouffon.mjs` : `node outils/generer-bouffon.mjs` refait le bouffon, le chapeau et le logo, puis refaire les vidéos et le kit |
