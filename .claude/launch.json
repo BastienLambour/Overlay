@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "patagrain",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5500", "G:/Projets/Overlay/patagrain"],
+      "port": 5500
+    },
+    {
+      "name": "johnvongurt",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5501", "G:/Projets/Overlay/johnvongurt"],
+      "port": 5501
+    },
+    {
+      "name": "mordethrhedan",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5502", "G:/Projets/Overlay/mordethrhedan"],
+      "port": 5502
+    },
+    {
+      "name": "ambries",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5503", "G:/Projets/Overlay/ambries"],
+      "port": 5503
+    }
+  ]
+}

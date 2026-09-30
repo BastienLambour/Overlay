@@ -1,0 +1,100 @@
+/* =====================================================================
+   <NOM> — Configuration de l'overlay : c'est ici qu'on modifie les textes.
+   Pas besoin de toucher au reste : enregistre, puis actualise la source
+   dans OBS (clic droit > Actualiser).
+   Règles : garde les guillemets "…" autour des textes et la virgule en fin de ligne.
+   ===================================================================== */
+window.CONFIG = {
+  nomChaine: "<Nom affiché>",
+
+  // Identifiant technique de l'overlay (nom du dossier) : sépare les compteurs d'un overlay à l'autre.
+  id: "<pseudo>",
+
+  // Identifiant Twitch de la chaîne (celui de l'adresse twitch.tv/xxxx), en minuscules.
+  // Sert à lire le chat (aucun mot de passe nécessaire).
+  chaineTwitch: "<pseudo>",
+
+  // ---------------------------------------------------------------------
+  // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
+  // les follows, abonnements, bits, raids et dons. Voir TUTO.md.
+  // ---------------------------------------------------------------------
+  streamerbot: {
+    actif: true,
+    hote: "127.0.0.1",
+    port: 8080,
+    motDePasse: "",      // seulement si tu as activé l'authentification dans Streamer.bot
+  },
+
+  // --- Écran de démarrage ---
+  demarrage: {
+    titre: "Ça commence bientôt",
+    // Durée du compte à rebours en minutes (ou dans l'URL : demarrage.html?minutes=10)
+    minutes: 5,
+    texteFin: "C'est parti !",
+  },
+
+  // --- Écran de pause ---
+  pause: {
+    titre: "Petite pause",
+  },
+
+  // --- Écran de fin ---
+  fin: {
+    titre: "Merci d'être passés !",
+  },
+
+  // --- Chat intégré ---
+  chat: {
+    titre: "Le chat",
+    maxMessages: 12,
+    ignorer: ["nightbot", "streamelements", "streamlabs", "moobot", "fossabot", "wizebot"],
+    masquerCommandes: true,  // cache les messages qui commencent par « ! »
+  },
+
+  // --- Objectif (bandeau et jauge) ---
+  objectif: {
+    type: "follow",      // "follow" ou "sub"
+    titre: "Objectif followers",
+    cible: 50,
+    depart: 0,           // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
+  },
+
+  // --- Alertes ---
+  alertes: {
+    duree: 7,            // secondes d'affichage de chaque alerte
+    son: true,
+    volume: 0.5,         // de 0 à 1
+    anonyme: "quelqu’un",   // nom affiché quand Twitch ne donne pas le destinataire d'un abonnement offert
+    // {nom} {montant} {mois} {nombre} {destinataire} sont remplacés automatiquement
+    textes: {
+      follow:   { titre: "Nouveau follow",        message: "rejoint l'aventure" },
+      sub:      { titre: "Nouvel abonné",         message: "s'abonne à la chaîne" },
+      resub:    { titre: "Réabonnement",          message: "est abonné depuis {mois} mois" },
+      giftsub:  { titre: "Abonnement offert",     message: "offre un abonnement à {destinataire}" },
+      giftbomb: { titre: "Pluie d'abonnements !", message: "offre {nombre} abonnements" },
+      bits:     { titre: "Bits !",                message: "envoie {montant} bits" },
+      raid:     { titre: "Raid !",                message: "arrive avec {montant} viewers" },
+      don:      { titre: "Merci pour le don !",   message: "offre {montant}" },
+      objectif: { titre: "Objectif atteint !",    message: "merci à tous !" },
+    },
+  },
+
+  // --- Kit de chaîne Twitch (chaine/kit.html) : textes des visuels de la chaîne ---
+  chaine: {
+    slogan: "",                       // phrase sous le nom sur la bannière
+    horsLigne: "Pas de live pour le moment",
+    planning: [                       // jours et heures de stream (panneau Planning)
+      // ["Mercredi", "20h30"],
+    ],
+    reseaux: [                        // [nom, pseudo] (panneau Réseaux) — vide = panneau masqué
+      // ["Discord", "discord.gg/…"],
+    ],
+    // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
+    panneaux: ["À propos", "Planning", "Règles", "Soutenir"],
+  },
+
+  // Mode test (?test=1) : pseudos utilisés pour les fausses alertes
+  test: {
+    noms: ["Pseudo_1", "Pseudo_2", "Pseudo_3", "Pseudo_4", "Pseudo_5", "Pseudo_6"],
+  },
+};

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Alertes</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Source d'alertes : à ajouter en haut de chaque scène (1920 × 1080).
+  Coche « Contrôler l'audio via OBS » pour entendre et régler le son.
+  Options d'URL :
+    ?position=haut | centre | bas   (défaut : haut)
+    ?test=1   fait défiler des alertes d'exemple
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/son.js"></script>
+<script>
+  Commun.demarrer();
+  const CA = Commun.C.alertes || {};
+  const ecran = document.getElementById('ecran');
+  const Y = { haut: 190, centre: 440, bas: 740 }[Commun.params.get('position')] ?? 190;
+
+  const ICONES = { follow: 'oeil', sub: 'coeur', resub: 'trophee', giftsub: 'cadeau', giftbomb: 'cadeau', bits: 'piece', raid: 'fusee', don: 'eclair', objectif: 'etoile' };
+  const GRANDES = ['raid', 'giftbomb', 'objectif'];
+  const remplir = (t, e) => (t || '').replace(/\{(\w+)\}/g, (_, k) => e[k] ?? '');
+  // Petites éclaboussures autour du sticker
+  const tache = (c, r1, r2, r3) => `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="${r1}" fill="${c}" stroke="var(--encre)" stroke-width="4"/>
+    <circle cx="9" cy="48" r="${r2}" fill="${c}" stroke="var(--encre)" stroke-width="3"/><circle cx="51" cy="9" r="${r3}" fill="${c}" stroke="var(--encre)" stroke-width="3"/></svg>`;
+
+  // --- File d'attente : une alerte à la fois ---
+  const file = [];
+  let occupe = false;
+  function suivante() {
+    if (occupe || !file.length) return;
+    occupe = true;
+    afficher(file.shift(), () => { occupe = false; setTimeout(suivante, 600); });
+  }
+
+  function afficher(e, fini) {
+    const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
+    const grande = GRANDES.includes(e.type);
+    const bloc = document.createElement('div');
+    bloc.className = 'alerte-bloc';
+    bloc.style.top = Y + 'px';
+    bloc.innerHTML = `
+      ${grande ? `<div class="alerte-eclat"><svg viewBox="-600 -350 1200 700"><polygon points="${Commun.eclat(18, 600, 330).split(' ').map(p => { const [x, y] = p.split(',').map(Number); return `${x},${(y * .58).toFixed(1)}`; }).join(' ')}"
+        fill="var(--accent)" stroke="var(--encre)" stroke-width="10" stroke-linejoin="round"/></svg></div>` : ''}
+      <div class="alerte entre">
+        <div class="eclabousse" style="left:-30px;top:-30px;width:70px;height:70px">${tache('#fff', 16, 7, 5)}</div>
+        <div class="eclabousse" style="right:-24px;bottom:-32px;width:64px;height:64px">${tache('var(--accent)', 13, 6, 4)}</div>
+        <div class="alerte-ic">${Commun.icones[ICONES[e.type]] || ''}</div>
+        <div class="alerte-corps">
+          <div class="alerte-tete">Alerte !!</div>
+          <div class="alerte-titre"></div>
+          <div class="alerte-nom"></div>
+          <div class="alerte-msg"></div>
+        </div>
+      </div>`;
+    bloc.querySelector('.alerte-titre').textContent = t.titre;
+    bloc.querySelector('.alerte-nom').textContent = e.nom || '';
+    bloc.querySelector('.alerte-msg').textContent = remplir(t.message, e);
+    ecran.appendChild(bloc);
+    Son.jouer(e.type);
+
+    const el = bloc.querySelector('.alerte');
+    setTimeout(() => {
+      el.classList.remove('entre'); el.classList.add('sort'); bloc.classList.add('sort-bloc');
+      setTimeout(() => { bloc.remove(); fini(); }, 450);
+    }, (CA.duree || 7) * 1000);
+  }
+
+  Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
+  Evenements.demarrer();
+</script>
+</body>
+</html>

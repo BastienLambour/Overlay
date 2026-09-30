@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambries_ — Overlay Twitch</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  html, body { height: auto; overflow: auto; background: var(--fond); color: var(--texte); font-family: var(--f-texte); }
+  body { background-image: radial-gradient(ellipse at 50% -20%, color-mix(in srgb, var(--violet) 30%, transparent), transparent 55%); background-attachment: fixed; }
+  main { max-width: 1200px; margin: 0 auto; padding: 40px 20px 100px; }
+  .tete { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+  h1 { font: 400 clamp(64px, 10vw, 110px)/1 var(--f-neon); color: #fff; text-shadow: var(--halo-texte); margin: 0; }
+  h2 { font: 400 52px/1 var(--f-titre); letter-spacing: .03em; margin: 70px 0 16px; color: #fff; display: flex; gap: 16px; align-items: center;
+    -webkit-text-stroke: 2px var(--encre); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--violet); }
+  h2::before { content: attr(data-num); font: 600 16px var(--f-texte); color: var(--encre); background: var(--accent); padding: 4px 10px; border: 2px solid var(--encre); transform: rotate(-4deg); -webkit-text-stroke: 0; text-shadow: none; }
+  p { color: var(--doux); font-size: 18px; line-height: 1.6; max-width: 72ch; }
+  b { color: var(--texte); }
+  .liens { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 0; }
+  .liens a { text-decoration: none; color: var(--encre); font: 700 17px var(--f-texte); padding: 10px 18px; background: var(--blanc);
+    border: 3px solid var(--encre); border-radius: 12px; box-shadow: 5px 5px 0 var(--violet); transition: transform .2s var(--rebond); }
+  .liens a:hover { transform: translateY(-3px) rotate(-2deg); }
+  .apercus { display: grid; gap: 26px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .apercu a { color: var(--texte); text-decoration: none; }
+  .apercu b { display: block; font: 400 28px var(--f-titre); letter-spacing: .04em; margin: 12px 0 0; }
+  .apercu small { color: var(--doux); font-size: 14px; }
+  .ecran-mini { position: relative; aspect-ratio: 16/9; border: 3px solid color-mix(in srgb, var(--violet) 60%, transparent); border-radius: 16px; overflow: hidden;
+    background: linear-gradient(160deg, #2d3a55, #172033 60%, #0c1220); box-shadow: 0 0 20px color-mix(in srgb, var(--violet) 30%, transparent); }
+  .ecran-mini iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<main>
+  <div class="tete">
+    <div data-avatar="150" class="flotte"></div>
+    <div>
+      <h1 class="clignote-neon">Ambries_</h1>
+      <span class="sticker">10 % skill · 90 % d'excuses</span>
+    </div>
+  </div>
+  <p style="margin-top:26px">L'overlay Twitch d'Ambries_ : néon mauve, pop art et fluide blanc qui éclabousse. Chaque écran, scène, alerte et transition est visible ici en direct. Tout ce qu'il faut pour l'installer est dans le tutoriel.</p>
+  <nav class="liens">
+    <a href="TUTO.pdf">📘 Tutoriel d'installation (PDF)</a>
+    <a href="CONCEPT.pdf">🧭 Concept du projet (PDF)</a>
+    <a href="design/moodboard.html">🎨 Moodboard</a>
+    <a href="chaine/kit.html">📺 Kit de chaîne Twitch</a>
+  </nav>
+
+  <!-- ================================================================ -->
+  <h2 data-num="01">Aperçu</h2>
+  <p>Tout tourne ici en <b>mode test</b> (faux messages et fausses alertes). Clique sur un titre pour ouvrir la page en grand.</p>
+  <div class="apercus">
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/demarrage.html?minutes=0.5"></iframe></div><a href="scenes/demarrage.html?minutes=0.5" target="_blank"><b>Démarrage</b></a><small>scenes/demarrage.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/pause.html?test=1"></iframe></div><a href="scenes/pause.html?test=1" target="_blank"><b>Pause</b></a><small>scenes/pause.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/fin.html?test=1"></iframe></div><a href="scenes/fin.html?test=1" target="_blank"><b>Fin</b></a><small>scenes/fin.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/cam-seule.html?test=1"></iframe></div><a href="scenes/cam-seule.html?test=1" target="_blank"><b>Cam seule</b></a><small>scenes/cam-seule.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/contenu.html?test=1"></iframe></div><a href="scenes/contenu.html?test=1" target="_blank"><b>Contenu</b></a><small>scenes/contenu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="scenes/jeu.html?test=1"></iframe></div><a href="scenes/jeu.html?test=1" target="_blank"><b>Jeu</b></a><small>scenes/jeu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="sources/alertes.html?test=1"></iframe></div><a href="sources/alertes.html?test=1" target="_blank"><b>Alertes</b></a><small>sources/alertes.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="sources/chat.html?test=1"></iframe></div><a href="sources/chat.html?test=1" target="_blank"><b>Chat</b></a><small>sources/chat.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="sources/bandeau.html?test=1"></iframe></div><a href="sources/bandeau.html?test=1" target="_blank"><b>Bandeau</b></a><small>sources/bandeau.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="sources/objectif.html?test=1"></iframe></div><a href="sources/objectif.html?test=1" target="_blank"><b>Objectif</b></a><small>sources/objectif.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="sources/cam.html?apercu=1"></iframe></div><a href="sources/cam.html?apercu=1" target="_blank"><b>Cadre cam</b></a><small>sources/cam.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="transitions/splash.html?mode=complet" data-boucle="4"></iframe></div><a href="transitions/splash.html?mode=complet" target="_blank"><b>Transition : splash</b></a><small>transitions/splash.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="transitions/gouttes.html?mode=complet" data-boucle="4"></iframe></div><a href="transitions/gouttes.html?mode=complet" target="_blank"><b>Transition : gouttes</b></a><small>transitions/gouttes.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe data-src="transitions/pop-art.html?mode=complet" data-boucle="4"></iframe></div><a href="transitions/pop-art.html?mode=complet" target="_blank"><b>Transition : pop art</b></a><small>transitions/pop-art.html</small></div>
+  </div>
+</main>
+<script src="config.js"></script>
+<script src="js/commun.js"></script>
+<script>
+  Commun.demarrer();
+  // Ne charge que les aperçus visibles (et rejoue les transitions régulièrement)
+  const vues = new IntersectionObserver(entrees => entrees.forEach(({ target: f, isIntersecting }) => {
+    if (isIntersecting && !f.src) {
+      f.src = f.dataset.src;
+      if (f.dataset.boucle) setInterval(() => { f.src = f.dataset.src + '&t=' + Date.now(); }, f.dataset.boucle * 1000);
+    }
+  }), { rootMargin: '200px' });
+  document.querySelectorAll('iframe[data-src]').forEach(f => vues.observe(f));
+</script>
+</body>
+</html>

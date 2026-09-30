@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Démarrage</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « Démarrage » : source Navigateur 1920 × 1080, AU-DESSUS de la webcam / du jeu.
+  Compte à rebours posé sur ton image. Durée : demarrage.html?minutes=10
+  Coche « Actualiser le navigateur quand la scène devient active ».
+  Voir les emplacements : demarrage.html?apercu=1   ·   Faux chat : demarrage.html?test=1
+  Autre couleur pour cette scène : demarrage.html?couleur=rouge
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
+<script>Scenes.construire('demarrage');</script>
+</body>
+</html>

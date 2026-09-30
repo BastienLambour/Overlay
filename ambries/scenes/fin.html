@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Fin</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  #pluie { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+  .goutte { animation: tombe var(--d) linear var(--r) infinite; }
+  @keyframes tombe { from { transform: translateY(-160px) rotate(0); } to { transform: translateY(1260px) rotate(var(--rot)); } }
+
+  .perso { position: absolute; left: 230px; top: 280px; }
+  .perso .g1 { position: absolute; right: -60px; top: -20px; width: 110px; height: 110px; }
+  .perso .g2 { position: absolute; left: -100px; top: 90px; width: 120px; height: 90px; }
+
+  .colonne { position: absolute; left: 820px; top: 210px; width: 1000px; }
+  .gg { position: relative; display: inline-block; }
+  .gg .titre-pop { font-size: 330px; animation: gg-pop .8s .2s var(--rebond) both; }
+  @keyframes gg-pop { from { transform: scale(0) rotate(-20deg); } }
+  .gg .sticker { position: absolute; right: -150px; bottom: 60px; font-size: 48px; transform: rotate(8deg); animation: presque .6s 1.1s var(--rebond) both; }
+  @keyframes presque { from { transform: rotate(40deg) scale(0); } }
+  .merci { font: 600 46px/1.3 var(--f-texte); color: var(--texte); text-shadow: 3px 3px 0 var(--encre), 0 0 14px var(--encre); margin: 26px 0 40px; animation: apparait .6s 1.5s both; }
+  @keyframes apparait { from { opacity: 0; transform: translateY(20px); } }
+  .derniers { display: flex; gap: 22px; flex-wrap: wrap; animation: apparait .6s 1.9s both; }
+  .derniers .carte { background: var(--fond-2); border: 4px solid #fff; border-radius: 22px; box-shadow: var(--halo); padding: 16px 26px; display: flex; gap: 16px; align-items: center; }
+  .derniers .ic { width: 42px; height: 42px; color: var(--accent); }
+  .derniers small { display: block; font: 600 16px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--doux); }
+  .derniers b { font: 400 36px var(--f-titre); letter-spacing: .04em; }
+</style>
+</head>
+<body>
+<!--
+  Écran de fin : « GG ! (enfin… presque) », remerciements, derniers témoins,
+  et une pluie d'éclaboussures pop art.
+  Dans OBS : cocher « Actualiser le navigateur quand la scène devient active ».
+-->
+<div id="ecran">
+  <div class="calque lueur-fond"></div>
+  <svg id="pluie" viewBox="0 0 1920 1080"></svg>
+
+  <div class="perso">
+    <div data-avatar="440" class="flotte"></div>
+    <div class="g1 tremble" data-gribouillis="exclamation"></div>
+    <div class="g2 tremble" data-gribouillis="eclair"></div>
+  </div>
+
+  <div class="colonne">
+    <div class="gg"><h1 class="titre-pop" data-texte="fin.titre">GG !</h1><span class="sticker" data-texte="fin.sousTitre">(enfin… presque)</span></div>
+    <div class="merci" data-texte="fin.message">Merci d'avoir assisté au carnage 💜</div>
+    <div class="derniers">
+      <div class="carte"><span class="ic" data-icone="oeil"></span><div><small>Dernier témoin</small><b id="d-follow">—</b></div></div>
+      <div class="carte"><span class="ic" data-icone="coeur"></span><div><small>Soutien moral</small><b id="d-abonne">—</b></div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script>
+  Commun.demarrer();
+
+  // Pluie d'éclaboussures (blanches, néon et pop) qui tombent en tournant
+  const couleurs = ['#fff', '#fff', 'var(--violet)', 'var(--accent)', 'var(--mauve)'];
+  let html = '';
+  for (let i = 0; i < 34; i++) {
+    const x = Math.random() * 1920, r = 8 + Math.random() * 22, c = couleurs[i % couleurs.length];
+    const goutte = `<path d="M0 ${-r * 1.7} C${r * .6} ${-r * .6} ${r} 0 ${r} ${r * .3} A${r} ${r} 0 1 1 ${-r} ${r * .3} C${-r} 0 ${-r * .6} ${-r * .6} 0 ${-r * 1.7} Z"
+      fill="${c}" stroke="var(--encre)" stroke-width="3"/>`;
+    html += `<g transform="translate(${x.toFixed(0)} 0)"><g class="goutte" style="--d:${(6 + Math.random() * 7).toFixed(1)}s;--r:${(-Math.random() * 12).toFixed(1)}s;--rot:${(Math.random() * 90 - 45).toFixed(0)}deg">${goutte}</g></g>`;
+  }
+  document.getElementById('pluie').innerHTML = html;
+
+  // Derniers témoin et soutien de la soirée
+  Evenements.ecouter((e, etat) => {
+    document.getElementById('d-follow').textContent = etat.follow || '—';
+    document.getElementById('d-abonne').textContent = etat.abonne || '—';
+  });
+  Evenements.demarrer();
+</script>
+</body>
+</html>

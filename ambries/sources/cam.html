@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Cadre cam</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Cadre webcam néon seul (source 1920 × 1080), à poser AU-DESSUS de ta webcam.
+  Les chiffres x / y / l / h sont ceux de la zone où est ta webcam dans OBS.
+  Options d'URL :
+    ?x=1456&y=735&l=400&h=225   zone de la webcam
+    ?nom=0                      sans la plaque de nom
+    ?titre=Coucou               petit sticker au-dessus
+    ?apercu=1                   remplit la zone pour voir le placement
+-->
+<div id="ecran"></div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const p = Commun.params;
+  const z = Composants.zoneURL({ x: 1456, y: 735, l: 400, h: 225 });
+  Composants.cadre(document.getElementById('ecran'), z, { titre: p.get('titre') || '', nom: p.get('nom') !== '0', petit: z.l < 700 });
+  Commun.demarrer();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Objectif</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Barre d'objectif (followers ou abonnés, voir config.js > objectif).
+  Position : objectif.html?x=560&y=960&l=800&h=100   ·   Test : ?test=1
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Commun.demarrer();
+  Composants.objectif(document.getElementById('ecran'), Composants.zoneURL({ x: 560, y: 950, l: 800, h: 100 }));
+  Evenements.demarrer();
+</script>
+</body>
+</html>

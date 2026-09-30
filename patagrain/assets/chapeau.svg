@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 -4 392 214" role="img" aria-label="Chapeau de bouffon">
+  <style>
+    .pg-bleu { fill: var(--logo-bleu, #3A9AD9); }
+    .pg-bleu-fonce { fill: var(--logo-bleu-fonce, #1F6FA8); }
+    .pg-or { fill: var(--logo-or, #F5B82E); }
+    .pg-or-fonce { fill: #AD8120; }
+    .pg-d20-clair { fill: #8CC5EB; }
+    .pg-rouge { fill: var(--logo-chapeau, #232834); }
+  </style>
+  <g class="bf-chapeau">
+      
+      <g transform="translate(-4 0)"><path class="pg-bleu-fonce" d="M160 124 L118 104 C84 92 46 104 26 138 C18 152 16 170 22 186 C34 168 52 158 74 156 C98 154 116 162 126 178 Z"/>
+      <path class="pg-bleu" d="M162 122 L120 106 C88 96 54 108 36 138 C29 150 27 164 30 176 C42 160 60 150 80 149 C102 148 118 156 128 170 Z"/></g>
+      <g transform="translate(4 0)"><path class="pg-bleu-fonce" d="M240 124 L282 104 C316 92 354 104 374 138 C382 152 384 170 378 186 C366 168 348 158 326 156 C302 154 284 162 274 178 Z"/>
+      <path class="pg-bleu" d="M238 122 L280 106 C312 96 346 108 364 138 C371 150 373 164 370 176 C358 160 340 150 320 149 C298 148 282 156 272 170 Z"/></g>
+      <path class="pg-rouge" stroke="#C5CCD6" stroke-opacity=".7" stroke-width="2.5" stroke-linejoin="round" d="M236 118 C244 86 240 52 222 28 C208 10 186 2 164 6 C176 14 184 26 186 40 C190 66 182 94 170 118 Z"/>
+      <path class="pg-bleu" d="M112 178 C114 138 150 112 200 108 C250 112 286 138 288 178 C258 190 230 194 200 194 C170 194 142 190 112 178 Z"/>
+      <path class="pg-or" d="M110.0 158.0 L120.0 144.7 L130.0 163.1 L140.0 149.2 L150.0 167.0 L160.0 152.4 L170.0 169.6 L180.0 154.4 L190.0 170.8 L200.0 155.0 L210.0 170.8 L220.0 154.4 L230.0 169.6 L240.0 152.4 L250.0 167.0 L260.0 149.2 L270.0 163.1 L280.0 144.7 L290.0 158.0 L290.0 182.0 281.0 184.5 272.0 186.7 263.0 188.6 254.0 190.3 245.0 191.8 236.0 192.9 227.0 193.8 218.0 194.5 209.0 194.9 200.0 195.0 191.0 194.9 182.0 194.5 173.0 193.8 164.0 192.9 155.0 191.8 146.0 190.3 137.0 188.6 128.0 186.7 119.0 184.5 110.0 182.0 Z"/>
+      <path class="pg-or-fonce" d="M110 176 C142 190 170 194 200 194 C230 194 258 190 290 176 L290 186 C258 200 230 204 200 204 C170 204 142 200 110 186 Z"/>
+      <g class="bf-grelots">
+        <circle class="pg-or" cx="20" cy="194" r="13"/><circle class="pg-or" cx="380" cy="194" r="13"/>
+        <path d="M14 196 H26 M374 196 H386" stroke="rgba(0,0,0,.28)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="166" y1="8" x2="160" y2="20" stroke="#1b1b1b" stroke-width="2.5"/><polygon class="pg-d20-clair" points="158.0,15.1 139.3,25.5 158.0,22.5"/><polygon class="pg-d20-clair" points="158.0,15.1 158.0,22.5 176.7,25.5"/><polygon class="pg-bleu" points="139.3,25.5 143.4,47.7 158.0,22.5"/><polygon class="pg-bleu" points="176.7,25.5 158.0,22.5 172.6,47.7"/><polygon class="pg-bleu-fonce" points="139.3,25.5 139.3,46.5 143.4,47.7"/><polygon class="pg-bleu-fonce" points="176.7,25.5 172.6,47.7 176.7,46.5"/><polygon class="pg-bleu-fonce" points="139.3,46.5 158.0,56.9 143.4,47.7"/><polygon class="pg-bleu-fonce" points="176.7,46.5 172.6,47.7 158.0,56.9"/><polygon class="pg-bleu-fonce" points="143.4,47.7 158.0,56.9 172.6,47.7"/><polygon class="pg-or" points="158.0,22.5 143.4,47.7 172.6,47.7"/>
+      </g>
+    </g>
+</svg>

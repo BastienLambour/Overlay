@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Cam seule</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « blabla » : la cam en grand, le chat en bulles à côté, le bandeau en bas.
+  Dans OBS, place ta webcam SOUS cette source, dans la zone :
+    x 80 · y 200 · 1260 × 709 px
+  (ouvre cam-seule.html?apercu=1 pour voir la zone)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const CAM = { x: 80, y: 200, l: 1260, h: 709 };
+
+  Composants.fondDecoupe(ecran, [CAM]);
+  Composants.entete(ecran);
+  Composants.cadre(ecran, CAM);
+  Composants.chat(ecran, { x: 1394, y: 200, l: 446, h: 709 });
+  Composants.bandeau(ecran, { x: 80, y: 956, l: 1760, h: 84 });
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/* =====================================================================
+   PATAGRAIN — Styles communs aux transitions.
+   Les unités cqw / cqh = 1 % de la largeur / hauteur de l'écran.
+   --decalage (posé par js/transition.js) fait démarrer l'animation au
+   moment où l'écran est couvert, en mode « entrée ».
+   ===================================================================== */
+#ecran * { position: absolute; animation-delay: var(--decalage, 0s) !important; animation-fill-mode: both !important; }

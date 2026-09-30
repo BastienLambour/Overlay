@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Passage de la fusée</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .trainee { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background-color: var(--fond); overflow: hidden;
+    background-image: radial-gradient(circle, var(--doux) 1.5px, transparent 2.5px), linear-gradient(var(--faible) 2px, transparent 2px), linear-gradient(90deg, var(--faible) 2px, transparent 2px);
+    background-size: 90px 90px, 64px 64px, 64px 64px; }
+  .trainee::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 60px; background: var(--accent); opacity: .9; }
+  .vol { position: absolute; top: 50%; left: 0; width: 520px; height: 520px; margin-top: -260px; }
+  .vol svg { width: 100%; height: 100%; overflow: visible; }
+  .vol .vibre { animation: vibre .1s linear infinite alternate; }
+  @keyframes vibre { from { transform: translate(0, -2px); } to { transform: translate(0, 2px); } }
+
+  /* Mode « complet » (stinger) : recouvre puis dévoile — 2 s */
+  .complet .trainee { animation: trainee 2s cubic-bezier(.6,0,.3,1) both; }
+  .complet .vol { animation: vol 2s cubic-bezier(.6,0,.3,1) both; }
+  @keyframes trainee { 0% { left: 0; width: 0; } 50%, 58% { left: 0; width: 100%; } 100% { left: 100%; width: 0; } }
+  @keyframes vol { 0% { transform: translateX(-560px); } 50% { transform: translateX(1760px); } 100% { transform: translateX(2600px); } }
+
+  /* Mode « entrée » : l'écran est couvert, la fusée traverse et dévoile la scène — 1,4 s */
+  .entree .trainee { animation: devoile 1.4s cubic-bezier(.6,0,.3,1) both; }
+  .entree .trainee::after { left: 0; right: auto; }
+  .entree .vol { animation: vol-entree 1.4s cubic-bezier(.6,0,.3,1) both; }
+  @keyframes devoile { 0%, 10% { left: 0; width: 100%; } 100% { left: 100%; width: 0; } }
+  @keyframes vol-entree { 0%, 10% { transform: translateX(-560px); } 100% { transform: translateX(2100px); } }
+</style>
+</head>
+<body>
+<!--
+  Transition « passage de la fusée » (1920 × 1080).
+  ?mode=entree  (défaut) : à mettre en haut de chaque scène, avec « Actualiser le navigateur
+                quand la scène devient active » : la fusée traverse et dévoile la scène.
+  ?mode=complet : recouvre puis dévoile (2 s), pour fabriquer une vidéo Stinger.
+-->
+<div id="ecran">
+  <div class="trainee"></div>
+  <div class="vol"><svg viewBox="-260 -260 520 520"><g class="vibre"><g transform="rotate(90) scale(1.3)" id="fusee-place"></g></g></svg></div>
+</div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>document.getElementById('fusee-place').innerHTML = Commun.fusee({ id: 'f-pass', flamme: true });</script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patagrain — Overlay Twitch</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  html, body { width: auto; height: auto; overflow: auto; background: var(--fond); }
+  main { max-width: 1200px; margin: 0 auto; padding: 36px 20px 100px; }
+  .logo { width: min(520px, 90%); margin: 0 auto 10px; }
+  .intro { text-align: center; color: var(--texte-doux); font-size: 18px; max-width: 70ch; margin: 0 auto; }
+  h2 { font: 800 44px/1.1 var(--f-titre); color: var(--primaire); margin: 64px 0 16px; display: flex; gap: 16px; align-items: center; }
+  h2::before { content: attr(data-num); font: 900 16px var(--f-texte); color: #1b1b1b; background: var(--accent); border-radius: 10px; padding: 6px 10px; }
+  h3 { font: 800 28px var(--f-titre); margin: 26px 0 10px; }
+  p, li, td { color: var(--texte-doux); font-size: 17px; line-height: 1.6; }
+  b, strong { color: var(--texte); }
+  a { color: var(--accent); }
+  code { font: 700 15px ui-monospace, Consolas, monospace; color: var(--accent); overflow-wrap: anywhere; }
+  li { margin-bottom: 6px; }
+  ol, ul { padding-left: 24px; }
+  .note { border-left: 6px solid var(--accent); background: var(--surface); border-radius: 12px; padding: 14px 18px; margin: 18px 0; }
+  .note p { margin: 0; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; }
+  th { text-align: left; font: 900 13px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); padding: 12px 14px; border-bottom: 3px solid var(--fond); }
+  td { padding: 12px 14px; border-bottom: 2px solid var(--fond); vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  .tableau { overflow-x: auto; }
+  .apercus { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .apercu b { display: block; font: 800 24px var(--f-titre); margin: 10px 0 0; }
+  .apercu small { color: var(--texte-doux); font-size: 14px; }
+  .ecran-mini { position: relative; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; border: 3px solid var(--surface);
+    background: linear-gradient(160deg, #3c6e47, #1d3b2a 60%, #0e1f16); }
+  .ecran-mini iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .pile { list-style: none; padding: 0; margin: 8px 0 0; }
+  .pile li { background: var(--surface); border-radius: 10px; padding: 8px 14px; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .pile li span:last-child { font: 700 14px ui-monospace, Consolas, monospace; color: var(--texte-doux); }
+  .scenes-obs { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .liens { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; }
+  .liens a { text-decoration: none; font-weight: 800; padding: 10px 16px; border: 2px solid var(--accent); border-radius: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="assets/logo-couleur.svg" alt="Patagrain">
+  <p class="intro">L'overlay Twitch de Patagrain : chaque écran, scène, alerte et transition, en direct.
+    Tout ce qu'il faut pour l'installer est dans le tutoriel.</p>
+  <nav class="liens" style="justify-content:center">
+    <a href="TUTO.pdf">📘 Tutoriel d'installation (PDF)</a>
+    <a href="CONCEPT.pdf">🧭 Concept du projet (PDF)</a>
+    <a href="design/moodboard.html">🎨 Moodboard</a>
+    <a href="chaine/kit.html">📺 Kit de chaîne Twitch</a>
+  </nav>
+
+  <h2 data-num="01">Aperçu</h2>
+  <p>Tout tourne ici en <b>mode test</b> (faux messages et fausses alertes). Le fond vert représente ton jeu ou ta cam. Clique sur un titre pour ouvrir la page en grand.</p>
+  <div class="apercus">
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/demarrage.html?minutes=1" loading="lazy"></iframe></div><a href="scenes/demarrage.html?minutes=0.5" target="_blank"><b>Starting soon</b></a><small>scenes/demarrage.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/pause.html?test=1&minutes=5" loading="lazy"></iframe></div><a href="scenes/pause.html?test=1" target="_blank"><b>Pause</b></a><small>scenes/pause.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/fin.html?prochainStream=Jeudi%2020h30" loading="lazy"></iframe></div><a href="scenes/fin.html" target="_blank"><b>Fin</b></a><small>scenes/fin.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/cam-seule.html?test=1" loading="lazy"></iframe></div><a href="scenes/cam-seule.html?test=1" target="_blank"><b>Cam seule</b></a><small>scenes/cam-seule.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/contenu.html?test=1" loading="lazy"></iframe></div><a href="scenes/contenu.html?test=1" target="_blank"><b>Contenu</b></a><small>scenes/contenu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/jeu.html?test=1" loading="lazy"></iframe></div><a href="scenes/jeu.html?test=1" target="_blank"><b>Jeu</b></a><small>scenes/jeu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/alertes.html?test=1&position=centre" loading="lazy"></iframe></div><a href="sources/alertes.html?test=1" target="_blank"><b>Alertes</b></a><small>sources/alertes.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/objectif.html?test=1&x=460&y=440&l=1000&h=190" loading="lazy"></iframe></div><a href="sources/objectif.html?test=1" target="_blank"><b>Objectif</b></a><small>sources/objectif.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/chat.html?test=1&x=660&y=90&l=600&h=900" loading="lazy"></iframe></div><a href="sources/chat.html?test=1" target="_blank"><b>Chat</b></a><small>sources/chat.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/bandeau.html?test=1&x=60&y=490&l=1800&h=100" loading="lazy"></iframe></div><a href="sources/bandeau.html?test=1" target="_blank"><b>Bandeau d'infos</b></a><small>sources/bandeau.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/cam.html?nom=1&apercu=1&x=560&y=260&l=800&h=450" loading="lazy"></iframe></div><a href="sources/cam.html?nom=1&apercu=1" target="_blank"><b>Cadre cam</b></a><small>sources/cam.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="transitions/rideau.html?mode=complet" loading="lazy" data-boucle="4500"></iframe></div><a href="transitions/rideau.html?mode=complet" target="_blank"><b>Transition : rideau (bouffon machiniste)</b></a><small>transitions/rideau.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="transitions/epee.html?mode=complet" loading="lazy" data-boucle="3900"></iframe></div><a href="transitions/epee.html?mode=complet" target="_blank"><b>Transition : coup d'épée (bouffon bretteur)</b></a><small>transitions/epee.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="transitions/de.html?mode=complet" loading="lazy" data-boucle="4300"></iframe></div><a href="transitions/de.html?mode=complet" target="_blank"><b>Transition : jet de dé (bouffon équilibriste)</b></a><small>transitions/de.html</small></div>
+  </div>
+
+</main>
+<script>
+  // Les transitions ne durent que 2 à 3 s : on les relance en boucle, seulement quand elles sont à l'écran
+  const visibles = new Set();
+  const observateur = new IntersectionObserver(entrees => entrees.forEach(e => e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target)));
+  document.querySelectorAll('iframe[data-boucle]').forEach(f => {
+    observateur.observe(f);
+    setInterval(() => { if (visibles.has(f)) f.contentWindow.location.reload(); }, Number(f.dataset.boucle));
+  });
+</script>
+</body>
+</html>

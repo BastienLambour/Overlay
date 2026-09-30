@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Cadre webcam</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Cadre webcam seul (source 1920 × 1080), à poser AU-DESSUS de ta webcam.
+  Les chiffres x / y / l / h sont ceux de la zone où est ta webcam dans OBS.
+  Options d'URL :
+    ?x=1456&y=735&l=400&h=225   zone de la webcam
+    ?nom=1                      affiche la plaque « Nom — Grade »
+    ?titre=Flux%20caméra        texte au-dessus (vide pour le masquer : ?titre=)
+    ?apercu=1                   remplit la zone pour voir le placement
+-->
+<div id="ecran"></div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const p = Commun.params;
+  Composants.cadre(document.getElementById('ecran'), Composants.zoneURL({ x: 1456, y: 735, l: 400, h: 225 }),
+    { titre: p.has('titre') ? p.get('titre') : 'Flux caméra', nom: p.has('nom') });
+  Commun.demarrer();
+</script>
+</body>
+</html>

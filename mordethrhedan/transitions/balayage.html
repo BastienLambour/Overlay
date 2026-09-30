@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Balayage</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  .nom { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; opacity: 0; }
+  .nom p { font-size: 150px; }
+  /* Un panneau de fond traverse l'écran de gauche à droite, bord lumineux en tête */
+  .panneau { position: absolute; inset: 0; transform: translateX(-102%); }
+  .panneau-fond { position: absolute; inset: 0; }
+  .panneau::before, .panneau::after { content: ""; position: absolute; top: 0; bottom: 0; width: 8px; background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 30px 6px var(--accent-halo); }
+  .panneau::before { left: -4px; } .panneau::after { right: -4px; }
+
+  .complet .panneau { animation: complet 1.6s cubic-bezier(.7,0,.3,1) both; }
+  .complet .nom { animation: nom-complet 1.6s ease both; }
+  @keyframes complet { 0% { transform: translateX(-102%); } 40%, 60% { transform: translateX(0); } 100% { transform: translateX(102%); } }
+  @keyframes nom-complet { 0%, 35% { opacity: 0; } 45%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
+
+  .entree .panneau { animation: entree .8s .15s cubic-bezier(.7,0,.3,1) both; }
+  .entree .nom { animation: nom-entree .5s both; }
+  @keyframes entree { from { transform: translateX(0); } to { transform: translateX(102%); } }
+  @keyframes nom-entree { from { opacity: 1; } to { opacity: 0; } }
+</style>
+</head>
+<body>
+<!--
+  Transition « balayage ».
+  Sans rien installer : en haut de chaque scène, cocher « Actualiser le navigateur quand la scène devient active ».
+  Vidéo Stinger : voir outils/generer-transitions.mjs (point de transition : 800 ms).
+-->
+<div id="ecran">
+  <div class="panneau"><div class="panneau-fond"></div></div>
+  <div class="nom"><p class="titre-neon"></p></div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script>document.querySelector('.nom p').textContent = Commun.C.nomChaine || '';</script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

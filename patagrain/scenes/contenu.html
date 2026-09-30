@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Contenu</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « Contenu » : le contenu à gauche, la cam et le chat empilés à droite.
+  Dans OBS, place tes sources SOUS cette source, dans les zones :
+    Contenu : x 60   · y 130 · 1280 × 720 px
+    Webcam  : x 1400 · y 150 · 460 × 259 px
+  (ouvre contenu.html?apercu=1 pour voir les zones, ?test=1 pour de faux messages)
+  Option : ?titre=Mon%20titre   étiquette au-dessus du contenu (vide pour la masquer : ?titre=)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const CONTENU = { x: 60, y: 130, l: 1280, h: 720 };
+  const CAM = { x: 1400, y: 150, l: 460, h: 259 };
+  const p = Commun.params;
+
+  Composants.fondDecoupe(ecran, [CONTENU, CAM]);
+  Composants.entete(ecran);
+  Composants.cadre(ecran, CONTENU, { decor: false, nom: false, titre: p.has('titre') ? p.get('titre') : CONFIG.titreDuJour, apercuTitre: 'Contenu' });
+  Composants.cadre(ecran, CAM);
+  Composants.chat(ecran, { x: 1390, y: 470, l: 480, h: 420 });
+  Composants.bandeau(ecran, { x: 60, y: 930, l: 1800, h: 100 });
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

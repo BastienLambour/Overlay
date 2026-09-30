@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Speedrun</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « Speedrun » : source Navigateur 1920 × 1080, AU-DESSUS de la webcam / du jeu.
+  Manette et splits à gauche (tes propres widgets, posés PAR-DESSUS cette source), jeu à droite.
+  Voir les emplacements : speedrun.html?apercu=1   ·   Faux chat : speedrun.html?test=1
+  Autre couleur pour cette scène : speedrun.html?couleur=rouge
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
+<script>Scenes.construire('speedrun');</script>
+</body>
+</html>

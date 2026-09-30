@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Le sas</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .porte { position: absolute; top: 0; bottom: 0; width: 960px; background-color: var(--fond-2);
+    background-image: linear-gradient(var(--faible) 2px, transparent 2px), linear-gradient(90deg, var(--faible) 2px, transparent 2px); background-size: 64px 64px; }
+  .porte.g { left: 0; border-right: 5px solid var(--trait); }
+  .porte.d { right: 0; border-left: 5px solid var(--trait); }
+  .porte::after { content: ""; position: absolute; top: 0; bottom: 0; width: 70px; background: repeating-linear-gradient(-50deg, var(--accent) 0 24px, var(--etiquette-fond) 24px 48px); }
+  .porte.g::after { right: 0; } .porte.d::after { left: 0; }
+  .porte .rivets { position: absolute; top: 60px; bottom: 60px; width: 14px; background: radial-gradient(circle, var(--doux) 5px, transparent 6px) 0 0 / 14px 90px; }
+  .porte.g .rivets { right: 110px; } .porte.d .rivets { left: 110px; }
+  .badge-sas { position: absolute; left: 50%; top: 50%; text-align: center; transform: translate(-50%, -50%); }
+  .badge-sas .rond { width: 220px; height: 220px; margin: 0 auto 22px; border-radius: 50%; background: var(--fond); border: 6px solid var(--trait); display: grid; place-items: center; color: var(--trait); }
+  .badge-sas .rond svg { width: 120px; height: 120px; }
+  .badge-sas .etiquette { font-size: 28px; }
+
+  /* Mode « complet » (stinger) : fermeture, pause, ouverture — 2,2 s */
+  .complet .porte.g { animation: porte-g 2.2s cubic-bezier(.7,0,.2,1) both; }
+  .complet .porte.d { animation: porte-d 2.2s cubic-bezier(.7,0,.2,1) both; }
+  .complet .badge-sas { animation: badge 2.2s cubic-bezier(.34,1.4,.64,1) both; }
+  @keyframes porte-g { 0% { transform: translateX(-101%); } 28%, 72% { transform: translateX(0); } 100% { transform: translateX(-101%); } }
+  @keyframes porte-d { 0% { transform: translateX(101%); } 28%, 72% { transform: translateX(0); } 100% { transform: translateX(101%); } }
+  @keyframes badge { 0%, 25% { transform: translate(-50%, -50%) scale(0); } 36%, 66% { transform: translate(-50%, -50%) scale(1); } 76%, 100% { transform: translate(-50%, -50%) scale(0); } }
+
+  /* Mode « entrée » : la scène démarre sas fermé, puis il s'ouvre — 1,3 s */
+  .entree .porte.g { animation: ouvre-g 1.3s cubic-bezier(.7,0,.2,1) both; }
+  .entree .porte.d { animation: ouvre-d 1.3s cubic-bezier(.7,0,.2,1) both; }
+  .entree .badge-sas { animation: badge-sort 1.3s ease-in both; }
+  @keyframes ouvre-g { 0%, 45% { transform: translateX(0); } 100% { transform: translateX(-101%); } }
+  @keyframes ouvre-d { 0%, 45% { transform: translateX(0); } 100% { transform: translateX(101%); } }
+  @keyframes badge-sort { 0%, 30% { transform: translate(-50%, -50%) scale(1); } 45%, 100% { transform: translate(-50%, -50%) scale(0); } }
+</style>
+</head>
+<body>
+<!--
+  Transition « sas » (1920 × 1080).
+  ?mode=entree  (défaut) : à mettre en haut de chaque scène, avec « Actualiser le navigateur
+                quand la scène devient active » : le sas s'ouvre sur la scène.
+  ?mode=complet : fermeture + ouverture (2,2 s), pour fabriquer une vidéo Stinger.
+-->
+<div id="ecran">
+  <div class="porte g"><div class="rivets"></div></div>
+  <div class="porte d"><div class="rivets"></div></div>
+  <div class="badge-sas"><div class="rond" data-icone="fusee"></div><span class="etiquette">Changement de canal</span></div>
+</div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

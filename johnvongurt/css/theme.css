@@ -1,0 +1,167 @@
+/* =====================================================================
+   THÈME — variables et composants partagés par tous les écrans.
+   Changer une couleur ici la change partout.
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  /* Thème sombre (par défaut) */
+  --fond: #0B0E13;
+  --fond-2: #11151C;
+  --trait: #E6EAEE;        /* traits et texte principal */
+  --doux: #7C8793;         /* texte secondaire */
+  --faible: rgba(230, 234, 238, .08);
+  --coque: #141920;        /* remplissage de la fusée */
+  --accent: #FF9F1C;       /* orange « attention » */
+  --flamme: #FFE08A;
+  --alerte: #FF4D4D;
+  --ok: #5BD69A;
+  --etiquette-fond: #07090C;
+  --etiquette-texte: #E6EAEE;
+
+  --f-titre: 'Barlow Condensed', sans-serif;
+  --f-texte: 'Barlow', sans-serif;
+  --f-mono: 'JetBrains Mono', monospace;
+  --marge: 48px;
+  --epaisseur: 3px;
+}
+
+[data-theme="clair"] {
+  --fond: #E4E6E1;
+  --fond-2: #D8DBD5;
+  --trait: #1D242B;
+  --doux: #6F7880;
+  --faible: rgba(29, 36, 43, .08);
+  --coque: #EEF0EC;
+  --etiquette-fond: #15191E;
+  --etiquette-texte: #EEF0EC;
+}
+
+/* ---------- Écran 1920×1080 mis à l'échelle ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+#ecran {
+  position: absolute; left: 0; top: 0;
+  width: 1920px; height: 1080px; overflow: hidden;
+  transform-origin: 0 0;
+  background: var(--fond); color: var(--trait);
+  font-family: var(--f-texte);
+}
+.calque { position: absolute; inset: 0; }
+
+/* ---------- Fonds ---------- */
+.grille {
+  background-image:
+    linear-gradient(var(--faible) 1px, transparent 1px),
+    linear-gradient(90deg, var(--faible) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.vignette { background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55)); }
+[data-theme="clair"] .vignette { background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.10)); }
+
+.etoile { fill: var(--trait); animation: scintille var(--d, 3s) ease-in-out infinite; animation-delay: var(--r, 0s); }
+@keyframes scintille { 50% { opacity: .12; } }
+
+/* ---------- Coins en équerre ---------- */
+.cadre { position: absolute; }
+.cadre > .coin { position: absolute; width: 60px; height: 60px; border: var(--epaisseur) solid var(--trait); }
+.coin.hg { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.coin.hd { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.coin.bg { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.coin.bd { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+.cadre.marge { inset: var(--marge); }
+
+/* ---------- Boîte biseautée ---------- */
+.boite {
+  --c: 22px;
+  position: relative; padding: var(--epaisseur);
+  background: var(--trait);
+  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
+}
+.boite > .interieur {
+  background: var(--fond-2);
+  clip-path: polygon(0 0, calc(100% - var(--c)) 0, 100% var(--c), 100% 100%, var(--c) 100%, 0 calc(100% - var(--c)));
+  height: 100%;
+}
+
+/* ---------- Textes ---------- */
+.label {
+  font: 600 22px var(--f-texte); letter-spacing: .14em; text-transform: uppercase;
+}
+.label.doux { color: var(--doux); }
+.mono { font-family: var(--f-mono); }
+.titre-geant {
+  font: 700 118px/0.95 var(--f-titre); text-transform: uppercase; letter-spacing: .01em; margin: 0;
+}
+.etiquette {
+  display: inline-block;
+  background: var(--etiquette-fond); color: var(--etiquette-texte);
+  font: 500 24px var(--f-mono); letter-spacing: .1em; text-transform: uppercase;
+  padding: 10px 24px;
+}
+.hachures {
+  display: inline-block; width: 90px; height: 16px;
+  background: repeating-linear-gradient(-55deg, var(--doux) 0 4px, transparent 4px 10px);
+}
+.attention { color: var(--accent); }
+
+/* ---------- En-tête « Mission Control » ---------- */
+.entete { position: absolute; left: 80px; top: 72px; }
+.entete-haut { display: flex; align-items: center; gap: 20px; margin-bottom: 12px; }
+.badge {
+  width: 84px; height: 84px; border-radius: 50%;
+  border: var(--epaisseur) solid var(--trait);
+  display: grid; place-items: center;
+}
+.badge svg { width: 46px; height: 46px; }
+.entete .boite { display: inline-block; }
+.entete .interieur { padding: 14px 40px 10px 26px; }
+.entete .nom { font: 700 104px/1 var(--f-titre); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap; }
+
+/* ---------- Statut système (haut droite) ---------- */
+.statut { position: absolute; right: 80px; top: 72px; text-align: center; }
+.statut-titre { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 12px; }
+.statut-titre::before, .statut-titre::after { content: ""; height: 2px; width: 80px; background: var(--doux); }
+.statut .boite { --c: 16px; }
+.statut .interieur { display: flex; padding: 14px 10px; }
+.statut-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 30px; min-width: 170px; }
+.statut-item + .statut-item { border-left: 2px solid var(--faible); }
+.statut-item svg { width: 40px; height: 40px; }
+.statut-item .label { font-size: 18px; }
+.statut-item .valeur { font: 600 22px var(--f-mono); }
+
+.icone { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Pied de page ---------- */
+.pied { position: absolute; left: 80px; right: 80px; bottom: 64px; display: flex; align-items: center; justify-content: space-between; }
+.pied-circuit { display: flex; align-items: center; gap: 14px; }
+.pied-circuit svg { width: 120px; height: 24px; }
+.pied .label { font-size: 18px; white-space: nowrap; }
+.pied .etiquette { white-space: nowrap; }
+.pied-centre { position: absolute; left: 50%; transform: translateX(-50%); bottom: 118px; }
+
+/* ---------- Fusée (dessin commun) ----------
+   Couleurs fixes : la fusée garde la même livrée quel que soit le thème. */
+.fusee { --coque: #141920; --trait: #E6EAEE; }
+.fusee .jambe-int { transition: transform .9s cubic-bezier(.34,1.56,.64,1); }
+.fusee .jambe-int.gauche { transform: rotate(-25deg) scale(.5); }
+.fusee .jambe-int.droite { transform: rotate(25deg) scale(.5); }
+.jambes-sorties .fusee .jambe-int { transform: none; }
+.fusee .coque, .fusee .aileron, .fusee .tuyere, .fusee .hublot {
+  fill: var(--coque); stroke: var(--trait); stroke-width: 3; stroke-linejoin: round;
+}
+.fusee .contour { fill: none; stroke: var(--trait); stroke-width: 3; stroke-linejoin: round; }
+.fusee .ligne { fill: none; stroke: var(--trait); stroke-width: 2.4; stroke-linecap: round; }
+.fusee .hublot-int { fill: var(--accent); }
+.fusee .carburant { fill: var(--accent); opacity: .45; }
+.fusee .niveau { stroke: var(--accent); stroke-width: 2.5; }
+.fusee .jambes { fill: none; stroke: var(--trait); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.fl-ext { fill: var(--accent); }
+.fl-int { fill: var(--flamme); }
+.flamme { transform-box: fill-box; transform-origin: 50% 0%; animation: crepite .12s ease-in-out infinite alternate; }
+@keyframes crepite { from { transform: scale(.92, .86); } to { transform: scale(1.04, 1.08); } }
+
+/* Traits génériques pour les décors SVG */
+.trait { fill: none; stroke: var(--trait); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.trait-fin { fill: none; stroke: var(--doux); stroke-width: 1.6; stroke-linecap: round; }
+.plein { fill: var(--coque); stroke: var(--trait); stroke-width: 2.5; stroke-linejoin: round; }

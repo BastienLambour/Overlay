@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Source — Bandeau d'infos</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Bandeau d'infos seul (source 1920 × 1080) : titre du jour, dernier aventurier (follow),
+  dernier chevalier (abonné), dernier tribut (bits / don), objectif. Se met à jour via Streamer.bot.
+  Options d'URL :
+    ?x=60&y=950&l=1800&h=100   position et taille
+    ?compact=1                 seulement dernier aventurier + objectif
+    ?test=1                    événements d'exemple
+-->
+<div id="ecran"></div>
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Composants.bandeau(document.getElementById('ecran'), Composants.zoneURL({ x: 60, y: 950, l: 1800, h: 100 }), { compact: Commun.params.has('compact') });
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

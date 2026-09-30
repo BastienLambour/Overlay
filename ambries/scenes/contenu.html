@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Contenu</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « contenu » : cam + chat à gauche, contenu (jeu, vidéo, navigateur…) à droite.
+  Dans OBS, place tes sources SOUS cette source, dans les zones :
+    Webcam  : x 60  · y 220 · 480 × 270 px
+    Contenu : x 590 · y 200 · 1270 × 714 px
+  (ouvre contenu.html?apercu=1 pour voir les zones)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const CAM = { x: 60, y: 220, l: 480, h: 270 };
+  const CONTENU = { x: 590, y: 200, l: 1270, h: 714 };
+
+  Composants.fondDecoupe(ecran, [CAM, CONTENU]);
+  Composants.entete(ecran);
+  Composants.cadre(ecran, CONTENU, { titre: 'En cours', nom: false, doodle: false, jeu: true });
+  Composants.cadre(ecran, CAM, { petit: true });
+  Composants.chat(ecran, { x: 60, y: 550, l: 480, h: 364 });
+  Composants.bandeau(ecran, { x: 60, y: 956, l: 1800, h: 84 });
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

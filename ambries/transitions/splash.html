@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Transition Splash</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  #fluide { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+  .prechargement { position: absolute; width: 1px; height: 1px; opacity: 0; }
+</style>
+</head>
+<body>
+<!--
+  Transition « Splash » (1920 × 1080) : Une bande de fluide blanc traverse l'écran en éclaboussant, puis repart en laissant des gouttes.
+  ?mode=entree  (défaut) : à mettre en haut d'une scène, avec « Actualiser le navigateur
+                quand la scène devient active » : la scène apparaît en se découvrant.
+  ?mode=complet : recouvre puis découvre, pour fabriquer la vidéo Stinger
+                  (node outils/generer-transitions.mjs splash).
+-->
+<div id="ecran" data-type="splash">
+  <svg id="fluide" viewBox="0 0 1920 1080"></svg>
+  <img class="prechargement" src="../assets/avatar.png" alt="">
+</div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fluide.js"></script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

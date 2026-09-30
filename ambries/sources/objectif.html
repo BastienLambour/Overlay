@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Objectif</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Objectif (source 1920 × 1080) : ta tête avance dans la jauge à chaque follow
+  (ou abonnement, selon config.js › objectif.type).
+  Options d'URL :
+    ?x=560&y=60&l=800&h=150   position et taille
+    ?test=1                   événements d'exemple
+-->
+<div id="ecran"></div>
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Composants.objectif(document.getElementById('ecran'), Composants.zoneURL({ x: 560, y: 60, l: 800, h: 150 }));
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Coup d'épée (bouffon bretteur)</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/transitions.css">
+<link rel="stylesheet" href="../css/bouffon.css">
+<style>
+  /* 6. Le bouffon bretteur — arrive, lève l'épée et tranche l'écran — 2,4 s */
+  .br { inset: 0; }
+  .br-a { background: var(--primaire-fonce); clip-path: polygon(0 0, 101% 0, 0 101%); transform: translate(-100%, -100%); }
+  .br-b { background: var(--fond); clip-path: polygon(101% -1%, 101% 101%, -1% 101%); transform: translate(100%, 100%); }
+  .br-trait { left: 50%; top: 50%; width: 125cqw; height: 1.6cqh; background: #FFF8E8; box-shadow: 0 0 2cqh #fff; border-radius: 1cqh;
+    transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); }
+  .br-perso { height: 64cqh; width: 27.8cqh; left: calc(50% - 13.9cqh); top: 30cqh; transform: translateX(-80cqw); }
+  #ecran .br-a { animation: br-a 2.4s cubic-bezier(.77,0,.18,1) both; }
+  #ecran .br-b { animation: br-b 2.4s cubic-bezier(.77,0,.18,1) both; }
+  #ecran .br-trait { animation: br-trait 2.4s ease-out both; }
+  #ecran .br-perso { animation: br-perso 2.4s both; }
+  #ecran .bf-hanche-g { animation: br-pas-g 2.4s both; }
+  #ecran .bf-hanche-d { animation: br-pas-d 2.4s both; }
+  #ecran .bf-epaule-d { animation: br-bras 2.4s both; }
+  #ecran .bf-coude-d { animation: br-coude 2.4s both; }
+  #ecran .bf-epaule-g { animation: br-bras-g 2.4s ease-in-out both; }
+  #ecran .bf-tout { animation: br-corps 2.4s both; }
+  @keyframes br-a { 0%, 4% { transform: translate(-100%, -100%); } 26%, 64% { transform: translate(0, 0); } 90%, 100% { transform: translate(-100%, -100%); } }
+  @keyframes br-b { 0%, 4% { transform: translate(100%, 100%); } 26%, 64% { transform: translate(0, 0); } 90%, 100% { transform: translate(100%, 100%); } }
+  @keyframes br-trait { 0%, 47% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); opacity: 1; }
+    53% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 1; } 70%, 100% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 0; } }
+  @keyframes br-perso { 0%, 8% { transform: translateX(-80cqw); animation-timing-function: linear; } 32%, 58% { transform: translateX(0); animation-timing-function: ease-in; } 74%, 100% { transform: translateX(85cqw); } }
+  @keyframes br-pas-g { 0%, 10%, 18%, 26%, 32%, 58%, 62%, 66%, 70%, 100% { transform: translateY(0); } 14%, 22%, 29%, 60%, 68% { transform: translateY(-26px) rotate(6deg); } }
+  @keyframes br-pas-d { 0%, 14%, 22%, 29%, 32%, 60%, 68%, 100% { transform: translateY(0); } 10%, 18%, 26%, 62%, 66%, 72% { transform: translateY(-26px) rotate(-6deg); } }
+  @keyframes br-bras { 0%, 32% { transform: rotate(-20deg); animation-timing-function: ease-out; } 42%, 46% { transform: rotate(-165deg); animation-timing-function: cubic-bezier(.7,0,1,.5); }
+    50% { transform: rotate(35deg); } 56% { transform: rotate(25deg); } 64%, 100% { transform: rotate(-20deg); } }
+  @keyframes br-coude { 0%, 32% { transform: rotate(0); } 42%, 46% { transform: rotate(-20deg); } 50%, 56% { transform: rotate(10deg); } 64%, 100% { transform: rotate(0); } }
+  @keyframes br-bras-g { 0%, 32% { transform: rotate(20deg); } 42%, 46% { transform: rotate(55deg); } 50%, 56% { transform: rotate(35deg); } 64%, 100% { transform: rotate(20deg); } }
+  @keyframes br-corps { 0%, 40% { transform: none; } 46% { transform: rotate(-4deg); } 50% { transform: rotate(6deg) translateY(10px); } 56% { transform: rotate(4deg) translateY(6px); } 64%, 100% { transform: none; } }
+</style>
+</head>
+<body>
+<!--
+  Transition « Coup d'épée (bouffon bretteur) » (1920 × 1080). Durée 2,4 s. Point de transition : 700 ms.
+  Les panneaux se referment, le bouffon traverse l'écran, lève l'épée et tranche l'écran en deux, puis repart.
+  ?mode=entree  (défaut) : en haut d'une scène, avec « Actualiser le navigateur quand la scène
+                devient active » : la scène apparaît couverte, puis se dévoile.
+  ?mode=complet : animation entière, pour fabriquer la vidéo Stinger (outils/generer-transitions.mjs).
+-->
+<div id="ecran" data-coupe="700">
+  <div class="br br-a"></div>
+  <div class="br br-b"></div>
+  <div class="br-trait"></div>
+  <div class="br-perso" data-bouffon="pied-epee"></div>
+</div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/bouffon.js"></script>
+<script>
+  // Le bouffon (dessin commun à toutes les transitions, voir js/bouffon.js)
+  document.querySelectorAll('[data-bouffon]').forEach(el => {
+    el.innerHTML = Bouffon.svg('pied', { epee: el.dataset.bouffon === 'pied-epee' });
+  });
+</script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

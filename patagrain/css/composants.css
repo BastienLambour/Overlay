@@ -1,0 +1,181 @@
+/* =====================================================================
+   PATAGRAIN — Composants réutilisés par les scènes et les sources.
+   ===================================================================== */
+
+/* ---------- Cartes ---------- */
+.carte { background: var(--surface); border-radius: var(--rayon); box-shadow: var(--ombre); }
+.carte.bordee { border: 5px solid var(--accent); }
+
+/* ---------- Fond des écrans d'attente ---------- */
+.fond-attente {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 45%, color-mix(in srgb, var(--primaire) 14%, transparent), transparent 70%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .35) 100%),
+    var(--fond);
+}
+.decor-flottant { position: absolute; inset: 0; pointer-events: none; }
+.decor-flottant svg {
+  position: absolute; width: var(--taille, 90px); opacity: .09;
+  animation: derive var(--duree, 18s) ease-in-out infinite alternate;
+  animation-delay: var(--retard, 0s);
+}
+@keyframes derive {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to   { transform: translate(var(--dx, 30px), var(--dy, -40px)) rotate(var(--rot, 40deg)); }
+}
+
+/* ---------- Fond opaque avec des trous pour la cam et le contenu ---------- */
+.fond-decoupe { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+
+/* ---------- Fanions ---------- */
+.fanions { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; }
+.fanions::before { content: ""; position: absolute; top: 10px; left: 0; right: 0; height: 5px; background: var(--texte-doux); opacity: .55; border-radius: 5px; }
+.fanion {
+  width: 70px; height: 92px; margin: 10px 5px 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center; animation: balance 3.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -.37s);
+}
+.fanion:nth-child(3n+1) { background: var(--primaire); }
+.fanion:nth-child(3n+2) { background: var(--accent); }
+.fanion:nth-child(3n)   { background: var(--accent-2); }
+@keyframes balance { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+/* ---------- Bandeau de messages (écrans d'attente) ---------- */
+.bandeau-messages {
+  position: absolute; left: 50%; bottom: 60px; translate: -50% 0;
+  display: flex; align-items: center; gap: 22px;
+  padding: 18px 40px; min-width: 900px; justify-content: center;
+}
+.bandeau-messages svg { width: 46px; flex: none; }
+.bandeau-messages .message { font: 700 32px var(--f-texte); color: var(--texte); transition: opacity .6s, transform .6s var(--rebond); }
+.bandeau-messages .message.sortie { opacity: 0; transform: translateY(14px); }
+
+/* ---------- En-tête des scènes en direct ---------- */
+.entete { position: absolute; left: 60px; top: 26px; display: flex; align-items: center; gap: 22px; }
+.entete .logo { height: 70px; }
+.en-direct { display: flex; align-items: center; gap: 10px; background: var(--accent-2); color: var(--fond);
+  font: 900 20px var(--f-texte); letter-spacing: 3px; text-transform: uppercase; padding: 6px 16px; border-radius: 10px; }
+.en-direct i { width: 12px; height: 12px; border-radius: 50%; background: var(--fond); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+
+/* ---------- Cadre de caméra (anneau autour d'une zone transparente) ---------- */
+.cam-cadre { position: absolute; pointer-events: none; }
+.cam-cadre .anneau { position: absolute; overflow: visible; }
+.cam-cadre .anneau .bord { fill: var(--primaire); }
+.cam-cadre .anneau .ombre { fill: var(--primaire-fonce); }
+.cam-cadre .chapeau { position: absolute; left: 50%; translate: -50% 0; z-index: 2; }
+.cam-cadre .de { position: absolute; z-index: 3; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .3)); animation: vacille-de 4s ease-in-out infinite; }
+.cam-cadre .de.g { --r: -14deg; }
+.cam-cadre .de.d { --r: 12deg; animation-delay: -2s; }
+.cam-cadre .plaque {
+  position: absolute; left: 50%; translate: -50% 0; z-index: 2; white-space: nowrap;
+  background: var(--accent); color: #1b1b1b; font-family: var(--f-titre); font-weight: 800;
+  padding: .06em .9em .12em; clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%);
+}
+/* Cadre « contenu » : plus sobre, sans décor */
+.cam-cadre.sobre .anneau .bord { fill: var(--surface); }
+.cam-cadre .titre-zone {
+  position: absolute; z-index: 2; left: 34px; white-space: nowrap;
+  background: var(--surface); color: var(--texte); border: 4px solid var(--primaire); border-radius: 12px;
+  font: 800 24px var(--f-titre); padding: 2px 18px 4px; display: flex; align-items: center; gap: 10px;
+}
+.cam-cadre .titre-zone svg { width: 26px; }
+
+/* ---------- Zones d'aperçu (?apercu=1) ---------- */
+.apercu-zone {
+  position: absolute; display: grid; place-items: center; text-align: center;
+  background: repeating-linear-gradient(45deg, #56616f 0 30px, #4c5663 30px 60px);
+  color: #fff; font: 900 26px/1.4 var(--f-texte); text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
+}
+.apercu-zone.jeu { background: linear-gradient(160deg, #3c6e47, #1d3b2a 60%, #0e1f16); }
+
+/* ---------- Chat ---------- */
+.chat {
+  --taille-chat: 26px;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
+  overflow: hidden; font-size: var(--taille-chat);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%);
+}
+.chat-msg {
+  background: color-mix(in srgb, var(--surface) var(--opacite-chat, 88%), transparent);
+  border-left: .28em solid var(--c); border-radius: .5em;
+  padding: .35em .7em .4em; line-height: 1.3; overflow-wrap: anywhere;
+  animation: chat-entree .5s var(--rebond) both;
+}
+.chat-msg.sortie { animation: chat-sortie .6s ease-in both; }
+.chat-pseudo { font-weight: 900; color: var(--c); margin-right: .45em; white-space: nowrap; }
+.chat-pseudo::after { content: " :"; color: var(--texte-doux); font-weight: 700; }
+.chat-badges { display: inline-flex; gap: .15em; margin-right: .3em; vertical-align: -.18em; }
+.chat-badges > * { height: 1.05em; width: auto; display: inline-block; }
+.chat-badges .badge-epee { height: 1.15em; transform: rotate(35deg); }
+.chat-texte { font-weight: 600; }
+.emote { height: 1.5em; display: inline-block; vertical-align: -.4em; margin: 0 .05em; }
+@keyframes chat-entree { from { opacity: 0; transform: translateX(-30px); } }
+@keyframes chat-sortie { to { opacity: 0; transform: translateX(-30px); } }
+
+/* Carte « taverne » qui contient le chat */
+.taverne { position: absolute; display: flex; flex-direction: column; padding: 22px 22px 18px; }
+.taverne-tete { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.taverne-tete svg { width: 38px; }
+.taverne-tete .titre { font-size: 44px; }
+.taverne .chat { flex: 1; min-height: 0; }
+/* Chat flottant sur le jeu : pas de carte, messages plus transparents */
+.chat-flottant { position: absolute; }
+.chat-flottant .chat { position: absolute; inset: 0; --opacite-chat: 72%; }
+
+/* ---------- Bandeau d'infos ---------- */
+.bandeau { position: absolute; display: flex; align-items: stretch; overflow: hidden; padding: 0; }
+.bandeau .embleme { flex: none; display: grid; place-items: center; padding: 0 18px 0 22px; background: var(--fond); }
+.bandeau .embleme img { height: 72%; }
+.bandeau-item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 16px; padding: 0 26px; }
+.bandeau-item + .bandeau-item { border-left: 4px solid var(--fond); }
+.bandeau-item .ic { flex: none; width: 44px; display: grid; place-items: center; }
+.bandeau-item .ic svg, .bandeau-item .ic img { width: 100%; }
+.bandeau-item small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 900 14px var(--f-texte); letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); }
+.bandeau-item b { display: block; font: 800 30px/1.1 var(--f-titre); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bandeau-item.flash { animation: flash 1.4s ease-out; }
+@keyframes flash { 0% { background: color-mix(in srgb, var(--accent) 45%, transparent); } 100% { background: transparent; } }
+.mini-jauge { height: 8px; margin-top: 5px; border-radius: 8px; background: var(--fond); overflow: hidden; }
+.mini-jauge i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 8px; transition: width 1s var(--rebond); }
+.bandeau.compact .bandeau-item b { font-size: 26px; }
+
+/* ---------- Objectif (guilde) ---------- */
+.objectif { position: absolute; padding: 18px 30px 22px; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+.objectif-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.objectif-tete .titre { font-size: 38px; display: flex; align-items: center; gap: 12px; }
+.objectif-tete .titre svg { width: 40px; }
+.objectif-tete .compte { font: 900 30px var(--f-texte); font-variant-numeric: tabular-nums; }
+.jauge { position: relative; height: 30px; border-radius: 30px; background: var(--fond); border: 4px solid var(--primaire); }
+.jauge .rempli { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 30px; background: var(--accent);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .12); transition: width 1.2s var(--rebond); }
+.jauge .curseur { position: absolute; top: 50%; left: 112px; width: 34px; translate: calc(-50% - 52px) -50%; transition: left 1.2s var(--rebond); }
+
+/* ---------- Alertes ---------- */
+.alerte {
+  position: absolute; left: 50%; display: flex; align-items: center; gap: 26px; translate: -50% 0;
+  background: var(--surface); border: 6px solid var(--primaire); border-radius: 28px;
+  padding: 20px 46px 20px 20px; min-width: 700px; max-width: 1300px; box-shadow: 0 12px 0 var(--primaire-fonce);
+}
+.alerte.grande { border-color: var(--accent); box-shadow: 0 12px 0 color-mix(in srgb, var(--accent) 60%, #000); padding: 28px 56px 28px 28px; }
+.alerte.entre { animation: alerte-entre .8s var(--rebond) both; }
+.alerte.sort { animation: alerte-sort .5s ease-in both; }
+@keyframes alerte-entre { from { opacity: 0; transform: translateY(-160px) scale(.6) rotate(-5deg); } }
+@keyframes alerte-sort { to { opacity: 0; transform: translateY(-60px) scale(.85); } }
+.alerte-icone { width: 130px; height: 130px; flex: none; border-radius: 22px; background: var(--fond); display: grid; place-items: center; transform-origin: 50% 12%; }
+.alerte.grande .alerte-icone { width: 160px; height: 160px; }
+.alerte-icone > * { width: 76%; max-height: 80%; }
+.alerte.entre .alerte-icone { animation: tinte 1.4s .5s ease-in-out 2; }
+.alerte-titre { font: 900 24px var(--f-texte); letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+.alerte-nom { font: 800 76px/1 var(--f-titre); display: inline-block; margin: 4px 0 6px; overflow-wrap: anywhere; }
+.alerte.grande .alerte-nom { font-size: 92px; }
+.alerte.entre .alerte-nom { animation: pop .55s .4s var(--rebond) both; }
+.alerte-msg { font: 700 30px var(--f-texte); color: var(--texte-doux); }
+@keyframes pop { from { transform: scale(0); } }
+/* Grande alerte : guirlande de fanions au-dessus de la carte */
+.alerte .fanions { top: -70px; left: 30px; right: 30px; }
+.alerte .fanions::before { top: 4px; }
+.alerte .fanion { width: 46px; height: 60px; margin-top: 4px; }
+.alerte.entre .fanions { animation: fanions-tombent .7s .2s var(--rebond) both; }
+@keyframes fanions-tombent { from { opacity: 0; transform: translateY(-40px); } }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Starting soon</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .contenu { position: absolute; inset: 0 0 150px; padding-top: 70px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .logo { width: 760px; }
+  .titre-principal { font-size: 108px; margin-top: 22px; }
+  .du-jour { display: flex; align-items: center; gap: 18px; margin-top: 18px; font: 700 38px var(--f-texte); color: var(--texte-doux); }
+  .du-jour svg { width: 42px; }
+  .compteur { margin-top: 36px; padding: 16px 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .compteur .etiquette { display: flex; align-items: center; gap: 14px; }
+  .compteur .etiquette svg { width: 40px; animation: lancer 10s var(--rebond) infinite; }
+  .chiffres { font: 900 112px/1 var(--f-texte); font-variant-numeric: tabular-nums; letter-spacing: 4px; }
+  .chiffres.fini { font: 800 88px/1.2 var(--f-titre); color: var(--accent); animation: entree .8s var(--rebond) both; }
+  @keyframes lancer { 0%, 88% { transform: rotate(0); } 100% { transform: rotate(720deg); } }
+</style>
+</head>
+<body>
+<!--
+  Écran « Starting soon » (1920 × 1080, plein écran).
+  Coche « Actualiser le navigateur quand la scène devient active » : le compte à rebours repart à chaque fois.
+  Options : ?minutes=10  (durée)  ·  ?heure=20:30  (heure fixe)  ·  ?titre=…  ·  ?titreDuJour=…
+-->
+<div id="ecran" class="plein">
+  <div class="fond-attente"></div>
+  <div class="decor-flottant" id="decor"></div>
+  <div class="fanions" id="fanions"></div>
+
+  <div class="contenu">
+    <div class="entree"><img class="logo flotte" src="../assets/logo-couleur.svg" alt="Patagrain"></div>
+    <h1 class="titre titre-principal entree" style="--retard:.15s" data-texte="demarrage.titre"></h1>
+    <div class="du-jour entree" style="--retard:.3s">
+      <svg viewBox="0 0 100 100"><use href="#i-d20"/></svg><span data-texte="titreDuJour"></span><svg viewBox="0 0 100 100"><use href="#i-d20"/></svg>
+    </div>
+    <div class="compteur carte bordee entree" style="--retard:.45s">
+      <div class="etiquette"><svg viewBox="0 0 100 100"><use href="#i-d20"/></svg><span data-texte="demarrage.etiquette"></span></div>
+      <div class="chiffres" id="chiffres">--:--</div>
+    </div>
+  </div>
+
+  <div class="bandeau-messages carte entree" style="--retard:.6s">
+    <svg viewBox="0 0 60 70"><use href="#i-grelot"/></svg><span class="message" id="message"></span>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  const P = Commun, R = CONFIG.demarrage;
+  P.demarrer();
+  P.fanions(document.getElementById('fanions'));
+  P.decor(document.getElementById('decor'));
+  P.messages(document.getElementById('message'));
+
+  const chiffres = document.getElementById('chiffres');
+  P.compteARebours(chiffres, { heure: P.params.get('heure') || R.heure, minutes: P.params.get('minutes') ?? R.minutes }, () => {
+    chiffres.textContent = R.texteFin;
+    chiffres.classList.add('fini');
+  });
+</script>
+</body>
+</html>

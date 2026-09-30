@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Démarrage</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  #coulures { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .trame-coin { position: absolute; right: 0; bottom: 0; width: 900px; height: 600px; --c: color-mix(in srgb, var(--violet) 55%, transparent); --t: 26px;
+    -webkit-mask: radial-gradient(circle at 100% 100%, #000 20%, transparent 70%); mask: radial-gradient(circle at 100% 100%, #000 20%, transparent 70%); }
+
+  .perso { position: absolute; left: 190px; top: 300px; }
+  .perso .g1 { position: absolute; right: -70px; top: -30px; width: 120px; height: 120px; }
+  .perso .g2 { position: absolute; left: -110px; top: 40px; width: 130px; height: 90px; }
+  .perso .g3 { position: absolute; left: -40px; bottom: -30px; width: 90px; height: 90px; }
+
+  .colonne { position: absolute; left: 790px; top: 250px; width: 1000px; }
+  .colonne .titre-pop { font-size: 150px; }
+  .compteur { display: inline-block; margin: 34px 0 40px; font: 400 130px/1 var(--f-titre); letter-spacing: .05em; color: var(--encre);
+    background: var(--blanc); border: 6px solid var(--encre); border-radius: 26px; padding: 10px 40px 0; box-shadow: 12px 12px 0 var(--violet), 0 0 40px color-mix(in srgb, var(--violet) 60%, transparent);
+    transform: rotate(-2deg); }
+  .compteur.fini { animation: rebond-c .5s var(--rebond); }
+  @keyframes rebond-c { from { transform: rotate(-12deg) scale(1.3); } }
+
+  .chargement { width: 820px; }
+  .chargement .l { display: flex; justify-content: space-between; align-items: baseline; font: 600 30px var(--f-texte); color: var(--lilas); margin-bottom: 12px; }
+  .chargement .l b { font: 400 44px var(--f-titre); color: var(--accent); letter-spacing: .03em; }
+  .jauge { height: 50px; border-radius: 999px; border: 5px solid var(--encre); background: var(--surface); overflow: hidden; box-shadow: 8px 8px 0 var(--encre), 0 0 24px color-mix(in srgb, var(--violet) 50%, transparent); }
+  .jauge i { display: block; height: 100%; width: 0; border-radius: 999px; transition: width .5s linear;
+    background: var(--accent); background-image: radial-gradient(circle, rgba(255,255,255,.35) 28%, transparent 30%); background-size: 16px 16px; animation: defile 1s linear infinite; }
+  .phrase { margin-top: 30px; font: 500 30px var(--f-texte); color: var(--doux); min-height: 40px; transition: opacity .4s; }
+  .phrase.cache { opacity: 0; }
+
+  .final { position: absolute; left: 1510px; top: 640px; width: 0; height: 0; opacity: 0; }
+  .final.visible { opacity: 1; }
+  .final svg { position: absolute; left: -260px; top: -170px; width: 520px; height: 340px; overflow: visible; }
+  .final .sticker { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) rotate(-5deg); font-size: 44px; white-space: nowrap; }
+  .final.visible svg { animation: eclat-entre .7s var(--rebond) both, eclat-tourne 14s linear infinite; }
+  .final.visible .sticker { animation: sticker-pop .6s .15s var(--rebond) both; }
+  @keyframes sticker-pop { from { transform: translate(-50%, -50%) rotate(-25deg) scale(0); } }
+</style>
+</head>
+<body>
+<!--
+  Écran « Ça commence bientôt » : compte à rebours, jauge « Chargement des excuses »
+  qui plafonne à 90 %, petites phrases qui défilent.
+  Durée : config.js › demarrage.minutes, ou demarrage.html?minutes=10
+  Dans OBS : cocher « Actualiser le navigateur quand la scène devient active ».
+-->
+<div id="ecran">
+  <div class="calque lueur-fond"></div>
+  <div class="trame-coin trame"></div>
+  <svg id="coulures" viewBox="0 0 1920 1080"></svg>
+
+  <div class="perso">
+    <div data-avatar="440" class="flotte"></div>
+    <div class="g1 tremble" data-gribouillis="exclamation"></div>
+    <div class="g2 tremble" data-gribouillis="eclair"></div>
+    <div class="g3" data-gribouillis="spirale"></div>
+  </div>
+
+  <div class="colonne">
+    <h1 class="titre-pop" data-texte="demarrage.titre">Ça commence bientôt !</h1>
+    <div class="compteur" id="compteur">05:00</div>
+    <div class="chargement">
+      <div class="l"><span id="chargement-texte" data-texte="demarrage.chargement">Chargement des excuses…</span><b id="pourcent">0 %</b></div>
+      <div class="jauge"><i id="jauge"></i></div>
+    </div>
+    <div class="phrase" id="phrase"></div>
+  </div>
+
+  <div class="final" id="final">
+    <svg viewBox="-330 -210 660 420"><polygon id="eclat" fill="#fff" stroke="var(--encre)" stroke-width="8" stroke-linejoin="round"/></svg>
+    <span class="sticker" data-texte="demarrage.texteFin">C'est parti !</span>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fluide.js"></script>
+<script>
+  Commun.demarrer();
+  const C = Commun.C.demarrage || {};
+  const $ = id => document.getElementById(id);
+
+  // Coulures de peinture blanche figées en haut de l'écran (les mêmes que la transition « gouttes »)
+  Fluide.creer($('coulures'), 'gouttes', { graine: 11 }).rendre(0.3);
+  $('eclat').setAttribute('points', Commun.eclat(16, 330, 200).split(' ').map(p => { const [x, y] = p.split(',').map(Number); return `${x},${(y * .64).toFixed(1)}`; }).join(' '));
+
+  // Compte à rebours + jauge qui plafonne à 90 % (on ne rigole pas avec les excuses)
+  const minutes = parseFloat(Commun.params.get('minutes') ?? C.minutes ?? 5);
+  const duree = Math.max(5, minutes * 60);
+  const debut = Date.now();
+  let fini = false;
+  function tic() {
+    const ecoule = (Date.now() - debut) / 1000, reste = duree - ecoule;
+    $('compteur').textContent = Commun.mmss(Math.ceil(Math.max(0, reste)));
+    const pct = Math.min(90, Math.floor(ecoule / duree * 100));
+    $('pourcent').textContent = pct + ' %';
+    $('jauge').style.width = pct + '%';
+    if (reste <= 0 && !fini) {
+      fini = true;
+      $('compteur').classList.add('fini');
+      $('chargement-texte').textContent = '90 %… ça suffira.';
+      $('final').classList.add('visible');
+    }
+  }
+  tic(); setInterval(tic, 250);
+
+  // Petites phrases qui défilent
+  const phrases = C.phrases || [];
+  let n = 0;
+  function phraseSuivante() {
+    if (!phrases.length) return;
+    const el = $('phrase');
+    el.classList.add('cache');
+    setTimeout(() => { el.textContent = phrases[n++ % phrases.length]; el.classList.remove('cache'); }, 400);
+  }
+  phraseSuivante(); setInterval(phraseSuivante, 4500);
+</script>
+</body>
+</html>

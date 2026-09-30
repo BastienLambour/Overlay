@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre">
+<head>
+<meta charset="UTF-8">
+<title>Démarrage — Préparation au lancement</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  /* ----- Panneau « séquence de lancement » ----- */
+  .panneau { position: absolute; left: 80px; top: 330px; width: 560px; }
+  .panneau .interieur { padding: 28px 32px 30px; }
+  .panneau-tete { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .compteur { font: 600 124px/1 var(--f-mono); letter-spacing: -.02em; margin: 6px 0 22px; }
+  .compteur .t { color: var(--doux); font-size: 64px; vertical-align: 28px; margin-right: 10px; }
+  .compteur.zero { color: var(--accent); animation: clignote 1s steps(2) infinite; }
+  @keyframes clignote { 50% { opacity: .35; } }
+
+  .ligne-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .ligne-info .mono { font-size: 26px; font-weight: 600; color: var(--accent); }
+  .jauge { display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; height: 26px; margin-bottom: 30px; }
+  .jauge i { background: var(--faible); transition: background .4s; }
+  .jauge i.plein { background: var(--accent); }
+
+  .verifs { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+  .verifs li { display: flex; justify-content: space-between; align-items: center; font: 500 24px var(--f-texte); }
+  .verifs li .etat { font: 600 18px var(--f-mono); letter-spacing: .08em; color: var(--doux); }
+  .verifs li.ok .etat { color: var(--ok); }
+  .verifs li.encours .etat { color: var(--accent); animation: clignote 1.2s steps(2) infinite; }
+
+  .avertissement { display: flex; align-items: center; gap: 12px; margin-top: 26px; font: 600 20px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; }
+  .avertissement svg { width: 30px; height: 30px; }
+
+  /* ----- Scène du pas de tir ----- */
+  #scene { position: absolute; left: 680px; top: 180px; width: 1180px; height: 700px; }
+  .balise { fill: var(--alerte); animation: clignote 1.4s steps(2) infinite; }
+  .lampe { fill: var(--flamme); }
+  .flux { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 10 16; animation: flux 1s linear infinite; }
+  @keyframes flux { to { stroke-dashoffset: -26; } }
+  .bras { transition: transform 2.5s cubic-bezier(.6,0,.2,1); }
+  .retrait .bras { transform: scaleX(.22); }
+  .vapeur { fill: var(--trait); opacity: 0; transform-box: fill-box; transform-origin: center; animation: vapeur var(--d) ease-out infinite; animation-delay: var(--r); }
+  @keyframes vapeur {
+    0% { opacity: 0; transform: translate(0, 0) scale(.3); }
+    15% { opacity: .22; }
+    100% { opacity: 0; transform: translate(var(--dx), -40px) scale(1.8); }
+  }
+  .retrait .vapeur { animation-duration: calc(var(--d) * .6); }
+  .retrait .flux { animation: none; opacity: 0; transition: opacity 1s; }
+  .etiquette-svg { font: 600 15px var(--f-mono); fill: var(--doux); letter-spacing: .1em; }
+  #scene { overflow: visible; }
+
+  /* ----- Allumage & décollage ----- */
+  #f1-allumage { transform-box: fill-box; transform-origin: 50% 0%; transform: scale(.3, 0); opacity: 0; transition: transform 1.2s ease-out, opacity .3s; }
+  .allumage-on #f1-allumage { transform: scale(.7, .6); opacity: 1; }
+  .decolle #f1-allumage { transform: scale(1.4, 2); }
+  .lueur { fill: var(--accent); opacity: 0; transition: opacity .8s; }
+  .allumage-on .lueur { opacity: .35; }
+  .secousse { animation: secousse .07s linear infinite alternate; }
+  @keyframes secousse { from { transform: translate(-1.5px, 1px); } to { transform: translate(1.5px, -1px); } }
+
+  .fumee { fill: var(--fond-2); stroke: var(--trait); stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .allumage-on .fumee.petite { animation: bouffee var(--d) ease-out var(--r) infinite; }
+  @keyframes bouffee { 0% { opacity: .5; transform: translate(0,0) scale(.4); } 100% { opacity: 0; transform: translate(var(--dx), -30px) scale(1.6); } }
+  .decolle .fumee.grosse { animation: nuage-fumee var(--d) cubic-bezier(.1,.6,.3,1) var(--r) forwards; }
+  @keyframes nuage-fumee {
+    0% { opacity: 1; transform: translate(0, 0) scale(.3); }
+    60% { opacity: .9; }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(var(--s)); }
+  }
+
+  /* ----- Zone d'annonces (à droite de la fusée) ----- */
+  .annonces { position: absolute; left: 1400px; top: 250px; width: 440px; height: 380px; }
+  .annonce { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px;
+    opacity: 0; transform: translateY(20px) scale(.96); transition: opacity .5s, transform .6s cubic-bezier(.34,1.4,.64,1); }
+  .annonce.visible { opacity: 1; transform: none; }
+  .annonce .gros-label { white-space: nowrap; background: var(--accent); color: var(--fond); font: 600 26px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 12px 24px; }
+  .annonce .coche { width: 90px; height: 90px; border: 4px solid var(--ok); border-radius: 50%; display: grid; place-items: center; color: var(--ok); }
+  .annonce .coche svg { width: 52px; height: 52px; }
+  .chiffre { font: 600 300px/0.9 var(--f-mono); color: var(--accent); }
+  .chiffre.tic { animation: tic .9s cubic-bezier(.2,.7,.3,1); }
+  @keyframes tic { from { transform: scale(1.35); opacity: .5; } }
+  .annonce .titre-geant { color: var(--accent); font-size: 112px; white-space: nowrap; }
+  .annonce .titre-geant.blanc { color: var(--trait); font-size: 88px; }
+</style>
+</head>
+<body>
+<div id="ecran">
+  <div class="calque grille"></div>
+  <div class="calque vignette"></div>
+  <div class="cadre marge"></div>
+
+  <!-- En-tête -->
+  <div class="entete">
+    <div class="entete-haut">
+      <div class="badge" data-icone="fusee"></div>
+      <div class="label">Mission Control</div>
+      <span class="hachures"></span>
+    </div>
+    <div class="boite"><div class="interieur"><div class="nom" data-texte="nomChaine">John Von Gurt</div></div></div>
+  </div>
+
+  <!-- Statut système -->
+  <div class="statut">
+    <div class="statut-titre label doux">Statut système</div>
+    <div class="boite"><div class="interieur">
+      <div class="statut-item"><span data-icone="pouls"></span><span class="label">Télémétrie</span><span class="valeur" style="color:var(--ok)">Nominale</span></div>
+      <div class="statut-item"><span data-icone="energie"></span><span class="label">Énergie</span><span class="valeur">100 %</span></div>
+      <div class="statut-item"><span data-icone="horloge"></span><span class="label">Heure locale</span><span class="valeur" data-horloge>--:--</span></div>
+    </div></div>
+  </div>
+
+  <!-- Séquence de lancement -->
+  <div class="panneau boite"><div class="interieur">
+    <div class="panneau-tete"><span class="label" data-texte="demarrage.titre">Préparation au lancement</span><span class="hachures"></span></div>
+    <div class="compteur" id="compteur"><span class="t">T-</span><span id="temps">05:00</span></div>
+
+    <div class="ligne-info"><span class="label doux">Ravitaillement</span><span class="mono" id="pourcent">0 %</span></div>
+    <div class="jauge" id="jauge"></div>
+
+    <div class="label doux">Vérifications</div>
+    <ul class="verifs" id="verifs"></ul>
+
+    <div class="avertissement attention"><span data-icone="alerte"></span>Attention : ergols cryogéniques</div>
+  </div></div>
+
+  <!-- Pas de tir -->
+  <svg id="scene" viewBox="-430 -260 860 510">
+    <defs>
+      <linearGradient id="cone-g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="var(--flamme)" stop-opacity=".22"/>
+        <stop offset="1" stop-color="var(--flamme)" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="cone-d" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--flamme)" stop-opacity=".22"/>
+        <stop offset="1" stop-color="var(--flamme)" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g id="ciel"></g>
+
+    <!-- Projecteurs -->
+    <polygon points="-378,-58 -40,175 -250,175" fill="url(#cone-g)"/>
+    <polygon points="378,-58 40,175 250,175" fill="url(#cone-d)"/>
+    <path class="trait" d="M-385,175 V-50 M385,175 V-50 M-398,175 H-372 M372,175 H398"/>
+    <rect class="plein" x="-400" y="-70" width="30" height="16" rx="3"/>
+    <rect class="plein" x="370" y="-70" width="30" height="16" rx="3"/>
+    <rect class="lampe" x="-394" y="-58" width="18" height="4"/>
+    <rect class="lampe" x="376" y="-58" width="18" height="4"/>
+
+    <!-- Sol -->
+    <path class="trait" d="M-430,175 H430"/>
+    <path class="trait-fin" d="M-420,196 H-360 M-330,196 H-250 M-220,196 H-120 M120,196 H220 M250,196 H330 M360,196 H420 M-300,222 H-200 M200,222 H300" />
+
+    <!-- Réservoirs -->
+    <path class="trait" d="M240,175 L252,118 M300,175 L288,118 M352,175 L362,130 M398,175 L388,130"/>
+    <circle class="plein" cx="270" cy="85" r="48"/>
+    <path class="trait-fin" d="M222,85 A48 16 0 0 0 318,85"/>
+    <text class="etiquette-svg" x="270" y="80" text-anchor="middle">LOX</text>
+    <circle class="plein" cx="375" cy="105" r="34"/>
+    <path class="trait-fin" d="M341,105 A34 11 0 0 0 409,105"/>
+    <text class="etiquette-svg" x="375" y="100" text-anchor="middle">RP-1</text>
+
+    <!-- Canalisations + flux de carburant -->
+    <path class="trait" d="M375,139 V160 H270 M270,133 V160 H-134 V-20"/>
+    <path class="flux" d="M375,139 V160 H270 M270,133 V160 H-134 V-20"/>
+
+    <!-- Lueur des moteurs sur la table -->
+    <ellipse class="lueur" cx="0" cy="160" rx="150" ry="30"/>
+
+    <!-- Table de lancement -->
+    <rect class="plein" x="-110" y="138" width="220" height="37"/>
+    <path class="trait-fin" d="M-60,138 V175 M60,138 V175 M-60,156 H60"/>
+
+    <!-- Tour de lancement -->
+    <g id="tour"></g>
+    <circle class="balise" cx="-160" cy="-247" r="5"/>
+
+    <!-- Vapeur -->
+    <g id="vapeurs"></g>
+
+    <!-- Bras (se rétractent à T-30) -->
+    <g transform="translate(-140,-115)"><g class="bras">
+      <rect class="plein" x="0" y="-9" width="110" height="18"/>
+      <path class="trait-fin" d="M10,-9 L22,9 L34,-9 L46,9 L58,-9 L70,9 L82,-9 L94,9"/>
+    </g></g>
+    <g transform="translate(-140,-20)"><g class="bras">
+      <path class="trait" d="M0,-6 H108 M0,6 H108"/>
+      <path class="trait-fin" d="M0,-6 L12,6 L24,-6 L36,6 L48,-6 L60,6 L72,-6 L84,6 L96,-6 L108,6"/>
+      <rect class="plein" x="100" y="-12" width="12" height="24"/>
+    </g></g>
+
+    <!-- Fusée -->
+    <g id="fusee-vol"><g id="fusee-place"></g></g>
+
+    <!-- Fumée d'allumage et nuage du décollage -->
+    <g id="fumees"></g>
+  </svg>
+
+  <!-- Annonces : ravitaillement terminé, décompte, décollage -->
+  <div class="annonces">
+    <div class="annonce" id="a-termine">
+      <div class="coche"><svg viewBox="0 0 32 32" class="icone" style="stroke-width:3"><path d="M7 17 L13 23 L25 9"/></svg></div>
+      <div class="gros-label" data-texte="demarrage.ravitaillementTermine">Ravitaillement terminé</div>
+      <div class="label doux" data-texte="demarrage.sequenceFinale">Séquence finale engagée</div>
+    </div>
+    <div class="annonce" id="a-decompte">
+      <div class="label doux" data-texte="demarrage.decompte">Décollage dans</div>
+      <div class="chiffre" id="chiffre">10</div>
+    </div>
+    <div class="annonce" id="a-decollage">
+      <h2 class="titre-geant" data-texte="demarrage.decollage">Décollage !</h2>
+    </div>
+    <div class="annonce" id="a-reussi">
+      <span class="hachures"></span>
+      <h2 class="titre-geant blanc" data-texte="demarrage.lancementReussi">Lancement réussi</h2>
+    </div>
+  </div>
+
+  <!-- Pied de page -->
+  <div class="pied">
+    <div class="pied-circuit"><span class="label doux" data-texte="decor.protocole">Protocole v1.2</span><span data-icone="circuit" style="color:var(--doux)"></span><span class="label doux" data-texte="decor.capteurs">Capteurs externes</span></div>
+    <div class="etiquette" id="statut-bas" data-texte="demarrage.statut">Ravitaillement en cours</div>
+    <div class="label doux">+ &nbsp;<span data-texte="decor.exploration">Exploration spatiale profonde</span>&nbsp; +</div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  Commun.demarrer();
+  const C = Commun.C.demarrage || {};
+
+  // --- Dessin : fusée, tour, étoiles, vapeur ---
+  document.getElementById('fusee-place').innerHTML = Commun.fusee({ id: 'f1', carburant: true, flamme: true });
+  Commun.etoiles(document.getElementById('ciel'), 70, { l: 860, h: 300, x0: -430, y0: -260, taille: [0.6, 1.8] });
+
+  let tour = '<rect class="plein" x="-180" y="-225" width="40" height="400"/><path class="trait-fin" d="';
+  for (let y = 175; y > -225; y -= 40) tour += `M-180,${y} L-140,${y - 20} L-180,${y - 40} M-180,${y} H-140 `;
+  tour += '"/><path class="trait" d="M-192,-225 H-128 M-160,-225 V-247"/>';
+  document.getElementById('tour').innerHTML = tour;
+
+  const sources = [[-70, 130], [-40, 136], [40, 136], [70, 130], [-100, 150], [100, 150], [-30, -20], [-30, -26], [-26, -110]];
+  let vap = '';
+  sources.forEach(([x, y], i) => {
+    for (let k = 0; k < 2; k++) {
+      const dx = (x < 0 ? -1 : 1) * (10 + Math.random() * 40);
+      vap += `<circle class="vapeur" cx="${x}" cy="${y}" r="${10 + Math.random() * 10}" style="--d:${(2.5 + Math.random() * 2).toFixed(2)}s;--r:${(-Math.random() * 4).toFixed(2)}s;--dx:${dx.toFixed(0)}px"/>`;
+    }
+  });
+  document.getElementById('vapeurs').innerHTML = vap;
+
+  // --- Jauge & vérifications ---
+  const jauge = document.getElementById('jauge');
+  jauge.innerHTML = '<i></i>'.repeat(24);
+  const segments = [...jauge.children];
+  const verifs = C.verifications || [];
+  document.getElementById('verifs').innerHTML = verifs.map(v => `<li><span>${v}</span><span class="etat">En attente</span></li>`).join('');
+  const lignes = [...document.querySelectorAll('#verifs li')];
+
+  // --- Fumées ---
+  let fum = '';
+  for (let i = 0; i < 14; i++) {   // petites bouffées à l'allumage
+    const c = i % 2 ? 1 : -1;
+    fum += `<circle class="fumee petite" cx="${c * (20 + Math.random() * 60)}" cy="${150 + Math.random() * 15}" r="${14 + Math.random() * 10}"
+      style="--d:${(1.2 + Math.random()).toFixed(2)}s;--r:${(-Math.random() * 2).toFixed(2)}s;--dx:${(c * (30 + Math.random() * 60)).toFixed(0)}px"/>`;
+  }
+  for (let i = 0; i < 34; i++) {   // gros nuage au décollage
+    const c = i % 2 ? 1 : -1;
+    fum += `<circle class="fumee grosse" cx="${c * Math.random() * 50}" cy="${150 + Math.random() * 20}" r="${18 + Math.random() * 14}"
+      style="--d:${(4 + Math.random() * 3).toFixed(2)}s;--r:${(Math.random() * 1.6).toFixed(2)}s;--dx:${(c * (50 + Math.random() * 300)).toFixed(0)}px;--dy:${(-5 - Math.random() * 60).toFixed(0)}px;--s:${(1.6 + Math.random() * 1.6).toFixed(2)}"/>`;
+  }
+  document.getElementById('fumees').innerHTML = fum;
+
+  // --- Séquence : ravitaillement (jusqu'à T-30) > séquence finale > décompte (T-10) > décollage (T-0) ---
+  const minutes = parseFloat(Commun.params.get('minutes') ?? C.minutes ?? 5);
+  const duree = Math.max(5, minutes * 60);
+  const finCarburant = duree > 40 ? duree - 30 : duree * 0.4;   // instant où le plein est fait
+  const debut = Date.now();
+  const $ = id => document.getElementById(id);
+  const scene = $('scene'), carb = $('f1-carb'), niveau = $('f1-niveau');
+  const HAUT = 272; // hauteur du corps de la fusée
+  let phase = '', dernierChiffre = null;
+
+  function annonce(id) {
+    document.querySelectorAll('.annonce').forEach(a => a.classList.toggle('visible', a.id === id));
+  }
+
+  function tic() {
+    const ecoule = (Date.now() - debut) / 1000;
+    const reste = duree - ecoule;
+    const p = Math.min(1, ecoule / finCarburant);
+
+    // Compteur du panneau : T- puis T+ après le décollage
+    $('compteur').querySelector('.t').textContent = reste > 0 ? 'T-' : 'T+';
+    $('temps').textContent = Commun.mmss(reste > 0 ? Math.ceil(reste) : -reste);
+
+    // Remplissage proportionnel au temps
+    const h = HAUT * p;
+    carb.setAttribute('y', 110 - h); carb.setAttribute('height', h);
+    niveau.setAttribute('y1', 110 - h); niveau.setAttribute('y2', 110 - h);
+    $('pourcent').textContent = Math.floor(p * 100) + ' %';
+    segments.forEach((s, i) => s.classList.toggle('plein', i < Math.floor(p * 24)));
+    lignes.forEach((li, i) => {
+      const seuil = (i + 1) / lignes.length * 0.97, precedent = i / lignes.length * 0.97;
+      li.classList.toggle('ok', p >= seuil);
+      li.classList.toggle('encours', p < seuil && p >= precedent);
+      li.querySelector('.etat').textContent = p >= seuil ? 'OK' : p >= precedent ? 'En cours' : 'En attente';
+    });
+
+    // Phases
+    if (reste <= 0) { if (phase !== 'decollage') decollage(); return; }
+
+    if (reste <= 10) {
+      if (phase !== 'decompte') {
+        phase = 'decompte'; annonce('a-decompte'); $('compteur').classList.add('zero');
+        scene.classList.add('retrait');
+        $('statut-bas').textContent = C.statutSequenceFinale || '';
+      }
+      const n = Math.ceil(reste);
+      if (n !== dernierChiffre) {
+        dernierChiffre = n;
+        const c = $('chiffre'); c.textContent = n;
+        c.classList.remove('tic'); void c.offsetWidth; c.classList.add('tic');
+      }
+      if (reste <= 3 && !scene.classList.contains('allumage-on')) {
+        scene.classList.add('allumage-on');
+        $('fusee-place').classList.add('secousse');
+      }
+    } else if (p >= 1 && phase !== 'finale') {
+      phase = 'finale';
+      scene.classList.add('retrait');
+      annonce('a-termine');
+      $('statut-bas').textContent = C.statutSequenceFinale || '';
+    }
+  }
+
+  // --- Décollage : la fusée accélère et quitte l'écran ---
+  function decollage() {
+    phase = 'decollage';
+    scene.classList.add('retrait', 'allumage-on', 'decolle');
+    $('fusee-place').classList.add('secousse');
+    $('compteur').classList.remove('zero');
+    annonce('a-decollage');
+    const vol = $('fusee-vol');
+    const t0 = performance.now();
+    const envol = setInterval(() => {
+      const t = (performance.now() - t0) / 1000 - 0.7;   // les moteurs montent en puissance
+      if (t <= 0) return;
+      const y = -(0.5 * 95 * t * t + 8 * t);
+      vol.setAttribute('transform', `translate(0,${y.toFixed(1)})`);
+      if (y < -1200) { clearInterval(envol); $('fusee-place').classList.remove('secousse'); }
+    }, 16);
+    setTimeout(() => {
+      annonce('a-reussi');
+      $('statut-bas').textContent = C.statutDecollage || '';
+    }, 4500);
+  }
+
+  tic(); setInterval(tic, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" data-accent="orange" data-police="barlow">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>John Von Gurt — Moodboard</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Oxanium:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== Variantes testables depuis la barre du haut ===== */
+  [data-accent="cyan"]  { --accent: #38CFF0; }
+  [data-accent="vert"]  { --accent: #7BE08A; }
+  [data-police="barlow"]  { --f-titre: 'Barlow Condensed', sans-serif; }
+  [data-police="rajdhani"]{ --f-titre: 'Rajdhani', sans-serif; }
+  [data-police="oxanium"] { --f-titre: 'Oxanium', sans-serif; }
+
+  html, body { height: auto; overflow: auto; background: var(--fond); color: var(--trait); font-family: var(--f-texte); transition: background .4s, color .4s; }
+  body { background-image: linear-gradient(var(--faible) 1px, transparent 1px), linear-gradient(90deg, var(--faible) 1px, transparent 1px); background-size: 48px 48px; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 30px 20px 90px; }
+  h2 { font: 700 46px/1 var(--f-titre); text-transform: uppercase; margin: 80px 0 8px; display: flex; align-items: center; gap: 18px; }
+  h2::before { content: attr(data-num); font: 600 16px var(--f-mono); color: var(--accent); border: 2px solid var(--accent); padding: 4px 8px; }
+  h3 { font: 700 28px var(--f-titre); text-transform: uppercase; margin: 36px 0 12px; letter-spacing: .02em; }
+  .sous { color: var(--doux); max-width: 72ch; margin: 0 0 24px; font-size: 17px; line-height: 1.55; }
+  section { scroll-margin-top: 80px; }
+
+  /* Barre de réglages */
+  .reglages { position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; align-items: center; padding: 10px 16px;
+    background: color-mix(in srgb, var(--fond) 90%, transparent); border-bottom: 2px solid var(--faible); }
+  .groupe { display: flex; gap: 6px; align-items: center; }
+  .groupe > span { font: 600 13px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); margin-right: 4px; }
+  .btn { font: 600 14px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--trait); background: var(--fond-2);
+    border: 2px solid var(--faible); padding: 6px 12px; cursor: pointer; transition: border-color .2s, transform .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.actif { border-color: var(--accent); color: var(--accent); }
+
+  /* Hero */
+  .hero { position: relative; padding: 50px 40px; margin-top: 20px; }
+  .hero-haut { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+  .hero .boite { display: inline-block; }
+  .hero .interieur { padding: 14px 40px 10px 26px; }
+  .hero .nom { font: 700 clamp(56px, 9vw, 110px)/1 var(--f-titre); text-transform: uppercase; }
+  .hero p { color: var(--doux); font-size: 19px; margin: 20px 0 0; }
+
+  .carte { position: relative; background: var(--fond-2); border: 2px solid var(--faible); padding: 20px; }
+  .carte h4 { font: 700 24px var(--f-titre); text-transform: uppercase; margin: 12px 0 4px; }
+  .carte p { color: var(--doux); font-size: 15px; margin: 0; line-height: 1.5; }
+  .grille-cartes { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+  /* Nuancier */
+  .nuancier { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .nuance { border: 2px solid var(--faible); background: var(--fond-2); }
+  .nuance div { height: 86px; border-bottom: 2px solid var(--faible); }
+  .nuance p { margin: 0; padding: 10px 12px; font-size: 14px; color: var(--doux); }
+  .nuance b { display: block; color: var(--trait); font: 700 20px var(--f-titre); text-transform: uppercase; }
+  .nuance code { font: 500 13px var(--f-mono); }
+
+  /* Typo */
+  .typo .carte { display: flex; gap: 24px; align-items: baseline; flex-wrap: wrap; cursor: pointer; margin-bottom: 12px; }
+  .typo .carte.choisie { border-color: var(--accent); }
+  .typo .nom-police { font: 600 13px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); width: 190px; }
+  .typo .demo { flex: 1 1 400px; font-size: clamp(34px, 5vw, 60px); line-height: 1; text-transform: uppercase; font-weight: 700; }
+
+  /* Fusée */
+  .hublot { aspect-ratio: 1; background: radial-gradient(circle, #141B26, #05070A 75%); display: grid; place-items: center; overflow: hidden; }
+  .hublot svg { width: 100%; height: 100%; }
+  .vitesse { stroke: #E6EAEE; stroke-width: 3; stroke-linecap: round; animation: file var(--d) linear infinite; animation-delay: var(--r); }
+  @keyframes file { from { transform: translateY(-320px); } to { transform: translateY(320px); } }
+  .vibre { animation: vibre .16s ease-in-out infinite alternate; }
+  @keyframes vibre { from { transform: translate(-1.5px, 1px); } to { transform: translate(1.5px, -1px); } }
+
+  /* Motifs */
+  .motif { height: 130px; display: grid; place-items: center; background: var(--fond); border: 2px solid var(--faible); position: relative; overflow: hidden; }
+  .demo-coins { position: absolute; inset: 22px; }
+  .demo-coins .coin { width: 30px; height: 30px; }
+  .orbite-demo { width: 96px; height: 96px; border: 2px dashed var(--doux); border-radius: 50%; position: relative; animation: tourne 6s linear infinite; }
+  .orbite-demo::after { content: ""; position: absolute; top: -7px; left: 50%; margin-left: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+  .orbite-demo::before { content: ""; position: absolute; inset: 30px; border: 2px solid var(--trait); border-radius: 50%; }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+  .icones { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; padding: 0 10px; }
+  .icones span { width: 34px; height: 34px; display: block; }
+  .icones svg { width: 100%; height: 100%; }
+  .clignote { animation: clignote 1s steps(2) infinite; }
+  @keyframes clignote { 50% { opacity: .3; } }
+
+  /* Faux jeu pour tester la lisibilité */
+  .scene-demo { position: relative; overflow: hidden; min-height: 300px; padding: 30px; display: grid; place-items: center;
+    background: linear-gradient(160deg, #3d4a5c 0%, #1d2632 60%, #10151c 100%); border: 2px solid var(--faible); }
+  .scene-demo::before { content: ""; position: absolute; inset: 0; opacity: .35;
+    background: radial-gradient(circle at 70% 30%, #b8763c 0 60px, transparent 61px), repeating-linear-gradient(95deg, transparent 0 60px, rgba(255,255,255,.04) 60px 62px); }
+  .scene-demo > * { position: relative; }
+
+  /* ===== Alerte ===== */
+  .alerte { display: flex; width: min(620px, 100%); background: var(--fond-2); border: var(--epaisseur) solid var(--trait); position: relative; }
+  .alerte::after { content: ""; position: absolute; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0; top: 0; }
+  .alerte.joue { animation: ouvre .55s cubic-bezier(.7,0,.2,1) both; }
+  .alerte.joue::after { animation: balayage .9s .35s ease-in-out both; }
+  @keyframes ouvre { from { clip-path: inset(48% 50% 48% 50%); } 45% { clip-path: inset(48% 0 48% 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes balayage { 0% { top: 0; opacity: .9; } 100% { top: 100%; opacity: 0; } }
+  .alerte-icone { width: 130px; flex: none; display: grid; place-items: center; background: var(--etiquette-fond); color: var(--accent); }
+  .alerte-icone span { width: 64px; height: 64px; display: block; }
+  .alerte-icone svg { width: 100%; height: 100%; }
+  .alerte.joue .alerte-icone span { animation: pop .5s .4s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pop { from { transform: scale(0) rotate(-30deg); } }
+  .alerte-corps { padding: 16px 22px 18px; flex: 1; min-width: 0; }
+  .alerte-tete { display: flex; align-items: center; gap: 12px; font: 600 14px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .alerte-tete .hachures { width: 60px; height: 12px; }
+  .alerte-titre { font: 700 46px/1.05 var(--f-titre); text-transform: uppercase; margin: 6px 0 4px; }
+  .alerte-nom { font: 600 24px var(--f-mono); color: var(--accent); min-height: 30px; }
+  .alerte-nom::after { content: "_"; animation: clignote .8s steps(2) infinite; }
+  .alerte-msg { color: var(--doux); font-size: 17px; opacity: 0; transition: opacity .5s; }
+  .alerte-msg.visible { opacity: 1; }
+  .lexique { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); margin-top: 14px; }
+  .lexique button { text-align: left; cursor: pointer; background: var(--fond-2); border: 2px solid var(--faible); color: var(--trait); padding: 12px 14px; font: inherit; }
+  .lexique button.actif, .lexique button:hover { border-color: var(--accent); }
+  .lexique small { display: block; font: 600 12px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); }
+  .lexique b { font: 700 22px var(--f-titre); text-transform: uppercase; }
+
+  /* ===== Cadre webcam ===== */
+  .cam { width: min(520px, 100%); }
+  .cam .interieur { padding: 16px 18px 18px; }
+  .cam-tete { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .cam-tete .label { font-size: 16px; }
+  .rec { margin-left: auto; font: 600 15px var(--f-mono); display: flex; align-items: center; gap: 8px; }
+  .rec i { width: 12px; height: 12px; border-radius: 50%; background: var(--alerte); animation: clignote 1.2s steps(2) infinite; }
+  .cam-flux { position: relative; aspect-ratio: 16/9; background: linear-gradient(160deg, #4b5563, #252b33); overflow: hidden; display: grid; place-items: center; color: #ffffff80; font: 600 15px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; }
+  .cam-flux::after { content: ""; position: absolute; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, rgba(255,255,255,.07), transparent); animation: scan 4s linear infinite; }
+  @keyframes scan { from { top: -40px; } to { top: 100%; } }
+  .cam-flux .cadre { inset: 14px; --trait: #E6EAEE; }
+  .cam-flux .coin { width: 34px; height: 34px; }
+  .cam-nom { position: absolute; left: 14px; bottom: 14px; z-index: 2; font-size: 15px; padding: 6px 14px; }
+
+  /* ===== Chat ===== */
+  .chat { width: min(460px, 100%); }
+  .chat .interieur { padding: 16px 20px 18px; }
+  .chat-lignes { height: 230px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden; margin: 12px 0 14px; }
+  .chat-ligne { font-size: 19px; animation: arrive .45s cubic-bezier(.2,.7,.3,1) both; }
+  .chat-ligne b { font: 600 17px var(--f-mono); color: var(--c); margin-right: 6px; }
+  @keyframes arrive { from { opacity: 0; transform: translateX(-24px); clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  .chat-invite { border-top: 2px solid var(--faible); padding-top: 12px; font: 500 16px var(--f-mono); color: var(--doux); }
+  .chat-invite::after { content: "▌"; color: var(--accent); animation: clignote .9s steps(2) infinite; margin-left: 4px; }
+
+  /* ===== Bandeau ===== */
+  .bandeau { width: 100%; max-width: 960px; --c: 18px; }
+  .bandeau .interieur { display: flex; align-items: center; }
+  .bandeau-item { display: flex; align-items: center; gap: 14px; padding: 14px 26px; flex: 1; min-width: 0; }
+  .bandeau-item + .bandeau-item { border-left: 2px solid var(--faible); }
+  .bandeau-item > span:first-child { width: 36px; height: 36px; flex: none; }
+  .bandeau-item svg { width: 100%; height: 100%; }
+  .bandeau-item small { display: block; font: 600 13px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); }
+  .bandeau-item b { font: 600 19px var(--f-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .bandeau-item.flash b { animation: flash .9s ease-out; }
+  @keyframes flash { 0% { color: var(--accent); transform: translateY(-8px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+
+  /* ===== Objectif ===== */
+  .objectif { width: 100%; max-width: 760px; }
+  .objectif-tete { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .objectif-tete b { font: 700 30px var(--f-titre); text-transform: uppercase; }
+  .objectif-tete span { font: 600 22px var(--f-mono); color: var(--accent); }
+  .trajet { position: relative; height: 70px; display: flex; align-items: center; gap: 14px; }
+  .astre { width: 46px; height: 46px; flex: none; border-radius: 50%; border: var(--epaisseur) solid var(--trait); background: var(--fond-2); }
+  .astre.lune { background: repeating-radial-gradient(circle at 30% 30%, var(--fond-2) 0 6px, var(--faible) 6px 8px); }
+  .piste { position: relative; flex: 1; height: 4px; background: repeating-linear-gradient(90deg, var(--doux) 0 10px, transparent 10px 18px); }
+  .piste-pleine { position: absolute; left: 0; top: -2px; height: 8px; background: var(--accent); transition: width 1s cubic-bezier(.34,1.3,.64,1); }
+  .piste-fusee { position: absolute; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; transition: left 1s cubic-bezier(.34,1.3,.64,1); }
+  .piste-fusee svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ===== Transitions ===== */
+  .transition-zone { min-height: 340px; }
+  .porte { position: absolute !important; top: 0; bottom: 0; width: 50%; background: var(--fond-2); z-index: 5;
+    background-image: linear-gradient(var(--faible) 1px, transparent 1px), linear-gradient(90deg, var(--faible) 1px, transparent 1px); background-size: 32px 32px; }
+  .porte.g { left: 0; transform: translateX(-101%); border-right: 4px solid var(--trait); }
+  .porte.d { right: 0; transform: translateX(101%); border-left: 4px solid var(--trait); }
+  .porte::after { content: ""; position: absolute; top: 0; bottom: 0; width: 34px; background: repeating-linear-gradient(-50deg, var(--accent) 0 12px, var(--etiquette-fond) 12px 24px); }
+  .porte.g::after { right: 0; } .porte.d::after { left: 0; }
+  .sas-badge { position: absolute !important; left: 50%; top: 50%; z-index: 6; transform: translate(-50%, -50%) scale(0); text-align: center; }
+  .sas-badge .rond { width: 120px; height: 120px; margin: 0 auto 12px; border-radius: 50%; background: var(--fond); border: 4px solid var(--trait); display: grid; place-items: center; color: var(--trait); }
+  .sas-badge .rond span { width: 64px; height: 64px; display: block; }
+  .sas-badge svg { width: 100%; height: 100%; }
+  .sas.joue .porte.g { animation: porte-g 2.2s cubic-bezier(.7,0,.2,1) both; }
+  .sas.joue .porte.d { animation: porte-d 2.2s cubic-bezier(.7,0,.2,1) both; }
+  .sas.joue .sas-badge { animation: badge 2.2s cubic-bezier(.34,1.4,.64,1) both; }
+  @keyframes porte-g { 0% { transform: translateX(-101%); } 28%, 72% { transform: translateX(0); } 100% { transform: translateX(-101%); } }
+  @keyframes porte-d { 0% { transform: translateX(101%); } 28%, 72% { transform: translateX(0); } 100% { transform: translateX(101%); } }
+  @keyframes badge { 0%, 25% { transform: translate(-50%, -50%) scale(0); } 38%, 66% { transform: translate(-50%, -50%) scale(1); } 76%, 100% { transform: translate(-50%, -50%) scale(0); } }
+
+  .trainee { position: absolute !important; top: 0; bottom: 0; left: 0; width: 0; z-index: 5; background: var(--fond);
+    background-image: radial-gradient(circle, var(--trait) 1px, transparent 1.5px); background-size: 46px 46px; }
+  .passage-fusee { position: absolute !important; top: 50%; left: 0; z-index: 6; width: 220px; height: 220px; margin-top: -110px; transform: translateX(-120%); }
+  .passage-fusee svg { width: 100%; height: 100%; overflow: visible; }
+  .passage.joue .trainee { animation: trainee 2s cubic-bezier(.6,0,.3,1) both; }
+  .passage.joue .passage-fusee { animation: fusee-passe 2s cubic-bezier(.6,0,.3,1) both; }
+  @keyframes trainee { 0% { width: 0; left: 0; } 50% { width: 100%; left: 0; } 60% { width: 100%; left: 0; } 100% { width: 0; left: 100%; } }
+  @keyframes fusee-passe { 0% { left: 0; transform: translateX(-120%); } 50% { left: 100%; transform: translateX(-40%); } 100% { left: 100%; transform: translateX(60%); } }
+
+  /* ===== Scènes ===== */
+  .scenes { display: grid; gap: 26px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .scene-carte h4 { font: 700 26px var(--f-titre); text-transform: uppercase; margin: 12px 0 2px; }
+  .scene-carte p { color: var(--doux); font-size: 15px; margin: 0; line-height: 1.5; }
+  .ecran-mini { position: relative; aspect-ratio: 16/9; background: var(--fond); border: 2px solid var(--faible); overflow: hidden; }
+  .ecran-mini iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .z { position: absolute; display: grid; place-items: center; text-align: center; font: 600 10px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; border: 2px solid var(--trait); color: var(--trait); background: var(--fond-2); }
+  .z.jeu { border: 0; background: linear-gradient(160deg, #3d4a5c, #1d2632); color: #ffffffaa; }
+  .z.contenu { background: #d9dcd6; color: #1d242b; border-color: #d9dcd6; }
+  .z.chat { background: color-mix(in srgb, var(--fond-2) 70%, transparent); }
+  .z.nom { border: 0; background: var(--etiquette-fond); color: var(--etiquette-texte); font-size: 9px; }
+  .z.titre { border: 0; background: none; font: 700 17px var(--f-titre); white-space: nowrap; }
+  .z.barre { border-color: var(--doux); }
+  .z.accent { border-color: var(--accent); color: var(--accent); }
+
+  .note { border-left: 5px solid var(--accent); background: var(--fond-2); padding: 14px 18px; margin-top: 22px; color: var(--doux); line-height: 1.55; }
+  .note b { color: var(--trait); }
+
+  @media (max-width: 640px) {
+    .alerte-icone { width: 84px; } .alerte-titre { font-size: 32px; }
+    .bandeau .interieur { flex-direction: column; align-items: stretch; }
+    .bandeau-item + .bandeau-item { border-left: 0; border-top: 2px solid var(--faible); }
+    .hero { padding: 40px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="reglages">
+  <div class="groupe"><span>Thème</span>
+    <button class="btn" data-set="theme" data-val="sombre">Sombre</button>
+    <button class="btn" data-set="theme" data-val="clair">Clair</button>
+  </div>
+  <div class="groupe"><span>Accent</span>
+    <button class="btn" data-set="accent" data-val="orange">Orange</button>
+    <button class="btn" data-set="accent" data-val="cyan">Cyan</button>
+    <button class="btn" data-set="accent" data-val="vert">Vert</button>
+  </div>
+  <div class="groupe"><span>Titres</span>
+    <button class="btn" data-set="police" data-val="barlow">Barlow</button>
+    <button class="btn" data-set="police" data-val="rajdhani">Rajdhani</button>
+    <button class="btn" data-set="police" data-val="oxanium">Oxanium</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <header class="hero cadre">
+    <div class="hero-haut"><div class="badge" data-icone="fusee"></div><div class="label">Mission Control</div><span class="hachures"></span></div>
+    <div class="boite"><div class="interieur"><div class="nom" data-texte="nomChaine">John Von Gurt</div></div></div>
+    <p>Moodboard de l'overlay — le centre de contrôle de mission</p>
+  </header>
+
+  <!-- ============ 01 COULEURS ============ -->
+  <section>
+    <h2 data-num="01">Les couleurs</h2>
+    <p class="sous">Une base neutre (noir spatial ou gris clair « station »), des traits clairs et une seule couleur d'accent pour tout ce qui doit attirer l'œil. Teste les variantes avec la barre du haut : toute la page suit, et l'overlay suivra pareil.</p>
+    <div class="nuancier" id="nuancier"></div>
+  </section>
+
+  <!-- ============ 02 TYPO ============ -->
+  <section class="typo">
+    <h2 data-num="02">Les typographies</h2>
+    <p class="sous">Une police condensée et technique pour les titres, une police sobre pour le texte, et une police « machine » pour les données, pseudos et étiquettes. Clique sur une option pour l'appliquer.</p>
+    <div class="carte" data-police-choix="barlow"><div class="nom-police">Barlow Condensed</div><div class="demo" style="font-family:'Barlow Condensed'">Préparation au lancement</div></div>
+    <div class="carte" data-police-choix="rajdhani"><div class="nom-police">Rajdhani</div><div class="demo" style="font-family:'Rajdhani'">Préparation au lancement</div></div>
+    <div class="carte" data-police-choix="oxanium"><div class="nom-police">Oxanium</div><div class="demo" style="font-family:'Oxanium'">Préparation au lancement</div></div>
+    <div class="carte" style="cursor:default"><div class="nom-police">Texte · Barlow</div><div class="demo" style="font:500 24px/1.4 var(--f-texte);text-transform:none">Merci d'avoir rejoint l'équipage ! Les infos et le texte courant sont écrits comme ça.</div></div>
+    <div class="carte" style="cursor:default"><div class="nom-police">Données · JetBrains Mono</div><div class="demo" style="font:600 26px/1.4 var(--f-mono);text-transform:uppercase;color:var(--accent)">T-04:59 · Altitude 408 km · #recrue_42</div></div>
+  </section>
+
+  <!-- ============ 03 FUSÉE ============ -->
+  <section>
+    <h2 data-num="03">La fusée</h2>
+    <p class="sous">Une seule fusée, dessinée une seule fois et réutilisée partout : même silhouette, même livrée, même hublot orange. Seul son état change d'un écran à l'autre.</p>
+    <div class="grille-cartes">
+      <div class="carte"><div class="hublot"><svg viewBox="-190 -190 380 380" id="fusee-sol"></svg></div><h4>Au sol</h4><p>Démarrage : le réservoir se remplit pendant le compte à rebours.</p></div>
+      <div class="carte"><div class="hublot" style="border-radius:50%"><svg viewBox="-200 -200 400 400"><g transform="rotate(45)"><g id="lignes-vol"></g><g class="vibre"><g transform="scale(.85)" id="fusee-vol"></g></g></g></svg></div><h4>En vol</h4><p>Pause : moteur allumé, en croisière dans l'anneau de chargement.</p></div>
+      <div class="carte"><div class="hublot jambes-sorties"><svg viewBox="-190 -190 380 380" id="fusee-alu"></svg></div><h4>Alunissage</h4><p>Fin : les jambes se déploient au moment de se poser.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 04 MOTIFS ============ -->
+  <section>
+    <h2 data-num="04">Motifs &amp; icônes</h2>
+    <p class="sous">Le vocabulaire graphique d'un poste de contrôle : on pioche dedans pour habiller tous les éléments.</p>
+    <div class="grille-cartes">
+      <div class="carte"><div class="motif"><div class="demo-coins cadre"></div><span class="label doux" style="font-size:14px">Zone utile</span></div><h4>Coins en équerre</h4><p>Encadrent la cam, le jeu et les écrans sans les enfermer.</p></div>
+      <div class="carte"><div class="motif"><div class="boite" style="width:70%;height:64px"><div class="interieur"></div></div></div><h4>Boîtes biseautées</h4><p>Les panneaux d'info : bord fin et deux coins coupés.</p></div>
+      <div class="carte"><div class="motif" style="gap:16px"><span class="hachures" style="width:160px;height:20px"></span><span class="hachures" style="width:100px;height:12px"></span></div><h4>Hachures</h4><p>Pour souligner un titre ou marquer une zone technique.</p></div>
+      <div class="carte"><div class="motif"><span class="etiquette" style="font-size:16px">En attente de signal</span></div><h4>Étiquettes</h4><p>Les messages de statut : fond noir, police machine.</p></div>
+      <div class="carte"><div class="motif"><div class="orbite-demo"></div></div><h4>Orbites</h4><p>Pointillés et satellite qui tourne, pour les éléments d'attente.</p></div>
+      <div class="carte"><div class="motif" style="color:var(--doux)"><span data-icone="circuit" style="width:180px;display:block"></span></div><h4>Circuits</h4><p>Petits traits de liaison pour le décor de bord d'écran.</p></div>
+      <div class="carte" style="grid-column:1/-1"><div class="motif"><div class="icones">
+        <span data-icone="fusee"></span><span data-icone="casque"></span><span data-icone="radar"></span><span data-icone="carburant"></span><span data-icone="coeur"></span><span data-icone="cible"></span><span data-icone="groupe"></span><span data-icone="camera"></span><span data-icone="pouls"></span><span data-icone="energie"></span><span data-icone="planete"></span><span data-icone="horloge"></span><span data-icone="alerte" class="attention"></span>
+      </div></div><h4>Icônes</h4><p>Toutes en trait, même épaisseur : alertes, bandeau, statut système.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 COMPOSANTS ============ -->
+  <section>
+    <h2 data-num="05">Les composants</h2>
+    <p class="sous">Les éléments réutilisés sur toutes les scènes. Le fond coloré simule un jeu, pour vérifier la lisibilité par-dessus.</p>
+
+    <h3>Alertes</h3>
+    <div class="scene-demo">
+      <div class="alerte joue" id="alerte">
+        <div class="alerte-icone"><span id="alerte-icone" data-icone="casque"></span></div>
+        <div class="alerte-corps">
+          <div class="alerte-tete"><span>Transmission entrante</span><span class="hachures"></span></div>
+          <div class="alerte-titre" id="alerte-titre">Nouvelle recrue</div>
+          <div class="alerte-nom" id="alerte-nom"></div>
+          <div class="alerte-msg" id="alerte-msg">rejoint l'équipage</div>
+        </div>
+      </div>
+    </div>
+    <p class="sous" style="margin:14px 0 0">Un vocabulaire « mission spatiale » pour chaque type d'alerte. Clique pour voir l'animation : ouverture façon écran, pseudo tapé à la machine.</p>
+    <div class="lexique" id="lexique"></div>
+
+    <div class="grille-cartes" style="margin-top:40px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
+      <div>
+        <h3 style="margin-top:0">Cadre webcam</h3>
+        <div class="boite cam"><div class="interieur">
+          <div class="cam-tete"><span class="label">Flux caméra</span><span class="hachures" style="width:70px;height:12px"></span><span class="rec"><i></i><span id="rec">00:00:00</span></span></div>
+          <div class="cam-flux"><div class="cadre"></div>Ta webcam<span class="etiquette cam-nom"><span data-texte="nomChaine">John Von Gurt</span> — Commandant</span></div>
+        </div></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Chat intégré</h3>
+        <div class="boite chat"><div class="interieur">
+          <div class="cam-tete"><span class="label">Canal de communication</span><span class="hachures" style="width:70px;height:12px"></span></div>
+          <div class="chat-lignes" id="chat"></div>
+          <div class="chat-invite">&gt; transmission</div>
+        </div></div>
+      </div>
+    </div>
+
+    <h3>Bandeau d'infos &amp; objectif</h3>
+    <div class="scene-demo" style="gap:34px">
+      <div class="boite bandeau"><div class="interieur">
+        <div class="bandeau-item" id="b-recrue"><span data-icone="groupe"></span><div><small>Dernière recrue</small><b id="b-recrue-nom">Mission_Alpha</b></div></div>
+        <div class="bandeau-item"><span data-icone="coeur"></span><div><small>Dernier soutien</small><b>5,00 €</b></div></div>
+        <div class="bandeau-item"><span data-icone="cible"></span><div><small>Objectif</small><b>50 recrues</b></div></div>
+        <div class="bandeau-item" style="flex:none"><span data-icone="fusee" style="color:var(--accent)"></span></div>
+      </div></div>
+
+      <div class="objectif">
+        <div class="objectif-tete"><b>Objectif : 50 recrues</b><span id="obj-txt">36 / 50</span></div>
+        <div class="trajet">
+          <div class="astre"></div>
+          <div class="piste"><div class="piste-pleine" id="obj-pleine"></div><div class="piste-fusee" id="obj-fusee"><svg viewBox="-170 -170 340 340"><g transform="rotate(90) scale(.9)" id="fusee-obj"></g></svg></div></div>
+          <div class="astre lune"></div>
+        </div>
+      </div>
+      <button class="btn" id="btn-recrue">+ une recrue</button>
+    </div>
+
+    <h3>Transitions entre les scènes</h3>
+    <div class="grille-cartes" style="grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
+      <div>
+        <div class="scene-demo transition-zone sas" id="sas">
+          <div class="porte g"></div><div class="porte d"></div>
+          <div class="sas-badge"><div class="rond"><span data-icone="fusee"></span></div><span class="etiquette" style="font-size:15px">Changement de canal</span></div>
+          <button class="btn" data-joue="sas">▶ Fermer le sas</button>
+        </div>
+        <h4 style="font:700 24px var(--f-titre);text-transform:uppercase;margin:12px 0 2px">Le sas</h4>
+        <p class="sous" style="font-size:15px">Deux portes blindées se ferment, le badge apparaît, puis elles se rouvrent sur la nouvelle scène.</p>
+      </div>
+      <div>
+        <div class="scene-demo transition-zone passage" id="passage">
+          <div class="trainee"></div>
+          <div class="passage-fusee"><svg viewBox="-200 -200 400 400"><g transform="rotate(90) scale(.8)" id="fusee-passage"></g></svg></div>
+          <button class="btn" data-joue="passage">▶ Passage de la fusée</button>
+        </div>
+        <h4 style="font:700 24px var(--f-titre);text-transform:uppercase;margin:12px 0 2px">Le passage</h4>
+        <p class="sous" style="font-size:15px">La fusée traverse l'écran en laissant une traînée d'espace qui recouvre tout, puis dévoile la scène suivante.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 06 SCÈNES ============ -->
+  <section>
+    <h2 data-num="06">Les scènes</h2>
+    <p class="sous">Les trois écrans déjà construits (en direct ci-dessous), plus la mise en page proposée pour les scènes avec cam, contenu et jeu.</p>
+    <div class="scenes">
+      <div class="scene-carte"><div class="ecran-mini"><iframe src="../scenes/demarrage.html?minutes=2" loading="lazy" tabindex="-1"></iframe></div><h4>Démarrage</h4><p>Ravitaillement de la fusée et compte à rebours. Construit.</p></div>
+      <div class="scene-carte"><div class="ecran-mini"><iframe src="../scenes/pause.html" loading="lazy" tabindex="-1"></iframe></div><h4>Attente / pause</h4><p>La fusée en croisière dans l'anneau de chargement. Construit.</p></div>
+      <div class="scene-carte"><div class="ecran-mini"><iframe src="../scenes/fin.html?boucle=16" loading="lazy" tabindex="-1"></iframe></div><h4>Fin</h4><p>Alunissage et « Mission accomplie ». Construit.</p></div>
+
+      <div class="scene-carte"><div class="ecran-mini">
+        <div class="z nom" style="left:3%;top:4%;width:34%;height:7%">John Von Gurt</div>
+        <div class="z" style="left:3%;top:14%;width:70%;height:72%">Flux caméra (grand)</div>
+        <div class="z chat" style="left:75%;top:14%;width:22%;height:72%">Canal de comm.</div>
+        <div class="z barre" style="left:3%;top:89%;width:94%;height:8%">Bandeau d'infos</div>
+      </div><h4>Cam seule</h4><p>Pour discuter : la cam en grand, le chat à côté, le bandeau en bas.</p></div>
+
+      <div class="scene-carte"><div class="ecran-mini">
+        <div class="z titre" style="left:3%;top:3%;width:34%;height:14%;justify-content:start">John Von Gurt</div>
+        <div class="z" style="left:3%;top:19%;width:34%;height:34%">Flux caméra</div>
+        <div class="z chat" style="left:3%;top:56%;width:34%;height:30%">Canal de comm.</div>
+        <div class="z contenu" style="left:40%;top:14%;width:57%;height:72%">Contenu</div>
+        <div class="z barre" style="left:3%;top:89%;width:94%;height:8%">Bandeau d'infos</div>
+      </div><h4>Contenu + cam + chat</h4><p>Comme ta référence « Mission Control » : colonne cam et chat à gauche, contenu à droite.</p></div>
+
+      <div class="scene-carte"><div class="ecran-mini">
+        <div class="z jeu" style="inset:0">Jeu plein écran</div>
+        <div class="z nom" style="left:3%;top:4%;width:30%;height:7%">John Von Gurt</div>
+        <div class="z chat" style="left:3%;top:48%;width:22%;height:36%;opacity:.8">Comm.</div>
+        <div class="z accent" style="right:3%;bottom:10%;width:22%;height:26%;background:var(--fond-2)">Cam</div>
+        <div class="z barre" style="left:28%;bottom:3%;width:44%;height:6%">Bandeau fin</div>
+      </div><h4>Jeu</h4><p>Le jeu en grand, cadre pur : petite cam, chat en transparence, bandeau discret.</p></div>
+    </div>
+
+    <div class="note"><b>Et dans OBS ?</b> Les transitions HTML ne se branchent pas directement comme transition de scène. On les exportera en courte vidéo avec transparence pour une transition <b>Stinger</b> d'OBS : c'est la méthode standard, et ça rend exactement comme ici.</div>
+  </section>
+
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  Commun.demarrer();
+  const racine = document.documentElement;
+
+  // --- Réglages thème / accent / police ---
+  function regler(type, val) {
+    racine.dataset[type] = val;
+    document.querySelectorAll(`[data-set="${type}"]`).forEach(b => b.classList.toggle('actif', b.dataset.val === val));
+    if (type === 'police') document.querySelectorAll('[data-police-choix]').forEach(c => c.classList.toggle('choisie', c.dataset.policeChoix === val));
+    majNuancier();
+  }
+  document.querySelectorAll('[data-set]').forEach(b => b.onclick = () => regler(b.dataset.set, b.dataset.val));
+  document.querySelectorAll('[data-police-choix]').forEach(c => c.onclick = () => regler('police', c.dataset.policeChoix));
+
+  const couleurs = [['--fond', 'Fond', 'Espace, écrans d’attente'], ['--fond-2', 'Panneau', 'Boîtes, bandeau, chat'], ['--trait', 'Trait', 'Contours et texte'], ['--doux', 'Secondaire', 'Labels, décor'], ['--accent', 'Accent', 'Alertes, données, surbrillance'], ['--ok', 'Validé', 'Statuts « OK »'], ['--alerte', 'Alarme', 'Balises, REC']];
+  function majNuancier() {
+    const s = getComputedStyle(racine);
+    document.getElementById('nuancier').innerHTML = couleurs.map(([v, nom, usage]) =>
+      `<div class="nuance"><div style="background:var(${v})"></div><p><b>${nom}</b><code>${s.getPropertyValue(v).trim()}</code><br>${usage}</p></div>`).join('');
+  }
+
+  // --- La fusée dans ses 3 états ---
+  const sol = document.getElementById('fusee-sol');
+  sol.innerHTML = `<path d="M-190,160 H190" stroke="#E6EAEE" stroke-width="2.5"/><rect x="-80" y="138" width="160" height="22" fill="#141920" stroke="#E6EAEE" stroke-width="2.5"/>` + Commun.fusee({ id: 'm-sol', carburant: true });
+  const carb = document.getElementById('m-sol-carb'), niv = document.getElementById('m-sol-niveau');
+  let niveau = 0;
+  setInterval(() => { niveau = (niveau + 0.004) % 1.15; const h = 272 * Math.min(1, niveau);
+    carb.setAttribute('y', 110 - h); carb.setAttribute('height', h); niv.setAttribute('y1', 110 - h); niv.setAttribute('y2', 110 - h); }, 40);
+
+  document.getElementById('fusee-vol').innerHTML = Commun.fusee({ id: 'm-vol', flamme: true });
+  let lignes = '';
+  for (let i = 0; i < 22; i++) {
+    const x = Math.round(-190 + Math.random() * 380); if (Math.abs(x) < 55) continue;
+    lignes += `<line class="vitesse" x1="${x}" x2="${x}" y1="0" y2="${(20 + Math.random() * 60).toFixed(0)}" style="--d:${(0.6 + Math.random() * .9).toFixed(2)}s;--r:${(-Math.random() * 2).toFixed(2)}s;opacity:${(.3 + Math.random() * .6).toFixed(2)}"/>`;
+  }
+  document.getElementById('lignes-vol').innerHTML = lignes;
+
+  document.getElementById('fusee-alu').innerHTML = `<path d="M-190,178 Q0,150 190,178 V190 H-190 Z" fill="#141920" stroke="#E6EAEE" stroke-width="2.5"/><g transform="translate(0,12)">${Commun.fusee({ id: 'm-alu' })}</g>`;
+  ['fusee-sol', 'fusee-alu'].forEach(id => Commun.etoiles(document.getElementById(id), 30, { l: 380, h: 220, x0: -190, y0: -190, taille: [.6, 1.6] }));
+  document.querySelectorAll('.hublot .etoile').forEach(e => e.style.fill = '#E6EAEE');
+  // les étoiles doivent être derrière la fusée
+  ['fusee-sol', 'fusee-alu'].forEach(id => { const s = document.getElementById(id); s.querySelectorAll('.etoile').forEach(e => s.prepend(e)); });
+
+  document.getElementById('fusee-obj').innerHTML = Commun.fusee({ id: 'm-obj', flamme: true });
+  document.getElementById('fusee-passage').innerHTML = Commun.fusee({ id: 'm-pass', flamme: true });
+
+  // --- Alertes ---
+  const alertes = [
+    { type: 'Follow', titre: 'Nouvelle recrue', nom: 'Astro_Lou', msg: 'rejoint l’équipage', icone: 'casque' },
+    { type: 'Abonnement', titre: 'Astronaute certifié', nom: 'Capitaine_K', msg: 'signe pour la mission · 3 mois', icone: 'fusee' },
+    { type: 'Raid', titre: 'Flotte en approche !', nom: 'StarPilot', msg: 'arrive avec 42 vaisseaux', icone: 'radar' },
+    { type: 'Bits', titre: 'Carburant reçu', nom: 'Nova_77', msg: 'ajoute 500 bits au réservoir', icone: 'carburant' },
+    { type: 'Don', titre: 'Soutien de mission', nom: 'Kepler', msg: 'finance la mission : 5,00 €', icone: 'coeur' },
+    { type: 'Objectif', titre: 'Objectif atteint !', nom: '50 recrues', msg: 'cap sur la prochaine étape', icone: 'cible' },
+  ];
+  const lex = document.getElementById('lexique');
+  lex.innerHTML = alertes.map((a, i) => `<button data-i="${i}"${i ? '' : ' class="actif"'}><small>${a.type}</small><b>${a.titre}</b></button>`).join('');
+  let frappe;
+  function jouerAlerte(a) {
+    const el = document.getElementById('alerte');
+    document.getElementById('alerte-titre').textContent = a.titre;
+    document.getElementById('alerte-icone').innerHTML = Commun.icones[a.icone];
+    const msg = document.getElementById('alerte-msg'); msg.textContent = a.msg; msg.classList.remove('visible');
+    const nom = document.getElementById('alerte-nom'); nom.textContent = '';
+    el.classList.remove('joue'); void el.offsetWidth; el.classList.add('joue');
+    clearInterval(frappe);
+    let i = 0;
+    setTimeout(() => { frappe = setInterval(() => {
+      nom.textContent = a.nom.slice(0, ++i);
+      if (i >= a.nom.length) { clearInterval(frappe); msg.classList.add('visible'); }
+    }, 55); }, 550);
+  }
+  lex.querySelectorAll('button').forEach(b => b.onclick = () => {
+    lex.querySelectorAll('button').forEach(x => x.classList.toggle('actif', x === b));
+    jouerAlerte(alertes[b.dataset.i]);
+  });
+  jouerAlerte(alertes[0]);
+
+  // --- Cam : compteur REC ---
+  const t0 = Date.now();
+  setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000);
+    document.getElementById('rec').textContent = [s / 3600, s / 60 % 60, s % 60].map(n => String(Math.floor(n)).padStart(2, '0')).join(':'); }, 1000);
+
+  // --- Chat ---
+  const messages = [['Astro_Lou', '#FF9F1C', 'bonsoir l’équipage o7'], ['Kepler', '#38CFF0', 'on décolle quand ?'], ['Nova_77', '#B794F6', 'la fusée est trop propre'], ['StarPilot', '#7BE08A', 'T-moins combien ?'], ['Capitaine_K', '#FF6B6B', 'GG pour l’alunissage'], ['Orbite', '#F6E05E', 'check du hublot 🚀']];
+  const chat = document.getElementById('chat');
+  let im = 0;
+  function nouveauMessage() {
+    const [n, c, t] = messages[im++ % messages.length];
+    chat.insertAdjacentHTML('beforeend', `<div class="chat-ligne" style="--c:${c}"><b>${n}:</b>${t}</div>`);
+    while (chat.children.length > 6) chat.firstElementChild.remove();
+  }
+  for (let i = 0; i < 4; i++) nouveauMessage();
+  setInterval(nouveauMessage, 2200);
+
+  // --- Objectif ---
+  let recrues = 36;
+  const noms = ['Mission_Alpha', 'Orbite', 'Luna_B', 'Cosmo', 'Pilote_Z', 'Apollo_13'];
+  function majObjectif() {
+    const p = recrues / 50 * 100;
+    document.getElementById('obj-txt').textContent = `${recrues} / 50`;
+    document.getElementById('obj-pleine').style.width = p + '%';
+    document.getElementById('obj-fusee').style.left = p + '%';
+  }
+  document.getElementById('btn-recrue').onclick = () => {
+    recrues = recrues >= 50 ? 30 : recrues + 1; majObjectif();
+    const item = document.getElementById('b-recrue');
+    document.getElementById('b-recrue-nom').textContent = noms[recrues % noms.length];
+    item.classList.remove('flash'); void item.offsetWidth; item.classList.add('flash');
+  };
+  majObjectif();
+
+  // --- Transitions ---
+  document.querySelectorAll('[data-joue]').forEach(b => b.onclick = () => {
+    const z = document.getElementById(b.dataset.joue);
+    z.classList.remove('joue'); void z.offsetWidth; z.classList.add('joue');
+  });
+
+  regler('theme', 'sombre'); regler('accent', 'orange'); regler('police', 'barlow');
+</script>
+</body>
+</html>

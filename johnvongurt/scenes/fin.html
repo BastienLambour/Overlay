@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre">
+<head>
+<meta charset="UTF-8">
+<title>Fin — Mission accomplie</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  #decor { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+  .sol { fill: var(--coque); stroke: var(--trait); stroke-width: 3; }
+  .cratere { fill: none; stroke: var(--doux); stroke-width: 2; }
+  .terre-ombre { fill: var(--fond); opacity: .75; }
+
+  #f3-flamme { transition: opacity .5s; }
+  .pose #f3-flamme { opacity: 0; }
+
+  /* Poussière à l'alunissage */
+  .grain { fill: var(--doux); opacity: 0; }
+  .pose .grain { animation: projete 2.2s cubic-bezier(.2,.7,.3,1) forwards; animation-delay: var(--r); }
+  @keyframes projete {
+    0% { opacity: .9; transform: translate(0, 0); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+  }
+  .nuage { fill: var(--doux); opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .pose .nuage { animation: nuage 3s ease-out forwards; }
+  @keyframes nuage { 0% { opacity: .35; transform: scale(.2, .5); } 100% { opacity: 0; transform: scale(1.6, 1); } }
+
+  /* Drapeau */
+  #drapeau { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); transition: transform .8s cubic-bezier(.34,1.56,.64,1); }
+  .drapeau-plante #drapeau { transform: scaleY(1); }
+  .toile { fill: var(--accent); animation: flotte 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 0 50%; }
+  @keyframes flotte { 50% { transform: skewY(-4deg) scaleX(.94); } }
+
+  /* ----- Panneau de fin ----- */
+  .message { position: absolute; left: 80px; top: 360px; width: 700px; opacity: 0; transform: translateY(30px); transition: opacity 1s, transform 1s cubic-bezier(.2,.7,.3,1); }
+  .fini .message { opacity: 1; transform: none; }
+  .message .titre-geant { font-size: 128px; margin: 14px 0 24px; }
+  .message p { font: 500 32px/1.4 var(--f-texte); color: var(--trait); margin: 0 0 30px; max-width: 620px; }
+
+  .descente { position: absolute; left: 80px; top: 380px; transition: opacity .6s; }
+  .fini .descente { opacity: 0; }
+  .descente .mono { font: 600 34px var(--f-mono); color: var(--accent); animation: clignote 1s steps(2) infinite; }
+  @keyframes clignote { 50% { opacity: .35; } }
+
+  /* ----- Télémétrie ----- */
+  .telemetrie { position: absolute; right: 80px; top: 420px; width: 440px; }
+  .telemetrie .interieur { padding: 22px 28px; }
+  .mesure { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 2px solid var(--faible); }
+  .mesure:last-child { border-bottom: 0; }
+  .mesure .valeur { font: 600 28px var(--f-mono); }
+  #etat { color: var(--accent); font-size: 22px; }
+  .fini #etat { color: var(--ok); }
+</style>
+</head>
+<body>
+<div id="ecran">
+  <div class="calque grille"></div>
+
+  <svg id="decor" viewBox="0 0 1920 1080">
+    <g id="ciel"></g>
+
+    <!-- Terre au loin -->
+    <g transform="translate(1210,250)">
+      <circle class="plein" r="64"/>
+      <path class="trait-fin" d="M-40,-30 C-20,-40 -10,-20 -24,-6 C-36,6 -30,24 -12,30 M14,-50 C30,-40 44,-30 36,-12 C30,4 46,10 52,20 M-8,40 C8,34 22,44 30,50"/>
+      <path class="terre-ombre" d="M10,-63 A64 64 0 0 1 10,63 A40 64 0 0 0 10,-63 Z"/>
+    </g>
+
+    <!-- Sol lunaire -->
+    <path class="sol" d="M-10,850 Q960,740 1930,850 V1090 H-10 Z"/>
+    <g>
+      <ellipse class="cratere" cx="300" cy="905" rx="80" ry="15"/>
+      <ellipse class="cratere" cx="300" cy="909" rx="54" ry="9"/>
+      <ellipse class="cratere" cx="640" cy="862" rx="40" ry="8"/>
+      <ellipse class="cratere" cx="1380" cy="880" rx="95" ry="17"/>
+      <ellipse class="cratere" cx="1380" cy="885" rx="60" ry="10"/>
+      <ellipse class="cratere" cx="1720" cy="940" rx="50" ry="10"/>
+      <ellipse class="cratere" cx="1080" cy="975" rx="62" ry="11"/>
+      <ellipse class="cratere" cx="820" cy="1010" rx="36" ry="7"/>
+    </g>
+
+    <!-- Nuage et grains de poussière -->
+    <ellipse class="nuage" cx="960" cy="790" rx="190" ry="26"/>
+    <g id="poussiere"></g>
+
+    <!-- Drapeau -->
+    <g id="drapeau">
+      <path class="trait" d="M1130,796 V680"/>
+      <rect class="toile" x="1131" y="682" width="58" height="36"/>
+      <path d="M1145,700 l10,-10 l10,10 l10,-10" fill="none" stroke="var(--fond)" stroke-width="3"/>
+    </g>
+
+    <!-- Fusée -->
+    <g id="fusee-pos"><g transform="scale(1.15)" id="fusee-place"></g></g>
+  </svg>
+
+  <div class="calque vignette" style="pointer-events:none"></div>
+  <div class="cadre marge"></div>
+
+  <!-- En-tête -->
+  <div class="entete">
+    <div class="entete-haut">
+      <div class="badge" data-icone="fusee"></div>
+      <div class="label">Mission Control</div>
+      <span class="hachures"></span>
+    </div>
+    <div class="boite"><div class="interieur"><div class="nom" data-texte="nomChaine">John Von Gurt</div></div></div>
+  </div>
+
+  <!-- Statut système -->
+  <div class="statut">
+    <div class="statut-titre label doux">Statut système</div>
+    <div class="boite"><div class="interieur">
+      <div class="statut-item"><span data-icone="planete"></span><span class="label">Destination</span><span class="valeur">Lune</span></div>
+      <div class="statut-item"><span data-icone="horloge"></span><span class="label">Heure locale</span><span class="valeur" data-horloge>--:--</span></div>
+    </div></div>
+  </div>
+
+  <!-- Pendant la descente -->
+  <div class="descente">
+    <div class="label doux">Phase finale</div>
+    <div class="mono">Alunissage en cours…</div>
+  </div>
+
+  <!-- Après l'alunissage -->
+  <div class="message">
+    <span class="hachures"></span>
+    <h1 class="titre-geant" data-texte="fin.titre">Mission accomplie</h1>
+    <p data-texte="fin.message">Merci d'avoir suivi la mission !</p>
+  </div>
+
+  <!-- Télémétrie -->
+  <div class="telemetrie boite"><div class="interieur">
+    <div class="label doux" style="margin-bottom:6px">Télémétrie de descente</div>
+    <div class="mesure"><span class="label">Altitude</span><span class="valeur" id="altitude">1 500 m</span></div>
+    <div class="mesure"><span class="label">Vitesse</span><span class="valeur" id="vitesse">0 m/s</span></div>
+    <div class="mesure"><span class="label">Carburant</span><span class="valeur" id="carburant">18 %</span></div>
+    <div class="mesure"><span class="label">État</span><span class="valeur" id="etat">Descente</span></div>
+  </div></div>
+
+  <!-- Pied de page -->
+  <div class="pied">
+    <div class="pied-circuit"><span class="label doux" data-texte="decor.protocole">Protocole v1.2</span><span data-icone="circuit" style="color:var(--doux)"></span><span class="label doux" data-texte="decor.capteurs">Capteurs externes</span></div>
+    <div class="etiquette" id="statut-bas">Alunissage en cours</div>
+    <div class="label doux">+ &nbsp;<span data-texte="decor.exploration">Exploration spatiale profonde</span>&nbsp; +</div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  Commun.demarrer();
+  const C = Commun.C.fin || {};
+  const ecran = document.getElementById('ecran');
+
+  document.getElementById('fusee-place').innerHTML = Commun.fusee({ id: 'f3', flamme: true });
+  Commun.etoiles(document.getElementById('ciel'), 140, { h: 780 });
+
+  // Grains de poussière projetés de part et d'autre
+  let grains = '';
+  for (let i = 0; i < 40; i++) {
+    const cote = i % 2 ? 1 : -1;
+    grains += `<circle class="grain" cx="${960 + cote * (20 + Math.random() * 60)}" cy="${792 - Math.random() * 6}" r="${(1.5 + Math.random() * 3).toFixed(1)}"
+      style="--dx:${(cote * (120 + Math.random() * 380)).toFixed(0)}px;--dy:${(-10 - Math.random() * 70).toFixed(0)}px;--r:${(Math.random() * .3).toFixed(2)}s"/>`;
+  }
+  document.getElementById('poussiere').innerHTML = grains;
+
+  // --- Séquence d'alunissage ---
+  const pos = document.getElementById('fusee-pos');
+  const ECHELLE = 1.15, SOL = 795;
+  const Y_FIN = SOL - 150 * ECHELLE;      // pieds posés sur le sol
+  const Y_DEBUT = -320;
+  const DUREE = 7000, ALT = 1500;
+  const fmt = n => Math.round(n).toLocaleString('fr-FR');
+  const txt = (id, v) => document.getElementById(id).textContent = v;
+
+  let minuterie;
+  function sequence() {
+    ecran.classList.remove('jambes-sorties', 'pose', 'drapeau-plante', 'fini');
+    txt('statut-bas', 'Alunissage en cours'); txt('etat', 'Descente');
+    const t0 = performance.now();
+    clearInterval(minuterie);
+    minuterie = setInterval(image, 16);
+    function image() {
+      const t = performance.now();
+      const p = Math.min(1, (t - t0) / DUREE);
+      const e = 1 - Math.pow(1 - p, 3);                       // freinage progressif
+      const y = Y_DEBUT + (Y_FIN - Y_DEBUT) * e;
+      const balance = Math.sin(t / 380) * 1.6 * (1 - p);      // léger balancement
+      pos.setAttribute('transform', `translate(960,${y.toFixed(1)}) rotate(${balance.toFixed(2)})`);
+
+      txt('altitude', fmt(ALT * (1 - e)) + ' m');
+      const v = 3 * Math.pow(1 - p, 2) * ALT / (DUREE / 1000);
+      txt('vitesse', (v >= 0.05 ? '-' : '') + v.toFixed(1).replace('.', ',') + ' m/s');
+      txt('carburant', Math.max(2, Math.round(18 - 16 * p)) + ' %');
+      if (p > .5) ecran.classList.add('jambes-sorties');
+
+      if (p < 1) return;
+
+      // Contact !
+      clearInterval(minuterie);
+      ecran.classList.add('pose');
+      txt('etat', 'Alunissage confirmé');
+      setTimeout(() => ecran.classList.add('drapeau-plante'), 1400);
+      setTimeout(() => {
+        ecran.classList.add('fini');
+        txt('statut-bas', C.statut || 'Retour au centre de contrôle');
+      }, 1000);
+    }
+  }
+
+  setTimeout(sequence, 600);
+  // Option : ?boucle=20 rejoue l'alunissage toutes les 20 secondes (pratique pour tester)
+  const boucle = parseFloat(Commun.params.get('boucle'));
+  if (boucle > 0) setInterval(sequence, boucle * 1000);
+</script>
+</body>
+</html>

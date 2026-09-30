@@ -1,0 +1,182 @@
+/* =====================================================================
+   PATAGRAIN — Le bouffon (mascotte) : réglages communs et ses « numéros ».
+   Le dessin vient de js/bouffon.js (Bouffon.svg('pied') / ('buste')).
+   Les articulations du bouffon en pied tournent autour de leurs pivots,
+   exprimés en unités du dessin (voir outils/generer-bouffon.mjs).
+   Les numéros qui s'enchaînent (cirque…) sont pilotés par js/numeros.js.
+   ===================================================================== */
+.bouffon-svg.bouffon-pied g { transform-box: view-box; }
+.bouffon-svg.bouffon-pied .bf-oeil-d,
+.bouffon-svg.bouffon-pied .bf-oeil-g { transform-box: fill-box; transform-origin: 50% 50%; }
+.bouffon-svg.bouffon-pied .bf-chapeau { transform-origin: 200px 196px; }
+.bouffon-svg .bf-oeil-d, .bouffon-svg .bf-oeil-g { transform-box: fill-box; transform-origin: 50% 50%; }
+#ecran .bouffon-svg { position: static; display: block; width: 100%; height: 100%; }
+
+/* ---------- Petits gestes réutilisables ---------- */
+@keyframes bf-cligne { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes bf-grelots { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(7deg); } 45% { transform: rotate(-6deg); } 70% { transform: rotate(3deg); } }
+@keyframes bf-pas { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-24px) rotate(4deg); } }
+.cligne .bf-oeil-g, .cligne .bf-oeil-d { animation: bf-cligne 5s infinite; }
+.ding .bf-chapeau { animation: bf-grelots .9s ease-in-out; }
+
+/* =====================================================================
+   1. LE NUMÉRO DE CIRQUE (Starting soon) — jongle, poirier, salut
+   ===================================================================== */
+/* Jongle avec trois dés (les dés sont ajoutés au dessin par Numeros.cirque) */
+.bfx-des { opacity: 0; transition: opacity .3s; }
+.jongle .bfx-des { opacity: 1; }
+.jongle .bf-epaule-g { animation: jg-epaule-g .5s ease-in-out infinite alternate; }
+.jongle .bf-epaule-d { animation: jg-epaule-d .5s ease-in-out -.25s infinite alternate; }
+.jongle .bf-coude-g { transform: rotate(-62deg); }
+.jongle .bf-coude-d { transform: rotate(62deg); }
+.jongle .bf-tout { animation: jg-corps .25s ease-in-out infinite alternate; }
+.jongle .bf-haut { animation: jg-tete 1s ease-in-out infinite alternate; }
+.jongle .bfx-de { animation: jg-de 1.5s linear infinite; }
+.jongle .bfx-de.d2 { animation-delay: -.5s; }
+.jongle .bfx-de.d3 { animation-delay: -1s; }
+@keyframes jg-epaule-g { from { transform: rotate(-4deg); } to { transform: rotate(42deg); } }
+@keyframes jg-epaule-d { from { transform: rotate(4deg); } to { transform: rotate(-42deg); } }
+@keyframes jg-corps { to { transform: translateY(12px); } }
+@keyframes jg-tete { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+/* Chaque dé fait le tour d'une grande ellipse devant le bouffon, en tournant sur lui-même */
+@keyframes jg-de {
+  0%     { transform: translate(275px, 555px) rotate(0); }
+  12.5%  { transform: translate(345px, 397px) rotate(45deg); }
+  25%    { transform: translate(330px, 200px) rotate(90deg); }
+  37.5%  { transform: translate(239px, 79px) rotate(135deg); }
+  50%    { transform: translate(125px, 105px) rotate(180deg); }
+  62.5%  { transform: translate(55px, 263px) rotate(225deg); }
+  75%    { transform: translate(70px, 460px) rotate(270deg); }
+  87.5%  { transform: translate(161px, 581px) rotate(315deg); }
+  100%   { transform: translate(275px, 555px) rotate(360deg); } }
+
+/* Poirier : le corps bascule, mains au sol, jambes qui gigotent */
+.poirier .bf-tout { transform-origin: 200px 400px !important; animation: pr-corps 4.4s cubic-bezier(.5,0,.3,1) both; }
+.poirier .bf-epaule-g { animation: pr-bras-g 4.4s ease-in-out both; }
+.poirier .bf-epaule-d { animation: pr-bras-d 4.4s ease-in-out both; }
+.poirier .bf-hanche-g { animation: pr-jambe 4.4s ease-in-out both; }
+.poirier .bf-hanche-d { animation: pr-jambe 4.4s ease-in-out both reverse; }
+@keyframes pr-corps { 0% { transform: none; } 18%, 82% { transform: translateY(190px) rotate(180deg); } 100% { transform: none; } }
+@keyframes pr-bras-g { 0% { transform: rotate(0); } 12%, 88% { transform: rotate(168deg); } 100% { transform: rotate(0); } }
+@keyframes pr-bras-d { 0% { transform: rotate(0); } 12%, 88% { transform: rotate(-168deg); } 100% { transform: rotate(0); } }
+@keyframes pr-jambe { 0%, 20%, 80%, 100% { transform: rotate(0); } 35%, 65% { transform: rotate(14deg); } 50% { transform: rotate(-10deg); } }
+
+/* Salut : grande courbette, un bras devant, l'autre sur le côté */
+.salut .bf-tout { animation: sl-corps 2.4s ease-in-out both; }
+.salut .bf-epaule-d { animation: sl-bras-d 2.4s ease-in-out both; }
+.salut .bf-coude-d { animation: sl-coude-d 2.4s ease-in-out both; }
+.salut .bf-epaule-g { animation: sl-bras-g 2.4s ease-in-out both; }
+.salut .bf-oeil-d { animation: sl-clin 2.4s both; }
+.salut .bf-clin { animation: sl-clin-trait 2.4s both; }
+@keyframes sl-corps { 0%, 100% { transform: none; } 35%, 70% { transform: scale(1.02, .9); } }
+@keyframes sl-bras-d { 0%, 100% { transform: rotate(0); } 35%, 70% { transform: rotate(40deg); } }
+@keyframes sl-coude-d { 0%, 100% { transform: rotate(0); } 35%, 70% { transform: rotate(75deg); } }
+@keyframes sl-bras-g { 0%, 100% { transform: rotate(0); } 35%, 70% { transform: rotate(65deg); } }
+@keyframes sl-clin { 0%, 38%, 62%, 100% { transform: scaleY(1); } 42%, 58% { transform: scaleY(0); } }
+@keyframes sl-clin-trait { 0%, 38%, 62%, 100% { opacity: 0; } 42%, 58% { opacity: 1; } }
+
+/* =====================================================================
+   2. AU COIN DU FEU (Pause) — piloté par Numeros.feu :
+      dodo (il rêve d'un d20 qui roule) → réveil (le dé tombe sur 1 !) →
+      chamallow (il le fait griller) → croque → et il se rendort
+   ===================================================================== */
+.au-feu .bf-epaule-g { transform: rotate(18deg); }
+.au-feu .bf-coude-g { transform: rotate(-55deg); }
+.au-feu .bf-epaule-d { transform: rotate(-18deg); transition: transform .8s ease-in-out; }
+.au-feu .bf-coude-d { transform: rotate(55deg); transition: transform .8s ease-in-out; }
+.bfx-baton { opacity: 0; transition: opacity .3s; }
+/* Il dort : la tête dodeline, les yeux fermés (expression « dort ») */
+.dodo .bf-haut { animation: dd-tete 3.2s ease-in-out infinite; }
+.dodo .bf-tout { animation: dd-souffle 3.2s ease-in-out infinite; }
+@keyframes dd-tete { 0%, 100% { transform: rotate(4deg) translateY(6px); } 50% { transform: rotate(10deg) translateY(14px); } }
+@keyframes dd-souffle { 50% { transform: scale(1.015, 1.01); } }
+/* Réveil en sursaut */
+.reveil .bf-tout { animation: rv-saut .9s cubic-bezier(.34, 1.56, .64, 1) both; }
+.reveil .bf-chapeau { animation: bf-grelots .9s ease-in-out 2; }
+@keyframes rv-saut { 0% { transform: none; } 30% { transform: translateY(-46px) scale(.97, 1.05); } 60% { transform: translateY(0) scale(1.03, .96); } 100% { transform: none; } }
+/* Le chamallow au bout du bâton, tendu vers le feu (à droite) */
+.chamallow .bf-epaule-d, .croque .bf-epaule-d { transform: rotate(-118deg); }
+.chamallow .bf-coude-d { transform: rotate(4deg); }
+.chamallow .bfx-baton, .croque .bfx-baton { opacity: 1; }
+.chamallow .bfx-guimauve { animation: ch-grille 4.2s linear both; }
+.chamallow .bf-haut { transform: rotate(-6deg); transition: transform .6s; }
+@keyframes ch-grille { 0%, 15% { fill: #FFFFFF; } 55% { fill: #F1D29A; } 90%, 100% { fill: #B06A33; } }
+/* Il le croque : la main vient à la bouche */
+.croque .bf-epaule-d { transform: rotate(142deg); }
+.croque .bf-coude-d { transform: rotate(-38deg); }
+.croque .bfx-guimauve { fill: #B06A33; animation: ch-croque 1.6s ease-in both; }
+@keyframes ch-croque { 0%, 45% { opacity: 1; } 55%, 100% { opacity: 0; } }
+/* Les « Z » qui s'envolent */
+.bfx-z { position: absolute; font: 800 var(--taille-z, 44px)/1 var(--f-titre); color: var(--texte-doux); opacity: 0; }
+.dort .bfx-z { animation: sn-z 3s infinite; }
+.dort .bfx-z.z2 { animation-delay: 1s; } .dort .bfx-z.z3 { animation-delay: 2s; }
+@keyframes sn-z { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: .9; } 100% { opacity: 0; transform: translate(2.2em, -2.6em) scale(1.25) rotate(12deg); } }
+/* La bulle de rêve (avec le d20 qui roule dedans) */
+.bfx-reve { opacity: 0; transform: scale(.3); transform-origin: 0 100%; transition: opacity .5s, transform .5s var(--rebond, ease); }
+.dort .bfx-reve { opacity: 1; transform: none; }
+.bfx-reve .bulle { position: absolute; border-radius: 50%; background: var(--texte); }
+.bfx-reve .de-reve { animation: rv-roule .5s linear infinite; }
+.bfx-reve.pose .de-reve { animation: none; }
+@keyframes rv-roule { to { transform: rotate(360deg); } }
+
+/* =====================================================================
+   3. IL SURVEILLE LA TAVERNE (Cam seule, Contenu) — dépasse de la carte du chat
+   ===================================================================== */
+.guette .bf-oeil-g, .guette .bf-oeil-d { animation: gt-yeux 6s ease-in-out infinite; }
+.guette .bf-tout { animation: gt-corps 6s ease-in-out infinite; }
+@keyframes gt-yeux { 0%, 30% { transform: translate(-2px, 3px); } 40%, 60% { transform: translate(3px, 1px); } 70%, 100% { transform: translate(-2px, 3px); } }
+@keyframes gt-corps { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+/* à chaque nouveau message : les grelots tintent et il se dresse un peu (classe « ding », ajoutée par Numeros.taverne) */
+.guette.ding .bf-tout { animation: gt-hop .6s var(--rebond, ease) both; }
+@keyframes gt-hop { 40% { transform: translateY(-14px); } }
+
+/* =====================================================================
+   4. IL DESCEND AVEC L'ALERTE (Alertes) — une main tient la corde, l'autre salue
+   La main droite (levée) est au point (328, 228) du dessin : c'est là que passe la corde.
+   ===================================================================== */
+.rappel .bf-epaule-d { transform: rotate(-165deg); }
+.rappel .bf-coude-d { transform: rotate(-4deg); }
+.rappel .bf-epaule-g { animation: rp-salue 1.2s ease-in-out infinite alternate; }
+.rappel .bf-coude-g { transform: rotate(-30deg); }
+.rappel .bf-tout { transform: rotate(-7deg); transform-origin: 328px 228px !important; }
+.rappel .bf-hanche-g { animation: rp-jambe 1.4s ease-in-out infinite alternate; }
+.rappel .bf-hanche-d { animation: rp-jambe 1.4s ease-in-out -.7s infinite alternate; }
+@keyframes rp-salue { from { transform: rotate(48deg); } to { transform: rotate(78deg); } }
+@keyframes rp-jambe { from { transform: rotate(-9deg); } to { transform: rotate(12deg); } }
+
+/* =====================================================================
+   5. IL SE CACHE SOUS SON CHAPEAU, POSÉ SUR LA CAM (Jeu)
+   Au repos on ne voit que son chapeau sur la cam ; il se lève : sa tête apparaît
+   SOUS le chapeau, il regarde à gauche, à droite, clin d'œil, et redescend.
+   ===================================================================== */
+.coucou-jeu .bf-oeil-g { animation: cj-yeux var(--duree-coucou, 10s) ease-in-out infinite; }
+.coucou-jeu .bf-oeil-d { animation: cj-oeil-d var(--duree-coucou, 10s) ease-in-out infinite; }
+@keyframes cj-yeux { 0%, 34% { transform: translate(0, 0); } 40%, 46% { transform: translate(-4px, 1px); } 50%, 56% { transform: translate(4px, 1px); } 60%, 100% { transform: translate(0, 0); } }
+@keyframes cj-oeil-d { 0%, 34% { transform: translate(0, 0); } 40%, 46% { transform: translate(-4px, 1px); } 50%, 56% { transform: translate(4px, 1px); }
+  58% { transform: translate(0, 0) scaleY(1); } 59.5%, 61% { transform: translate(0, 0) scaleY(0); } 62.5%, 100% { transform: translate(0, 0) scaleY(1); } }
+.coucou-jeu .bf-chapeau { animation: cj-chapeau var(--duree-coucou, 10s) ease-in-out infinite; transform-origin: 200px 196px; transform-box: view-box; }
+@keyframes cj-chapeau { 0%, 24% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 36%, 62% { transform: rotate(3deg); } 68%, 100% { transform: rotate(0); } }
+
+/* =====================================================================
+   6. IL DIT AU REVOIR (Fin) — piloté par Numeros.auRevoir : coucou → courbette → saut de joie
+   ===================================================================== */
+.au-revoir .bf-epaule-d { transform: rotate(-148deg); }
+.au-revoir .bf-coude-d { animation: ar-main .4s ease-in-out infinite alternate; }
+.au-revoir .bf-tout { animation: ar-corps .8s ease-in-out infinite alternate; }
+.au-revoir .bf-oeil-d { animation: ar-clin 3.5s both; }
+.au-revoir .bf-clin { animation: ar-clin-trait 3.5s both; }
+@keyframes ar-main { from { transform: rotate(-32deg); } to { transform: rotate(26deg); } }
+@keyframes ar-corps { from { transform: rotate(-3deg) translateY(0); } to { transform: rotate(3deg) translateY(-6px); } }
+@keyframes ar-clin { 0%, 55%, 70%, 100% { transform: scaleY(1); } 60%, 65% { transform: scaleY(0); } }
+.hop .bf-tout { animation: hp-saut 1.3s cubic-bezier(.34, 1.4, .64, 1) both; }
+.hop .bf-epaule-g { animation: hp-bras-g 1.3s ease-in-out both; }
+.hop .bf-epaule-d { animation: hp-bras-d 1.3s ease-in-out both; }
+.hop .bf-hanche-g { animation: hp-jambe-g 1.3s ease-in-out both; }
+.hop .bf-hanche-d { animation: hp-jambe-d 1.3s ease-in-out both; }
+.hop .bf-chapeau { animation: bf-grelots .9s .3s ease-in-out; }
+@keyframes hp-saut { 0%, 100% { transform: none; } 15% { transform: translateY(14px) scale(1.04, .94); } 45% { transform: translateY(-90px); } 75% { transform: translateY(0) scale(1.03, .96); } }
+@keyframes hp-bras-g { 0%, 100% { transform: rotate(0); } 30%, 70% { transform: rotate(150deg); } }
+@keyframes hp-bras-d { 0%, 100% { transform: rotate(0); } 30%, 70% { transform: rotate(-150deg); } }
+@keyframes hp-jambe-g { 0%, 100% { transform: rotate(0); } 35%, 60% { transform: rotate(18deg); } }
+@keyframes hp-jambe-d { 0%, 100% { transform: rotate(0); } 35%, 60% { transform: rotate(-18deg); } }
+@keyframes ar-clin-trait { 0%, 60%, 72%, 100% { opacity: 0; } 64%, 68% { opacity: 1; } }

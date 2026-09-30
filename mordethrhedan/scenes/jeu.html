@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Jeu + cam</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « Jeu + cam » : source Navigateur 1920 × 1080, AU-DESSUS de la webcam / du jeu.
+  Le jeu en plein écran SOUS cette source, la cam dans un coin.
+  Coin de la cam : jeu.html?cam=haut-gauche (défaut), haut-droite, bas-gauche, bas-droite
+  Sans le grand cadre extérieur : jeu.html?cadre=0
+  Voir les emplacements : jeu.html?apercu=1   ·   Faux chat : jeu.html?test=1
+  Autre couleur pour cette scène : jeu.html?couleur=rouge
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
+<script>Scenes.construire('jeu');</script>
+</body>
+</html>

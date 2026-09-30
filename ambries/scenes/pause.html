@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Pause</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .fond-trame { position: absolute; inset: 0; --c: color-mix(in srgb, var(--violet) 22%, transparent); --t: 24px; }
+  .enseigne { position: absolute; left: 110px; top: 190px; width: 1150px; height: 520px; display: grid; place-items: center; }
+  .enseigne .tube { position: absolute; inset: 0; border-radius: 60px; border-width: 6px; animation: gresille 6s infinite; }
+  .enseigne .mot { font: 400 300px/1 var(--f-neon); color: #fff; text-shadow: var(--halo-texte), 0 0 80px var(--violet); animation: panne 7s infinite; }
+  @keyframes gresille { 0%, 70%, 74%, 100% { opacity: 1; } 72% { opacity: .4; } }
+  @keyframes panne { 0%, 40%, 43%, 46%, 100% { opacity: 1; } 41%, 44.5% { opacity: .2; } }
+  .enseigne .vis { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 3px solid var(--mauve); }
+  .message { position: absolute; left: 110px; top: 770px; width: 1150px; text-align: center; }
+  .message .sticker { font-size: 40px; }
+  .depuis { position: absolute; left: 110px; top: 880px; width: 1150px; text-align: center; font: 600 28px var(--f-texte); color: var(--doux); }
+  .depuis b { font: 400 36px var(--f-titre); color: var(--lilas); letter-spacing: .05em; }
+  .perso { position: absolute; left: 40px; top: 36px; }
+  .perso .g { position: absolute; right: -60px; top: -10px; width: 80px; height: 80px; }
+</style>
+</head>
+<body>
+<!--
+  Écran de pause : enseigne néon « Pause » qui grésille, et le chat reste visible.
+-->
+<div id="ecran">
+  <div class="calque lueur-fond"></div>
+  <div class="fond-trame trame"></div>
+  <div class="perso"><div data-avatar="150"></div><div class="g tremble" data-gribouillis="exclamation"></div></div>
+
+  <div class="enseigne">
+    <div class="tube"></div>
+    <i class="vis" style="left:26px;top:26px"></i><i class="vis" style="right:26px;top:26px"></i>
+    <i class="vis" style="left:26px;bottom:26px"></i><i class="vis" style="right:26px;bottom:26px"></i>
+    <div class="mot" data-texte="pause.titre">Pause</div>
+  </div>
+  <div class="message"><span class="sticker" data-texte="pause.message">Je reviens… avec une excuse.</span></div>
+  <div class="depuis">En pause depuis <b id="depuis">00:00</b></div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Composants.chat(document.getElementById('ecran'), { x: 1370, y: 190, l: 480, h: 750 });
+  Commun.demarrer();
+  const debut = Date.now();
+  setInterval(() => document.getElementById('depuis').textContent = Commun.mmss((Date.now() - debut) / 1000), 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Alertes</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .alerte-bloc { position: absolute; left: 50%; width: 860px; margin-left: -430px; }
+  .alerte-bloc .alerte { position: relative; }
+  /* Grands événements : bandes « danger » au-dessus et en dessous */
+  .bandes { position: absolute; left: 0; right: 0; top: -22px; bottom: -22px;
+    background: repeating-linear-gradient(-50deg, var(--accent) 0 14px, var(--etiquette-fond) 14px 28px);
+    animation: bandes-entre .5s cubic-bezier(.7,0,.2,1) both, bandes .8s linear infinite; }
+  .sort-bloc .bandes { animation: bandes-sort .4s ease-in both; }
+  @keyframes bandes { to { background-position: 40px 0; } }
+  @keyframes bandes-entre { from { transform: scaleX(0); } }
+  @keyframes bandes-sort { to { transform: scaleX(0); } }
+</style>
+</head>
+<body>
+<!--
+  Source d'alertes : à ajouter en haut de chaque scène (1920 × 1080).
+  Coche « Contrôler l'audio via OBS » pour entendre et régler le son.
+  Options d'URL :
+    ?position=haut | centre | bas   (défaut : haut)
+    ?test=1   fait défiler des alertes d'exemple
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/son.js"></script>
+<script>
+  Commun.demarrer();
+  const CA = Commun.C.alertes || {};
+  const ecran = document.getElementById('ecran');
+  const Y = { haut: 110, centre: 440, bas: 780 }[Commun.params.get('position')] ?? 110;
+
+  const ICONES = { follow: 'casque', sub: 'fusee', resub: 'fusee', giftsub: 'groupe', giftbomb: 'groupe', bits: 'carburant', raid: 'radar', don: 'coeur', objectif: 'cible' };
+  const GRANDES = ['raid', 'giftbomb', 'objectif'];
+  const remplir = (t, e) => (t || '').replace(/\{(\w+)\}/g, (_, k) => e[k] ?? '');
+
+  // --- File d'attente : une alerte à la fois ---
+  const file = [];
+  let occupe = false;
+  function suivante() {
+    if (occupe || !file.length) return;
+    occupe = true;
+    afficher(file.shift(), () => { occupe = false; setTimeout(suivante, 600); });
+  }
+
+  function afficher(e, fini) {
+    const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
+    const bloc = document.createElement('div');
+    bloc.className = 'alerte-bloc';
+    bloc.style.top = Y + 'px';
+    bloc.innerHTML = (GRANDES.includes(e.type) ? '<div class="bandes"></div>' : '') + '<div class="alerte entre"></div>';
+    const el = bloc.querySelector('.alerte');
+    el.innerHTML = `
+      <div class="alerte-icone"><span>${Commun.icones[ICONES[e.type]] || ''}</span></div>
+      <div class="alerte-corps">
+        <div class="alerte-tete"><span>Transmission entrante</span><span class="hachures"></span></div>
+        <div class="alerte-titre">${t.titre}</div>
+        <div class="alerte-nom"></div>
+        <div class="alerte-msg"></div>
+      </div>`;
+    ecran.appendChild(bloc);
+    el.querySelector('.alerte-msg').textContent = remplir(t.message, e);
+    Son.jouer(e.type);
+
+    // Pseudo tapé à la machine
+    const nom = el.querySelector('.alerte-nom'), texte = String(e.nom || '');
+    let i = 0;
+    setTimeout(function frappe() {
+      nom.textContent = texte.slice(0, ++i);
+      if (i < texte.length) setTimeout(frappe, 55); else el.querySelector('.alerte-msg').classList.add('visible');
+    }, 550);
+
+    setTimeout(() => {
+      el.classList.remove('entre'); el.classList.add('sort'); bloc.classList.add('sort-bloc');
+      setTimeout(() => { bloc.remove(); fini(); }, 500);
+    }, (CA.duree || 7) * 1000);
+  }
+
+  Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
+  Evenements.demarrer();
+</script>
+</body>
+</html>

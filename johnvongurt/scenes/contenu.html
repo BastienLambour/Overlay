@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Contenu + cam + chat</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « contenu » : colonne cam + chat à gauche, contenu à droite.
+  Dans OBS, place tes sources SOUS cette source, dans les zones :
+    Webcam  : x 60  · y 250 · 480 × 270 px
+    Contenu : x 580 · y 190 · 1280 × 720 px
+  (ouvre contenu.html?apercu=1 pour voir les zones)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const CAM = { x: 60, y: 250, l: 480, h: 270 };
+  const CONTENU = { x: 580, y: 190, l: 1280, h: 720 };
+
+  Composants.fondDecoupe(ecran, [CAM, CONTENU]);
+  Composants.entete(ecran);
+  Composants.cadre(ecran, CONTENU, { titre: 'Flux principal', nom: false });
+  Composants.cadre(ecran, CAM, { nom: false });
+  Composants.chat(ecran, { x: 53, y: 566, l: 494, h: 350 });
+  Composants.bandeau(ecran, { x: 53, y: 956, l: 1814, h: 76 });
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

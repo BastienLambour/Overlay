@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr" data-palette="neon" data-police="bangers">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambries — Moodboard</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  [data-police="bangers"] { --f-titre: 'Bangers', cursive; }
+  [data-police="luckiest"] { --f-titre: 'Luckiest Guy', cursive; }
+  [data-police="bungee"] { --f-titre: 'Bungee', cursive; }
+
+  html, body { height: auto; overflow: auto; background: var(--fond); color: var(--texte); font-family: var(--f-texte); }
+  body { background-image: radial-gradient(ellipse at 50% -20%, color-mix(in srgb, var(--violet) 30%, transparent), transparent 55%); background-attachment: fixed; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 20px 20px 100px; }
+  h2 { font: 400 56px/1 var(--f-titre); letter-spacing: .03em; margin: 90px 0 10px; color: #fff;
+    -webkit-text-stroke: 2px var(--encre); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--violet); display: flex; align-items: center; gap: 16px; }
+  h2::before { content: attr(data-num); font: 600 16px var(--f-texte); color: var(--encre); background: var(--accent); padding: 4px 10px; border: 2px solid var(--encre); transform: rotate(-4deg); -webkit-text-stroke: 0; text-shadow: none; }
+  h3 { font: 400 32px var(--f-titre); letter-spacing: .04em; margin: 40px 0 12px; color: var(--lilas); }
+  .sous { color: var(--doux); max-width: 70ch; font-size: 18px; line-height: 1.55; margin: 0 0 24px; }
+  section { scroll-margin-top: 80px; }
+
+  /* Réglages */
+  .reglages { position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; padding: 10px 16px;
+    background: color-mix(in srgb, var(--fond) 88%, transparent); border-bottom: 2px solid color-mix(in srgb, var(--violet) 50%, transparent); }
+  .groupe { display: flex; gap: 6px; align-items: center; }
+  .groupe > span { font: 600 13px var(--f-texte); text-transform: uppercase; letter-spacing: .1em; color: var(--doux); margin-right: 4px; }
+  .btn { font: 600 15px var(--f-texte); color: var(--texte); background: var(--surface); border: 2px solid transparent; border-radius: 999px; padding: 6px 14px; cursor: pointer; transition: transform .2s var(--rebond); }
+  .btn:hover { transform: translateY(-2px) rotate(-2deg); }
+  .btn.actif { border-color: var(--accent); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .btn.gros { font-size: 18px; padding: 10px 22px; background: var(--blanc); color: var(--encre); border: 3px solid var(--encre); box-shadow: var(--ombre-pop); border-radius: 12px; }
+
+  /* Hero */
+  .hero { display: flex; align-items: center; gap: 50px; flex-wrap: wrap; justify-content: center; padding: 60px 0 20px; }
+  .avatar-neon { width: 240px; height: 240px; border-radius: 50%; padding: 10px; flex: none; position: relative; animation: flotte 5s ease-in-out infinite; }
+  .avatar-neon::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 6px solid #fff; box-shadow: var(--halo), inset 0 0 16px var(--violet); }
+  .avatar-neon img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; transform: scale(1.05); display: block; }
+  .avatar-neon .bulle { position: absolute; right: -30px; top: -6px; }
+  @keyframes flotte { 50% { transform: translateY(-10px) rotate(2deg); } }
+  .hero-nom { font: 400 clamp(70px, 12vw, 150px)/1 var(--f-neon); color: #fff; text-shadow: var(--halo-texte); margin: 0; }
+  .hero-bio { margin-top: 18px; }
+
+  /* Cartes */
+  .grille { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .carte { background: var(--fond-2); border: 2px solid color-mix(in srgb, var(--violet) 35%, transparent); border-radius: 18px; padding: 20px; }
+  .carte h4 { font: 400 28px var(--f-titre); letter-spacing: .04em; margin: 14px 0 4px; }
+  .carte p { color: var(--doux); margin: 0; font-size: 15px; line-height: 1.5; }
+  .zone { height: 150px; border-radius: 12px; background: var(--fond); position: relative; overflow: hidden; display: grid; place-items: center; }
+  .zone.trame { background: var(--fond) radial-gradient(circle, var(--c) 28%, transparent 30%) 0 0 / var(--t) var(--t); }
+
+  /* Nuancier */
+  .nuancier { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .nuance { border-radius: 16px; overflow: hidden; background: var(--fond-2); border: 2px solid var(--surface); }
+  .nuance div { height: 90px; }
+  .nuance p { margin: 0; padding: 10px 12px; font-size: 14px; color: var(--doux); }
+  .nuance b { display: block; color: var(--texte); font: 400 22px var(--f-titre); letter-spacing: .04em; }
+
+  /* Typo */
+  .typo .carte { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; cursor: pointer; }
+  .typo .carte.choisie { border-color: var(--accent); box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .typo .nom-police { width: 170px; font: 600 13px var(--f-texte); text-transform: uppercase; letter-spacing: .1em; color: var(--doux); }
+  .typo .demo { flex: 1 1 400px; font-size: clamp(38px, 6vw, 70px); }
+
+  /* Personnage */
+  .jauges { display: grid; gap: 16px; }
+  .jauge-l { display: flex; justify-content: space-between; font: 400 26px var(--f-titre); letter-spacing: .04em; margin-bottom: 6px; }
+  .jauge { height: 34px; border-radius: 999px; border: 3px solid var(--encre); background: var(--surface); overflow: hidden; box-shadow: var(--ombre-pop); }
+  .jauge i { display: block; height: 100%; border-radius: 999px; }
+  .jauge .skill { width: 10%; background: var(--ok); }
+  .jauge .excuses { width: 90%; background: var(--accent); background-image: radial-gradient(circle, rgba(255,255,255,.35) 28%, transparent 30%); background-size: 14px 14px; animation: defile 1s linear infinite; }
+  @keyframes defile { to { background-position: 14px 0; } }
+  .stickers { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; margin-top: 30px; }
+  .stickers .sticker:nth-child(2) { transform: rotate(4deg); background: var(--blanc); }
+  .stickers .sticker:nth-child(3) { transform: rotate(-6deg); background: var(--mauve); }
+
+  /* Motifs */
+  .doodle { stroke: #fff; stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px var(--violet)); }
+  .tremble { animation: tremble .25s steps(2) infinite; }
+  @keyframes tremble { 50% { transform: translate(2px, -1px) rotate(2deg); } }
+  .tube-demo { width: 70%; height: 90px; animation: allumage 3s infinite; }
+  @keyframes allumage { 0%, 3%, 7%, 100% { opacity: 1; } 5% { opacity: .3; } 9% { opacity: .5; } }
+
+  /* Faux jeu en fond de démo */
+  .faux-jeu { position: relative; overflow: hidden; border-radius: 18px; padding: 34px; display: grid; place-items: center; min-height: 300px;
+    background: linear-gradient(160deg, #2d3a55, #172033 60%, #0c1220); }
+  .faux-jeu::before { content: ""; position: absolute; inset: 0; opacity: .3; background: radial-gradient(circle at 75% 25%, #d98c4a 0 70px, transparent 71px), repeating-linear-gradient(100deg, transparent 0 70px, rgba(255,255,255,.05) 70px 72px); }
+  .faux-jeu > * { position: relative; }
+
+  /* ---- Alerte « sticker BD » ---- */
+  .alerte { display: flex; align-items: center; gap: 22px; background: var(--blanc); color: var(--encre); border: 4px solid var(--encre); border-radius: 22px;
+    padding: 18px 30px 18px 18px; box-shadow: 10px 10px 0 var(--violet), 0 0 40px color-mix(in srgb, var(--violet) 70%, transparent); transform: rotate(-2deg); position: relative; width: min(640px, 100%); }
+  .alerte.joue { animation: alerte-pop .6s var(--rebond) both; }
+  @keyframes alerte-pop { 0% { transform: rotate(-12deg) scale(0); } 100% { transform: rotate(-2deg) scale(1); } }
+  .alerte-ic { width: 104px; height: 104px; flex: none; border-radius: 50%; background: var(--violet); border: 4px solid var(--encre); display: grid; place-items: center; color: #fff; }
+  .alerte-ic svg { width: 58px; height: 58px; }
+  .alerte.joue .alerte-ic { animation: tourne-pop .7s .2s var(--rebond) both; }
+  @keyframes tourne-pop { from { transform: scale(0) rotate(-120deg); } }
+  .alerte-tete { font: 700 14px var(--f-texte); letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .alerte-titre { font: 400 50px/1 var(--f-titre); letter-spacing: .03em; margin: 2px 0; }
+  .alerte-nom { font: 700 28px var(--f-texte); color: var(--accent); -webkit-text-stroke: 1px var(--encre); paint-order: stroke fill; }
+  [data-palette="pop"] .alerte-nom { color: #B8860B; }
+  .alerte-msg { font-size: 18px; font-weight: 500; opacity: .75; }
+  .alerte .eclabousse { position: absolute; width: 60px; height: 60px; pointer-events: none; }
+  .alerte.joue .eclabousse { animation: gicle .7s .15s var(--rebond) both; }
+  @keyframes gicle { from { transform: scale(0); } }
+  .vocab { width: 100%; border-collapse: collapse; margin-top: 22px; background: var(--fond-2); border-radius: 14px; overflow: hidden; }
+  .vocab th { text-align: left; font: 600 13px var(--f-texte); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); padding: 12px 16px; border-bottom: 2px solid var(--surface); }
+  .vocab td { padding: 10px 16px; border-bottom: 1px solid var(--surface); color: var(--doux); }
+  .vocab td:nth-child(2) { font: 400 22px var(--f-titre); letter-spacing: .03em; color: var(--texte); }
+  .lexique { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); margin-top: 16px; }
+  .lexique button { text-align: left; cursor: pointer; background: var(--fond-2); border: 2px solid var(--surface); color: var(--texte); border-radius: 14px; padding: 12px 14px; font: inherit; transition: transform .2s var(--rebond); }
+  .lexique button:hover { transform: rotate(-2deg) scale(1.03); }
+  .lexique button.actif { border-color: var(--accent); }
+  .lexique small { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--doux); font-weight: 600; }
+  .lexique b { font: 400 24px var(--f-titre); letter-spacing: .03em; }
+
+  /* ---- Cadre cam néon ---- */
+  .cam { position: relative; width: min(520px, 100%); aspect-ratio: 16/9; margin: 20px auto 30px; }
+  .cam-ecran { position: absolute; inset: 0; border-radius: 26px; background: linear-gradient(160deg, #54496a, #2a2238); display: grid; place-items: center; color: #ffffff90; font-weight: 600; overflow: hidden; }
+  .cam-ecran::after { content: ""; position: absolute; right: 0; bottom: 0; width: 45%; height: 45%; --c: color-mix(in srgb, var(--violet) 55%, transparent); --t: 16px;
+    background-image: radial-gradient(circle, var(--c) 28%, transparent 30%); background-size: 16px 16px; -webkit-mask: linear-gradient(135deg, transparent 40%, #000); mask: linear-gradient(135deg, transparent 40%, #000); }
+  .cam-tube { position: absolute; inset: -8px; border-radius: 32px; border: 5px solid #fff; box-shadow: var(--halo), inset 0 0 16px var(--violet); animation: allumage 4s infinite; pointer-events: none; }
+  .cam-nom { position: absolute; left: -14px; bottom: -22px; }
+  .cam-doodle { position: absolute; right: -34px; top: -40px; width: 80px; }
+
+  /* ---- Chat bulles ---- */
+  .chat { width: min(440px, 100%); display: flex; flex-direction: column; gap: 12px; height: 330px; justify-content: flex-end; overflow: hidden; }
+  .bulle-chat { align-self: flex-start; max-width: 100%; background: var(--surface); border: 3px solid #fff; border-radius: 18px 18px 18px 4px; padding: 8px 16px 9px;
+    box-shadow: 4px 4px 0 var(--c), 0 0 14px color-mix(in srgb, var(--violet) 45%, transparent); font-size: 18px; animation: bulle .45s var(--rebond) both; }
+  .bulle-chat b { color: var(--c); display: block; font-size: 15px; font-weight: 700; }
+  @keyframes bulle { from { transform: scale(0) rotate(-6deg); transform-origin: 0 100%; } }
+
+  /* ---- Bandeau ---- */
+  .bandeau { display: flex; width: 100%; max-width: 980px; background: color-mix(in srgb, var(--fond) 92%, transparent); border-radius: 999px; border: 3px solid #fff; box-shadow: var(--halo); overflow: hidden; }
+  .bandeau-item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 12px 22px; }
+  .bandeau-item + .bandeau-item { border-left: 2px dashed color-mix(in srgb, var(--violet) 60%, transparent); }
+  .bandeau-item svg { width: 30px; height: 30px; flex: none; color: var(--accent); }
+  .bandeau-item small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--doux); }
+  .bandeau-item b { display: block; font: 400 22px var(--f-titre); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---- Objectif ---- */
+  .objectif { width: 100%; max-width: 760px; }
+  .objectif-tete { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .objectif-tete b { font: 400 36px var(--f-titre); letter-spacing: .03em; }
+  .objectif-tete span { font: 400 30px var(--f-titre); color: var(--accent); }
+  .barre { position: relative; height: 44px; border-radius: 999px; border: 4px solid #fff; box-shadow: var(--halo); background: var(--fond); }
+  .barre-pleine { position: absolute; left: 4px; top: 4px; bottom: 4px; border-radius: 999px; background: var(--violet);
+    background-image: radial-gradient(circle, rgba(255,255,255,.3) 28%, transparent 30%); background-size: 14px 14px; transition: width 1s var(--rebond); animation: defile 1s linear infinite; }
+  .barre-tete { position: absolute; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; border: 4px solid #fff; box-shadow: var(--halo); overflow: hidden; transition: left 1s var(--rebond); background: var(--fond); }
+  .barre-tete img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); }
+
+  /* ---- Transitions ---- */
+  .transition-demo { position: relative; aspect-ratio: 16/9; border-radius: 18px; overflow: hidden; background: linear-gradient(160deg, #2d3a55, #172033 60%, #0c1220); }
+  .transition-demo::before { content: "Ta scène"; position: absolute; inset: 0; display: grid; place-items: center; font: 400 42px var(--f-titre); color: #ffffff40; letter-spacing: .05em; }
+  .transition-demo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .transition-demo .btn { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 2; }
+
+  /* ---- Écrans ---- */
+  .ecran-mini { position: relative; aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; background: var(--fond); border: 2px solid var(--surface); container-type: inline-size; }
+  .ecran-mini .centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3cqw; }
+  .ecran-mini .titre-pop { font-size: 9cqw; text-align: center; -webkit-text-stroke-width: 1.5px; text-shadow: 3px 3px 0 var(--encre), 0 0 18px var(--violet); }
+  .ecran-mini .neon { font-size: 11cqw; }
+  .ecran-mini .mini-avatar { width: 22cqw; height: 22cqw; border-radius: 50%; border: .8cqw solid #fff; box-shadow: var(--halo); overflow: hidden; }
+  .ecran-mini .mini-avatar img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); }
+  .chargement { width: 60%; }
+  .chargement .l { display: flex; justify-content: space-between; font: 600 2.6cqw var(--f-texte); color: var(--lilas); margin-bottom: 1cqw; }
+  .chargement .jauge { height: 3.4cqw; border-width: .5cqw; box-shadow: .6cqw .6cqw 0 var(--encre); }
+  .chargement .jauge i { width: 0; animation: charge 6s ease-in-out infinite; }
+  @keyframes charge { 0% { width: 0; } 70%, 100% { width: 90%; } }
+  .ecran-mini .petit { font-size: 2.8cqw; color: var(--doux); }
+  .z { position: absolute; display: grid; place-items: center; text-align: center; font: 600 10px var(--f-texte); letter-spacing: .08em; text-transform: uppercase; }
+  .z.cam { border: 3px solid #fff; border-radius: 12px; box-shadow: 0 0 10px var(--violet); color: #fff; background: #3b3150; }
+  .z.chat { background: var(--surface); border-radius: 10px; color: var(--lilas); }
+  .z.contenu { background: #2d3a55; border-radius: 10px; color: #ffffff90; border: 3px solid var(--mauve); }
+  .z.jeu { background: linear-gradient(160deg, #2d3a55, #0c1220); color: #ffffff70; }
+  .z.barre-z { background: var(--fond); border: 2px solid #fff; border-radius: 999px; color: var(--lilas); box-shadow: 0 0 8px var(--violet); }
+  .z.nom { background: var(--accent); color: var(--encre); font: 400 13px var(--f-titre); letter-spacing: .06em; border: 2px solid var(--encre); transform: rotate(-3deg); }
+  .scene-info h4 { font: 400 28px var(--f-titre); letter-spacing: .04em; margin: 12px 0 2px; }
+  .scene-info p { color: var(--doux); margin: 0; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<nav class="reglages">
+  <div class="groupe"><span>Palette</span>
+    <button class="btn" data-set="palette" data-val="neon">Néon mauve</button>
+    <button class="btn" data-set="palette" data-val="lilas">Néon lilas</button>
+    <button class="btn" data-set="palette" data-val="pop">Pop acidulé</button>
+  </div>
+  <div class="groupe"><span>Titres</span>
+    <button class="btn" data-set="police" data-val="bangers">Bangers</button>
+    <button class="btn" data-set="police" data-val="luckiest">Luckiest Guy</button>
+    <button class="btn" data-set="police" data-val="bungee">Bungee</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="avatar-neon"><img src="../assets/avatar.png" alt="Avatar d'Ambries_">
+      <svg class="bulle tremble" viewBox="0 0 60 60" width="70"><path class="doodle" d="M18 8 L22 36 M22 48 L22 50 M38 6 L40 34 M40 46 L40 48"/></svg></div>
+    <div>
+      <h1 class="hero-nom clignote-neon">Ambries_</h1>
+      <div class="hero-bio"><span class="sticker">10 % skill · 90 % d'excuses</span></div>
+    </div>
+  </header>
+
+  <!-- ============ 01 COULEURS ============ -->
+  <section>
+    <h2 data-num="01">Les couleurs</h2>
+    <p class="sous">La nuit violette de ta photo, un néon mauve qui brille, du blanc pur pour le fluide et les éclaboussures, et une couleur « pop » pour les stickers. Teste les trois variantes avec les boutons du haut : toute la page suit.</p>
+    <div class="nuancier" id="nuancier"></div>
+  </section>
+
+  <!-- ============ 02 TYPO ============ -->
+  <section class="typo">
+    <h2 data-num="02">Les typographies</h2>
+    <p class="sous">Une police BD bien grasse pour les titres (clique pour l'appliquer), une écriture « enseigne néon » pour ton pseudo, et une police ronde et lisible pour le reste.</p>
+    <div class="carte" data-police-choix="bangers"><div class="nom-police">Bangers</div><div class="demo titre-pop" style="font-family:'Bangers'">Ça commence bientôt !</div></div>
+    <div class="carte" data-police-choix="luckiest"><div class="nom-police">Luckiest Guy</div><div class="demo titre-pop" style="font-family:'Luckiest Guy'">Ça commence bientôt !</div></div>
+    <div class="carte" data-police-choix="bungee"><div class="nom-police">Bungee</div><div class="demo titre-pop" style="font-family:'Bungee'">Ça commence bientôt !</div></div>
+    <div class="carte" style="cursor:default"><div class="nom-police">Néon · Tilt Neon</div><div class="demo neon clignote-neon">Ambries_</div></div>
+    <div class="carte" style="cursor:default"><div class="nom-police">Texte · Fredoka</div><div class="demo" style="font:500 24px/1.4 var(--f-texte)">Merci d'être là pour assister au carnage ! Le chat, les pseudos et les infos sont écrits comme ça.</div></div>
+  </section>
+
+  <!-- ============ 03 PERSONNAGE ============ -->
+  <section>
+    <h2 data-num="03">Le personnage</h2>
+    <p class="sous">Ton avatar est la star : il apparaît dans un anneau néon au centre des transitions, sur les écrans d'attente et dans la jauge d'objectif. Et on assume l'humour de ta bio jusqu'au bout.</p>
+    <div class="grille" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
+      <div class="carte">
+        <div class="jauges">
+          <div><div class="jauge-l"><span>Skill</span><span style="color:var(--ok)">10 %</span></div><div class="jauge"><i class="skill"></i></div></div>
+          <div><div class="jauge-l"><span>Excuses</span><span style="color:var(--accent)">90 %</span></div><div class="jauge"><i class="excuses"></i></div></div>
+        </div>
+        <h4>La jauge officielle</h4><p>Elle revient sur l'écran de démarrage : « Chargement des excuses… ».</p>
+      </div>
+      <div class="carte">
+        <div class="stickers"><span class="sticker">C'était facile pourtant</span><span class="sticker">Oups</span><span class="sticker">Lag !!</span><span class="sticker">Excuse n°47</span></div>
+        <h4>Les stickers</h4><p>Des petites étiquettes de travers, pour les titres, les plaques de nom et les messages.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 MOTIFS ============ -->
+  <section>
+    <h2 data-num="04">Motifs &amp; symboles</h2>
+    <p class="sous">Le mélange néon + pop art : du trait qui brille, des points de BD et du fluide blanc qui éclabousse.</p>
+    <div class="grille">
+      <div class="carte"><div class="zone"><svg viewBox="0 0 1920 1080" style="position:absolute;inset:0;width:100%;height:100%" id="m-splash"></svg></div><h4>Éclaboussures</h4><p>Fluide blanc épais, bords qui se rejoignent comme un vrai liquide, ombre néon décalée.</p></div>
+      <div class="carte"><div class="zone"><svg viewBox="0 0 1920 1080" style="position:absolute;inset:0;width:100%;height:100%" id="m-gouttes"></svg></div><h4>Coulures</h4><p>De la peinture blanche qui dégouline du haut de l'écran.</p></div>
+      <div class="carte"><div class="zone trame" style="--c:var(--violet);--t:20px"></div><h4>Trame pop art</h4><p>Les points des vieilles BD, en violet ou en rose, pour les fonds et les coins.</p></div>
+      <div class="carte"><div class="zone"><div class="tube tube-demo"></div></div><h4>Tubes néon</h4><p>Des bordures blanches qui brillent en violet et grésillent de temps en temps.</p></div>
+      <div class="carte"><div class="zone"><svg viewBox="0 0 200 100" width="190" class="tremble">
+        <path class="doodle" d="M30 20 L34 60 M34 76 L34 78 M54 16 L58 56 M58 72 L58 74"/>
+        <path class="doodle" d="M90 30 L105 20 L100 45 L118 35 L112 60 L130 50"/>
+        <path class="doodle" d="M150 60 C150 40 180 40 176 58 C172 74 150 70 156 54 C160 44 170 48 168 56"/></svg></div>
+        <h4>Gribouillis</h4><p>Les « !! », éclairs de stress et spirales de ta photo, qui tremblotent.</p></div>
+      <div class="carte"><div class="zone"><svg viewBox="-110 -110 220 220" width="150" style="animation:tourne 12s linear infinite"><polygon id="eclat-demo" fill="#fff" stroke="var(--encre)" stroke-width="6" stroke-linejoin="round"/><text text-anchor="middle" y="16" font-family="Bangers" font-size="48" fill="var(--violet)">OUPS!</text></svg></div>
+        <h4>Éclats BD</h4><p>Les bulles d'explosion des comics, pour les grosses alertes.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 COMPOSANTS ============ -->
+  <section>
+    <h2 data-num="05">Les composants</h2>
+    <p class="sous">Les éléments réutilisés dans toutes les scènes. Le fond bleu simule un jeu, pour vérifier la lisibilité par-dessus.</p>
+
+    <h3>Alertes</h3>
+    <div class="faux-jeu">
+      <div class="alerte joue" id="alerte">
+        <svg class="eclabousse" viewBox="0 0 60 60" style="left:-26px;top:-26px"><circle cx="30" cy="30" r="16" fill="#fff" stroke="var(--encre)" stroke-width="4"/><circle cx="10" cy="46" r="7" fill="#fff" stroke="var(--encre)" stroke-width="3"/><circle cx="50" cy="10" r="5" fill="#fff" stroke="var(--encre)" stroke-width="3"/></svg>
+        <svg class="eclabousse" viewBox="0 0 60 60" style="right:-20px;bottom:-28px"><circle cx="26" cy="26" r="13" fill="var(--accent)" stroke="var(--encre)" stroke-width="4"/><circle cx="50" cy="44" r="6" fill="var(--accent)" stroke="var(--encre)" stroke-width="3"/></svg>
+        <div class="alerte-ic" id="alerte-ic"></div>
+        <div>
+          <div class="alerte-tete">Alerte !!</div>
+          <div class="alerte-titre" id="alerte-titre">Nouveau témoin !</div>
+          <div class="alerte-nom" id="alerte-nom">Pixel_Lou</div>
+          <div class="alerte-msg" id="alerte-msg">va assister au carnage</div>
+        </div>
+      </div>
+    </div>
+    <p class="sous" style="margin:14px 0 0">Un vocabulaire à ton image pour chaque type d'alerte. Clique pour voir l'animation :</p>
+    <div class="lexique" id="lexique"></div>
+    <table class="vocab">
+      <tr><th>Événement Twitch</th><th>Titre de l'alerte</th><th>Message</th></tr>
+      <tr><td>Follow</td><td>Nouveau témoin !</td><td>va assister au carnage</td></tr>
+      <tr><td>Abonnement</td><td>Soutien moral officiel</td><td>croit encore en moi (courageux)</td></tr>
+      <tr><td>Réabonnement</td><td>Toujours là ?!</td><td>supporte ça depuis X mois</td></tr>
+      <tr><td>Abonnement offert</td><td>Cadeau empoisonné</td><td>offre un abonnement à…</td></tr>
+      <tr><td>Pluie d'abonnements</td><td>Pluie de cadeaux !</td><td>offre X abonnements (grande alerte)</td></tr>
+      <tr><td>Bits</td><td>Pièces de consolation</td><td>envoie X bits pour me remonter le moral</td></tr>
+      <tr><td>Raid</td><td>Invasion !!</td><td>débarque avec X personnes (grande alerte)</td></tr>
+      <tr><td>Don</td><td>Fonds pour excuses</td><td>finance ma prochaine excuse</td></tr>
+      <tr><td>Objectif atteint</td><td>Objectif atteint !</td><td>même moi je n'y croyais pas (grande alerte)</td></tr>
+    </table>
+
+    <div class="grille" style="margin-top:40px;grid-template-columns:repeat(auto-fill,minmax(420px,1fr))">
+      <div>
+        <h3 style="margin-top:0">Cadre webcam</h3>
+        <div class="cam"><div class="cam-ecran">Ta webcam</div><div class="cam-tube"></div>
+          <span class="sticker cam-nom">Ambries_</span>
+          <svg class="cam-doodle tremble" viewBox="0 0 60 60"><path class="doodle" d="M18 8 L22 36 M22 48 L22 50 M38 6 L40 34 M40 46 L40 48"/></svg></div>
+        <p class="sous" style="font-size:15px">Tube néon qui grésille, trame de points dans le coin, plaque de nom en sticker et « !! » qui tremblote.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Chat</h3>
+        <div class="faux-jeu" style="min-height:0;padding:20px"><div class="chat" id="chat"></div></div>
+      </div>
+    </div>
+
+    <h3>Bandeau &amp; objectif</h3>
+    <div class="faux-jeu" style="gap:40px">
+      <div class="bandeau">
+        <div class="bandeau-item"><svg viewBox="0 0 32 32" data-ic="oeil"></svg><div><small>Dernier témoin</small><b id="b-temoin">Pixel_Lou</b></div></div>
+        <div class="bandeau-item"><svg viewBox="0 0 32 32" data-ic="coeur"></svg><div><small>Soutien moral</small><b>Choco_Chat</b></div></div>
+        <div class="bandeau-item"><svg viewBox="0 0 32 32" data-ic="etoile"></svg><div><small>Objectif</small><b id="b-obj">36 / 50 témoins</b></div></div>
+      </div>
+      <div class="objectif">
+        <div class="objectif-tete"><b>Objectif : 50 témoins</b><span id="obj-txt">36 / 50</span></div>
+        <div class="barre"><div class="barre-pleine" id="barre-pleine"></div><div class="barre-tete" id="barre-tete"><img src="../assets/avatar.png" alt=""></div></div>
+      </div>
+      <button class="btn gros" id="btn-temoin">+ un témoin</button>
+    </div>
+  </section>
+
+  <!-- ============ 06 TRANSITIONS ============ -->
+  <section>
+    <h2 data-num="06">Les transitions</h2>
+    <p class="sous">La partie la plus fun ! Trois transitions en fluide blanc et néon, avec ton avatar au milieu. Elles deviendront de vraies transitions OBS (vidéos transparentes), comme pour l'overlay Espace.</p>
+    <div class="grille" style="grid-template-columns:repeat(auto-fill,minmax(460px,1fr))">
+      <div><div class="transition-demo"><svg viewBox="0 0 1920 1080" id="t-splash"></svg><button class="btn gros" data-jouer="splash">▶ Splash</button></div>
+        <h3 style="margin:14px 0 2px">Splash</h3><p class="sous" style="font-size:15px">Une bande de fluide blanc traverse l'écran en éclaboussant, puis repart en laissant des gouttes.</p></div>
+      <div><div class="transition-demo"><svg viewBox="0 0 1920 1080" id="t-gouttes"></svg><button class="btn gros" data-jouer="gouttes">▶ Gouttes</button></div>
+        <h3 style="margin:14px 0 2px">Gouttes</h3><p class="sous" style="font-size:15px">De la peinture blanche coule du haut et recouvre tout, puis le rideau entier tombe.</p></div>
+      <div><div class="transition-demo"><svg viewBox="0 0 1920 1080" id="t-pop"></svg><button class="btn gros" data-jouer="pop">▶ Pop art</button></div>
+        <h3 style="margin:14px 0 2px">Pop art</h3><p class="sous" style="font-size:15px">Onde de choc, cercle néon, trame de points et éclat BD qui explose au centre.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ 07 ÉCRANS ============ -->
+  <section>
+    <h2 data-num="07">Scènes</h2>
+    <p class="sous">Les trois écrans d'attente, puis la mise en page des scènes avec cam, contenu et jeu (même principe que pour l'overlay Espace).</p>
+    <div class="grille" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
+      <div class="scene-info"><div class="ecran-mini"><div class="calque lueur-fond"></div><div class="centre">
+        <div class="mini-avatar"><img src="../assets/avatar.png" alt=""></div>
+        <div class="titre-pop">Ça commence bientôt !</div>
+        <div class="chargement"><div class="l"><span>Chargement des excuses…</span><span>90 %</span></div><div class="jauge"><i class="excuses"></i></div></div>
+      </div></div><h4>Démarrage</h4><p>Compte à rebours et jauge « chargement des excuses » qui plafonne à 90 %.</p></div>
+
+      <div class="scene-info"><div class="ecran-mini"><div class="calque trame" style="--c:color-mix(in srgb,var(--violet) 25%,transparent);--t:18px"></div><div class="centre">
+        <div class="neon clignote-neon">Pause</div>
+        <div class="petit">Je reviens… avec une excuse.</div>
+      </div></div><h4>Pause</h4><p>Enseigne néon « Pause » qui grésille, et le chat reste visible.</p></div>
+
+      <div class="scene-info"><div class="ecran-mini"><div class="calque lueur-fond"></div><div class="centre">
+        <div class="titre-pop">GG !</div>
+        <span class="sticker" style="font-size:2.8cqw">(enfin… presque)</span>
+        <div class="petit">Merci d'avoir assisté au carnage 💜</div>
+      </div></div><h4>Fin</h4><p>Remerciements et derniers témoins de la soirée.</p></div>
+
+      <div class="scene-info"><div class="ecran-mini">
+        <div class="z nom" style="left:3%;top:4%;width:22%;height:8%">Ambries_</div>
+        <div class="z cam" style="left:3%;top:15%;width:68%;height:70%">Cam (grande)</div>
+        <div class="z chat" style="left:74%;top:15%;width:23%;height:70%">Chat</div>
+        <div class="z barre-z" style="left:3%;top:89%;width:94%;height:7%">Bandeau</div>
+      </div><h4>Cam seule</h4><p>Pour discuter : grande cam, chat en bulles à côté.</p></div>
+
+      <div class="scene-info"><div class="ecran-mini">
+        <div class="z nom" style="left:3%;top:4%;width:22%;height:8%">Ambries_</div>
+        <div class="z cam" style="left:3%;top:15%;width:30%;height:32%">Cam</div>
+        <div class="z chat" style="left:3%;top:51%;width:30%;height:35%">Chat</div>
+        <div class="z contenu" style="left:36%;top:15%;width:61%;height:71%">Contenu</div>
+        <div class="z barre-z" style="left:3%;top:89%;width:94%;height:7%">Bandeau</div>
+      </div><h4>Contenu</h4><p>Cam et chat à gauche, contenu à droite.</p></div>
+
+      <div class="scene-info"><div class="ecran-mini">
+        <div class="z jeu" style="inset:0">Jeu plein écran</div>
+        <div class="z nom" style="left:3%;top:4%;width:22%;height:8%">Ambries_</div>
+        <div class="z chat" style="left:3%;top:48%;width:22%;height:36%;opacity:.85">Chat</div>
+        <div class="z cam" style="right:3%;bottom:11%;width:22%;height:26%">Cam</div>
+        <div class="z barre-z" style="left:28%;bottom:3%;width:44%;height:6%">Bandeau</div>
+      </div><h4>Jeu</h4><p>Le jeu en grand, petite cam néon, chat qui s'efface tout seul.</p></div>
+    </div>
+  </section>
+</div>
+
+<script src="../js/fluide.js"></script>
+<script>
+  const racine = document.documentElement;
+  const AVATAR = '../assets/avatar.png';
+
+  // --- Icônes (trait blanc) ---
+  const IC = {
+    oeil: '<path d="M3 16 C8 8 24 8 29 16 C24 24 8 24 3 16 Z"/><circle cx="16" cy="16" r="4.5"/>',
+    coeur: '<path d="M16 27 C6 20 3 14 6 9 C9 5 14 6 16 10 C18 6 23 5 26 9 C29 14 26 20 16 27 Z"/>',
+    etoile: '<path d="M16 3 L19.5 12 L29 12.5 L21.5 18.5 L24 28 L16 22.5 L8 28 L10.5 18.5 L3 12.5 L12.5 12 Z"/>',
+    eclair: '<path d="M18 3 L7 18 H15 L13 29 L25 13 H17 Z"/>',
+    cadeau: '<rect x="5" y="12" width="22" height="16" rx="2"/><path d="M3 12 H29 M16 12 V28 M16 12 C12 4 6 8 10 12 M16 12 C20 4 26 8 22 12"/>',
+    fusee: '<path d="M16 3 C22 8 23 15 21 22 H11 C9 15 10 8 16 3 Z M11 16 L6 23 H11 M21 16 L26 23 H21 M14 22 L16 29 L18 22"/>',
+    piece: '<circle cx="16" cy="16" r="12"/><path d="M16 9 V23 M20 11.5 C18 10 12 10 12 13.5 C12 17 20 15 20 19 C20 22.5 14 22.5 12 21"/>',
+    trophee: '<path d="M10 4 H22 V13 C22 17 19 20 16 20 C13 20 10 17 10 13 Z M10 7 H5 C5 12 7 14 10 14 M22 7 H27 C27 12 25 14 22 14 M16 20 V25 M10 28 H22 L20 25 H12 Z"/>',
+  };
+  const svgIc = (nom, extra = '') => `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" ${extra}>${IC[nom]}</svg>`;
+  document.querySelectorAll('[data-ic]').forEach(s => { s.outerHTML = svgIc(s.dataset.ic); });
+
+  // --- Réglages ---
+  function regler(type, val) {
+    racine.dataset[type] = val;
+    document.querySelectorAll(`[data-set="${type}"]`).forEach(b => b.classList.toggle('actif', b.dataset.val === val));
+    if (type === 'police') document.querySelectorAll('[data-police-choix]').forEach(c => c.classList.toggle('choisie', c.dataset.policeChoix === val));
+    majNuancier();
+  }
+  document.querySelectorAll('[data-set]').forEach(b => b.onclick = () => regler(b.dataset.set, b.dataset.val));
+  document.querySelectorAll('[data-police-choix]').forEach(c => c.onclick = () => regler('police', c.dataset.policeChoix));
+  const couleurs = [['--fond', 'Nuit violette', 'Fonds, écrans'], ['--surface', 'Surface', 'Bulles, cartes'], ['--violet', 'Néon violet', 'Halos, cadres'], ['--mauve', 'Mauve', 'Détails'],
+    ['--accent', 'Pop', 'Stickers, pseudos'], ['--blanc', 'Blanc fluide', 'Éclaboussures, tubes'], ['--encre', 'Encre', 'Contours BD']];
+  function majNuancier() {
+    const s = getComputedStyle(racine);
+    document.getElementById('nuancier').innerHTML = couleurs.map(([v, n, u]) =>
+      `<div class="nuance"><div style="background:var(${v})"></div><p><b>${n}</b><code>${s.getPropertyValue(v).trim()}</code><br>${u}</p></div>`).join('');
+  }
+
+  // --- Éclat BD (motif) ---
+  const pts = [];
+  for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2, r = i % 2 ? 62 : 100; pts.push(`${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r).toFixed(1)}`); }
+  document.getElementById('eclat-demo').setAttribute('points', pts.join(' '));
+  document.head.insertAdjacentHTML('beforeend', '<style>@keyframes tourne{to{transform:rotate(360deg)}}</style>');
+
+  // --- Motifs figés tirés des transitions ---
+  Fluide.creer(document.getElementById('m-splash'), 'splash').rendre(.42);
+  Fluide.creer(document.getElementById('m-gouttes'), 'gouttes').rendre(.55);
+
+  // --- Transitions jouables ---
+  const transitions = {};
+  ['splash', 'gouttes', 'pop'].forEach(type => {
+    transitions[type] = Fluide.creer(document.getElementById('t-' + type), type, { avatar: AVATAR });
+    transitions[type].rendre(0);
+  });
+  document.querySelectorAll('[data-jouer]').forEach(b => b.onclick = () => Fluide.jouer(transitions[b.dataset.jouer]));
+
+  // --- Alertes ---
+  const alertes = [
+    { type: 'Follow', titre: 'Nouveau témoin !', nom: 'Pixel_Lou', msg: 'va assister au carnage', ic: 'oeil' },
+    { type: 'Abonnement', titre: 'Soutien moral officiel', nom: 'Choco_Chat', msg: 'croit encore en moi (courageux)', ic: 'coeur' },
+    { type: 'Réabonnement', titre: 'Toujours là ?!', nom: 'Mr_Patate', msg: 'supporte ça depuis 7 mois', ic: 'trophee' },
+    { type: 'Abo offert', titre: 'Cadeau empoisonné', nom: 'Luna', msg: 'offre un abonnement à Kiwi', ic: 'cadeau' },
+    { type: 'Bits', titre: 'Pièces de consolation', nom: 'Bidule', msg: 'envoie 500 bits pour me remonter le moral', ic: 'piece' },
+    { type: 'Raid', titre: 'Invasion !!', nom: 'GrosStreamer', msg: 'débarque avec 42 personnes', ic: 'fusee' },
+    { type: 'Don', titre: 'Fonds pour excuses', nom: 'Toto', msg: 'finance ma prochaine excuse : 5 €', ic: 'eclair' },
+  ];
+  const lex = document.getElementById('lexique');
+  lex.innerHTML = alertes.map((a, i) => `<button data-i="${i}"${i ? '' : ' class="actif"'}><small>${a.type}</small><b>${a.titre}</b></button>`).join('');
+  function jouerAlerte(a) {
+    const el = document.getElementById('alerte');
+    document.getElementById('alerte-titre').textContent = a.titre;
+    document.getElementById('alerte-nom').textContent = a.nom;
+    document.getElementById('alerte-msg').textContent = a.msg;
+    document.getElementById('alerte-ic').innerHTML = svgIc(a.ic);
+    el.classList.remove('joue'); void el.offsetWidth; el.classList.add('joue');
+  }
+  lex.querySelectorAll('button').forEach(b => b.onclick = () => {
+    lex.querySelectorAll('button').forEach(x => x.classList.toggle('actif', x === b));
+    jouerAlerte(alertes[b.dataset.i]);
+  });
+  jouerAlerte(alertes[0]);
+
+  // --- Chat ---
+  const msgs = [['Pixel_Lou', '#FF4FD8', 'coucou !! 💜'], ['Mr_Patate', '#5EF2B0', 'c\'était facile pourtant 😭'], ['Choco_Chat', '#C084FC', 'excuse n°48 en approche'],
+    ['Kiwi', '#3BE8F0', 'le lag, évidemment'], ['Luna', '#FFE14D', 'on y croit !!'], ['Toto', '#FF8A5B', 'GG (enfin presque)']];
+  const chat = document.getElementById('chat');
+  let im = 0;
+  function msg() {
+    const [n, c, t] = msgs[im++ % msgs.length];
+    chat.insertAdjacentHTML('beforeend', `<div class="bulle-chat" style="--c:${c}"><b>${n}</b>${t}</div>`);
+    while (chat.children.length > 5) chat.firstElementChild.remove();
+  }
+  for (let i = 0; i < 3; i++) msg();
+  setInterval(msg, 2400);
+
+  // --- Objectif ---
+  let temoins = 36;
+  const noms = ['Pixel_Lou', 'Kiwi', 'Luna', 'Mr_Patate', 'Choco_Chat'];
+  function majObjectif() {
+    const p = temoins / 50 * 100;
+    document.getElementById('obj-txt').textContent = `${temoins} / 50`;
+    document.getElementById('b-obj').textContent = `${temoins} / 50 témoins`;
+    document.getElementById('barre-pleine').style.width = `calc(${p}% - 8px)`;
+    document.getElementById('barre-tete').style.left = p + '%';
+  }
+  document.getElementById('btn-temoin').onclick = () => {
+    temoins = temoins >= 50 ? 30 : temoins + 1;
+    document.getElementById('b-temoin').textContent = noms[temoins % noms.length];
+    majObjectif();
+  };
+  majObjectif();
+
+  regler('palette', 'neon'); regler('police', 'bangers');
+</script>
+</body>
+</html>

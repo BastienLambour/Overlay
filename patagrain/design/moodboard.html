@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="fr" data-palette="royal" data-police="grenze">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patagrain — Moodboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600;800&family=Pirata+One&family=MedievalSharp&family=Nunito:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ PALETTES (les "variables" du système) ============ */
+  :root, [data-palette="royal"] {
+    --primaire: #3A9AD9;     /* bleu du logo */
+    --primaire-fonce: #1F6FA8;
+    --accent: #F5B82E;       /* or */
+    --accent-2: #E5484D;     /* rouge bouffon */
+    --fond: #152238;         /* bleu nuit */
+    --surface: #1E3050;
+    --texte: #FFF3DC;        /* crème */
+    --texte-doux: #B9C4D6;
+  }
+  [data-palette="donjon"] {
+    --primaire: #3A9AD9;
+    --primaire-fonce: #22679A;
+    --accent: #F2C14E;
+    --accent-2: #8B5CF6;     /* violet magie */
+    --fond: #171329;
+    --surface: #251E42;
+    --texte: #F6F0FF;
+    --texte-doux: #B7AFCF;
+  }
+  [data-palette="parchemin"] {
+    --primaire: #3A9AD9;
+    --primaire-fonce: #1F6FA8;
+    --accent: #E0A526;
+    --accent-2: #C8443C;     /* rouge brique */
+    --fond: #F1E4C6;
+    --surface: #FFF8E8;
+    --texte: #2B2440;
+    --texte-doux: #6E6480;
+  }
+  /* Nouveau (à valider) : ses couleurs à lui — noir et bleu, l'or du logo en petite touche */
+  [data-palette="noirbleu"] {
+    --primaire: #3A9AD9;     /* bleu du logo */
+    --primaire-fonce: #1F5F94;
+    --accent: #F5B82E;       /* or (grelots, dés) : en petite touche */
+    --accent-2: #8FD0F5;     /* bleu glacier, à la place du rouge */
+    --fond: #0B0D11;         /* noir */
+    --surface: #171B23;
+    --texte: #F2F5F8;
+    --texte-doux: #9AA6B5;
+    --bouffon-habit: #1E232D;
+  }
+  /* Nouvelles propositions (à valider) : sans rouge, en accord avec le bouffon noir, bleu et or */
+  [data-palette="bleuor"] {          /* Royal bleu & or : le rouge devient bleu glacier */
+    --primaire: #3A9AD9;
+    --primaire-fonce: #1F6FA8;
+    --accent: #F5B82E;
+    --accent-2: #8FD0F5;
+    --fond: #152238;
+    --surface: #1E3050;
+    --texte: #FFF3DC;
+    --texte-doux: #B9C4D6;
+  }
+  [data-palette="nuitor"] {          /* Royal nuit & or : fond plus sombre, le rouge devient ambre */
+    --primaire: #3A9AD9;
+    --primaire-fonce: #1F5F94;
+    --accent: #F5B82E;
+    --accent-2: #E08A2E;
+    --fond: #0F1420;
+    --surface: #1A2233;
+    --texte: #FFF3DC;
+    --texte-doux: #A9B3C4;
+  }
+  [data-police="grenze"]  { --f-titre: 'Grenze Gotisch', serif; }
+  [data-police="pirata"]  { --f-titre: 'Pirata One', serif; }
+  [data-police="medieval"]{ --f-titre: 'MedievalSharp', serif; }
+  :root { --f-texte: 'Nunito', sans-serif; --rayon: 14px; --rebond: cubic-bezier(.34,1.56,.64,1); }
+
+  /* ============ BASE ============ */
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--fond); color: var(--texte);
+    font-family: var(--f-texte); line-height: 1.5;
+    transition: background .4s, color .4s;
+  }
+  .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1, h2, h3 { font-family: var(--f-titre); font-weight: 800; letter-spacing: .5px; }
+  h2 { font-size: 2.2rem; color: var(--primaire); margin: 64px 0 6px; }
+  .sous { color: var(--texte-doux); margin-bottom: 22px; max-width: 70ch; }
+  section { scroll-margin-top: 90px; }
+
+  /* Barre de réglages */
+  .reglages {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--fond) 88%, transparent);
+    border-bottom: 3px solid var(--primaire);
+    padding: 10px 20px; display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; align-items: center;
+  }
+  .reglages span { font-weight: 900; font-size: .8rem; text-transform: uppercase; color: var(--texte-doux); }
+  .groupe { display: flex; gap: 6px; align-items: center; }
+  .btn {
+    font: 700 .9rem var(--f-texte); color: var(--texte);
+    background: var(--surface); border: 2px solid transparent; border-radius: 999px;
+    padding: 6px 14px; cursor: pointer; transition: transform .2s var(--rebond), border-color .2s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.actif { border-color: var(--accent); }
+
+  /* Hero */
+  .hero { text-align: center; padding: 30px 0 10px; }
+  .hero img { width: min(620px, 100%); animation: flotte 5s ease-in-out infinite; }
+  .hero p { font-size: 1.15rem; color: var(--texte-doux); }
+  @keyframes flotte { 50% { transform: translateY(-8px) rotate(-1deg); } }
+
+  /* ============ MOTIFS ============ */
+  .arlequin {
+    --a: var(--primaire); --b: var(--primaire-fonce); --t: 36px;
+    background: conic-gradient(from 45deg, var(--a) 90deg, var(--b) 0 180deg, var(--a) 0 270deg, var(--b) 0) 0 0 / var(--t) calc(var(--t) * 1.5);
+  }
+  .arlequin.tri { --b: var(--accent); }
+  .arlequin.anim { animation: defile 6s linear infinite; }
+  @keyframes defile { to { background-position: calc(var(--t) * 4) 0; } }
+
+  .fanions { position: relative; display: flex; justify-content: center; padding-top: 6px; }
+  .fanions::before { content: ""; position: absolute; top: 4px; left: 0; right: 0; height: 3px; background: var(--texte-doux); border-radius: 3px; }
+  .fanion {
+    width: 42px; height: 54px; margin: 0 3px;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center; animation: balance 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * -.35s);
+  }
+  .fanion:nth-child(3n+1) { background: var(--primaire); }
+  .fanion:nth-child(3n+2) { background: var(--accent); }
+  .fanion:nth-child(3n)   { background: var(--accent-2); }
+  @keyframes balance { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+  .grille { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .carte {
+    background: var(--surface); border-radius: var(--rayon); padding: 20px;
+    box-shadow: 0 6px 0 rgba(0,0,0,.18);
+  }
+  .carte h3 { font-size: 1.4rem; margin-bottom: 4px; }
+  .carte p { color: var(--texte-doux); font-size: .92rem; }
+  .motif-zone { height: 120px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; overflow: hidden; }
+  .motif-zone svg { height: 90px; }
+
+  .agite:hover svg, .agite svg { animation: tinte 1.6s ease-in-out infinite; transform-origin: 50% 10%; }
+  @keyframes tinte { 0%,60%,100% { transform: rotate(0); } 10% { transform: rotate(14deg); } 25% { transform: rotate(-12deg); } 40% { transform: rotate(6deg); } }
+  .roule svg { animation: roule 3s var(--rebond) infinite; }
+  @keyframes roule { 0%,55% { transform: rotate(0) scale(1); } 75% { transform: rotate(360deg) scale(1.15); } 100% { transform: rotate(360deg) scale(1); } }
+  .brille { position: relative; }
+  .brille::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%);
+    background-size: 250% 100%; animation: reflet 3s ease-in-out infinite;
+    mask: var(--masque) center / contain no-repeat; -webkit-mask: var(--masque) center / contain no-repeat;
+  }
+  @keyframes reflet { 0% { background-position: 150% 0; } 60%,100% { background-position: -50% 0; } }
+
+  /* ============ PALETTE ============ */
+  .nuancier { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .nuance { border-radius: var(--rayon); overflow: hidden; background: var(--surface); box-shadow: 0 6px 0 rgba(0,0,0,.18); }
+  .nuance div { height: 90px; }
+  .nuance p { padding: 10px 12px; font-size: .85rem; }
+  .nuance b { display: block; font-size: .95rem; }
+  .nuance code { color: var(--texte-doux); }
+
+  /* ============ TYPO ============ */
+  .typo { display: grid; gap: 14px; }
+  .typo .carte { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
+  .typo .demo { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; color: var(--texte); flex: 1 1 400px; }
+  .typo .demo em { color: var(--accent); font-style: normal; }
+  .typo .nom { font: 900 .8rem var(--f-texte); text-transform: uppercase; color: var(--texte-doux); width: 170px; }
+  .typo .carte.choisie { outline: 3px solid var(--accent); }
+
+  /* ============ COMPOSANTS ============ */
+  .scene-demo {
+    position: relative; border-radius: var(--rayon); overflow: hidden; min-height: 260px;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,.05) 0 80px, transparent 81px),
+      linear-gradient(135deg, #2c3e50, #0f1a2a);
+    display: grid; place-items: center; padding: 24px;
+  }
+  .scene-demo .fauxjeu { position: absolute; inset: 0; opacity: .35;
+    background: repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,.04) 38px 40px), linear-gradient(160deg, #3c6e47, #1d3b2a 60%, #0e1f16); }
+  .scene-demo > *:not(.fauxjeu) { position: relative; }
+
+  /* Alerte */
+  .alerte {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--surface); color: var(--texte);
+    border: 4px solid var(--primaire); border-radius: 18px;
+    padding: 14px 26px 14px 14px; min-width: 360px;
+    box-shadow: 0 8px 0 var(--primaire-fonce);
+  }
+  .alerte.joue { animation: entree .7s var(--rebond) both; }
+  .alerte.joue .alerte-icone { animation: tinte 1.4s .5s ease-in-out 2; }
+  .alerte.joue .alerte-nom { animation: pop .5s .35s var(--rebond) both; }
+  @keyframes entree { from { transform: translateY(-120px) scale(.6) rotate(-6deg); opacity: 0; } }
+  @keyframes pop { from { transform: scale(0); } }
+  .alerte-icone { width: 78px; height: 78px; flex: none; border-radius: 14px; display: grid; place-items: center; transform-origin: 50% 10%; }
+  .alerte-icone svg { width: 62px; }
+  .alerte-titre { font: 900 .8rem var(--f-texte); text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); }
+  .alerte-nom { font-family: var(--f-titre); font-size: 2.2rem; line-height: 1; display: inline-block; }
+  .alerte-msg { color: var(--texte-doux); font-size: .95rem; }
+
+  .lexique { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; }
+  .lexique button { text-align: left; cursor: pointer; font: inherit; color: inherit; border: 2px solid transparent; }
+  .lexique button:hover, .lexique button.actif { border-color: var(--accent); }
+  .lexique b { display: block; font-family: var(--f-titre); font-size: 1.25rem; color: var(--texte); }
+  .lexique small { color: var(--texte-doux); }
+
+  /* Cadre cam */
+  .cam { position: relative; width: 320px; aspect-ratio: 16/9; margin: 80px auto 30px; }
+  .cam-ecran { position: absolute; inset: 0; border-radius: 16px; border: 6px solid var(--primaire);
+    background: linear-gradient(160deg, #56616f, #2b323c); display: grid; place-items: center; color: #ffffff88; font-weight: 700;
+    box-shadow: 0 8px 0 var(--primaire-fonce); }
+  .cam-couronne { position: absolute; left: 50%; top: -74px; transform: translateX(-50%); width: 110px; z-index: 2; }
+  .cam-nom { position: absolute; left: 50%; bottom: -22px; transform: translateX(-50%);
+    background: var(--accent); color: #1b1b1b; font-family: var(--f-titre); font-size: 1.4rem;
+    padding: 2px 22px; clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%); white-space: nowrap; }
+  .cam-nom { z-index: 2; }
+  .cam-de { position: absolute; z-index: 3; filter: drop-shadow(0 4px 0 rgba(0,0,0,.3)); animation: vacille 4s ease-in-out infinite; }
+  .cam-de.d1 { width: 50px; bottom: -18px; left: -20px; --r: -14deg; }
+  .cam-de.d2 { width: 44px; bottom: -16px; right: -18px; --r: 12deg; animation-delay: -2s; }
+  @keyframes vacille { 0%,100% { transform: rotate(var(--r)) translateY(0); } 50% { transform: rotate(calc(var(--r) * -.4)) translateY(-4px); } }
+
+  /* Dés du MJ */
+  .des { display: flex; gap: 8px; align-items: flex-end; justify-content: center; }
+  .des svg { height: 40px; animation: roule 3.4s var(--rebond) infinite; animation-delay: calc(var(--i) * .25s); }
+  .xp-niv { display: inline-flex; align-items: center; gap: 6px; }
+  .xp-niv svg { width: 30px; }
+
+  /* Bandeau */
+  .bandeau {
+    display: flex; align-items: stretch; width: 100%; max-width: 900px; height: 56px;
+    background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 0 rgba(0,0,0,.3);
+  }
+  .bandeau .arlequin { width: 70px; flex: none; --t: 20px; }
+  .bandeau .bloc { display: flex; align-items: center; gap: 10px; padding: 0 18px; white-space: nowrap; }
+  .bandeau .bloc + .bloc { border-left: 3px solid var(--fond); }
+  .bandeau .live { font-weight: 900; color: #fff; background: var(--accent-2); border-radius: 6px; padding: 1px 8px; font-size: .8rem; }
+  .bandeau .titre { font-family: var(--f-titre); font-size: 1.35rem; overflow: hidden; text-overflow: ellipsis; }
+  .bandeau .flex { flex: 1; min-width: 0; }
+
+  /* Objectif */
+  .objectif { width: 100%; max-width: 520px; }
+  .objectif-tete { display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 6px; }
+  .objectif-tete span:first-child { font-family: var(--f-titre); font-size: 1.4rem; font-weight: 800; }
+  .jauge { height: 26px; border-radius: 999px; background: var(--surface); border: 3px solid var(--primaire); overflow: hidden; }
+  .jauge .rempli { height: 100%; width: 72%; --a: var(--accent); --b: color-mix(in srgb, var(--accent) 75%, #fff); --t: 18px; border-radius: 999px; transition: width 1s var(--rebond); }
+
+  /* Chat */
+  .chat { width: 320px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { background: color-mix(in srgb, var(--surface) 82%, transparent); border-left: 5px solid var(--c, var(--primaire)); border-radius: 10px; padding: 7px 12px; animation: glisse .5s var(--rebond) both; animation-delay: calc(var(--i) * .25s); }
+  .msg b { color: var(--c, var(--primaire)); }
+  @keyframes glisse { from { transform: translateX(-40px); opacity: 0; } }
+
+  /* ============ LOGO & EMBLÈME ============ */
+  .identite { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; }
+  .identite .panneau { border-radius: var(--rayon); display: grid; place-items: center; padding: 26px; min-height: 190px; }
+  .identite .panneau img { max-width: 100%; }
+  .emblemes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+  .embleme-carte { text-align: center; }
+  .embleme-carte .grand { width: 120px; margin: 4px auto 12px; display: block; }
+  .avatars { display: flex; gap: 12px; justify-content: center; align-items: center; }
+  .avatar { border-radius: 50%; display: grid; place-items: center; overflow: hidden; }
+  .avatar img { width: 78%; }
+  @media (max-width: 800px) { .identite, .emblemes { grid-template-columns: 1fr; } }
+
+  /* ============ TRANSITIONS ============ */
+  .tr-scene { position: relative; aspect-ratio: 16/9; border-radius: var(--rayon); overflow: hidden; container-type: size; background: #000; }
+  .tr-vue { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 2cqh; }
+  .tr-vue.cachee { visibility: hidden; }
+  .tr-vue-a { background: var(--fond); }
+  .tr-vue-a img { width: 42cqw; }
+  .tr-vue-a p { font-family: var(--f-titre); font-size: 4.2cqw; color: var(--texte); }
+  .tr-vue-b .fauxjeu { position: absolute; inset: 0; opacity: .9; }
+  .tr-vue-b .mini-cam { position: absolute; right: 3cqw; bottom: 5cqh; width: 22cqw; aspect-ratio: 16/9; border: .6cqw solid var(--primaire); border-radius: 1.2cqw; background: #3b4452; }
+  .tr-vue-b p { position: relative; font-family: var(--f-titre); font-size: 4.2cqw; color: #fff; }
+  .tr { position: absolute; inset: 0; pointer-events: none; visibility: hidden; z-index: 10; }
+  .tr.joue { visibility: visible; }
+  .tr * { position: absolute; }
+  .tr-boutons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .tr-boutons .btn { font-size: 1rem; padding: 9px 18px; }
+  .usage { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 16px; }
+  .usage .carte { padding: 14px 16px; }
+  .usage b { font-family: var(--f-titre); font-size: 1.25rem; display: block; }
+
+  /* 1. Rideau d'arlequin */
+  .rd { top: 0; bottom: 0; width: 51%;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1.2cqw, transparent 1.2cqw 5cqw), var(--surface); }
+  .rd-g { left: 0; transform: translateX(-101%); box-shadow: inset -1cqw 0 0 var(--accent); }
+  .rd-d { right: 0; transform: translateX(101%); box-shadow: inset 1cqw 0 0 var(--accent); }
+  .rd-embleme { width: 20cqw; left: 40cqw; top: calc(50cqh - 10cqw); transform: scale(0); }
+  .tr-rideau.joue .rd-g { animation: rd-g 1.8s cubic-bezier(.77,0,.18,1) both; }
+  .tr-rideau.joue .rd-d { animation: rd-d 1.8s cubic-bezier(.77,0,.18,1) both; }
+  .tr-rideau.joue .rd-embleme { animation: rd-emb 1.8s var(--rebond) both; }
+  @keyframes rd-g { 35%, 65% { transform: translateX(0); } 100% { transform: translateX(-101%); } }
+  @keyframes rd-d { 35%, 65% { transform: translateX(0); } 100% { transform: translateX(101%); } }
+  @keyframes rd-emb { 0%, 28% { transform: scale(0) rotate(-90deg); } 42%, 62% { transform: scale(1) rotate(0); } 74%, 100% { transform: scale(0) rotate(90deg); } }
+
+  /* 2. Coup d'épée */
+  .ep-panneau { inset: 0; }
+  .ep-a { background: var(--primaire-fonce); }
+  .ep-b { background: var(--fond); }
+  .ep-a { clip-path: polygon(0 0, 101% 0, 0 101%); transform: translate(-100%, -100%); }
+  .ep-b { clip-path: polygon(101% -1%, 101% 101%, -1% 101%); transform: translate(100%, 100%); }
+  .ep-trait { left: 50%; top: 50%; width: 125cqw; height: 1.6cqh; background: #FFF8E8; box-shadow: 0 0 2cqh #fff; border-radius: 1cqh;
+    transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); transform-origin: center; }
+  .ep-lame { height: 72cqh; left: 50%; top: 50%; transform: translate(-50%, -50%) translate(80cqw, -50cqh) rotate(-540deg); }
+  .tr-epee.joue .ep-a { animation: ep-a 2s cubic-bezier(.77,0,.18,1) both; }
+  .tr-epee.joue .ep-b { animation: ep-b 2s cubic-bezier(.77,0,.18,1) both; }
+  .tr-epee.joue .ep-trait { animation: ep-trait 2s ease-out both; }
+  .tr-epee.joue .ep-lame { animation: ep-lame 2s cubic-bezier(.3,.7,.3,1) both; }
+  @keyframes ep-a { 0%, 4% { transform: translate(-100%, -100%); } 28%, 70% { transform: translate(0, 0); } 95%, 100% { transform: translate(-100%, -100%); } }
+  @keyframes ep-b { 0%, 4% { transform: translate(100%, 100%); } 28%, 70% { transform: translate(0, 0); } 95%, 100% { transform: translate(100%, 100%); } }
+  @keyframes ep-trait { 0%, 58% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); opacity: 1; }
+    68% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 1; } 90%, 100% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 0; } }
+  @keyframes ep-lame {
+    0% { transform: translate(-50%, -50%) translate(80cqw, -50cqh) rotate(-540deg); opacity: 1; }
+    30%, 50% { transform: translate(-50%, -50%) rotate(60.64deg); }
+    57% { transform: translate(-50%, -50%) translate(7cqw, -4cqh) rotate(60.64deg); opacity: 1; }
+    68% { transform: translate(-50%, -50%) translate(-80cqw, 45cqh) rotate(60.64deg); opacity: 1; }
+    69%, 100% { transform: translate(-50%, -50%) translate(-80cqw, 45cqh) rotate(60.64deg); opacity: 0; } }
+
+  /* 3. Jet de dé */
+  .de-cercle { inset: 0; background: radial-gradient(circle at 50% 50%, var(--surface) 0 19cqw, var(--accent) 19cqw 19.7cqw, var(--fond) 19.7cqw); clip-path: circle(0% at 50% 50%); }
+  .de-img { width: 22cqw; left: 39cqw; top: calc(50cqh - 11cqw); transform: translate(70cqw, -60cqh); }
+  .tr-de.joue .de-cercle { animation: de-cercle 2.2s cubic-bezier(.65,0,.35,1) both; }
+  .tr-de.joue .de-img { animation: de-img 2.2s linear both; }
+  @keyframes de-cercle { 0%, 48% { clip-path: circle(0% at 50% 50%); } 62%, 78% { clip-path: circle(75% at 50% 50%); } 96%, 100% { clip-path: circle(0% at 50% 50%); } }
+  @keyframes de-img {
+    0%   { transform: translate(70cqw, -60cqh) rotate(0); animation-timing-function: ease-in; }
+    14%  { transform: translate(38cqw, 0) rotate(-260deg); animation-timing-function: ease-out; }
+    24%  { transform: translate(20cqw, -20cqh) rotate(-440deg); animation-timing-function: ease-in; }
+    34%  { transform: translate(8cqw, 0) rotate(-610deg); animation-timing-function: ease-out; }
+    40%  { transform: translate(3cqw, -5cqh) rotate(-680deg); animation-timing-function: ease-in; }
+    46%  { transform: translate(0, 0) rotate(-720deg) scale(1); animation-timing-function: ease-out; }
+    52%  { transform: translate(0, 0) rotate(-720deg) scale(1.3); }
+    58%, 82% { transform: translate(0, 0) rotate(-720deg) scale(1); animation-timing-function: ease-in; }
+    96%, 100% { transform: translate(0, 0) rotate(-540deg) scale(0); } }
+
+  /* ============ LE BOUFFON (mascotte) ============ */
+  .etiquette-nouveau { font: 900 .8rem var(--f-texte); text-transform: uppercase; letter-spacing: 1px; vertical-align: middle;
+    background: var(--accent); color: #1b1b1b; border-radius: 8px; padding: 3px 10px; }
+  .btn.nouveau::after { content: "nouveau"; margin-left: 8px; font-size: .65rem; font-weight: 900; text-transform: uppercase;
+    background: var(--accent); color: #1b1b1b; border-radius: 6px; padding: 1px 6px; vertical-align: 1px; }
+  .bouffon-zone { display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px; align-items: stretch; }
+  .bouffon-scene { border-radius: var(--rayon); display: grid; place-items: end center; overflow: hidden; min-height: 460px; padding-top: 20px;
+    background: radial-gradient(ellipse 60% 70% at 50% 60%, color-mix(in srgb, var(--primaire) 22%, transparent), transparent 70%), var(--surface); }
+  .bouffon-scene .bouffon-svg { width: min(430px, 92%); }
+  .bouffon-infos { display: flex; flex-direction: column; gap: 14px; }
+  .bouffon-infos ul { color: var(--texte-doux); padding-left: 20px; }
+  .bouffon-infos li { margin-bottom: 4px; }
+  .emotes { display: flex; gap: 16px; align-items: end; }
+  .emote-apercu { border-radius: 12px; background: var(--surface); overflow: hidden; display: grid; place-items: center; }
+  .emote-apercu .bouffon-svg { width: 100%; height: 100%; }
+  @media (max-width: 800px) { .bouffon-zone { grid-template-columns: 1fr; } }
+
+  /* Animations du bouffon (réutilisées dans l'overlay) */
+  .bouffon-svg .bf-chapeau, .bouffon-svg .bf-tout, .bouffon-svg .bf-oeil-d, .bouffon-svg .bf-grelots { transform-box: fill-box; }
+  .bouffon-svg .bf-chapeau { transform-origin: 50% 92%; }
+  .bouffon-svg .bf-tout { transform-origin: 50% 100%; }
+  .bouffon-svg .bf-oeil-d { transform-origin: 50% 50%; }
+  .vivant .bf-tout { animation: bf-respire 4s ease-in-out infinite; }
+  .vivant .bf-chapeau { animation: bf-hoche 3.4s ease-in-out infinite; }
+  .vivant .bf-oeil-d, .vivant .bf-oeil-g { animation: bf-cligne 5s infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+  .clin .bf-oeil-d { animation: bf-clin 1.2s ease-in-out both !important; }
+  .clin .bf-clin { animation: bf-clin-trait 1.2s ease-in-out both; }
+  .clin .bf-bouche { animation: bf-sourire 1.2s ease-in-out both; transform-box: fill-box; transform-origin: 50% 0; }
+  .grelots .bf-chapeau { animation: tinte 1.3s ease-in-out both !important; }
+  @keyframes bf-respire { 50% { transform: translateY(-1.2%); } }
+  @keyframes bf-hoche { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2.5deg); } }
+  @keyframes bf-cligne { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+  @keyframes bf-clin { 0%, 100% { transform: scaleY(1); } 20%, 75% { transform: scaleY(0); } }
+  @keyframes bf-clin-trait { 0%, 100% { opacity: 0; } 20%, 75% { opacity: 1; } }
+  @keyframes bf-sourire { 20%, 75% { transform: scale(1.15, 1.5); } }
+
+  /* Le bouffon en pied : articulations (origines en unités du dessin) */
+  .bouffon-svg.bouffon-pied g { transform-box: view-box; }
+  .bouffon-svg.bouffon-pied .bf-oeil-d, .bouffon-svg.bouffon-pied .bf-oeil-g { transform-box: fill-box; transform-origin: 50% 50%; }
+  .bouffon-svg.bouffon-pied .bf-chapeau { transform-origin: 200px 196px; }
+  .marche .bf-hanche-g { animation: bf-pas .5s ease-in-out infinite; }
+  .marche .bf-hanche-d { animation: bf-pas .5s ease-in-out -.25s infinite; }
+  .marche .bf-epaule-g { animation: bf-balance-g 1s ease-in-out infinite; }
+  .marche .bf-epaule-d { animation: bf-balance-d 1s ease-in-out infinite; }
+  .marche .bf-tout { animation: bf-sautille .25s ease-in-out infinite alternate; }
+  @keyframes bf-pas { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-26px) rotate(4deg); } 50% { transform: translateY(0); } }
+  @keyframes bf-balance-g { 0%, 100% { transform: rotate(62deg); } 50% { transform: rotate(78deg); } }
+  @keyframes bf-balance-d { 0%, 100% { transform: rotate(-78deg); } 50% { transform: rotate(-62deg); } }
+  @keyframes bf-sautille { to { transform: translateY(-8px); } }
+  .pied-apercu { display: flex; gap: 18px; align-items: end; }
+  .pied-apercu .bouffon-pied { height: 250px; width: auto; }
+  .tr .bouffon-svg { position: static; width: 100%; height: 100%; }
+
+  /* 5. Le bouffon équilibriste — marche sur le dé qui roule, saute, « ta-da ! » — 2,8 s */
+  .eq-cercle { inset: 0; background: radial-gradient(circle at 50% 58%, var(--surface) 0 19cqw, var(--accent) 19cqw 19.7cqw, var(--fond) 19.7cqw);
+    clip-path: circle(0% at 50% 58%); }
+  .eq-groupe { left: 50%; top: 0; width: 0; height: 100%; transform-origin: 0 58cqh; transform: translateX(75cqw); }
+  .eq-de { width: 16cqw; left: -8cqw; top: calc(58cqh - 8cqw); }
+  .eq-perso { height: 36cqh; width: 15.65cqh; left: -7.83cqh; top: calc(58cqh - 7.6cqw - 35cqh); }
+  .tr-equilibriste.joue .eq-cercle { animation: eq-cercle 2.8s cubic-bezier(.65,0,.35,1) both; }
+  .tr-equilibriste.joue .eq-groupe { animation: eq-groupe 2.8s both; }
+  .tr-equilibriste.joue .eq-de { animation: eq-de 2.8s both; }
+  .tr-equilibriste.joue .eq-perso { animation: eq-saut 2.8s both; }
+  .tr-equilibriste.joue .bf-hanche-g { animation: eq-pas-g 2.8s both; }
+  .tr-equilibriste.joue .bf-hanche-d { animation: eq-pas-d 2.8s both; }
+  .tr-equilibriste.joue .bf-epaule-g { animation: eq-bras-g 2.8s ease-in-out both; }
+  .tr-equilibriste.joue .bf-epaule-d { animation: eq-bras-d 2.8s ease-in-out both; }
+  .tr-equilibriste.joue .bf-oeil-d { animation: eq-clin 2.8s both; transform-box: fill-box; transform-origin: 50% 50%; }
+  .tr-equilibriste.joue .bf-clin { animation: eq-clin-trait 2.8s both; }
+  .tr-equilibriste.joue .bf-chapeau { animation: eq-chapeau 2.8s ease-in-out both; }
+  @keyframes eq-cercle { 0%, 48% { clip-path: circle(0% at 50% 58%); } 62%, 80% { clip-path: circle(80% at 50% 58%); } 97%, 100% { clip-path: circle(0% at 50% 58%); } }
+  @keyframes eq-groupe { 0% { transform: translateX(75cqw); animation-timing-function: cubic-bezier(.3,.6,.4,1); } 45%, 82% { transform: translateX(0) scale(1); animation-timing-function: ease-in; } 92%, 100% { transform: translateX(0) scale(0); } }
+  @keyframes eq-de { 0% { transform: rotate(0); animation-timing-function: cubic-bezier(.3,.6,.4,1); } 45%, 100% { transform: rotate(-720deg); } }
+  @keyframes eq-saut { 0%, 45% { transform: translateY(0) rotate(-3deg); } 47% { transform: translateY(1cqh) scale(1.04, .94); }
+    52% { transform: translateY(-9cqh) rotate(0); } 58% { transform: translateY(0) scale(1.05, .93); } 62%, 100% { transform: translateY(0) scale(1); } }
+  @keyframes eq-pas-g { 0%, 10%, 20%, 30%, 40%, 45%, 100% { transform: translateY(0); } 5%, 15%, 25%, 35% { transform: translateY(-26px) rotate(4deg); } 52% { transform: translateY(-20px) rotate(12deg); } 58% { transform: translateY(0); } }
+  @keyframes eq-pas-d { 0%, 5%, 15%, 25%, 35%, 45%, 100% { transform: translateY(0); } 10%, 20%, 30%, 40% { transform: translateY(-26px) rotate(-4deg); } 52% { transform: translateY(-20px) rotate(-12deg); } 58% { transform: translateY(0); } }
+  @keyframes eq-bras-g { 0% { transform: rotate(62deg); } 11% { transform: rotate(80deg); } 22% { transform: rotate(58deg); } 33% { transform: rotate(82deg); } 45% { transform: rotate(66deg); } 52%, 100% { transform: rotate(150deg); } }
+  @keyframes eq-bras-d { 0% { transform: rotate(-80deg); } 11% { transform: rotate(-60deg); } 22% { transform: rotate(-82deg); } 33% { transform: rotate(-58deg); } 45% { transform: rotate(-66deg); } 52%, 100% { transform: rotate(-150deg); } }
+  @keyframes eq-clin { 0%, 64%, 74%, 100% { transform: scaleY(1); } 67%, 71% { transform: scaleY(0); } }
+  @keyframes eq-clin-trait { 0%, 64%, 74%, 100% { opacity: 0; } 67%, 71% { opacity: 1; } }
+  @keyframes eq-chapeau { 0%, 58% { transform: rotate(0); } 61% { transform: rotate(8deg); } 64% { transform: rotate(-7deg); } 67% { transform: rotate(4deg); } 70%, 100% { transform: rotate(0); } }
+
+  /* 6. Le bouffon bretteur — arrive, lève l'épée et tranche l'écran — 2,4 s */
+  .br { inset: 0; }
+  .br-a { background: var(--primaire-fonce); clip-path: polygon(0 0, 101% 0, 0 101%); transform: translate(-100%, -100%); }
+  .br-b { background: var(--fond); clip-path: polygon(101% -1%, 101% 101%, -1% 101%); transform: translate(100%, 100%); }
+  .br-trait { left: 50%; top: 50%; width: 125cqw; height: 1.6cqh; background: #FFF8E8; box-shadow: 0 0 2cqh #fff; border-radius: 1cqh;
+    transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); }
+  .br-perso { height: 64cqh; width: 27.8cqh; left: calc(50% - 13.9cqh); top: 30cqh; transform: translateX(-80cqw); }
+  .tr-bretteur.joue .br-a { animation: br-a 2.4s cubic-bezier(.77,0,.18,1) both; }
+  .tr-bretteur.joue .br-b { animation: br-b 2.4s cubic-bezier(.77,0,.18,1) both; }
+  .tr-bretteur.joue .br-trait { animation: br-trait 2.4s ease-out both; }
+  .tr-bretteur.joue .br-perso { animation: br-perso 2.4s both; }
+  .tr-bretteur.joue .bf-hanche-g { animation: br-pas-g 2.4s both; }
+  .tr-bretteur.joue .bf-hanche-d { animation: br-pas-d 2.4s both; }
+  .tr-bretteur.joue .bf-epaule-d { animation: br-bras 2.4s both; }
+  .tr-bretteur.joue .bf-coude-d { animation: br-coude 2.4s both; }
+  .tr-bretteur.joue .bf-epaule-g { animation: br-bras-g 2.4s ease-in-out both; }
+  .tr-bretteur.joue .bf-tout { animation: br-corps 2.4s both; }
+  @keyframes br-a { 0%, 4% { transform: translate(-100%, -100%); } 26%, 64% { transform: translate(0, 0); } 90%, 100% { transform: translate(-100%, -100%); } }
+  @keyframes br-b { 0%, 4% { transform: translate(100%, 100%); } 26%, 64% { transform: translate(0, 0); } 90%, 100% { transform: translate(100%, 100%); } }
+  @keyframes br-trait { 0%, 47% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(0); opacity: 1; }
+    53% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 1; } 70%, 100% { transform: translate(-50%, -50%) rotate(-29.36deg) scaleX(1); opacity: 0; } }
+  @keyframes br-perso { 0%, 8% { transform: translateX(-80cqw); animation-timing-function: linear; } 32%, 58% { transform: translateX(0); animation-timing-function: ease-in; } 74%, 100% { transform: translateX(85cqw); } }
+  @keyframes br-pas-g { 0%, 10%, 18%, 26%, 32%, 58%, 62%, 66%, 70%, 100% { transform: translateY(0); } 14%, 22%, 29%, 60%, 68% { transform: translateY(-26px) rotate(6deg); } }
+  @keyframes br-pas-d { 0%, 14%, 22%, 29%, 32%, 60%, 68%, 100% { transform: translateY(0); } 10%, 18%, 26%, 62%, 66%, 72% { transform: translateY(-26px) rotate(-6deg); } }
+  @keyframes br-bras { 0%, 32% { transform: rotate(-20deg); animation-timing-function: ease-out; } 42%, 46% { transform: rotate(-165deg); animation-timing-function: cubic-bezier(.7,0,1,.5); }
+    50% { transform: rotate(35deg); } 56% { transform: rotate(25deg); } 64%, 100% { transform: rotate(-20deg); } }
+  @keyframes br-coude { 0%, 32% { transform: rotate(0); } 42%, 46% { transform: rotate(-20deg); } 50%, 56% { transform: rotate(10deg); } 64%, 100% { transform: rotate(0); } }
+  @keyframes br-bras-g { 0%, 32% { transform: rotate(20deg); } 42%, 46% { transform: rotate(55deg); } 50%, 56% { transform: rotate(35deg); } 64%, 100% { transform: rotate(20deg); } }
+  @keyframes br-corps { 0%, 40% { transform: none; } 46% { transform: rotate(-4deg); } 50% { transform: rotate(6deg) translateY(10px); } 56% { transform: rotate(4deg) translateY(6px); } 64%, 100% { transform: none; } }
+
+  /* 7. Le bouffon machiniste — tire la corde : le rideau se ferme, puis se rouvre — 3 s */
+  .mc-rd { top: 0; bottom: 0; width: 51%;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1.2cqw, transparent 1.2cqw 5cqw), var(--surface); }
+  .mc-g { left: 0; box-shadow: inset -1cqw 0 0 var(--accent); transform: translateX(-101%); }
+  .mc-d { right: 0; box-shadow: inset 1cqw 0 0 var(--accent); transform: translateX(101%); }
+  .mc-embleme { width: 18cqw; left: 41cqw; top: calc(46cqh - 9cqw); transform: scale(0); }
+  .mc-corde { left: calc(70cqw + 20.5cqh); top: 0; width: .5cqw; height: 57.8cqh; transform: translateY(-60cqh);
+    background: repeating-linear-gradient(160deg, #C79A3B 0 .8cqh, #8E6A22 .8cqh 1.6cqh); border-radius: .3cqw; }
+  .mc-corde::after { content: ""; position: absolute; left: 50%; bottom: -3.4cqh; width: 2.4cqw; height: 4cqh; transform: translateX(-50%);
+    background: var(--accent); clip-path: polygon(35% 0, 65% 0, 100% 100%, 0 100%); }
+  .mc-perso { height: 60cqh; width: 26.1cqh; left: 70cqw; top: 36cqh; transform: translateX(40cqw); }
+  .tr-machiniste.joue .mc-g { animation: mc-g 3s cubic-bezier(.77,0,.18,1) both; }
+  .tr-machiniste.joue .mc-d { animation: mc-d 3s cubic-bezier(.77,0,.18,1) both; }
+  .tr-machiniste.joue .mc-embleme { animation: mc-emb 3s var(--rebond) both; }
+  .tr-machiniste.joue .mc-corde { animation: mc-corde 3s both; }
+  .tr-machiniste.joue .mc-perso { animation: mc-perso 3s both; }
+  .tr-machiniste.joue .bf-tout { animation: mc-tire 3s both; }
+  .tr-machiniste.joue .bf-epaule-d { animation: mc-bras 3s ease-in-out both; }
+  .tr-machiniste.joue .bf-epaule-g { animation: mc-bras-g 3s ease-in-out both; }
+  .tr-machiniste.joue .bf-hanche-g { animation: mc-pas-g 3s both; }
+  .tr-machiniste.joue .bf-hanche-d { animation: mc-pas-d 3s both; }
+  .tr-machiniste.joue .bf-oeil-d { animation: mc-clin 3s both; }
+  .tr-machiniste.joue .bf-clin { animation: mc-clin-trait 3s both; }
+  .tr-machiniste.joue .bf-chapeau { animation: mc-chapeau 3s ease-in-out both; }
+  @keyframes mc-g { 0%, 30% { transform: translateX(-101%); } 44%, 60% { transform: translateX(0); } 80%, 100% { transform: translateX(-101%); } }
+  @keyframes mc-d { 0%, 30% { transform: translateX(101%); } 44%, 60% { transform: translateX(0); } 80%, 100% { transform: translateX(101%); } }
+  @keyframes mc-emb { 0%, 40% { transform: scale(0) rotate(-90deg); } 47%, 56% { transform: scale(1) rotate(0); } 62%, 100% { transform: scale(0) rotate(90deg); } }
+  @keyframes mc-corde { 0% { transform: translateY(-60cqh); animation-timing-function: cubic-bezier(.34,1.4,.64,1); } 10%, 26% { transform: translateY(0); }
+    32% { transform: translateY(4cqh); } 38%, 54% { transform: translateY(0); } 60% { transform: translateY(4cqh); } 66%, 86% { transform: translateY(0); animation-timing-function: ease-in; }
+    96%, 100% { transform: translateY(-60cqh); } }
+  @keyframes mc-perso { 0%, 6% { transform: translateX(40cqw); animation-timing-function: ease-out; } 18%, 70% { transform: translateX(0); animation-timing-function: ease-in; } 90%, 100% { transform: translateX(40cqw); } }
+  @keyframes mc-tire { 0%, 26%, 38%, 54%, 66%, 100% { transform: none; } 32%, 60% { transform: scale(1.03, .9); } }
+  @keyframes mc-bras { 0%, 18% { transform: rotate(-20deg); } 23%, 66% { transform: rotate(-170deg); } 70%, 100% { transform: rotate(-20deg); } }
+  @keyframes mc-bras-g { 0%, 26%, 38%, 54%, 66%, 100% { transform: rotate(20deg); } 32%, 60% { transform: rotate(45deg); } }
+  @keyframes mc-pas-g { 0%, 6%, 11%, 16%, 18%, 70%, 75%, 80%, 85%, 90%, 100% { transform: translateY(0); } 8.5%, 13.5%, 72.5%, 82.5% { transform: translateY(-26px) rotate(6deg); } }
+  @keyframes mc-pas-d { 0%, 8.5%, 13.5%, 18%, 70%, 72.5%, 82.5%, 90%, 100% { transform: translateY(0); } 6%, 11%, 16%, 77.5%, 87.5% { transform: translateY(-26px) rotate(-6deg); } }
+  @keyframes mc-clin { 0%, 45%, 53%, 100% { transform: scaleY(1); } 47%, 51% { transform: scaleY(0); } }
+  @keyframes mc-clin-trait { 0%, 45%, 53%, 100% { opacity: 0; } 47%, 51% { opacity: 1; } }
+  @keyframes mc-chapeau { 0%, 32% { transform: rotate(0); } 35% { transform: rotate(7deg); } 38% { transform: rotate(-6deg); } 41%, 60% { transform: rotate(0); }
+    63% { transform: rotate(7deg); } 66% { transform: rotate(-6deg); } 69%, 100% { transform: rotate(0); } }
+
+
+  /* ============ LE BOUFFON DANS L'OVERLAY (démos) ============ */
+  .numeros { display: grid; gap: 26px; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); }
+  .numero h3 { font-size: 1.45rem; margin: 10px 0 2px; }
+  .numero p { color: var(--texte-doux); font-size: .92rem; }
+  .bfx-scene { position: relative; aspect-ratio: 16/9; container-type: size; overflow: hidden; border-radius: 12px;
+    background: radial-gradient(ellipse 60% 70% at 50% 60%, color-mix(in srgb, var(--primaire) 18%, transparent), transparent 70%), var(--fond); }
+  .bfx-scene > * { position: absolute; }
+  .bfx-titre { left: 0; right: 0; top: 6cqh; text-align: center; font-family: var(--f-titre); font-size: 7cqh; color: var(--texte); }
+  .bfx-sol { left: 0; right: 0; bottom: 0; height: 7cqh; background: color-mix(in srgb, var(--surface) 70%, #000); }
+  /* 1. cirque */
+  .bfx-p-cirque { height: 62cqh; width: 27cqh; left: calc(50% - 13.5cqh); bottom: 7cqh; }
+  /* 2. feu */
+  .bfx-p-feu { height: 74cqh; width: 32.2cqh; left: calc(38% - 16.1cqh); bottom: -13cqh; z-index: 2; }
+  .bfx-buche { z-index: 3; left: 16cqw; width: 58cqw; bottom: 3cqh; height: 13cqh; border-radius: 7cqh; background: #6B4226; box-shadow: inset 0 -2cqh 0 #54331C; }
+  .bfx-feu { width: 19cqw; left: 55cqw; bottom: 8cqh; z-index: 1; }
+  .bfx-feu path { transform-box: fill-box; transform-origin: 50% 100%; animation: vacille 1.4s ease-in-out infinite; }
+  .bfx-feu path:nth-child(2) { animation-duration: 1.1s; } .bfx-feu path:nth-child(3) { animation-duration: .8s; }
+  @keyframes vacille { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(.94, 1.08) skewX(3deg); } 60% { transform: scale(1.04, .95) skewX(-2deg); } }
+  .bfx-zzz { left: 24cqw; top: 22cqh; --taille-z: 11cqh; z-index: 4; }
+  .bfx-zzz .bfx-z { color: var(--texte); text-shadow: 0 .4cqh 0 rgba(0,0,0,.3); }
+  .bfx-reve { left: 46cqw; top: 3cqh; width: 30cqw; height: 34cqh; }
+  .bfx-reve .nuage { position: absolute; left: 12%; top: 0; width: 88%; height: 78%; border-radius: 50%; background: var(--texte);
+    box-shadow: -4cqw 3cqh 0 -1cqh var(--texte), 4cqw 4cqh 0 -1.4cqh var(--texte); display: grid; place-items: center; }
+  .bfx-reve .nuage svg { width: 42%; }
+  .bfx-reve .b1 { left: 4%; bottom: 8%; width: 3cqh; height: 3cqh; } .bfx-reve .b2 { left: -4%; bottom: -8%; width: 1.8cqh; height: 1.8cqh; }
+  .bfx-zzz .bfx-z:nth-child(2) { left: 2cqh; } .bfx-zzz .bfx-z:nth-child(3) { left: 4cqh; }
+  /* 3. taverne */
+  .bfx-cam { left: 4cqw; top: 16cqh; width: 44cqw; height: 66cqh; border-radius: 1.5cqw; border: .8cqw solid var(--primaire);
+    background: repeating-linear-gradient(45deg, #56616f 0 3cqw, #4c5663 3cqw 6cqw); }
+  .bfx-p-guette { width: 17cqw; left: 72cqw; top: 5cqh; }
+  .bfx-carte { left: 54cqw; top: 36cqh; width: 42cqw; height: 60cqh; border-radius: 1.4cqw; background: var(--surface); padding: 2.5cqh 2cqw;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 1.4cqh; overflow: hidden; }
+  .bfx-carte .ligne { font: 700 3.4cqh/1.25 var(--f-texte); color: var(--texte); background: var(--fond); border-left: .6cqw solid var(--c); border-radius: .8cqh; padding: .8cqh 1.2cqw;
+    animation: glisse .5s var(--rebond) both; }
+  .bfx-carte .ligne b { color: var(--c); }
+  .bfx-main { width: 4.2cqh; height: 4.2cqh; border-radius: 50%; background: #F0C8A4; top: 34.2cqh; }
+  /* 4. alerte */
+  .bfx-alerte { inset: 0; animation: bfx-descente 8s cubic-bezier(.34,1.3,.64,1) infinite; }
+  .bfx-alerte > * { position: absolute; }
+  .bfx-corde { top: -100cqh; width: .5cqw; height: calc(100cqh + 20cqh); background: repeating-linear-gradient(160deg, #C79A3B 0 1cqh, #8E6A22 1cqh 2cqh); }
+  .bfx-carte-alerte { left: 24cqw; top: 20cqh; width: 46cqw; padding: 3cqh 2.5cqw; border-radius: 2cqh; background: var(--surface); border: .6cqh solid var(--primaire);
+    display: flex; gap: 2cqw; align-items: center; box-shadow: 0 1.4cqh 0 var(--primaire-fonce); }
+  .bfx-carte-alerte img { width: 11cqh; }
+  .bfx-carte-alerte small { display: block; font: 900 2.6cqh var(--f-texte); letter-spacing: .4cqh; text-transform: uppercase; color: var(--accent); }
+  .bfx-carte-alerte b { display: block; font: 800 7cqh/1 var(--f-titre); color: var(--texte); }
+  .bfx-carte-alerte span { font: 700 3cqh var(--f-texte); color: var(--texte-doux); }
+  .bfx-p-rappel { height: 40cqh; width: 17.4cqh; left: calc(76cqw - 14.3cqh); top: 4cqh; transform-origin: 82% 36.7%; animation: bfx-balance 8s ease-in-out infinite; }
+  @keyframes bfx-descente { 0% { transform: translateY(-110cqh); } 14%, 80% { transform: translateY(0); } 92%, 100% { transform: translateY(-110cqh); } }
+  @keyframes bfx-balance { 0%, 14% { transform: rotate(0); } 20% { transform: rotate(7deg); } 27% { transform: rotate(-5deg); } 34% { transform: rotate(3deg); } 40%, 100% { transform: rotate(0); } }
+  /* 5. jeu */
+  .bfx-jeu { background: linear-gradient(160deg, #3c6e47, #1d3b2a 60%, #0e1f16); }
+  .bfx-cadre-cam { left: 56cqw; top: 50cqh; width: 38cqw; height: 42cqh; border-radius: 1.4cqw; border: .8cqw solid var(--primaire);
+    background: repeating-linear-gradient(45deg, #56616f 0 3cqw, #4c5663 3cqw 6cqw); z-index: 2; }
+  .bfx-cache { left: 0; top: 0; width: 100%; height: 50cqh; overflow: hidden; z-index: 1; }
+  .bfx-p-jeu { position: absolute; width: 17.3cqw; left: 66.35cqw; top: 28cqh; animation: bfx-tete 10s ease-in-out infinite; }
+  @keyframes bfx-tete { 0%, 22% { transform: translateY(0); } 30%, 64% { transform: translateY(-11cqh); } 70%, 100% { transform: translateY(0); } }
+  /* 6. fin */
+  .bfx-p-fin { height: 70cqh; width: 30.4cqh; left: 22cqw; bottom: 7cqh; }
+  .bfx-bulle { left: 50cqw; top: 14cqh; padding: 2.4cqh 3cqw; border-radius: 3cqh; background: var(--texte); color: var(--fond);
+    font: 800 6.4cqh/1.1 var(--f-titre); transform-origin: 0 100%; }
+  .bfx-bulle::after { content: ""; position: absolute; left: -2cqw; bottom: 2cqh; border: 1.6cqh solid transparent; border-right: 2.4cqw solid var(--texte); }
+  @keyframes bfx-bulle { 0%, 8% { transform: scale(0); } 18%, 82% { transform: scale(1); } 92%, 100% { transform: scale(0); } }
+
+  /* 4. Page de grimoire */
+  .tr-page { perspective: 140cqw; }
+  .pg-feuille { inset: 0; transform-origin: left center; transform: rotateY(90deg); backface-visibility: hidden;
+    background: radial-gradient(ellipse at center, #FBF1DA 55%, #E9D5A8 100%); }
+  .pg-feuille::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to left, rgba(60,40,10,.45), transparent 60%); opacity: 0; }
+  .pg-cadre { inset: 5cqh 4cqw; border: .7cqh solid var(--accent); border-radius: 1.5cqw; display: grid; place-items: center; align-content: center; gap: 1.5cqh; }
+  .pg-cadre > * { position: static; }
+  .pg-cadre img { width: 9cqw; }
+  .pg-chap { font: 900 2cqw 'Nunito', sans-serif; letter-spacing: .6cqw; text-transform: uppercase; color: #E5484D; }
+  .pg-titre { font-family: var(--f-titre); font-size: 9cqw; line-height: 1; color: #1F6FA8; }
+  .pg-lignes { width: 46cqw; height: 9cqh; background: repeating-linear-gradient(to bottom, #C9B384 0 .5cqh, transparent .5cqh 2.6cqh); opacity: .7; }
+  .tr-page.joue .pg-feuille { animation: pg-feuille 2s both; }
+  .tr-page.joue .pg-feuille::after { animation: pg-ombre 2s both; }
+  @keyframes pg-feuille {
+    0% { transform: rotateY(90deg); animation-timing-function: cubic-bezier(.2,.8,.3,1); }
+    30%, 66% { transform: rotateY(0); animation-timing-function: cubic-bezier(.6,0,.8,.4); }
+    100% { transform: rotateY(-100deg); } }
+  @keyframes pg-ombre { 0% { opacity: .9; } 30%, 66% { opacity: 0; } 100% { opacity: .9; } }
+
+  /* ============ SCÈNES ============ */
+  .scenes { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+  .ecran { position: relative; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: color-mix(in srgb, var(--fond) 80%, #000); border: 3px solid var(--surface); }
+  .ecran .z { position: absolute; border-radius: 6px; display: grid; place-items: center; font: 900 .7rem var(--f-texte); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+  .z.z-cam  { background: var(--primaire); color: #fff; border: 2px solid var(--primaire-fonce); }
+  .z.z-chat { background: color-mix(in srgb, var(--accent-2) 70%, transparent); color: #fff; }
+  .z.z-contenu { background: #4a5568; color: #fff; }
+  .z.z-jeu { background: linear-gradient(160deg, #3c6e47, #1d3b2a); color: #ffffffaa; }
+  .z.z-barre { background: var(--surface); color: var(--texte); border-top: 3px solid var(--accent); border-radius: 0; }
+  .z.z-logo { background: none; }
+  .z.z-logo img { width: 100%; }
+  .z.z-txt { color: var(--texte); font-family: var(--f-titre); font-size: 1.1rem; letter-spacing: 0; text-transform: none; font-weight: 800; }
+  .ecran .arlequin { position: absolute; left: 0; right: 0; height: 10px; --t: 12px; }
+  .scene-info h3 { font-size: 1.5rem; margin-top: 10px; }
+  .scene-info p { color: var(--texte-doux); font-size: .92rem; }
+
+  .note { background: var(--surface); border-left: 6px solid var(--accent); border-radius: 10px; padding: 14px 18px; margin-top: 18px; }
+
+  @media (max-width: 600px) {
+    .alerte { min-width: 0; width: 100%; }
+    .cam { width: 240px; }
+    .bandeau .bloc.optionnel { display: none; }
+    .typo .nom { width: 100%; }
+  }
+</style>
+<link rel="stylesheet" href="../css/bouffon.css">
+</head>
+<body>
+
+<!-- ===== Bibliothèque d'icônes SVG ===== -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-chapeau" viewBox="0 0 100 80">
+      <image href="../assets/chapeau.svg" x="0" y="0" width="100" height="80"/>
+    </symbol>
+    <symbol id="i-grelot" viewBox="0 0 60 70">
+      <rect x="24" y="2" width="12" height="12" rx="6" fill="none" stroke="var(--accent)" stroke-width="4"/>
+      <circle cx="30" cy="40" r="26" fill="var(--accent)"/>
+      <path d="M8 36 H52" stroke="color-mix(in srgb, var(--accent) 60%, #000)" stroke-width="4"/>
+      <circle cx="30" cy="52" r="5" fill="color-mix(in srgb, var(--accent) 50%, #000)"/>
+      <path d="M30 52 V64" stroke="color-mix(in srgb, var(--accent) 50%, #000)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="21" cy="26" r="5" fill="#fff" opacity=".5"/>
+    </symbol>
+    <symbol id="i-d20" viewBox="0 0 100 100">
+      <g stroke-width=".4" stroke-linejoin="round">
+        <polygon points="50,2 7,25.8 50,19" fill="color-mix(in srgb, var(--primaire) 65%, #fff)" stroke="color-mix(in srgb, var(--primaire) 65%, #fff)"/>
+        <polygon points="50,2 50,19 93,25.8" fill="color-mix(in srgb, var(--primaire) 65%, #fff)" stroke="color-mix(in srgb, var(--primaire) 65%, #fff)"/>
+        <polygon points="7,25.8 16.5,77 50,19" fill="var(--primaire)" stroke="var(--primaire)"/>
+        <polygon points="93,25.8 50,19 83.5,77" fill="var(--primaire)" stroke="var(--primaire)"/>
+        <polygon points="7,25.8 7,74.2 16.5,77" fill="color-mix(in srgb, var(--primaire) 60%, var(--primaire-fonce))" stroke="color-mix(in srgb, var(--primaire) 60%, var(--primaire-fonce))"/>
+        <polygon points="93,25.8 83.5,77 93,74.2" fill="color-mix(in srgb, var(--primaire) 60%, var(--primaire-fonce))" stroke="color-mix(in srgb, var(--primaire) 60%, var(--primaire-fonce))"/>
+        <polygon points="7,74.2 50,98 16.5,77" fill="var(--primaire-fonce)" stroke="var(--primaire-fonce)"/>
+        <polygon points="93,74.2 83.5,77 50,98" fill="var(--primaire-fonce)" stroke="var(--primaire-fonce)"/>
+        <polygon points="16.5,77 50,98 83.5,77" fill="var(--primaire-fonce)" stroke="var(--primaire-fonce)"/>
+        <polygon points="50,19 16.5,77 83.5,77" fill="var(--accent)" stroke="var(--accent)"/>
+      </g>
+      <text x="50" y="65" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="21" fill="#1B3A66">20</text>
+    </symbol>
+    <symbol id="i-d6" viewBox="0 0 100 100">
+      <polygon points="50,6 92,28 50,50 8,28" fill="var(--texte)"/>
+      <polygon points="8,28 50,50 50,96 8,72" fill="var(--accent)"/>
+      <polygon points="92,28 50,50 50,96 92,72" fill="color-mix(in srgb, var(--accent) 70%, #000)"/>
+      <ellipse cx="50" cy="28" rx="7" ry="4.5" fill="var(--accent-2)"/>
+      <circle cx="20" cy="46" r="4.5" fill="var(--fond)"/><circle cx="38" cy="78" r="4.5" fill="var(--fond)"/>
+      <circle cx="62" cy="52" r="4.5" fill="var(--fond)"/><circle cx="71" cy="67" r="4.5" fill="var(--fond)"/><circle cx="80" cy="82" r="4.5" fill="var(--fond)"/>
+    </symbol>
+    <symbol id="i-d8" viewBox="0 0 100 100">
+      <polygon points="50,4 90,50 50,96 10,50" fill="var(--accent-2)"/>
+      <polygon points="50,4 90,50 50,62" fill="color-mix(in srgb, var(--accent-2) 70%, #000)"/>
+      <polygon points="50,4 50,62 10,50" fill="color-mix(in srgb, var(--accent-2) 80%, #fff)"/>
+      <path d="M10 50 L50 62 L90 50 M50 62 L50 96" stroke="var(--fond)" stroke-width="2.5" fill="none"/>
+      <text x="50" y="46" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="18" fill="#fff">8</text>
+    </symbol>
+    <symbol id="i-d4" viewBox="0 0 100 100">
+      <polygon points="50,6 94,90 6,90" fill="var(--primaire-fonce)"/>
+      <polygon points="50,6 94,90 58,90" fill="var(--primaire)"/>
+      <text x="44" y="74" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="22" fill="var(--accent)">4</text>
+    </symbol>
+    <symbol id="i-epee" viewBox="0 0 40 110">
+      <circle cx="20" cy="7" r="6" fill="var(--accent)"/>
+      <rect x="16" y="11" width="8" height="18" rx="3" fill="var(--primaire-fonce)"/>
+      <rect x="2" y="28" width="36" height="7" rx="3.5" fill="var(--accent)"/>
+      <path d="M13 35 H27 L25 94 L20 106 L15 94 Z" fill="var(--primaire)"/>
+      <path d="M20 38 V96" stroke="#fff" stroke-width="2" opacity=".5"/>
+    </symbol>
+    <symbol id="i-bouclier" viewBox="0 0 90 100">
+      <path d="M45 4 L84 16 C84 58 70 82 45 96 C20 82 6 58 6 16 Z" fill="var(--primaire)"/>
+      <path d="M45 4 L84 16 C84 58 70 82 45 96 Z" fill="var(--primaire-fonce)"/>
+      <path d="M45 30 L52 44 L67 45 L55 55 L59 70 L45 61 L31 70 L35 55 L23 45 L38 44 Z" fill="var(--accent)"/>
+    </symbol>
+    <symbol id="i-parchemin" viewBox="0 0 100 80">
+      <rect x="14" y="12" width="72" height="56" fill="var(--texte)" opacity=".92"/>
+      <rect x="6" y="6" width="88" height="12" rx="6" fill="var(--accent)"/>
+      <rect x="6" y="62" width="88" height="12" rx="6" fill="var(--accent)"/>
+      <path d="M26 30 H74 M26 40 H66 M26 50 H70" stroke="var(--primaire)" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<nav class="reglages">
+  <div class="groupe"><span>Palette</span>
+    <button class="btn actif" data-set="palette" data-val="royal">Bouffon royal</button>
+    <button class="btn" data-set="palette" data-val="donjon">Donjon nocturne</button>
+    <button class="btn" data-set="palette" data-val="parchemin">Parchemin clair</button>
+    <button class="btn" data-set="palette" data-val="bleuor">Royal bleu &amp; or ✔</button>
+    <button class="btn nouveau" data-set="palette" data-val="nuitor">Royal nuit &amp; or</button>
+  </div>
+  <div class="groupe"><span>Titres</span>
+    <button class="btn actif" data-set="police" data-val="grenze">Grenze Gotisch</button>
+    <button class="btn" data-set="police" data-val="pirata">Pirata One</button>
+    <button class="btn" data-set="police" data-val="medieval">MedievalSharp</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="fanions" id="fanions-hero"></div>
+    <img src="../assets/logo-couleur.svg" alt="Logo Patagrain">
+    <p>Moodboard de l'overlay — la cour du bouffon rencontre le donjon</p>
+  </header>
+
+  <!-- ================= LOGO & EMBLÈME ================= -->
+  <section id="identite">
+    <h2>Logo &amp; emblème</h2>
+    <p class="sous">Le logo complet pour les grands formats (écrans d'attente, transitions), et l'emblème d20 pour les petits : photo de profil Twitch, icônes, tampons dans l'overlay.</p>
+    <div class="identite">
+      <div class="panneau" style="background:#152238"><img src="../assets/logo-couleur.svg" alt="Logo Patagrain"></div>
+      <div class="panneau" style="background:#FFF3DC"><img src="../assets/logo-couleur.svg" alt=""></div>
+      <div class="panneau" style="background:linear-gradient(160deg,#3c6e47,#1d3b2a)"><img src="../assets/logo-contour.svg" alt="Logo avec contour crème, pour la scène Jeu"></div>
+    </div>
+    <div class="emblemes">
+      <div class="carte embleme-carte"><img class="grand" src="../assets/embleme-bleu.svg" alt=""><h3>Bleu royal</h3>
+        <div class="avatars"><div class="avatar" style="width:90px;height:90px;background:#FFF3DC"><img src="../assets/embleme-bleu.svg" alt=""></div><div class="avatar" style="width:40px;height:40px;background:#FFF3DC"><img src="../assets/embleme-bleu.svg" alt=""></div><div class="avatar" style="width:24px;height:24px;background:#FFF3DC"><img src="../assets/embleme-bleu.svg" alt=""></div></div></div>
+      <div class="carte embleme-carte"><img class="grand" src="../assets/embleme-glacier.svg" alt=""><h3>Bleu glacier</h3>
+        <div class="avatars"><div class="avatar" style="width:90px;height:90px;background:#152238"><img src="../assets/embleme-glacier.svg" alt=""></div><div class="avatar" style="width:40px;height:40px;background:#152238"><img src="../assets/embleme-glacier.svg" alt=""></div><div class="avatar" style="width:24px;height:24px;background:#152238"><img src="../assets/embleme-glacier.svg" alt=""></div></div></div>
+      <div class="carte embleme-carte"><img class="grand" src="../assets/embleme-nuit.svg" alt=""><h3>Nuit étoilée</h3>
+        <div class="avatars"><div class="avatar" style="width:90px;height:90px;background:#3A9AD9"><img src="../assets/embleme-nuit.svg" alt=""></div><div class="avatar" style="width:40px;height:40px;background:#3A9AD9"><img src="../assets/embleme-nuit.svg" alt=""></div><div class="avatar" style="width:24px;height:24px;background:#3A9AD9"><img src="../assets/embleme-nuit.svg" alt=""></div></div></div>
+    </div>
+    <p class="sous" style="margin-top:10px">Les ronds montrent le rendu en photo de profil Twitch (grande, dans le chat, dans la liste des chaînes).</p>
+  </section>
+
+  <!-- ================= LE BOUFFON ================= -->
+  <section id="bouffon">
+    <h2>Le bouffon</h2>
+    <p class="sous">La mascotte de la chaîne, dessinée d'après tes photos dans le même style flat que le logo. Il anime les trois transitions, et pourra servir d'emote ou apparaître sur les écrans d'attente. Il reste noir et bleu, quel que soit le thème.</p>
+    <div class="bouffon-zone">
+      <div class="bouffon-scene"><div class="vivant" id="bouffon-principal"></div></div>
+      <div class="bouffon-infos">
+        <div class="carte"><h3>Ce qui te ressemble</h3>
+          <ul>
+            <li>Cheveux longs et raides châtain clair, raie au milieu, qui s'arrêtent juste sous les épaules</li>
+            <li>Lunettes rectangulaires noires, yeux vert-gris</li>
+            <li>Collier de barbe fin (moustache et tour de la bouche), anneau à l'oreille gauche, grain de beauté sur la joue gauche</li>
+            <li>Habit noir et bleu, collerette de bouffon, et le chapeau du logo en noir et bleu, bien posé sur la tête</li>
+          </ul>
+        </div>
+        <div class="carte"><h3>Ses mimiques</h3>
+          <p class="sous" style="margin-bottom:10px">Au repos, il respire, hoche la tête et cligne des yeux. Clique pour tester :</p>
+          <div class="tr-boutons" style="margin-top:0">
+            <button class="btn" data-pose="clin">😉 Clin d'œil</button>
+            <button class="btn" data-pose="grelots">🔔 Grelots</button>
+          </div>
+        </div>
+        <div class="carte"><h3>En pied, articulé</h3>
+          <p class="sous" style="margin-bottom:10px">Épaules, coudes, hanches et genoux bougent : c'est ce qui permet de le faire marcher, sauter ou frapper.</p>
+          <div class="pied-apercu"><div id="bouffon-pied" class="marche"></div><div id="bouffon-pied-epee"></div></div>
+        </div>
+        <div class="carte"><h3>En emote</h3>
+          <div class="emotes">
+            <div class="emote-apercu" style="width:112px;height:112px" data-emote></div>
+            <div class="emote-apercu" style="width:56px;height:56px" data-emote></div>
+            <div class="emote-apercu" style="width:28px;height:28px" data-emote></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LE BOUFFON DANS L'OVERLAY ================= -->
+  <section id="numeros">
+    <h2>Le bouffon dans l'overlay <span class="etiquette-nouveau">à valider</span></h2>
+    <p class="sous">Sur chaque écran, le bouffon a son petit rôle. Ce sont des démos : elles tournent en boucle ici ; dans l'overlay, elles réagiront au vrai chat et aux vraies alertes.</p>
+    <div class="numeros">
+      <div class="numero"><div class="bfx-scene"><div class="bfx-sol"></div><div class="bfx-titre">Le spectacle va commencer…</div><div class="bfx-p-cirque" id="nm-cirque"></div></div>
+        <h3>🎭 Starting soon — le numéro de cirque</h3><p>Il jongle avec trois dés, passe au poirier, puis salue, en boucle. À la fin du compte à rebours, il lancera un d20 qui tombe sur 20.</p></div>
+      <div class="numero"><div class="bfx-scene"><div class="bfx-p-feu" id="nm-feu"></div><div class="bfx-buche"></div><svg class="bfx-feu" viewBox="0 0 200 150" aria-hidden="true">
+          <path d="M100 8 C122 40 150 58 142 96 C136 122 118 132 100 132 C82 132 62 122 58 96 C52 62 86 48 100 8 Z" fill="#F0782E"/>
+          <path d="M102 40 C116 62 132 76 126 102 C122 120 112 128 100 128 C88 128 76 120 74 102 C72 80 94 70 102 40 Z" fill="var(--accent)"/>
+          <path d="M100 76 C108 90 116 98 113 112 C111 122 106 126 100 126 C94 126 88 122 87 112 C86 100 96 94 100 76 Z" fill="var(--texte)"/>
+          <rect x="38" y="118" width="124" height="18" rx="9" fill="#7A4A2A" transform="rotate(-12 100 127)"/>
+          <rect x="38" y="118" width="124" height="18" rx="9" fill="#5E3820" transform="rotate(12 100 127)"/></svg>
+        <div class="bfx-zzz"><span class="bfx-z">z</span><span class="bfx-z z2">z</span><span class="bfx-z z3">Z</span></div>
+        <div class="bfx-reve"><span class="bulle b1"></span><span class="bulle b2"></span><div class="nuage">
+          <svg viewBox="0 0 100 100" class="de-reve"><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="var(--primaire)"/><polygon points="50,24 78,70 22,70" fill="var(--accent)"/>
+            <text class="bfx-chiffre" x="50" y="62" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="24" fill="#1B3A66">20</text></svg></div></div></div>
+        <h3>🔥 Pause — il rêve au coin du feu</h3><p>Il dort et rêve d'un d20 qui roule… quand il tombe sur 1, il se réveille en sursaut ! Il grille un chamallow, le croque, et se rendort.</p></div>
+      <div class="numero"><div class="bfx-scene"><div class="bfx-cam"></div><div class="bfx-p-guette" id="nm-guette"></div>
+        <div class="bfx-carte" id="nm-chat"></div><div class="bfx-main" style="left:74.5cqw"></div><div class="bfx-main" style="left:86cqw"></div></div>
+        <h3>💬 Cam seule & Contenu — il surveille la taverne</h3><p>Accoudé à la carte du chat, il suit les messages des yeux ; ses grelots tintent et il sursaute à chaque nouveau message.</p></div>
+      <div class="numero"><div class="bfx-scene"><div class="bfx-alerte">
+          <div class="bfx-corde" style="left:29cqw"></div><div class="bfx-corde" style="left:65cqw"></div><div class="bfx-corde" style="left:calc(76cqw - .25cqw);height:calc(100cqh + 19cqh)"></div>
+          <div class="bfx-carte-alerte"><img src="../assets/chapeau.svg" alt=""><div><small>Nouvel aventurier</small><b>SirMachin</b><span>rejoint la cour du roi !</span></div></div>
+          <div class="bfx-p-rappel" id="nm-rappel"></div></div></div>
+        <h3>🔔 Alertes — il descend avec l'alerte</h3><p>Il tient la corde d'une main, un peu sur le côté, et salue de l'autre en descendant du plafond avec l'alerte ; il se balance, puis tout remonte.</p></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu"><div class="bfx-cache"><div class="bfx-p-jeu" id="nm-jeu"></div></div><div class="bfx-cadre-cam"></div></div>
+        <h3>🎮 Jeu — il se cache sous son chapeau</h3><p>Le chapeau posé sur la cam, c'est le sien : de temps en temps (et à chaque follow), il se lève dessous, passe la tête, regarde à gauche, à droite, clin d'œil… et redescend.</p></div>
+      <div class="numero"><div class="bfx-scene"><div class="bfx-sol"></div><div class="bfx-p-fin" id="nm-fin"></div><div class="bfx-bulle" id="nm-bulle">Merci d'être venus !</div></div>
+        <h3>👋 Fin — il dit au revoir</h3><p>Coucou de la main et clin d'œil, grande courbette, saut de joie… et sa bulle remercie tout le monde.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= PALETTE ================= -->
+  <section id="couleurs">
+    <h2>Les couleurs</h2>
+    <p class="sous">Le bleu du logo reste la couleur reine. L'or rappelle les grelots et la couronne, et la troisième couleur change selon l'ambiance. Change de palette avec les boutons en haut : toute la page suit, et ce sera pareil pour l'overlay.</p>
+    <div class="nuancier" id="nuancier"></div>
+  </section>
+
+  <!-- ================= TYPO ================= -->
+  <section id="typo">
+    <h2>Les typographies</h2>
+    <p class="sous">Une police « médiévale » pour les titres, dans l'esprit gothique du logo, et une police ronde et très lisible pour le texte (pseudos, chat, infos). Clique sur une option pour l'appliquer à toute la page.</p>
+    <div class="typo">
+      <div class="carte" data-police-choix="grenze"><div class="nom">Grenze Gotisch</div><div class="demo" style="font-family:'Grenze Gotisch';font-weight:800">Le spectacle va <em>commencer</em>…</div></div>
+      <div class="carte" data-police-choix="pirata"><div class="nom">Pirata One</div><div class="demo" style="font-family:'Pirata One'">Le spectacle va <em>commencer</em>…</div></div>
+      <div class="carte" data-police-choix="medieval"><div class="nom">MedievalSharp</div><div class="demo" style="font-family:'MedievalSharp'">Le spectacle va <em>commencer</em>…</div></div>
+      <div class="carte"><div class="nom">Texte · Nunito</div><div class="demo" style="font-family:'Nunito';font-weight:700;font-size:1.6rem">Merci d'être venu·e·s ! Le chat, les infos et les pseudos seront écrits comme ça.</div></div>
+    </div>
+  </section>
+
+  <!-- ================= MOTIFS ================= -->
+  <section id="motifs">
+    <h2>Les motifs &amp; symboles</h2>
+    <p class="sous">Des formes plates et épaisses, comme dans le logo. On pioche dedans pour décorer les cadres, les alertes et les transitions.</p>
+    <div class="grille">
+      <div class="carte"><div class="motif-zone arlequin anim"></div><h3>Losanges d'arlequin</h3><p>Le motif signature du bouffon. Pour les bords, les bandeaux et les transitions.</p></div>
+      <div class="carte"><div class="motif-zone arlequin tri anim" style="--t:28px"></div><h3>Arlequin bicolore</h3><p>Version plus festive (bleu et or), pour les alertes et les moments forts.</p></div>
+      <div class="carte"><div class="motif-zone" style="background:var(--fond)"><div class="fanions" id="fanions-carte" style="width:100%"></div></div><h3>Fanions</h3><p>Rappellent le zigzag de la couronne du logo. Ils se balancent doucement en haut des écrans d'attente.</p></div>
+      <div class="carte agite"><div class="motif-zone" style="background:var(--fond)"><svg viewBox="0 0 60 70"><use href="#i-grelot"/></svg></div><h3>Grelots</h3><p>Ils tintent à chaque alerte. On pourra y associer un petit son de clochette.</p></div>
+      <div class="carte roule"><div class="motif-zone" style="background:var(--fond)"><svg viewBox="0 0 100 100"><use href="#i-d20"/></svg></div><h3>Dé à 20 faces</h3><p>Pour le côté JDR : compte à rebours, alertes de raid, écran de session.</p></div>
+      <div class="carte"><div class="motif-zone" style="background:var(--fond)"><div class="des">
+        <svg viewBox="0 0 100 100" style="--i:0"><use href="#i-d4"/></svg>
+        <svg viewBox="0 0 100 100" style="--i:1;height:44px"><use href="#i-d6"/></svg>
+        <svg viewBox="0 0 100 100" style="--i:2;height:48px"><use href="#i-d8"/></svg>
+        <svg viewBox="0 0 100 100" style="--i:3;height:56px"><use href="#i-d20"/></svg>
+      </div></div><h3>La trousse du MJ</h3><p>d4, d6, d8, d20 : des petits décors à semer aux coins des cadres et dans les transitions.</p></div>
+      <div class="carte agite"><div class="motif-zone" style="background:var(--fond)"><svg viewBox="0 0 100 80"><use href="#i-chapeau"/></svg></div><h3>Chapeau de bouffon</h3><p>Déclinaison du logo, en icône d'alerte ou en décor au-dessus de la cam.</p></div>
+      <div class="carte"><div class="motif-zone" style="background:var(--fond);gap:18px;display:flex;justify-content:center">
+        <svg viewBox="0 0 40 110" style="height:100px"><use href="#i-epee"/></svg>
+        <svg viewBox="0 0 90 100" style="height:80px"><use href="#i-bouclier"/></svg>
+        <svg viewBox="0 0 100 80" style="height:70px"><use href="#i-parchemin"/></svg>
+      </div><h3>Épée, blason, parchemin</h3><p>L'arsenal de l'aventurier, pour les transitions (coup d'épée), les subs et les infos.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= COMPOSANTS ================= -->
+  <section id="composants">
+    <h2>Les composants</h2>
+    <p class="sous">Les « préfabs » réutilisés sur toutes les scènes. Le fond vert simule ton jeu, pour voir la lisibilité par-dessus.</p>
+
+    <h3 style="font-size:1.6rem;margin:26px 0 10px">Alertes</h3>
+    <div class="scene-demo"><div class="fauxjeu"></div>
+      <div class="alerte joue" id="alerte">
+        <div class="alerte-icone" id="alerte-icone" style="background:var(--fond)"><svg viewBox="0 0 100 80"><use href="#i-chapeau"/></svg></div>
+        <div><div class="alerte-titre" id="alerte-titre">Nouvel aventurier</div><div class="alerte-nom" id="alerte-nom">SirMachin</div><div class="alerte-msg" id="alerte-msg">rejoint la cour du roi !</div></div>
+      </div>
+    </div>
+    <p class="sous" style="margin:14px 0 0">Un vocabulaire maison pour chaque type d'alerte. Clique pour voir l'animation :</p>
+    <div class="lexique" id="lexique"></div>
+
+    <div class="grille" style="margin-top:34px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">
+      <div class="carte"><h3>Cadre webcam</h3><p>Bordure épaisse bleue, chapeau de bouffon en couronne, dés de JDR aux coins, plaque de nom dorée.</p>
+        <div class="cam">
+          <div class="cam-ecran">Ta webcam</div>
+          <svg class="cam-couronne" viewBox="0 0 100 80"><use href="#i-chapeau"/></svg>
+          <svg class="cam-de d1" viewBox="0 0 100 100"><use href="#i-d20"/></svg>
+          <svg class="cam-de d2" viewBox="0 0 100 100"><use href="#i-d6"/></svg>
+          <div class="cam-nom">Patagrain</div>
+        </div>
+      </div>
+      <div class="carte"><h3>Chat intégré</h3><p>Messages qui glissent, pseudo coloré, fond semi-transparent pour rester lisible sur le jeu.</p>
+        <div class="scene-demo" style="min-height:230px;margin-top:14px;padding:14px"><div class="fauxjeu"></div>
+          <div class="chat" id="chat"></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.6rem;margin:30px 0 10px">Bandeau d'infos &amp; objectif</h3>
+    <div class="scene-demo" style="gap:26px"><div class="fauxjeu"></div>
+      <div class="bandeau">
+        <div class="arlequin tri anim"></div>
+        <div class="bloc"><span class="live">EN DIRECT</span></div>
+        <div class="bloc flex"><span class="titre">Donjons &amp; Dragons — La quête du grelot perdu</span></div>
+        <div class="bloc optionnel"><svg viewBox="0 0 100 100" style="width:30px"><use href="#i-d20"/></svg><b>Session 3</b></div>
+      </div>
+      <div class="objectif">
+        <div class="objectif-tete"><span class="xp-niv"><svg viewBox="0 0 100 100"><use href="#i-d20"/></svg>Guilde · Niveau 3</span><span id="obj-txt">36 / 50 aventuriers</span></div>
+        <div class="jauge"><div class="rempli arlequin anim" id="jauge"></div></div>
+      </div>
+      <button class="btn" id="btn-jauge">+ un aventurier</button>
+    </div>
+
+  </section>
+
+  <!-- ================= TRANSITIONS ================= -->
+  <section id="transitions">
+    <h2>Les transitions</h2>
+    <p class="sous">Trois transitions avec le bouffon, une par type de changement de scène. Chacune recouvre entièrement l'écran au moment de la coupe : c'est là qu'OBS change de scène sans que ça se voie. Clique pour les lancer (la démo alterne entre deux scènes).</p>
+    <div class="tr-scene" id="tr-scene">
+      <div class="tr-vue tr-vue-a"><img src="../assets/logo-couleur.svg" alt=""><p>Le spectacle va commencer…</p></div>
+      <div class="tr-vue tr-vue-b cachee"><div class="fauxjeu"></div><div class="mini-cam"></div><p>En jeu !</p></div>
+
+      <div class="tr tr-rideau"><div class="rd rd-g"></div><div class="rd rd-d"></div><img class="rd-embleme" src="../assets/embleme-glacier.svg" alt=""></div>
+      <div class="tr tr-epee"><div class="ep-panneau ep-a"></div><div class="ep-panneau ep-b"></div><div class="ep-trait"></div><img class="ep-lame" src="../assets/epee.svg" alt=""></div>
+      <div class="tr tr-de"><div class="de-cercle"></div><img class="de-img" src="../assets/embleme-bleu.svg" alt=""></div>
+      <div class="tr tr-equilibriste"><div class="eq-cercle"></div>
+        <div class="eq-groupe"><img class="eq-de" src="../assets/embleme-bleu.svg" alt=""><div class="eq-perso" id="bouffon-equilibriste"></div></div></div>
+      <div class="tr tr-bretteur"><div class="br br-a"></div><div class="br br-b"></div><div class="br-trait"></div><div class="br-perso" id="bouffon-bretteur"></div></div>
+      <div class="tr tr-machiniste"><div class="mc-rd mc-g"></div><div class="mc-rd mc-d"></div><img class="mc-embleme" src="../assets/embleme-glacier.svg" alt="">
+        <div class="mc-corde"></div><div class="mc-perso" id="bouffon-machiniste"></div></div>
+      <div class="tr tr-page"><div class="pg-feuille"><div class="pg-cadre"><img src="../assets/embleme-glacier.svg" alt=""><div class="pg-chap" id="pg-chap">Chapitre II</div><div class="pg-titre" id="pg-titre">En jeu</div><div class="pg-lignes"></div></div></div></div>
+    </div>
+    <div class="tr-boutons">
+      <button class="btn" data-tr="machiniste">🎭 Rideau (bouffon machiniste)</button>
+      <button class="btn" data-tr="bretteur">⚔️ Coup d'épée (bouffon bretteur)</button>
+      <button class="btn" data-tr="equilibriste">🎲 Jet de dé (bouffon équilibriste)</button>
+    </div>
+    <div class="usage">
+      <div class="carte"><b>Rideau — bouffon machiniste</b><p>Starting soon → Cam seule, et vers l'écran de fin. Le bouffon tire la corde : le rideau se ferme, clin d'œil, il tire de nouveau et le rideau s'ouvre. 3 s, coupe à 1,4 s.</p></div>
+      <div class="carte"><b>Coup d'épée — bouffon bretteur</b><p>Cam seule → Jeu. Le bouffon traverse l'écran, lève l'épée et tranche l'écran en deux, puis repart. 2,4 s, coupe à 0,7 s.</p></div>
+      <div class="carte"><b>Jet de dé — bouffon équilibriste</b><p>Jeu ↔ Pause, Contenu. Le bouffon arrive en marchant sur le dé qui roule, saute, atterrit bras en l'air et fait un clin d'œil. 2,8 s, coupe à 1,75 s.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCÈNES ================= -->
+  <section id="scenes">
+    <h2>Les scènes</h2>
+    <p class="sous">Proposition de mise en page pour chaque scène. Les zones sont indicatives : la cam et le chat seront déplaçables facilement.</p>
+    <div class="scenes">
+
+      <div class="scene-info"><div class="ecran">
+        <div class="arlequin" style="top:0"></div>
+        <div class="z z-logo" style="left:25%;top:18%;width:50%"><img src="../assets/logo-couleur.svg" alt=""></div>
+        <div class="z z-txt" style="left:0;right:0;top:62%">Le spectacle va commencer…</div>
+        <div class="z z-barre" style="left:30%;width:40%;top:76%;height:10%;border-radius:6px;border:0">Jet d’initiative · 05:00</div>
+        <div class="arlequin" style="bottom:0"></div>
+      </div><h3>Starting soon</h3><p>Logo animé, fanions, compte à rebours façon « jet d’initiative ». On peut ajouter le titre du stream du jour.</p></div>
+
+      <div class="scene-info"><div class="ecran">
+        <div class="arlequin" style="top:0"></div>
+        <div class="z z-logo" style="left:30%;top:16%;width:40%"><img src="../assets/logo-couleur.svg" alt=""></div>
+        <div class="z z-txt" style="left:0;right:0;top:55%">Repos court… le bouffon revient</div>
+        <div class="z z-chat" style="left:30%;width:40%;top:68%;height:22%">Chat</div>
+        <div class="arlequin" style="bottom:0"></div>
+      </div><h3>Pause</h3><p>Un « repos court » façon JDR : même habillage, avec le chat visible pour continuer à discuter.</p></div>
+
+      <div class="scene-info"><div class="ecran">
+        <div class="arlequin" style="top:0"></div>
+        <div class="z z-logo" style="left:30%;top:14%;width:40%"><img src="../assets/logo-couleur.svg" alt=""></div>
+        <div class="z z-txt" style="left:0;right:0;top:52%">Fin de la session · merci d’être venus</div>
+        <div class="z z-contenu" style="left:22%;width:56%;top:66%;height:20%">Remerciements (derniers aventuriers…)</div>
+        <div class="arlequin" style="bottom:0"></div>
+      </div><h3>Fin de stream</h3><p>Remerciements, derniers followers de la soirée, rendez-vous au prochain stream.</p></div>
+
+      <div class="scene-info"><div class="ecran">
+        <div class="z z-cam" style="left:3%;top:5%;width:62%;height:74%">Cam (grande)</div>
+        <div class="z z-chat" style="left:68%;top:5%;width:29%;height:74%">Chat</div>
+        <div class="z z-barre" style="left:0;right:0;bottom:0;height:14%">Bandeau d'infos</div>
+      </div><h3>Cam seule</h3><p>L'accueil : « Salut tout le monde ! ». Cam en grand, chat à côté, bandeau en bas.</p></div>
+
+      <div class="scene-info"><div class="ecran">
+        <div class="z z-contenu" style="left:3%;top:5%;width:64%;height:74%">Contenu</div>
+        <div class="z z-cam" style="left:70%;top:5%;width:27%;height:32%">Cam</div>
+        <div class="z z-chat" style="left:70%;top:40%;width:27%;height:39%">Chat</div>
+        <div class="z z-barre" style="left:0;right:0;bottom:0;height:14%">Bandeau d'infos</div>
+      </div><h3>Content</h3><p>Côte à côte : le contenu à gauche, la cam et le chat empilés à droite.</p></div>
+
+      <div class="scene-info"><div class="ecran">
+        <div class="z z-jeu" style="inset:0;border-radius:0">Jeu plein écran</div>
+        <div class="z z-chat" style="left:2%;top:38%;width:20%;height:46%;opacity:.75">Chat</div>
+        <div class="z z-cam" style="right:2%;bottom:13%;width:22%;height:26%">Cam</div>
+        <div class="z z-barre" style="left:0;right:0;bottom:0;height:9%">Barre fine</div>
+      </div><h3>Jeu</h3><p>Le jeu en grand, chat transparent, petite cam et barre discrète. La cam pourra changer de coin selon le jeu.</p></div>
+
+    </div>
+    <div class="note"><b>Ce que je te conseille :</b> par défaut, la cam en <b>bas à droite</b> en scène Jeu, parce que la plupart des jeux mettent leur interface importante (minimap, vie, sorts) en bas à gauche ou en haut. On prévoira quand même des positions toutes prêtes (4 coins) pour s'adapter à chaque jeu.</div>
+  </section>
+
+</div>
+
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
+<script>
+  // --- Réglages palette / police ---
+  const racine = document.documentElement;
+  function regler(type, val) {
+    racine.dataset[type] = val;
+    document.querySelectorAll(`[data-set="${type}"]`).forEach(b => b.classList.toggle('actif', b.dataset.val === val));
+    if (type === 'police') document.querySelectorAll('[data-police-choix]').forEach(c => c.classList.toggle('choisie', c.dataset.policeChoix === val));
+    majNuancier();
+  }
+  document.querySelectorAll('[data-set]').forEach(b => b.onclick = () => regler(b.dataset.set, b.dataset.val));
+  document.querySelectorAll('[data-police-choix]').forEach(c => { c.style.cursor = 'pointer'; c.onclick = () => regler('police', c.dataset.policeChoix); });
+
+  // --- Nuancier ---
+  const couleurs = [['--primaire','Bleu Patagrain','Couleur principale, cadres'],['--primaire-fonce','Bleu profond','Ombres, contours'],['--accent','Or','Grelots, titres, surbrillance'],['--accent-2','Accent','Alertes, badge « en direct »'],['--fond','Fond','Écrans d’attente'],['--surface','Surface','Cartes, bandeau, chat'],['--texte','Texte','Écriture principale']];
+  function majNuancier() {
+    const s = getComputedStyle(racine);
+    document.getElementById('nuancier').innerHTML = couleurs.map(([v, nom, usage]) =>
+      `<div class="nuance"><div style="background:var(${v})"></div><p><b>${nom}</b><code>${s.getPropertyValue(v).trim()}</code><br>${usage}</p></div>`).join('');
+  }
+
+  // --- Fanions ---
+  ['fanions-hero','fanions-carte'].forEach((id, k) => {
+    document.getElementById(id).innerHTML = Array.from({length: k ? 6 : 13}, (_, i) => `<div class="fanion" style="--i:${i}"></div>`).join('');
+  });
+
+  // --- Alertes ---
+  const alertes = [
+    { type: 'Follow', titre: 'Nouvel aventurier', nom: 'SirMachin', msg: 'rejoint la cour du roi !', icone: 'i-chapeau', vb: '0 0 100 80' },
+    { type: 'Sub', titre: 'Adoubement !', nom: 'DameTruc', msg: 'devient chevalier·ère de la cour', icone: 'i-bouclier', vb: '0 0 90 100' },
+    { type: 'Raid', titre: 'Une horde débarque !', nom: 'GrosStreamer', msg: 'arrive avec 42 compagnons', icone: 'i-epee', vb: '0 0 40 110' },
+    { type: 'Bits', titre: 'Tribut au bouffon', nom: 'Bidule', msg: 'lance 500 pièces d’or', icone: 'i-grelot', vb: '0 0 60 70' },
+    { type: 'Don', titre: 'Offrande royale', nom: 'Chouette', msg: 'offre 5 € au royaume', icone: 'i-parchemin', vb: '0 0 100 80' },
+    { type: 'Coup critique', titre: 'Coup critique !', nom: 'Dé naturel 20', msg: 'Exemple d’alerte spéciale JDR', icone: 'i-d20', vb: '0 0 100 100' },
+  ];
+  const lexique = document.getElementById('lexique');
+  lexique.innerHTML = alertes.map((a, i) => `<button class="carte${i ? '' : ' actif'}" data-i="${i}"><small>${a.type}</small><b>${a.titre}</b></button>`).join('');
+  lexique.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const a = alertes[b.dataset.i];
+    lexique.querySelectorAll('button').forEach(x => x.classList.toggle('actif', x === b));
+    document.getElementById('alerte-titre').textContent = a.titre;
+    document.getElementById('alerte-nom').textContent = a.nom;
+    document.getElementById('alerte-msg').textContent = a.msg;
+    document.getElementById('alerte-icone').innerHTML = `<svg viewBox="${a.vb}" style="height:62px"><use href="#${a.icone}"/></svg>`;
+    const el = document.getElementById('alerte');
+    el.classList.remove('joue'); void el.offsetWidth; el.classList.add('joue');
+  });
+
+  // --- Chat ---
+  const msgs = [['Gwendal','#F5B82E','Salut Patagrain !'],['LaDameDuLac','#E5484D','On lance les dés ce soir ?'],['Bob_le_Nain','#3A9AD9','Je veux un critique 🎲'],['Ysolde','#8BD17C','Le chapeau est trop stylé']];
+  const chat = document.getElementById('chat');
+  function rejouerChat() {
+    chat.innerHTML = msgs.map(([n, c, t], i) => `<div class="msg" style="--c:${c};--i:${i}"><b>${n}</b> ${t}</div>`).join('');
+  }
+  rejouerChat(); setInterval(rejouerChat, 6000);
+
+  // --- Objectif ---
+  let obj = 36;
+  document.getElementById('btn-jauge').onclick = () => {
+    obj = obj >= 50 ? 30 : obj + 1;
+    document.getElementById('obj-txt').textContent = `${obj} / 50 aventuriers`;
+    document.getElementById('jauge').style.width = (obj / 50 * 100) + '%';
+  };
+  document.getElementById('jauge').style.width = (obj / 50 * 100) + '%';
+
+  // --- Transitions ---
+  // coupe = moment (ms) où l'écran est entièrement couvert : c'est là que la scène change
+  const transitions = { rideau: { duree: 1800, coupe: 700 }, epee: { duree: 2000, coupe: 650 }, de: { duree: 2200, coupe: 1400 }, equilibriste: { duree: 2800, coupe: 1750 }, bretteur: { duree: 2400, coupe: 700 }, machiniste: { duree: 3000, coupe: 1400 }, page: { duree: 2000, coupe: 650 } };
+
+
+  // --- Le bouffon dans l'overlay (démos) ---
+  Numeros.cirque(document.getElementById('nm-cirque'));
+  Numeros.feu(document.getElementById('nm-feu'), document.getElementById('nm-feu').parentElement);
+  const chatDemo = document.getElementById('nm-chat');
+  Numeros.taverne(document.getElementById('nm-guette'), chatDemo);
+  Numeros.rappel(document.getElementById('nm-rappel'));
+  Numeros.coucouJeu(document.getElementById('nm-jeu'));
+  Numeros.auRevoir(document.getElementById('nm-fin'), document.getElementById('nm-bulle'));
+  const lignesDemo = [['Gwendal', '#F5B82E', 'Salut !'], ['Ysolde', '#8BD17C', 'On lance les dés ?'], ['Bob_le_Nain', '#8FD0F5', 'Coup critique !'], ['Perceval', '#C792EA', 'Le bouffon me regarde…']];
+  let nLigne = 0;
+  setInterval(() => {
+    const [n, c, t] = lignesDemo[nLigne++ % lignesDemo.length];
+    chatDemo.insertAdjacentHTML('beforeend', `<div class="ligne" style="--c:${c}"><b>${n}</b> ${t}</div>`);
+    while (chatDemo.children.length > 4) chatDemo.firstElementChild.remove();
+  }, 2600);
+
+  // --- Le bouffon ---
+  document.getElementById('bouffon-principal').innerHTML = Bouffon.svg();
+  document.getElementById('bouffon-equilibriste').innerHTML = Bouffon.svg('pied');
+  document.getElementById('bouffon-bretteur').innerHTML = Bouffon.svg('pied', { epee: true });
+  document.getElementById('bouffon-machiniste').innerHTML = Bouffon.svg('pied');
+  document.getElementById('bouffon-pied').innerHTML = Bouffon.svg('pied');
+  document.getElementById('bouffon-pied-epee').innerHTML = Bouffon.svg('pied', { epee: true });
+  document.querySelectorAll('[data-emote]').forEach(el => el.innerHTML = Bouffon.svg('tete'));
+  document.querySelectorAll('[data-pose]').forEach(b => b.onclick = () => {
+    const el = document.getElementById('bouffon-principal');
+    el.classList.remove('clin', 'grelots'); void el.offsetWidth; el.classList.add(b.dataset.pose);
+    setTimeout(() => el.classList.remove(b.dataset.pose), 1700);
+  });
+  const scene = document.getElementById('tr-scene');
+  let enCours = false, vueB = false;
+  document.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => {
+    if (enCours) return;
+    enCours = true;
+    const { duree, coupe } = transitions[b.dataset.tr];
+    const calque = scene.querySelector('.tr-' + b.dataset.tr);
+    document.getElementById('pg-titre').textContent = vueB ? 'Bienvenue' : 'En jeu';
+    document.getElementById('pg-chap').textContent = vueB ? 'Chapitre I' : 'Chapitre II';
+    calque.classList.remove('joue'); void calque.offsetWidth; calque.classList.add('joue');
+    setTimeout(() => {
+      vueB = !vueB;
+      scene.querySelector('.tr-vue-a').classList.toggle('cachee', vueB);
+      scene.querySelector('.tr-vue-b').classList.toggle('cachee', !vueB);
+    }, coupe);
+    setTimeout(() => { calque.classList.remove('joue'); enCours = false; }, duree);
+  });
+
+  // ?palette=noirbleu ouvre directement le moodboard sur un thème
+  const params = new URLSearchParams(location.search);
+  regler('palette', params.get('palette') || 'bleuor'); regler('police', params.get('police') || 'grenze');
+</script>
+</body>
+</html>

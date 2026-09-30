@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Source — Alertes</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Source d'alertes : à ajouter en haut de chaque scène (1920 × 1080).
+  Coche « Contrôler l'audio via OBS » pour entendre et régler le tintement des grelots.
+  Options d'URL :
+    ?position=haut | centre | bas   (défaut : haut)
+    ?test=1   fait défiler des alertes d'exemple
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/son.js"></script>
+<script>
+  const P = Commun;
+  P.demarrer();
+  const CA = P.C.alertes || {};
+  const ecran = document.getElementById('ecran');
+  const Y = { haut: 140, centre: 400, bas: 700 }[P.params.get('position')] ?? 140;
+
+  // Icône de chaque type d'alerte
+  const ICONES = { follow: 'chapeau', sub: 'bouclier', resub: 'bouclier', giftsub: 'parchemin', giftbomb: 'parchemin',
+    bits: 'grelot', raid: 'epee', don: 'embleme', objectif: 'd20' };
+  const GRANDES = ['raid', 'giftbomb', 'objectif'];
+
+  // --- File d'attente : une alerte à la fois ---
+  const file = [];
+  let occupe = false;
+  function suivante() {
+    if (occupe || !file.length) return;
+    occupe = true;
+    afficher(file.shift(), () => { occupe = false; setTimeout(suivante, 600); });
+  }
+
+  function afficher(e, fini) {
+    const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
+    const grande = GRANDES.includes(e.type);
+    const el = document.createElement('div');
+    el.className = 'alerte entre' + (grande ? ' grande' : '');
+    el.style.top = Y + 'px';
+    el.innerHTML = `
+      ${grande ? '<div class="fanions"></div>' : ''}
+      <div class="alerte-icone">${P.ico(ICONES[e.type] || 'd20')}</div>
+      <div>
+        <div class="alerte-titre"></div>
+        <div class="alerte-nom"></div>
+        <div class="alerte-msg"></div>
+      </div>`;
+    el.querySelector('.alerte-titre').textContent = t.titre;
+    el.querySelector('.alerte-nom').textContent = e.nom || '';
+    el.querySelector('.alerte-msg').textContent = P.remplir(t.message, e);
+    if (grande) P.fanions(el.querySelector('.fanions'), 15);
+    ecran.appendChild(el);
+    Son.jouer(e.type);
+
+    setTimeout(() => {
+      el.classList.remove('entre'); el.classList.add('sort');
+      setTimeout(() => { el.remove(); fini(); }, 500);
+    }, (CA.duree || 7) * 1000);
+  }
+
+  Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
+  Evenements.demarrer();
+</script>
+</body>
+</html>

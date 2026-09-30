@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mordethrhedan — Overlay Twitch</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  html, body { height: auto; overflow: auto; background: #07090A; color: var(--texte); font-family: var(--f-texte); }
+  main { max-width: 1200px; margin: 0 auto; padding: 40px 20px 100px; }
+  .label { font: 800 13px var(--f-texte); letter-spacing: .16em; text-transform: uppercase; color: var(--doux); }
+  h1 { margin: 10px 0 12px; font-size: clamp(48px, 8vw, 90px); }
+  h2 { font: 400 40px/1 var(--f-titre); color: var(--accent); margin: 70px 0 16px; display: flex; gap: 16px; align-items: center;
+    text-shadow: 0 0 calc(18px * var(--halo)) var(--accent-halo); }
+  h2::before { content: attr(data-num); font: 800 15px var(--f-texte); color: var(--accent); border: 2px solid var(--accent); border-radius: 8px; padding: 4px 8px; text-shadow: none; }
+  h3 { font: 800 24px var(--f-texte); margin: 30px 0 10px; }
+  p, li, td { color: var(--doux); font-size: 17px; line-height: 1.6; }
+  b, strong { color: var(--texte); }
+  code { color: var(--accent); background: #15191B; padding: 1px 6px; border-radius: 4px; font-size: 14.5px; overflow-wrap: anywhere; }
+  a { color: var(--texte); }
+  li { margin-bottom: 6px; }
+  .note { border-left: 5px solid var(--accent); background: #0E1113; border-radius: 6px; padding: 14px 18px; margin: 18px 0; }
+  .note p { margin: 0; }
+  table { width: 100%; border-collapse: collapse; background: #0E1113; border-radius: 10px; overflow: hidden; }
+  th { text-align: left; font: 800 13px var(--f-texte); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); padding: 12px 14px; border-bottom: 2px solid var(--accent-doux); }
+  td { padding: 12px 14px; border-bottom: 1px solid #1B1F21; vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  .tableau { overflow-x: auto; }
+  .apercus { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .apercu b { display: block; font: 800 20px var(--f-texte); margin: 10px 0 0; }
+  .apercu small { color: var(--doux); font-size: 14px; }
+  .ecran-mini { position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: linear-gradient(160deg, #3d4a5c, #1d2632 60%, #10151c); }
+  .ecran-mini iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .pile { list-style: none; padding: 0; margin: 8px 0 0; }
+  .pile li { background: #0E1113; border: 2px solid #1B1F21; border-radius: 8px; padding: 8px 14px; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .pile li span:last-child { font: 700 14px var(--f-texte); color: var(--doux); }
+  .scenes-obs { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .liens { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; }
+  .liens a { text-decoration: none; font-weight: 800; padding: 10px 16px; border: 2px solid var(--accent); border-radius: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="label">Overlay néon</span>
+  <h1 class="titre-neon" data-texte="nomChaine">Mordethrhedan</h1>
+  <p>L'overlay Twitch de Mordethrhedan : chaque écran, scène, alerte et transition, en direct. Tout ce qu'il faut pour l'installer est dans le tutoriel.</p>
+  <nav class="liens">
+    <a href="TUTO.pdf">📘 Tutoriel d'installation (PDF)</a>
+    <a href="CONCEPT.pdf">🧭 Concept du projet (PDF)</a>
+    <a href="design/moodboard.html">🎨 Moodboard</a>
+    <a href="chaine/kit.html">📺 Kit de chaîne Twitch</a>
+  </nav>
+
+  <!-- ================================================================ -->
+  <h2 data-num="01">Aperçu</h2>
+  <p>Tout tourne ici en <b>mode test</b> (faux messages et fausses alertes). Les zones grisées sont les emplacements de tes sources OBS. Clique sur un titre pour ouvrir la page en grand.</p>
+  <div class="apercus">
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/demarrage.html?test=1&minutes=10" loading="lazy"></iframe></div><a href="scenes/demarrage.html?test=1&minutes=0.5" target="_blank"><b>Démarrage</b></a><small>scenes/demarrage.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/pause.html?test=1" loading="lazy"></iframe></div><a href="scenes/pause.html?test=1" target="_blank"><b>Pause</b></a><small>scenes/pause.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/fin.html?test=1" loading="lazy"></iframe></div><a href="scenes/fin.html?test=1" target="_blank"><b>Fin</b></a><small>scenes/fin.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/cam-seule.html?test=1" loading="lazy"></iframe></div><a href="scenes/cam-seule.html?test=1" target="_blank"><b>Cam seule</b></a><small>scenes/cam-seule.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/contenu.html?test=1" loading="lazy"></iframe></div><a href="scenes/contenu.html?test=1" target="_blank"><b>Contenu</b></a><small>scenes/contenu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/jeu.html?apercu=1" loading="lazy"></iframe></div><a href="scenes/jeu.html?apercu=1" target="_blank"><b>Jeu</b></a><small>scenes/jeu.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="scenes/speedrun.html?apercu=1" loading="lazy"></iframe></div><a href="scenes/speedrun.html?apercu=1" target="_blank"><b>Speedrun</b></a><small>scenes/speedrun.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="sources/alertes.html?test=1" loading="lazy"></iframe></div><a href="sources/alertes.html?test=1" target="_blank"><b>Alertes</b></a><small>sources/alertes.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="transitions/balayage.html?mode=complet" loading="lazy"></iframe></div><a href="transitions/balayage.html?mode=complet" target="_blank"><b>Transition : balayage</b></a><small>transitions/balayage.html</small></div>
+    <div class="apercu"><div class="ecran-mini"><iframe src="transitions/volets.html?mode=complet" loading="lazy"></iframe></div><a href="transitions/volets.html?mode=complet" target="_blank"><b>Transition : volets</b></a><small>transitions/volets.html</small></div>
+  </div>
+
+</main>
+<script src="config.js"></script>
+<script src="js/commun.js"></script>
+<script>Commun.demarrer();</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+/* =====================================================================
+   THÈME NÉON — variables et éléments partagés.
+   La couleur d'accent est posée par js/commun.js (voir config.js).
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@600;700;800;900&display=swap');
+
+/* Police de Beyond Good & Evil : déposer le fichier dans le dossier assets/polices/
+   (Dyer.woff2, Dyer.otf ou Dyer.ttf). En attendant, « Righteous » la remplace. */
+@font-face {
+  font-family: 'Dyer';
+  src: url('../assets/polices/Dyer.woff2') format('woff2'),
+       url('../assets/polices/Dyer.otf') format('opentype'),
+       url('../assets/polices/Dyer.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --accent: #1EE88A;
+  --accent-fonce: #0B5C37;               /* recalculés en JS depuis --accent */
+  --accent-halo: rgba(30, 232, 138, .55);
+  --accent-doux: rgba(30, 232, 138, .18);
+
+  --fond: #050607;
+  --panneau: rgba(14, 16, 18, .78);
+  --panneau-2: rgba(32, 35, 38, .85);
+  --texte: #F2F5F3;
+  --doux: #9AA3A0;
+
+  --rayon: 24px;
+  --epaisseur: 5px;
+  --halo: .6;                            /* 0 = aucun halo */
+
+  --f-titre: 'Dyer', 'Righteous', sans-serif;
+  --f-texte: 'Nunito', sans-serif;
+}
+[data-halo="leger"] { --halo: .6; }
+[data-halo="moyen"] { --halo: 1.1; }
+[data-halo="fort"]  { --halo: 1.8; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+html.transparent, html.transparent body { background: transparent; }
+
+/* Écran 1920×1080 mis à l'échelle de la fenêtre */
+#ecran { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; color: var(--texte); font-family: var(--f-texte); }
+.plein { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---------- Cadre néon ---------- */
+.cadre {
+  position: absolute;
+  border: var(--epaisseur) solid var(--accent);
+  border-radius: var(--rayon);
+  box-shadow:
+    0 0 0 2px var(--accent-fonce),
+    0 0 calc(16px * var(--halo)) var(--accent-halo),
+    inset 0 0 0 2px var(--accent-fonce),
+    inset 0 0 calc(12px * var(--halo)) var(--accent-halo);
+}
+/* Variante « verre » : intérieur fumé (pour chat, infos) */
+.cadre.verre { background: var(--panneau); }
+
+/* ---------- Texte néon (titres, compte à rebours) ---------- */
+.titre-neon {
+  font-family: var(--f-titre); color: var(--accent); line-height: 1; margin: 0;
+  text-shadow:
+    3px 0 0 var(--accent-fonce), -3px 0 0 var(--accent-fonce), 0 3px 0 var(--accent-fonce), 0 -3px 0 var(--accent-fonce),
+    2px 2px 0 var(--accent-fonce), -2px 2px 0 var(--accent-fonce), 2px -2px 0 var(--accent-fonce), -2px -2px 0 var(--accent-fonce),
+    0 0 calc(22px * var(--halo)) var(--accent-halo);
+}
+
+/* ---------- Fond : éclats qui respirent ---------- */
+.eclat { animation: respire var(--d, 8s) ease-in-out infinite; animation-delay: var(--r, 0s); }
+.fond-fixe .eclat { animation: none; }
+@keyframes respire { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Jeu</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .signature { position: absolute; top: 30px; }
+  .signature img { height: 60px; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .35)); }
+</style>
+</head>
+<body>
+<!--
+  Scène « Jeu » : le jeu en plein écran SOUS cette source, petite cam dans un coin.
+  Position de la cam (par défaut en bas à droite) : x 1450 · y 740 · 420 × 236 px
+  Changer de coin : jeu.html?cam=bas-gauche  (ou haut-gauche, haut-droite, bas-droite)
+  Le chat se place automatiquement du côté opposé à la cam.
+  (ouvre jeu.html?apercu=1 pour voir les zones, ?test=1 pour de faux messages)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const coin = Commun.params.get('cam') || 'bas-droite';
+  const L = 420, H = 236;
+  const droite = coin.includes('droite'), bas = coin.includes('bas');
+  const CAM = { x: droite ? 1920 - 50 - L : 50, y: bas ? 1080 - 104 - H : 130, l: L, h: H };
+  const CHAT = { x: droite ? 50 : 1920 - 50 - 440, y: 470, l: 440, h: 440 };
+
+  Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu plein écran', true);
+  Composants.cadre(ecran, CAM, { nom: false });
+  Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
+  Composants.bandeau(ecran, { x: 560, y: 1000, l: 800, h: 64 }, { compact: true });
+  // Petit logo discret en haut, du côté opposé à la cam
+  Composants.creer(ecran, 'signature', '<img src="../assets/logo-contour.svg" alt="">').style[droite ? 'left' : 'right'] = '50px';
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

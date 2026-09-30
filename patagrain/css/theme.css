@@ -1,0 +1,71 @@
+/* =====================================================================
+   PATAGRAIN — Thème : couleurs, polices, bases communes à toutes les pages.
+   Pour changer une couleur partout : modifie-la ici, une seule fois.
+   ===================================================================== */
+
+/* Polices LOCALES (assets/polices/, licence SIL OFL) : l'overlay n'a plus besoin d'internet pour s'écrire.
+   Grenze Gotisch et Nunito sont des polices « variables » : un fichier couvre toutes les graisses. */
+@font-face {
+  font-family: 'Grenze Gotisch'; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url('../assets/polices/grenze-gotisch-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Grenze Gotisch'; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url('../assets/polices/grenze-gotisch-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Nunito'; font-style: normal; font-weight: 200 1000; font-display: swap;
+  src: url('../assets/polices/nunito-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Nunito'; font-style: normal; font-weight: 200 1000; font-display: swap;
+  src: url('../assets/polices/nunito-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* Couleurs (palette « Bouffon royal ») */
+  --primaire: #3A9AD9;        /* bleu du logo */
+  --primaire-fonce: #1F6FA8;
+  --accent: #F5B82E;          /* or */
+  --accent-2: #8FD0F5;        /* bleu glacier (palette « Royal bleu & or », sans rouge) */
+  --fond: #152238;            /* bleu nuit */
+  --surface: #1E3050;
+  --texte: #FFF3DC;           /* crème */
+  --texte-doux: #B9C4D6;
+  --parchemin: #FBF1DA;
+
+  /* Polices */
+  --f-titre: 'Grenze Gotisch', serif;
+  --f-texte: 'Nunito', sans-serif;
+
+  /* Formes et mouvements */
+  --rayon: 22px;
+  --ombre: 0 10px 0 rgba(0, 0, 0, .22);
+  --rebond: cubic-bezier(.34, 1.56, .64, 1);
+  --doux: cubic-bezier(.65, 0, .35, 1);
+}
+
+/* ---------- Base : chaque page est dessinée en 1920×1080 ----------
+   Elle s'agrandit ou se réduit toute seule à la taille de la source OBS
+   (1920×1080, 2560×1440…) en restant nette, car tout est vectoriel. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100vw; height: 100vh; overflow: hidden; background: transparent; }
+body { font-family: var(--f-texte); color: var(--texte); line-height: 1.35; -webkit-font-smoothing: antialiased; }
+#ecran { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; container-type: size; }
+#ecran.plein { background: var(--fond); }
+img, svg { display: block; }
+
+.titre { font-family: var(--f-titre); font-weight: 800; letter-spacing: 1px; line-height: 1.05; }
+.etiquette { font: 900 22px var(--f-texte); text-transform: uppercase; letter-spacing: 5px; color: var(--accent); }
+
+/* ---------- Animations communes ---------- */
+.entree { animation: entree .9s var(--rebond) both; animation-delay: var(--retard, 0s); }
+@keyframes entree { from { opacity: 0; transform: translateY(40px) scale(.94); } }
+.flotte { animation: flotte 6s ease-in-out infinite; }
+@keyframes flotte { 50% { transform: translateY(-12px); } }
+@keyframes tinte { 0%, 60%, 100% { transform: rotate(0); } 10% { transform: rotate(14deg); } 25% { transform: rotate(-12deg); } 40% { transform: rotate(6deg); } }
+@keyframes vacille-de { 0%, 100% { transform: rotate(var(--r, 0deg)) translateY(0); } 50% { transform: rotate(calc(var(--r, 0deg) * -.4)) translateY(-4px); } }

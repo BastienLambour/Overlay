@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Cadre néon</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Un cadre néon seul, pour encadrer n'importe quoi (widget manette, splits, image…).
+  La zone donnée est l'INTÉRIEUR du cadre :  cadre.html?x=40&y=40&l=380&h=290
+  Intérieur fumé : ?verre=1   ·   Voir la zone : ?apercu=1
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Commun.demarrer();
+  const z = Composants.zoneURL({ x: 760, y: 340, l: 400, h: 400 });
+  Composants.zoneApercu(document.getElementById('ecran'), z, 'Zone');
+  Composants.cadre(document.getElementById('ecran'), z, { verre: Commun.params.has('verre') });
+</script>
+</body>
+</html>

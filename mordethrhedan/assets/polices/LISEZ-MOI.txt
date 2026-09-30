@@ -1,0 +1,7 @@
+Dépose ici le fichier de la police de Beyond Good & Evil, nommé :
+
+    Dyer.ttf   (ou Dyer.otf, ou Dyer.woff2)
+
+Tous les titres de l'overlay l'utiliseront automatiquement.
+Actualise ensuite les sources dans OBS (clic droit > Actualiser).
+Tant que le fichier n'est pas là, la police « Righteous » la remplace.

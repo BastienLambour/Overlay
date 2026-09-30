@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Volets</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  .nom { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; opacity: 0; }
+  .nom p { font-size: 150px; }
+  /* Deux volets se referment au centre puis se rouvrent */
+  .volet { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; }
+  .volet.g { left: 0; transform: translateX(-102%); }
+  .volet.d { right: 0; transform: translateX(102%); }
+  .volet .panneau-fond { position: absolute; top: 0; width: 1920px; height: 1080px; }
+  .volet.g .panneau-fond { left: 0; } .volet.d .panneau-fond { left: -960px; }
+  .volet::after { content: ""; position: absolute; top: 0; bottom: 0; width: 6px; background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 26px 5px var(--accent-halo); }
+  .volet.g::after { right: 0; } .volet.d::after { left: 0; }
+
+  .complet .volet.g { animation: g-complet 1.6s cubic-bezier(.7,0,.3,1) both; }
+  .complet .volet.d { animation: d-complet 1.6s cubic-bezier(.7,0,.3,1) both; }
+  .complet .nom { animation: nom-complet 1.6s ease both; }
+  @keyframes g-complet { 0% { transform: translateX(-102%); } 38%, 62% { transform: translateX(0); } 100% { transform: translateX(-102%); } }
+  @keyframes d-complet { 0% { transform: translateX(102%); } 38%, 62% { transform: translateX(0); } 100% { transform: translateX(102%); } }
+  @keyframes nom-complet { 0%, 32% { opacity: 0; } 42%, 58% { opacity: 1; } 66%, 100% { opacity: 0; } }
+
+  .entree .volet.g { animation: g-entree .7s .2s cubic-bezier(.7,0,.3,1) both; }
+  .entree .volet.d { animation: d-entree .7s .2s cubic-bezier(.7,0,.3,1) both; }
+  .entree .nom { animation: nom-entree .4s both; }
+  @keyframes g-entree { from { transform: translateX(0); } to { transform: translateX(-102%); } }
+  @keyframes d-entree { from { transform: translateX(0); } to { transform: translateX(102%); } }
+  @keyframes nom-entree { from { opacity: 1; } to { opacity: 0; } }
+</style>
+</head>
+<body>
+<!--
+  Transition « volets ».
+  Sans rien installer : en haut de chaque scène, cocher « Actualiser le navigateur quand la scène devient active ».
+  Vidéo Stinger : voir outils/generer-transitions.mjs (point de transition : 800 ms).
+-->
+<div id="ecran">
+  <div class="volet g"><div class="panneau-fond"></div></div>
+  <div class="volet d"><div class="panneau-fond"></div></div>
+  <div class="nom"><p class="titre-neon"></p></div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script>document.querySelector('.nom p').textContent = Commun.C.nomChaine || '';</script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

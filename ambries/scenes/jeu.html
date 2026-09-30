@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Jeu</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .signature { position: absolute; left: 56px; top: 44px; display: flex; align-items: center; gap: 16px; }
+  .signature .sticker { font-size: 24px; }
+</style>
+</head>
+<body>
+<!--
+  Scène « jeu » : le jeu en plein écran SOUS cette source, petite cam néon dans un coin,
+  chat en bulles qui s'effacent toutes seules.
+  Position de la cam (par défaut en bas à droite) : x 1456 · y 735 · 400 × 225 px
+  Changer de coin : jeu.html?cam=bas-gauche  (ou haut-gauche, haut-droite, bas-droite)
+  (ouvre jeu.html?apercu=1 pour voir les zones)
+-->
+<div id="ecran">
+  <div class="signature"><div data-avatar="76"></div><span class="sticker" data-texte="nomChaine"></span></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const { droite, z: CAM } = Composants.coinCam(400, 225);
+  // Le chat se met du côté opposé à la cam
+  const CHAT = { x: droite ? 60 : 1920 - 60 - 440, y: 520, l: 440, h: 420 };
+
+  Composants.zoneApercu(ecran, { x: 0, y: 0, l: 1920, h: 1080 }, 'Jeu plein écran', true);
+  const fondJeu = ecran.querySelector('.apercu-zone.jeu');
+  if (fondJeu) ecran.prepend(fondJeu);   // l'aperçu du jeu reste au fond
+
+  Composants.cadre(ecran, CAM, { petit: true, nom: false });
+  Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
+  Composants.bandeau(ecran, { x: 560, y: 990, l: 800, h: 64 }, { compact: true });
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

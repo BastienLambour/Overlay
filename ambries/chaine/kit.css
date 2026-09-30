@@ -1,0 +1,34 @@
+/* =====================================================================
+   KIT DE CHAÎNE TWITCH — mise en page de la galerie (façon Twitch).
+   FICHIER COMMUN : identique dans tous les overlays (copie de _modele/chaine/).
+   ===================================================================== */
+html, body { height: auto; overflow: auto; margin: 0; background: #0e0e10; color: #efeff1;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+#kit { max-width: 1240px; margin: 0 auto; padding: 36px 20px 90px; }
+.kit-entete span { font: 700 13px/1 inherit; letter-spacing: .16em; text-transform: uppercase; color: #adadb8; }
+.kit-entete h1 { font-size: 56px; margin: 8px 0 10px; }
+.kit-entete p, .kit-aide { color: #adadb8; line-height: 1.55; max-width: 80ch; }
+#kit code { background: #26262c; color: #efeff1; padding: 1px 6px; border-radius: 4px; }
+#kit h2 { font-size: 26px; margin: 56px 0 4px; }
+.kit-aide { margin: 0 0 18px; font-size: 15px; }
+.kit-grille { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.kit-grille figure { margin: 0; }
+.kit-grille figcaption { color: #adadb8; font-size: 14px; margin-top: 8px; }
+.kit-grille figcaption b { color: #efeff1; }
+.kit-zone { background: #18181b; border-radius: 8px; padding: 10px; display: inline-block; }
+.kit-grille-panneau .kit-zone { padding: 0; background: none; }
+.kit-ligne { display: flex; gap: 14px; align-items: flex-end; padding: 12px 14px; border-radius: 8px; }
+.kit-ligne + .kit-ligne { margin-top: 6px; }
+.kit-fond-sombre { background: #18181b; }
+.kit-fond-clair { background: #f7f7f8; }
+
+/* Boîte d'un élément : dessiné à sa taille d'origine puis mis à l'échelle */
+.kit-boite { position: relative; overflow: hidden; flex: none; }
+.kit-el { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; }
+.kit-profil { border-radius: 50%; }
+.kit-grille-profil .kit-boite { border-radius: 50%; }
+
+/* Mode export : rien d'autre que l'élément, fond transparent */
+html.kit-seul, html.kit-seul body { background: transparent; }
+html.kit-seul #kit { padding: 0; margin: 0; max-width: none; }
+html.kit-seul .kit-el.kit-profil { border-radius: 0; }

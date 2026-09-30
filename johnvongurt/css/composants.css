@@ -1,0 +1,118 @@
+/* =====================================================================
+   COMPOSANTS — cadre cam, chat, bandeau, objectif, alertes.
+   ===================================================================== */
+
+/* Pages d'overlay : fond transparent pour laisser voir la cam et le jeu */
+html.transparent, html.transparent body, html.transparent #ecran { background: transparent; }
+.bloc { position: absolute; }
+
+/* ---------- Fond découpé (zones transparentes pour cam/contenu) ---------- */
+.fond-decoupe { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+
+/* ---------- En-tête compact ---------- */
+.entete-compacte { position: absolute; left: 80px; top: 56px; display: flex; align-items: center; gap: 18px; }
+.entete-compacte .badge { width: 72px; height: 72px; }
+.entete-compacte .badge svg { width: 40px; height: 40px; }
+.entete-compacte .boite { --c: 16px; }
+.entete-compacte .interieur { padding: 8px 30px 6px 18px; }
+.entete-compacte .nom { font: 700 60px/1 var(--f-titre); text-transform: uppercase; white-space: nowrap; }
+.entete-compacte .label { font-size: 17px; }
+
+.direct { position: absolute; right: 80px; top: 70px; display: flex; align-items: center; gap: 22px; }
+.direct .point { width: 14px; height: 14px; border-radius: 50%; background: var(--alerte); animation: clignote-c 1.2s steps(2) infinite; }
+.direct .label { font-size: 18px; }
+.direct .mono { font-size: 22px; font-weight: 600; }
+@keyframes clignote-c { 50% { opacity: .25; } }
+
+/* ---------- Cadre cam / contenu ---------- */
+.cam-cadre { position: absolute; }
+.cam-bord { position: absolute; inset: calc(var(--epaisseur) * -1 - 4px); border: var(--epaisseur) solid var(--trait); pointer-events: none; }
+.cam-cadre .cadre { inset: 16px; --trait: #E6EAEE; }
+.cam-cadre .cadre .coin { width: 40px; height: 40px; }
+.cam-tete { position: absolute; left: -7px; right: -7px; bottom: calc(100% + 12px); display: flex; align-items: center; gap: 14px; }
+.cam-tete .label { font-size: 18px; }
+.cam-tete .hachures { width: 70px; height: 12px; }
+.rec { margin-left: auto; display: flex; align-items: center; gap: 8px; font: 600 18px var(--f-mono); }
+.rec i { width: 12px; height: 12px; border-radius: 50%; background: var(--alerte); animation: clignote-c 1.2s steps(2) infinite; }
+.cam-nom { position: absolute; left: 16px; bottom: 16px; font-size: 17px; padding: 6px 14px; }
+.cam-cadre.leger .cam-bord { display: none; }
+.cam-cadre.leger .cadre { inset: -8px; --trait: var(--trait); }
+.cam-cadre.leger .cadre .coin { border-color: #E6EAEE; }
+
+/* Aperçu (?apercu=1) : remplit les zones transparentes pour voir le placement */
+.apercu-zone { position: absolute; display: grid; place-items: center; text-align: center; color: #ffffffb0; font: 600 20px/1.5 var(--f-mono);
+  background: linear-gradient(160deg, #4b5563, #252b33); }
+.apercu-zone.jeu { background: linear-gradient(160deg, #3d4a5c 0%, #1d2632 60%, #10151c 100%); }
+
+/* ---------- Chat ---------- */
+.panneau-chat { position: absolute; }
+.panneau-chat .interieur { display: flex; flex-direction: column; padding: 18px 22px; }
+.panneau-chat .cam-tete { position: static; margin-bottom: 8px; }
+.chat-lignes { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden; }
+.chat-ligne { font: 500 21px/1.35 var(--f-texte); overflow-wrap: anywhere; animation: arrive .45s cubic-bezier(.2,.7,.3,1) both; }
+.chat-ligne b { font: 600 18px var(--f-mono); color: var(--c); margin-right: 8px; }
+.chat-ligne b::after { content: ":"; }
+.chat-ligne .emote { height: 28px; vertical-align: middle; margin: -4px 1px 0; }
+.chat-ligne.part { animation: part .6s ease-in forwards; }
+@keyframes arrive { from { opacity: 0; transform: translateX(-24px); clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes part { to { opacity: 0; transform: translateX(-20px); } }
+.chat-invite { border-top: 2px solid var(--faible); padding-top: 12px; margin-top: 12px; font: 500 17px var(--f-mono); color: var(--doux); }
+.chat-invite::after { content: "▌"; color: var(--accent); animation: clignote-c .9s steps(2) infinite; margin-left: 4px; }
+
+/* Chat transparent (scène jeu) : bulles lisibles sur le jeu */
+.chat-flottant { position: absolute; display: flex; flex-direction: column; justify-content: flex-end; }
+.chat-flottant .chat-lignes { gap: 8px; }
+.chat-flottant .chat-ligne { align-self: flex-start; max-width: 100%; background: rgba(8, 11, 15, .78); border-left: 4px solid var(--c); padding: 7px 14px; font-size: 20px; }
+
+/* ---------- Bandeau ---------- */
+.bandeau { position: absolute; --c: 18px; }
+.bandeau .interieur { display: flex; align-items: center; }
+.bandeau-item { display: flex; align-items: center; gap: 14px; padding: 0 26px; flex: 1; min-width: 0; height: 100%; }
+.bandeau-item + .bandeau-item { border-left: 2px solid var(--faible); }
+.bandeau-item > .ic { width: 34px; height: 34px; flex: none; color: var(--trait); }
+.bandeau-item svg { width: 100%; height: 100%; }
+.bandeau-item small { display: block; font: 600 14px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--doux); }
+.bandeau-item b { display: block; font: 600 21px var(--f-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bandeau-item.flash b { animation: flash 1s ease-out; }
+.bandeau-item.flash .ic { animation: flash-ic 1s ease-out; }
+@keyframes flash { 0% { color: var(--accent); transform: translateY(-10px); opacity: 0; } 40% { color: var(--accent); } 100% { transform: none; opacity: 1; } }
+@keyframes flash-ic { 30% { color: var(--accent); transform: scale(1.25); } }
+.bandeau-item.fusee-fin { flex: none; }
+.mini-jauge { height: 6px; background: var(--faible); margin-top: 5px; }
+.mini-jauge i { display: block; height: 100%; background: var(--accent); transition: width 1s cubic-bezier(.34,1.3,.64,1); }
+
+/* ---------- Objectif Terre → Lune ---------- */
+.objectif { position: absolute; }
+.objectif-tete { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.objectif-tete b { font: 700 32px var(--f-titre); text-transform: uppercase; }
+.objectif-tete span { font: 600 24px var(--f-mono); color: var(--accent); }
+.trajet { display: flex; align-items: center; gap: 16px; height: 70px; }
+.astre { width: 48px; height: 48px; flex: none; border-radius: 50%; border: var(--epaisseur) solid var(--trait); background: var(--fond-2); }
+.astre.lune { background: repeating-radial-gradient(circle at 30% 30%, var(--fond-2) 0 6px, var(--faible) 6px 8px); }
+.piste { position: relative; flex: 1; height: 4px; background: repeating-linear-gradient(90deg, var(--doux) 0 10px, transparent 10px 18px); }
+.piste-pleine { position: absolute; left: 0; top: -2px; height: 8px; background: var(--accent); transition: width 1.2s cubic-bezier(.34,1.3,.64,1); }
+.piste-fusee { position: absolute; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; transition: left 1.2s cubic-bezier(.34,1.3,.64,1); }
+.piste-fusee svg { width: 100%; height: 100%; overflow: visible; }
+
+/* ---------- Alerte ---------- */
+.alerte { position: absolute; display: flex; background: var(--fond-2); border: var(--epaisseur) solid var(--trait); box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+.alerte::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); opacity: 0; }
+.alerte.entre { animation: ouvre .55s cubic-bezier(.7,0,.2,1) both; }
+.alerte.entre::after { animation: balayage .9s .35s ease-in-out both; }
+.alerte.sort { animation: ferme .45s cubic-bezier(.7,0,.2,1) both; }
+@keyframes ouvre { from { clip-path: inset(48% 50% 48% 50%); } 45% { clip-path: inset(48% 0 48% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes ferme { from { clip-path: inset(0 0 0 0); } 55% { clip-path: inset(48% 0 48% 0); } to { clip-path: inset(48% 50% 48% 50%); } }
+@keyframes balayage { 0% { top: 0; opacity: .9; } 100% { top: 100%; opacity: 0; } }
+.alerte-icone { width: 150px; flex: none; display: grid; place-items: center; background: var(--etiquette-fond); color: var(--accent); }
+.alerte-icone span { width: 76px; height: 76px; display: block; }
+.alerte-icone svg { width: 100%; height: 100%; }
+.alerte.entre .alerte-icone span { animation: pop .5s .4s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes pop { from { transform: scale(0) rotate(-30deg); } }
+.alerte-corps { padding: 20px 30px 22px; flex: 1; min-width: 0; }
+.alerte-tete { display: flex; align-items: center; gap: 12px; font: 600 16px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.alerte-tete .hachures { width: 70px; height: 12px; }
+.alerte-titre { font: 700 58px/1.05 var(--f-titre); text-transform: uppercase; margin: 6px 0 4px; white-space: nowrap; }
+.alerte-nom { font: 600 30px var(--f-mono); color: var(--accent); min-height: 38px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alerte-nom::after { content: "_"; animation: clignote-c .8s steps(2) infinite; }
+.alerte-msg { color: var(--trait); opacity: 0; font-size: 22px; transition: opacity .5s; }
+.alerte-msg.visible { opacity: .85; }

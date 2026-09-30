@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — Chat</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Chat seul, en bulles BD, à poser où tu veux (source 1920 × 1080).
+  Options d'URL :
+    ?x=1400&y=180&l=460&h=760   position et taille du panneau
+    ?flottant=1                 sans panneau (bulles seules, pour le jeu)
+    ?disparition=45             les messages disparaissent après 45 s
+    ?test=1                     faux messages
+-->
+<div id="ecran"></div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  const p = Commun.params;
+  Composants.chat(document.getElementById('ecran'), Composants.zoneURL({ x: 1400, y: 180, l: 460, h: 760 }),
+    { flottant: p.has('flottant'), disparition: parseFloat(p.get('disparition')) || 0 });
+  Commun.demarrer();
+</script>
+</body>
+</html>

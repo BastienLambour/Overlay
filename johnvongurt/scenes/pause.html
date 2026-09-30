@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="clair">
+<head>
+<meta charset="UTF-8">
+<title>Attente — Transmission en pause</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  .entete .nom { font-size: 72px; }
+  .titre { position: absolute; left: 0; right: 0; top: 270px; text-align: center; font-size: 104px; }
+
+  /* ----- Anneau de chargement ----- */
+  .anneau { position: absolute; left: 710px; top: 400px; width: 500px; height: 500px; }
+  .anneau > div { position: absolute; border-radius: 50%; }
+  .piste, .arc {
+    inset: 0;
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 38px), #000 calc(100% - 37px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 38px), #000 calc(100% - 37px));
+  }
+  .piste { background: var(--faible); }
+  .arc {
+    background: conic-gradient(from 0deg, transparent 0turn .06turn, color-mix(in srgb, var(--doux) 35%, transparent) .3turn, var(--doux) .6turn, var(--trait) .82turn, transparent .82turn);
+    animation: tourne 2.6s linear infinite;
+  }
+  .orbite { inset: -46px; border: 2px dashed color-mix(in srgb, var(--doux) 55%, transparent); animation: tourne 14s linear infinite reverse; }
+  .orbite::before { content: ""; position: absolute; top: -9px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--accent); }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+
+  #hublot { position: absolute; left: 36px; top: 36px; width: 428px; height: 428px; border-radius: 50%; --trait: #E6EAEE; --doux: #8C97A3; }
+  .vitesse { stroke: var(--trait); stroke-width: 3; stroke-linecap: round; animation: file var(--d) linear infinite; animation-delay: var(--r); }
+  .vitesse.point { stroke-width: 5; }
+  @keyframes file { from { transform: translateY(-320px); } to { transform: translateY(320px); } }
+  .vibre { animation: vibre .16s ease-in-out infinite alternate; }
+  @keyframes vibre { from { transform: translate(-1.5px, 1px); } to { transform: translate(1.5px, -1px); } }
+  .derive { animation: derive 5s ease-in-out infinite; }
+  @keyframes derive { 50% { transform: translate(6px, -14px); } }
+
+  /* ----- Cadrans latéraux ----- */
+  .cadran { position: absolute; top: 520px; width: 260px; text-align: center; }
+  .cadran svg { width: 260px; height: 260px; }
+  .cadran .aiguille { transform-origin: 0 0; animation: oscille var(--d) ease-in-out infinite; }
+  @keyframes oscille { 0%,100% { transform: rotate(var(--a1)); } 50% { transform: rotate(var(--a2)); } }
+  .cadran .valeur { font: 600 30px var(--f-mono); margin-top: 6px; }
+
+  .chrono { font: 600 22px var(--f-mono); }
+</style>
+</head>
+<body>
+<div id="ecran">
+  <div class="calque grille"></div>
+  <div class="calque vignette"></div>
+  <div class="cadre marge"></div>
+
+  <!-- En-tête -->
+  <div class="entete">
+    <div class="entete-haut">
+      <div class="badge" data-icone="fusee"></div>
+      <div class="label">Mission Control</div>
+      <span class="hachures"></span>
+    </div>
+    <div class="boite"><div class="interieur"><div class="nom" data-texte="nomChaine">John Von Gurt</div></div></div>
+  </div>
+
+  <!-- Statut système -->
+  <div class="statut">
+    <div class="statut-titre label doux">Statut système</div>
+    <div class="boite"><div class="interieur">
+      <div class="statut-item"><span data-icone="pouls"></span><span class="label">Signal</span><span class="valeur attention">Interrompu</span></div>
+      <div class="statut-item"><span data-icone="horloge"></span><span class="label">En pause depuis</span><span class="valeur" id="chrono">00:00</span></div>
+    </div></div>
+  </div>
+
+  <h1 class="titre-geant titre" data-texte="pause.titre">Transmission en pause</h1>
+
+  <!-- Cadrans -->
+  <div class="cadran" style="left:250px">
+    <svg viewBox="-130 -130 260 260">
+      <circle class="trait" r="118"/>
+      <circle class="trait-fin" r="96" stroke-dasharray="3 9"/>
+      <g class="aiguille" style="--a1:-40deg;--a2:25deg;--d:5s"><path class="trait" d="M0,0 L0,-88" style="stroke:var(--accent);stroke-width:4"/></g>
+      <circle r="8" fill="var(--trait)"/>
+    </svg>
+    <div class="label doux">Vitesse</div>
+    <div class="valeur" id="vitesse">27 600 km/h</div>
+  </div>
+  <div class="cadran" style="right:250px">
+    <svg viewBox="-130 -130 260 260">
+      <circle class="trait" r="118"/>
+      <circle class="trait-fin" r="96" stroke-dasharray="3 9"/>
+      <g class="aiguille" style="--a1:60deg;--a2:95deg;--d:7s"><path class="trait" d="M0,0 L0,-88" style="stroke:var(--accent);stroke-width:4"/></g>
+      <circle r="8" fill="var(--trait)"/>
+    </svg>
+    <div class="label doux">Altitude</div>
+    <div class="valeur" id="altitude">408 km</div>
+  </div>
+
+  <!-- Anneau + fusée en vol -->
+  <div class="anneau">
+    <svg id="hublot" viewBox="-200 -200 400 400">
+      <defs>
+        <clipPath id="rond"><circle r="204"/></clipPath>
+        <radialGradient id="espace"><stop offset="0" stop-color="#141B26"/><stop offset="1" stop-color="#05070A"/></radialGradient>
+      </defs>
+      <g clip-path="url(#rond)">
+        <circle r="204" fill="url(#espace)"/>
+        <g id="etoiles-hublot"></g>
+        <g transform="rotate(45)">
+          <g id="lignes"></g>
+          <g class="derive"><g class="vibre"><g transform="scale(.88)" id="fusee-place"></g></g></g>
+        </g>
+      </g>
+    </svg>
+    <div class="orbite"></div>
+    <div class="piste"></div>
+    <div class="arc"></div>
+  </div>
+
+  <!-- Pied de page -->
+  <div class="pied">
+    <div class="pied-circuit"><span class="label doux" data-texte="decor.protocole">Protocole v1.2</span><span data-icone="circuit" style="color:var(--doux)"></span><span class="label doux" data-texte="decor.capteurs">Capteurs externes</span></div>
+    <div class="etiquette" data-texte="pause.statut">Communication interrompue</div>
+    <div class="label doux">+ &nbsp;<span data-texte="decor.exploration">Exploration spatiale profonde</span>&nbsp; +</div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  Commun.demarrer();
+
+  // Fusée avec flamme
+  document.getElementById('fusee-place').innerHTML = Commun.fusee({ id: 'f2', flamme: true });
+
+  // Lignes de vitesse et poussières qui défilent derrière la fusée
+  let html = '';
+  for (let i = 0; i < 26; i++) {
+    const x = Math.round(-190 + Math.random() * 380);
+    if (Math.abs(x) < 55 && Math.random() < .7) continue; // on dégage l'axe de la fusée
+    const point = Math.random() < .35;
+    const l = point ? 0.1 : 20 + Math.random() * 60;
+    html += `<line class="vitesse${point ? ' point' : ''}" x1="${x}" x2="${x}" y1="0" y2="${l.toFixed(0)}"
+      style="--d:${(0.6 + Math.random() * 0.9).toFixed(2)}s;--r:${(-Math.random() * 2).toFixed(2)}s;opacity:${(0.3 + Math.random() * 0.6).toFixed(2)}"/>`;
+  }
+  document.getElementById('lignes').innerHTML = html;
+  Commun.etoiles(document.getElementById('etoiles-hublot'), 45, { l: 400, h: 400, x0: -200, y0: -200, taille: [0.6, 1.8] });
+
+  // Chronomètre de pause
+  const debut = Date.now();
+  setInterval(() => document.getElementById('chrono').textContent = Commun.mmss((Date.now() - debut) / 1000), 500);
+
+  // Valeurs de télémétrie qui fluctuent
+  const fmt = n => n.toLocaleString('fr-FR');
+  setInterval(() => {
+    document.getElementById('vitesse').textContent = fmt(27550 + Math.round(Math.random() * 100)) + ' km/h';
+    document.getElementById('altitude').textContent = (407.6 + Math.random() * 0.8).toFixed(1).replace('.', ',') + ' km';
+  }, 900);
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Alertes</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<style>
+  .alerte { position: absolute; left: 50%; transform: translateX(-50%); min-width: 720px; max-width: 1300px; padding: 26px 56px 30px; text-align: center; }
+  .alerte .cadre { position: absolute; inset: 0; }
+  .alerte > div:not(.cadre) { position: relative; }
+  .alerte-titre { font-size: 64px; }
+  .alerte-nom { font: 900 56px/1.1 var(--f-texte); color: var(--texte); margin-top: 12px; overflow-wrap: anywhere; }
+  .alerte-msg { font: 700 30px var(--f-texte); color: var(--doux); margin-top: 6px; }
+  .alerte.entre { animation: entre .5s cubic-bezier(.2,.8,.3,1) both; }
+  .alerte.sort { animation: sort .45s ease-in both; }
+  @keyframes entre { from { opacity: 0; transform: translate(-50%, -24px) scale(.96); } }
+  @keyframes sort { to { opacity: 0; transform: translate(-50%, -12px); } }
+  /* Grands événements (raid, pluie d'abonnements, objectif) : le halo pulse */
+  .alerte.grand .cadre { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 40px var(--accent-halo), inset 0 0 0 2px var(--accent-fonce), inset 0 0 30px var(--accent-halo); } }
+</style>
+</head>
+<body>
+<!--
+  Alertes : source Navigateur 1920 × 1080, tout EN HAUT de chaque scène.
+  Coche « Contrôler l'audio via OBS » pour entendre et régler le son.
+  Options : ?position=haut | centre | bas   ·   ?test=1 (alertes d'exemple)
+-->
+<div id="ecran"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/son.js"></script>
+<script>
+  Commun.demarrer();
+  const CA = Commun.C.alertes || {};
+  const ecran = document.getElementById('ecran');
+  const Y = { haut: 70, centre: 400, bas: 760 }[Commun.params.get('position')] ?? 70;
+  const GRANDS = ['raid', 'giftbomb', 'objectif'];
+  const remplir = (t, e) => (t || '').replace(/\{(\w+)\}/g, (_, k) => e[k] ?? '');
+  const echapper = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // Une alerte à la fois
+  const file = [];
+  let occupe = false;
+  function suivante() {
+    if (occupe || !file.length) return;
+    occupe = true;
+    afficher(file.shift(), () => { occupe = false; setTimeout(suivante, 500); });
+  }
+
+  function afficher(e, fini) {
+    const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
+    const el = document.createElement('div');
+    el.className = 'alerte entre' + (GRANDS.includes(e.type) ? ' grand' : '');
+    el.style.top = Y + 'px';
+    el.innerHTML = `<div class="cadre verre"></div>
+      <div class="alerte-titre titre-neon">${t.titre}</div>
+      <div class="alerte-nom">${echapper(e.nom || '')}</div>
+      <div class="alerte-msg">${echapper(remplir(t.message, e))}</div>`;
+    ecran.appendChild(el);
+    Son.jouer(e.type);
+    setTimeout(() => {
+      el.classList.replace('entre', 'sort');
+      setTimeout(() => { el.remove(); fini(); }, 450);
+    }, (CA.duree || 6) * 1000);
+  }
+
+  Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
+  Evenements.demarrer();
+</script>
+</body>
+</html>

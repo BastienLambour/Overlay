@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Compte à rebours</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Compte à rebours seul, en police néon.
+  compte-a-rebours.html?minutes=10&x=0&y=0&l=1920&h=1080&taille=260
+  Coche « Actualiser le navigateur quand la scène devient active ».
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Commun.demarrer();
+  const p = Commun.params, D = Commun.C.demarrage || {};
+  const el = Composants.titre(document.getElementById('ecran'), Composants.zoneURL({ x: 0, y: 0, l: 1920, h: 1080 }), '', parseFloat(p.get('taille') || 260));
+  const duree = Math.max(1, parseFloat(p.get('minutes') ?? D.minutes ?? 10) * 60), debut = Date.now();
+  (function tic() {
+    const reste = duree - (Date.now() - debut) / 1000;
+    if (reste <= 0) return el.innerHTML = D.finCompte || "C'est parti !";
+    el.textContent = Commun.mmss(Math.ceil(reste));
+    setTimeout(tic, 250);
+  })();
+</script>
+</body>
+</html>

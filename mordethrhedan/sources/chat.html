@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Source — Chat</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Chat seul, dans son cadre « verre ».
+  Taille et position réglables : chat.html?x=40&y=75&l=430&h=930
+  Sans cadre (messages seuls) : chat.html?nu=1   ·   Disparition après 60 s : ?disparition=60
+  Faux messages : ?test=1
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script>
+  Commun.demarrer();
+  const ecran = document.getElementById('ecran');
+  const z = Composants.zoneURL({ x: 40, y: 75, l: 430, h: 930 });
+  const disparition = parseFloat(Commun.params.get('disparition') || 0);
+  if (Commun.params.has('nu')) Chat.monter(Composants.creer(ecran, 'chat-boite', '', z), { disparition });
+  else Composants.chat(ecran, z, { disparition });
+</script>
+</body>
+</html>

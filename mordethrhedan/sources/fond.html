@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fond néon</title>
+<link rel="stylesheet" href="../css/theme.css">
+</head>
+<body>
+<!-- Source OBS « Navigateur » 1920×1080, à placer tout en bas de la scène.
+     Options d'URL : ?couleur=rouge  ?graine=12  ?fixe (sans animation) -->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script>
+  Commun.demarrer();
+  const F = Commun.C.fond || {};
+  const graine = parseInt(Commun.params.get('graine') ?? F.graine ?? 7, 10);
+  document.getElementById('ecran').innerHTML = fondNeon({ graine });
+  if (Commun.params.has('fixe') || F.animation === false) document.documentElement.classList.add('fond-fixe');
+</script>
+</body>
+</html>

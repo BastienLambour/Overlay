@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Transition — Rideau (bouffon machiniste)</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/transitions.css">
+<link rel="stylesheet" href="../css/bouffon.css">
+<style>
+  /* 7. Le bouffon machiniste — tire la corde : le rideau se ferme, puis se rouvre — 3 s */
+  .mc-rd { top: 0; bottom: 0; width: 51%;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 1.2cqw, transparent 1.2cqw 5cqw), var(--surface); }
+  .mc-g { left: 0; box-shadow: inset -1cqw 0 0 var(--accent); transform: translateX(-101%); }
+  .mc-d { right: 0; box-shadow: inset 1cqw 0 0 var(--accent); transform: translateX(101%); }
+  .mc-embleme { width: 18cqw; left: 41cqw; top: calc(46cqh - 9cqw); transform: scale(0); }
+  .mc-corde { left: calc(70cqw + 20.5cqh); top: 0; width: .5cqw; height: 57.8cqh; transform: translateY(-60cqh);
+    background: repeating-linear-gradient(160deg, #C79A3B 0 .8cqh, #8E6A22 .8cqh 1.6cqh); border-radius: .3cqw; }
+  .mc-corde::after { content: ""; position: absolute; left: 50%; bottom: -3.4cqh; width: 2.4cqw; height: 4cqh; transform: translateX(-50%);
+    background: var(--accent); clip-path: polygon(35% 0, 65% 0, 100% 100%, 0 100%); }
+  .mc-perso { height: 60cqh; width: 26.1cqh; left: 70cqw; top: 36cqh; transform: translateX(40cqw); }
+  #ecran .mc-g { animation: mc-g 3s cubic-bezier(.77,0,.18,1) both; }
+  #ecran .mc-d { animation: mc-d 3s cubic-bezier(.77,0,.18,1) both; }
+  #ecran .mc-embleme { animation: mc-emb 3s var(--rebond) both; }
+  #ecran .mc-corde { animation: mc-corde 3s both; }
+  #ecran .mc-perso { animation: mc-perso 3s both; }
+  #ecran .bf-tout { animation: mc-tire 3s both; }
+  #ecran .bf-epaule-d { animation: mc-bras 3s ease-in-out both; }
+  #ecran .bf-epaule-g { animation: mc-bras-g 3s ease-in-out both; }
+  #ecran .bf-hanche-g { animation: mc-pas-g 3s both; }
+  #ecran .bf-hanche-d { animation: mc-pas-d 3s both; }
+  #ecran .bf-oeil-d { animation: mc-clin 3s both; }
+  #ecran .bf-clin { animation: mc-clin-trait 3s both; }
+  #ecran .bf-chapeau { animation: mc-chapeau 3s ease-in-out both; }
+  @keyframes mc-g { 0%, 30% { transform: translateX(-101%); } 44%, 60% { transform: translateX(0); } 80%, 100% { transform: translateX(-101%); } }
+  @keyframes mc-d { 0%, 30% { transform: translateX(101%); } 44%, 60% { transform: translateX(0); } 80%, 100% { transform: translateX(101%); } }
+  @keyframes mc-emb { 0%, 40% { transform: scale(0) rotate(-90deg); } 47%, 56% { transform: scale(1) rotate(0); } 62%, 100% { transform: scale(0) rotate(90deg); } }
+  @keyframes mc-corde { 0% { transform: translateY(-60cqh); animation-timing-function: cubic-bezier(.34,1.4,.64,1); } 10%, 26% { transform: translateY(0); }
+    32% { transform: translateY(4cqh); } 38%, 54% { transform: translateY(0); } 60% { transform: translateY(4cqh); } 66%, 86% { transform: translateY(0); animation-timing-function: ease-in; }
+    96%, 100% { transform: translateY(-60cqh); } }
+  @keyframes mc-perso { 0%, 6% { transform: translateX(40cqw); animation-timing-function: ease-out; } 18%, 70% { transform: translateX(0); animation-timing-function: ease-in; } 90%, 100% { transform: translateX(40cqw); } }
+  @keyframes mc-tire { 0%, 26%, 38%, 54%, 66%, 100% { transform: none; } 32%, 60% { transform: scale(1.03, .9); } }
+  @keyframes mc-bras { 0%, 18% { transform: rotate(-20deg); } 23%, 66% { transform: rotate(-170deg); } 70%, 100% { transform: rotate(-20deg); } }
+  @keyframes mc-bras-g { 0%, 26%, 38%, 54%, 66%, 100% { transform: rotate(20deg); } 32%, 60% { transform: rotate(45deg); } }
+  @keyframes mc-pas-g { 0%, 6%, 11%, 16%, 18%, 70%, 75%, 80%, 85%, 90%, 100% { transform: translateY(0); } 8.5%, 13.5%, 72.5%, 82.5% { transform: translateY(-26px) rotate(6deg); } }
+  @keyframes mc-pas-d { 0%, 8.5%, 13.5%, 18%, 70%, 72.5%, 82.5%, 90%, 100% { transform: translateY(0); } 6%, 11%, 16%, 77.5%, 87.5% { transform: translateY(-26px) rotate(-6deg); } }
+  @keyframes mc-clin { 0%, 45%, 53%, 100% { transform: scaleY(1); } 47%, 51% { transform: scaleY(0); } }
+  @keyframes mc-clin-trait { 0%, 45%, 53%, 100% { opacity: 0; } 47%, 51% { opacity: 1; } }
+  @keyframes mc-chapeau { 0%, 32% { transform: rotate(0); } 35% { transform: rotate(7deg); } 38% { transform: rotate(-6deg); } 41%, 60% { transform: rotate(0); }
+    63% { transform: rotate(7deg); } 66% { transform: rotate(-6deg); } 69%, 100% { transform: rotate(0); } }
+</style>
+</head>
+<body>
+<!--
+  Transition « Rideau (bouffon machiniste) » (1920 × 1080). Durée 3 s. Point de transition : 1400 ms.
+  Le bouffon arrive, attrape la corde et tire : le rideau se ferme ; clin d'œil ; il tire de nouveau : le rideau s'ouvre.
+  ?mode=entree  (défaut) : en haut d'une scène, avec « Actualiser le navigateur quand la scène
+                devient active » : la scène apparaît couverte, puis se dévoile.
+  ?mode=complet : animation entière, pour fabriquer la vidéo Stinger (outils/generer-transitions.mjs).
+-->
+<div id="ecran" data-coupe="1400">
+  <div class="mc-rd mc-g"></div>
+  <div class="mc-rd mc-d"></div>
+  <img class="mc-embleme" src="../assets/embleme-glacier.svg" alt="">
+  <div class="mc-corde"></div>
+  <div class="mc-perso" data-bouffon="pied"></div>
+</div>
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/bouffon.js"></script>
+<script>
+  // Le bouffon (dessin commun à toutes les transitions, voir js/bouffon.js)
+  document.querySelectorAll('[data-bouffon]').forEach(el => {
+    el.innerHTML = Bouffon.svg('pied', { epee: el.dataset.bouffon === 'pied-epee' });
+  });
+</script>
+<script src="../js/transition.js"></script>
+</body>
+</html>

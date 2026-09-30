@@ -1,0 +1,52 @@
+/* =====================================================================
+   COMPOSANTS — styles du chat, des zones, de l'objectif…
+   ===================================================================== */
+.fond-scene { position: absolute; inset: 0; }
+.voile { position: absolute; }
+
+/* ---------- Aperçu des zones (?apercu=1 / ?test=1) ---------- */
+.apercu-zone, .zone-widget {
+  position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center;
+  font: 800 30px var(--f-texte); letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,.75);
+}
+.apercu-zone span, .zone-widget span { font: 700 20px var(--f-texte); letter-spacing: 0; text-transform: none; color: rgba(255,255,255,.5); }
+.apercu-zone { background: repeating-linear-gradient(45deg, rgba(95,105,115,.55) 0 22px, rgba(70,78,86,.55) 22px 44px); }
+.apercu-zone.jeu { background: linear-gradient(160deg, #3d4a5c, #1d2632 60%, #10151c); }
+.zone-widget { border: 3px dashed rgba(255,255,255,.3); border-radius: 18px; }
+
+/* ---------- Chat ---------- */
+.chat-boite {
+  position: absolute; padding: 18px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 70px);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 70px);
+}
+.msg {
+  flex: none; background: linear-gradient(180deg, rgba(48,52,56,.92), rgba(28,31,34,.92));
+  border-radius: 12px; padding: 10px 16px 12px;
+  animation: msg-arrive .35s ease-out both;
+}
+.msg.part { animation: msg-part .5s ease-in forwards; }
+@keyframes msg-arrive { from { opacity: 0; transform: translateY(10px); } }
+@keyframes msg-part { to { opacity: 0; } }
+.msg-tete { display: flex; align-items: center; gap: 8px; }
+.msg-nom { font: 900 20px var(--f-texte); text-transform: uppercase; letter-spacing: .04em; color: var(--c, var(--accent)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msg .badges { margin-left: auto; display: flex; gap: 5px; flex: none; }
+.badge { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; }
+.badge svg { width: 16px; height: 16px; }
+.msg p { margin: 4px 0 0; font: 700 26px/1.3 var(--f-texte); color: var(--texte); overflow-wrap: anywhere; }
+.emote { height: 32px; vertical-align: middle; margin: -4px 1px 0; }
+
+/* ---------- Grand titre ---------- */
+.grand-titre { position: absolute; display: grid; place-items: center; text-align: center; }
+.grand-titre p { margin: 0; }
+
+/* ---------- Objectif ---------- */
+.objectif { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+.obj-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.obj-titre { font: 400 40px var(--f-titre); color: var(--accent); text-shadow: 0 0 calc(14px * var(--halo)) var(--accent-halo); }
+.obj-compte { font: 900 30px var(--f-texte); color: var(--texte); }
+.obj-piste {
+  height: 28px; border-radius: 999px; border: 4px solid var(--accent); background: var(--panneau); overflow: hidden;
+  box-shadow: 0 0 0 2px var(--accent-fonce), 0 0 calc(14px * var(--halo)) var(--accent-halo);
+}
+.obj-plein { height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width 1.2s ease-out; box-shadow: 0 0 12px var(--accent-halo); }

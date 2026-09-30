@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — Cam seule</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+</head>
+<body>
+<!--
+  Scène « Cam seule » : source Navigateur 1920 × 1080, AU-DESSUS de la webcam / du jeu.
+  La webcam en grand, le chat à droite.
+  Voir les emplacements : cam-seule.html?apercu=1   ·   Faux chat : cam-seule.html?test=1
+  Autre couleur pour cette scène : cam-seule.html?couleur=rouge
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/scenes.js"></script>
+<script>Scenes.construire('cam-seule');</script>
+</body>
+</html>

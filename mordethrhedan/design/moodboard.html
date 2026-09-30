@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mordethrhedan — Moodboard</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  html, body { height: auto; overflow: auto; background: #07090A; color: var(--texte); font-family: var(--f-texte); }
+  .page { max-width: 1200px; margin: 0 auto; padding: 24px 20px 90px; }
+  h1 { margin: 30px 0 4px; }
+  h2 { font: 400 44px/1 var(--f-titre); color: var(--accent); margin: 72px 0 8px; text-shadow: 0 0 calc(18px * var(--halo)) var(--accent-halo); display: flex; gap: 16px; align-items: center; }
+  h2::before { content: attr(data-num); font: 800 15px var(--f-texte); color: var(--accent); border: 2px solid var(--accent); border-radius: 8px; padding: 4px 8px; text-shadow: none; }
+  .label { font: 800 13px var(--f-texte); letter-spacing: .16em; text-transform: uppercase; color: var(--doux); }
+  .hero { margin: 30px 0 10px; }
+  .vocab { width: 100%; border-collapse: collapse; background: #0E1113; border-radius: 10px; overflow: hidden; margin-top: 22px; }
+  .vocab td, .vocab th { padding: 10px 14px; border-bottom: 1px solid #1B1F21; text-align: left; color: var(--doux); }
+  .vocab th { font: 800 12px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; }
+  .vocab td:nth-child(2) { color: var(--accent); font-weight: 800; }
+  .motif-zone { position: relative; height: 170px; border-radius: 10px; background: #0B0D0E; overflow: hidden; }
+  .motif-zone .cadre { inset: 30px 40px; }
+  .badges { display: flex; gap: 10px; align-items: center; justify-content: center; height: 100%; }
+  .badges span { font: 900 13px var(--f-texte); padding: 4px 10px; border-radius: 999px; color: #07090A; }
+  .sous { color: var(--doux); max-width: 72ch; margin: 0 0 22px; line-height: 1.55; font-size: 17px; }
+  code { color: var(--accent); }
+
+  .reglages { position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 14px 22px; justify-content: center; align-items: center;
+    padding: 10px 16px; background: rgba(7, 9, 10, .94); border-bottom: 2px solid var(--accent-doux); }
+  .groupe { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .groupe > span { font: 800 12px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--doux); margin-right: 4px; }
+  .pastille { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; padding: 0; }
+  .pastille.actif { border-color: #fff; box-shadow: 0 0 10px currentColor; }
+  .btn { font: 800 13px var(--f-texte); color: var(--texte); background: #16191B; border: 2px solid #2A2F31; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  .btn.actif { border-color: var(--accent); color: var(--accent); }
+  input[type=color] { width: 34px; height: 30px; border: 0; background: none; cursor: pointer; padding: 0; }
+
+  .ecran { position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; }
+  .ecran iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; background: transparent; }
+  .grille { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  .carte h4 { font: 800 20px var(--f-texte); margin: 12px 0 2px; }
+  .carte p { color: var(--doux); font-size: 15px; margin: 0; line-height: 1.5; }
+  .carte code { font-size: 13px; }
+
+  .nuancier { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .nuance { border-radius: 12px; overflow: hidden; background: #111416; cursor: pointer; border: 2px solid transparent; }
+  .nuance.actif { border-color: #fff; }
+  .nuance div { height: 70px; box-shadow: inset 0 0 30px rgba(0,0,0,.35); }
+  .nuance p { margin: 0; padding: 8px 12px; font: 800 15px var(--f-texte); }
+  .nuance code { display: block; color: var(--doux); font-size: 13px; font-weight: 600; }
+
+  .typo-demo { background: #0E1113; border-radius: 12px; padding: 26px; margin-bottom: 12px; }
+  .typo-demo small { display: block; font: 800 12px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--doux); margin-bottom: 10px; }
+  .note { border-left: 4px solid var(--accent); background: #0E1113; padding: 12px 16px; border-radius: 6px; color: var(--doux); margin-bottom: 14px; line-height: 1.5; }
+  .note b { color: var(--texte); }
+  .rejouer { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<nav class="reglages">
+  <div class="groupe" id="choix-couleurs"><span>Couleur</span></div>
+  <div class="groupe"><span>Perso</span><input type="color" id="couleur-perso" value="#1EE88A" title="Choisir une couleur"></div>
+  <div class="groupe"><span>Halo</span>
+    <button class="btn" data-halo="leger">Léger</button><button class="btn" data-halo="moyen">Moyen</button><button class="btn" data-halo="fort">Fort</button>
+  </div>
+  <div class="groupe"><span>Fond</span><button class="btn" id="motif">Autre motif</button><button class="btn" id="anim">Animation : oui</button></div>
+</nav>
+
+<div class="page">
+  <header class="hero">
+    <span class="label">Moodboard · overlay néon</span>
+    <h1 class="titre-neon" style="font-size:clamp(48px,8vw,96px)" id="nom">Mordethrhedan</h1>
+  </header>
+  <p class="sous">Moodboard de l'overlay néon. Tout ce qui est affiché ci-dessous est la <b>vraie</b> page utilisée dans OBS, en mode test. Change la couleur en haut : cadres, textes et éclats du fond suivent partout.</p>
+  <div class="ecran"><iframe data-src="../scenes/pause.html?test=1"></iframe></div>
+
+  <h2 data-num="01">Les couleurs</h2>
+  <p class="sous">Une seule couleur d'accent sur une base noire et grise. Vert par défaut, les autres prêtes pour les jeux où elles rendent mieux. Dans OBS : <code>couleur</code> dans config.js, ou <code>?couleur=rouge</code> sur une seule scène.</p>
+  <div class="nuancier" id="nuancier"></div>
+
+  <h2 data-num="02">Les typographies</h2>
+  <div class="note" id="note-police"></div>
+  <div class="typo-demo"><small>Titres · Dyer (Beyond Good &amp; Evil)</small><p class="titre-neon" style="font-size:clamp(46px,7vw,86px)">Petite pause en cours</p></div>
+  <div class="typo-demo"><small>Compte à rebours · Dyer</small><p class="titre-neon" style="font-size:clamp(70px,12vw,150px)">09:39</p></div>
+  <div class="typo-demo"><small>Chat et infos · Nunito</small><p style="font:700 26px/1.4 var(--f-texte);margin:0">Salut tout le monde ! Le chat, les pseudos et les infos sont écrits dans une police simple et très lisible.</p></div>
+
+  <h2 data-num="03">Le fond cristal</h2>
+  <p class="sous">Le fond est généré : facettes nettes, éclats dans la couleur d'accent qui respirent très doucement (désactivable). Les cadres ont un trait régulier, un fin liseré sombre et un halo discret. Version transparente pour la cam et le jeu, version « verre » fumée pour le chat.</p>
+  <div class="grille">
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe></div><h4>Fond</h4><p><code>sources/fond.html</code> · autre motif : <code>?graine=12</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe><iframe data-src="../sources/cadre.html?x=460&y=190&l=1000&h=700&apercu=1"></iframe></div><h4>Cadre transparent</h4><p><code>sources/cadre.html</code> · à la taille voulue, pour encadrer n'importe quel widget.</p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe><iframe data-src="../sources/cadre.html?x=460&y=190&l=1000&h=700&verre=1"></iframe></div><h4>Cadre verre</h4><p><code>sources/cadre.html?verre=1</code> · intérieur fumé.</p></div>
+  </div>
+
+  <h2 data-num="04">Motifs &amp; symboles</h2>
+  <p class="sous">Un langage visuel réduit à l'essentiel : un trait néon régulier aux coins arrondis, un halo réglable, des pastilles de badges pour le chat. Tout prend la couleur d'accent choisie en haut.</p>
+  <div class="grille">
+    <div class="carte"><div class="motif-zone" data-halo="leger"><div class="cadre"></div></div><h4>Halo léger</h4><p>Réglage par défaut : <code>halo: "leger"</code></p></div>
+    <div class="carte"><div class="motif-zone" data-halo="moyen"><div class="cadre"></div></div><h4>Halo moyen</h4><p><code>halo: "moyen"</code></p></div>
+    <div class="carte"><div class="motif-zone" data-halo="fort"><div class="cadre"></div></div><h4>Halo fort</h4><p><code>halo: "fort"</code> · pour les jeux très sombres</p></div>
+    <div class="carte"><div class="motif-zone"><div class="cadre verre"></div></div><h4>Cadre verre</h4><p>Intérieur fumé, pour le chat et les infos.</p></div>
+    <div class="carte"><div class="motif-zone"><div class="badges"><span style="background:#E5484D">Streamer</span><span style="background:#1EE88A">Modo</span><span style="background:#E05BD8">VIP</span><span style="background:#8B5CF6">Abonné</span></div></div><h4>Badges du chat</h4><p>Pastilles devant le pseudo, comme sur ton ancien chat.</p></div>
+  </div>
+
+  <h2 data-num="05">Les composants</h2>
+  <p class="sous">Le chat reprend ton format en cartes : pseudo dans sa couleur Twitch, badges (streamer, modo, VIP, abonné…), emotes. Les alertes restent sobres : une carte qui apparaît en fondu avec un petit carillon ; les gros événements (raid, pluie d'abonnements, objectif) font pulser le halo.</p>
+  <div class="grille">
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe><iframe data-src="../sources/chat.html?test=1&x=660&y=40&l=600&h=1000"></iframe></div><h4>Chat</h4><p><code>sources/chat.html</code> (déjà inclus dans les scènes)</p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe><iframe data-src="../sources/alertes.html?test=1&position=centre"></iframe></div><h4>Alertes</h4><p><code>sources/alertes.html</code> · une nouvelle alerte d'exemple toutes les 8 s.</p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../sources/fond.html"></iframe><iframe data-src="../sources/objectif.html?test=1&x=360&y=440&l=1200&h=200"></iframe></div><h4>Objectif</h4><p><code>sources/objectif.html</code> · followers ou abonnés.</p></div>
+  </div>
+  <table class="vocab" id="vocab"><tr><th>Événement</th><th>Titre</th><th>Message</th></tr></table>
+
+  <h2 data-num="06">Les transitions</h2>
+  <p class="sous">Deux transitions simples, déjà exportées en vidéos Stinger dans <code>transitions/videos/</code>.</p>
+  <div class="grille">
+    <div class="carte"><div class="ecran" style="background:linear-gradient(160deg,#3d4a5c,#10151c)"><iframe data-src="../transitions/balayage.html?mode=complet" id="t-balayage"></iframe></div><h4>Balayage</h4><button class="btn rejouer" data-rejouer="t-balayage">▶ Rejouer</button></div>
+    <div class="carte"><div class="ecran" style="background:linear-gradient(160deg,#3d4a5c,#10151c)"><iframe data-src="../transitions/volets.html?mode=complet" id="t-volets"></iframe></div><h4>Volets</h4><button class="btn rejouer" data-rejouer="t-volets">▶ Rejouer</button></div>
+  </div>
+
+  <h2 data-num="07">Les scènes</h2>
+  <p class="sous">Les zones grisées sont les emplacements de tes sources OBS (webcam, jeu, contenu, ton image) ; les pointillés sont libres pour tes propres widgets (succès, manette, splits).</p>
+  <div class="grille">
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/jeu.html?apercu=1"></iframe></div><h4>Jeu + cam</h4><p><code>scenes/jeu.html</code> · cam dans un autre coin : <code>?cam=bas-droite</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/speedrun.html?apercu=1"></iframe></div><h4>Speedrun</h4><p><code>scenes/speedrun.html</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/contenu.html?test=1"></iframe></div><h4>Contenu + chat</h4><p><code>scenes/contenu.html</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/cam-seule.html?test=1"></iframe></div><h4>Cam seule</h4><p><code>scenes/cam-seule.html</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/demarrage.html?test=1&minutes=10"></iframe></div><h4>Démarrage</h4><p><code>scenes/demarrage.html?minutes=10</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/pause.html?test=1"></iframe></div><h4>Pause</h4><p><code>scenes/pause.html</code></p></div>
+    <div class="carte"><div class="ecran"><iframe data-src="../scenes/fin.html?test=1"></iframe></div><h4>Fin</h4><p><code>scenes/fin.html</code></p></div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/commun.js"></script>
+<script>
+  Commun.demarrer();
+  const racine = document.documentElement;
+  const reglages = { couleur: Commun.resoudre(Commun.C.couleur), halo: racine.dataset.halo, graine: (Commun.C.fond || {}).graine || 7, fixe: false };
+  document.getElementById('nom').textContent = Commun.C.nomChaine || '';
+  const evts = { follow: 'Follow', sub: 'Abonnement', resub: 'Réabonnement', giftsub: 'Abonnement offert', giftbomb: 'Pluie d’abonnements', bits: 'Bits', raid: 'Raid', don: 'Don', objectif: 'Objectif atteint' };
+  document.getElementById('vocab').insertAdjacentHTML('beforeend', Object.entries((Commun.C.alertes || {}).textes || {}).map(([k, t]) =>
+    `<tr><td>${evts[k] || k}</td><td>${t.titre}</td><td>{nom} ${t.message}</td></tr>`).join(''));
+
+  // Recharge chaque page intégrée avec les réglages choisis
+  // Seuls les écrans visibles tournent : une vingtaine de pages animées en même temps
+  // saturent la carte graphique (écran noir). Les autres sont vidés hors de la vue.
+  const visibles = new Set();
+  function adresse(f) {
+    const [chemin, q] = f.dataset.src.split('?');
+    const p = new URLSearchParams(q || '');
+    p.set('couleur', reglages.couleur); p.set('halo', reglages.halo); p.set('graine', reglages.graine);
+    if (reglages.fixe) p.set('fixe', '');
+    return chemin + '?' + p.toString();
+  }
+  function recharger() { visibles.forEach(f => { f.src = adresse(f); }); }
+  const vue = new IntersectionObserver(entrees => entrees.forEach(({ target: f, isIntersecting }) => {
+    if (isIntersecting) { visibles.add(f); f.src = adresse(f); }
+    else { visibles.delete(f); f.src = 'about:blank'; }
+  }), { rootMargin: '200px 0px' });
+  document.querySelectorAll('iframe[data-src]').forEach(f => vue.observe(f));
+
+  const noms = { vert: 'Vert', rouge: 'Rouge', bleu: 'Bleu', violet: 'Violet', orange: 'Orange', cyan: 'Cyan', jaune: 'Jaune', rose: 'Rose' };
+  document.getElementById('choix-couleurs').insertAdjacentHTML('beforeend', Object.entries(Commun.couleurs).map(([n, h]) =>
+    `<button class="pastille" data-couleur="${h}" title="${noms[n]}" style="background:${h};color:${h}"></button>`).join(''));
+  document.getElementById('nuancier').innerHTML = Object.entries(Commun.couleurs).map(([n, h]) =>
+    `<div class="nuance" data-couleur="${h}"><div style="background:${h}"></div><p>${noms[n]}<code>${n} · ${h}</code></p></div>`).join('');
+
+  function couleur(hex, rafraichir = true) {
+    reglages.couleur = Commun.appliquerCouleur(hex);
+    document.querySelectorAll('[data-couleur]').forEach(b => b.classList.toggle('actif', b.dataset.couleur.toLowerCase() === reglages.couleur.toLowerCase()));
+    document.getElementById('couleur-perso').value = reglages.couleur;
+    if (rafraichir) recharger();
+  }
+  document.querySelectorAll('[data-couleur]').forEach(b => b.onclick = () => couleur(b.dataset.couleur));
+  document.getElementById('couleur-perso').onchange = e => couleur(e.target.value);
+
+  function halo(v, rafraichir = true) {
+    reglages.halo = racine.dataset.halo = v;
+    document.querySelectorAll('[data-halo]').forEach(b => b.classList.toggle('actif', b.dataset.halo === v));
+    if (rafraichir) recharger();
+  }
+  document.querySelectorAll('[data-halo]').forEach(b => b.onclick = () => halo(b.dataset.halo));
+
+  document.getElementById('motif').onclick = () => { reglages.graine++; recharger(); };
+  document.getElementById('anim').onclick = e => {
+    reglages.fixe = !reglages.fixe;
+    e.target.textContent = 'Animation : ' + (reglages.fixe ? 'non' : 'oui');
+    recharger();
+  };
+  document.querySelectorAll('[data-rejouer]').forEach(b => b.onclick = () => { const f = document.getElementById(b.dataset.rejouer); f.src = adresse(f); });
+
+  document.fonts.load('40px Dyer').catch(() => {}).then(() => {
+    document.getElementById('note-police').innerHTML = document.fonts.check('40px Dyer')
+      ? '<b>Police Dyer chargée.</b> Les titres utilisent bien la police de Beyond Good &amp; Evil.'
+      : '<b>Police Dyer pas encore installée :</b> les titres utilisent « Righteous » en attendant. Dépose le fichier de la police (<code>Dyer.ttf</code>, <code>.otf</code> ou <code>.woff2</code>) dans le dossier <code>assets/polices/</code> et tout passera automatiquement en Dyer.';
+  });
+
+  couleur(reglages.couleur, false); halo(reglages.halo, false); recharger();
+</script>
+</body>
+</html>
