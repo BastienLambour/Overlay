@@ -332,7 +332,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 | Photo de profil | `profil.png` (800 × 800) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
 | Bannière de profil | `banniere.png` (1200 × 480) | … › **Marque** › Bannière de profil |
 | Écran hors-ligne | `hors-ligne.png` (1920 × 1080) | … › **Marque** › Bannière du lecteur vidéo |
-| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
 | Emotes | `emote-gg`, `pb`, `reset`, `gold`, `coeur`, `manette` (-112, -56, -28) | Tableau de bord › **Récompenses des spectateurs** › Emotes *(affilié ou partenaire)* |
 | Badges d'abonné | `badge-mois-1`, `-3`, `-6`, `-9`, `-12` (-72, -36, -18) | Tableau de bord › **Récompenses des spectateurs** › Badges d'abonné |
 

@@ -87,7 +87,7 @@ const Composants = (() => {
       ['follow', 'oeil', 'Dernier témoin'],
       ...(compact ? [] : [['abonne', 'coeur', 'Soutien moral'], ['soutien', 'piece', 'Fonds pour excuses']]),
       ['objectif', 'etoile', o.titre || 'Objectif'],
-    ];
+    ].filter(([cle]) => ((C.bandeau || {})[cle === 'recrue' ? 'follow' : cle]) !== false);   // config.js › bandeau : cases au choix
     const el = creer(parent, 'bandeau' + (compact ? ' compact' : ''), `${Commun.avatar(z.h - 12)}${items.map(([cle, ic, lib]) =>
       `<div class="bandeau-item" data-cle="${cle}">${ico(ic)}<div style="min-width:0;flex:1"><small>${lib}</small><b>—</b>${cle === 'objectif' ? '<div class="mini-jauge"><i></i></div>' : ''}</div></div>`).join('')}`, z);
 

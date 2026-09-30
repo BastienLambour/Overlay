@@ -105,7 +105,7 @@ window.CONFIG = {
     ],
     reseaux: [],                      // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

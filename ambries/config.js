@@ -76,6 +76,15 @@ window.CONFIG = {
     depart: 0,           // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
   },
 
+  // Bandeau d'infos (en bas des scènes) : ce qu'il affiche. Mets false pour cacher une case,
+  // ex. soutien: false si tu ne reçois ni dons ni bits.
+  bandeau: {
+    follow: true,        // « Dernier témoin » : dernier follow
+    abonne: true,        // « Soutien moral » : dernier abonné (chaîne affiliée ou partenaire)
+    soutien: true,       // « Fonds pour excuses » : dernier don ou bits
+    objectif: true,      // l'objectif et sa mini-jauge
+  },
+
   // --- Alertes ---
   alertes: {
     duree: 7,            // secondes d'affichage de chaque alerte
@@ -107,7 +116,7 @@ window.CONFIG = {
       // ["Discord", "discord.gg/…"],
     ],
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

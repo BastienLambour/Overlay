@@ -86,12 +86,12 @@ window.CONFIG = {
   },
 
   // --- Bandeau d'infos (en bas des scènes Cam seule, Contenu et Jeu) : ce qu'il affiche ---
-  // Mets false pour cacher une case, ex. tribut: false si tu ne reçois ni dons ni bits.
+  // Mets false pour cacher une case, ex. soutien: false si tu ne reçois ni dons ni bits.
   bandeau: {
     ceSoir: true,        // « Ce soir » : ce que tu fais aujourd'hui
-    aventurier: true,    // dernier follow
-    chevalier: true,     // dernier abonné (chaîne affiliée ou partenaire)
-    tribut: true,        // dernier don ou bits
+    follow: true,        // « Aventurier » : dernier follow
+    abonne: true,        // « Chevalier » : dernier abonné (chaîne affiliée ou partenaire)
+    soutien: true,       // « Tribut » : dernier don ou bits
     objectif: true,      // l'objectif et sa mini-jauge
   },
 

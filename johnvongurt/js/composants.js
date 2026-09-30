@@ -90,7 +90,7 @@ const Composants = (() => {
       ['recrue', 'groupe', 'Dernière recrue'],
       ...(compact ? [] : [['abonne', 'casque', 'Dernier abonné'], ['soutien', 'coeur', 'Dernier soutien']]),
       ['objectif', 'cible', o.titre || 'Objectif'],
-    ];
+    ].filter(([cle]) => ((C.bandeau || {})[cle === 'recrue' ? 'follow' : cle]) !== false);   // config.js › bandeau : cases au choix
     const el = creer(parent, 'bandeau boite', `<div class="interieur">${items.map(([cle, ic, lib]) =>
       `<div class="bandeau-item" data-cle="${cle}">${ico(ic)}<div style="min-width:0;flex:1"><small>${lib}</small><b>—</b>${cle === 'objectif' ? '<div class="mini-jauge"><i></i></div>' : ''}</div></div>`).join('')}
       <div class="bandeau-item fusee-fin"><span class="ic" style="color:var(--accent)">${Commun.icones.fusee}</span></div></div>`, z);

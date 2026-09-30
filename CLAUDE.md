@@ -75,8 +75,9 @@ Conventions :
 - **Objet JS global** : `Commun` (dans `commun.js`) ; un objet par fichier, du nom du fichier
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `streamerbot`, `demarrage`,
-  `pause`, `fin`, `chat`, `objectif`, `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`),
-  `test.noms`. Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
+  `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
+  [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`), `test.noms`,
+  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
   compteur), `?apercu=1` (montre les zones cam/jeu), `?reinitialiser` (remet l'objectif à zéro),
   `?minutes=10` (compte à rebours), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite`.

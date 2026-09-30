@@ -49,7 +49,7 @@ const Composants = (() => {
 
   // --- Cadre autour d'une zone transparente ---
   //  decor : chapeau de bouffon au-dessus + dés dans les coins du bas (chapeau: false = les dés seuls)
-  //  nom   : le logo de la chaîne, à cheval sur le bas du cadre (version à contour crème : lisible sur la cam)
+  //  nom   : la plaque dorée avec le logo de la chaîne, à cheval sur le bas du cadre
   //  titre : petite étiquette en haut à gauche (pour le cadre « contenu »)
   function cadre(parent, z, { decor = true, chapeau = true, nom = true, titre = '', sobre = false, apercuTitre = 'Webcam' } = {}) {
     zoneApercu(parent, z, apercuTitre, apercuTitre !== 'Webcam');
@@ -69,8 +69,8 @@ const Composants = (() => {
         <svg class="de d" viewBox="0 0 100 100" style="width:${de * .88}px;right:${-de * .34}px;bottom:${-de * .3}px"><use href="#i-d6"/></svg>`;
     }
     if (nom) {
-      const h = borne(46, z.l * 0.072, 96);                 // hauteur du logo
-      html += `<img class="logo-cadre" src="../assets/logo-contour.svg" alt="${C.nomChaine || ''}" style="height:${h}px;bottom:${-h * .5}px">`;
+      const h = borne(34, z.l * 0.05, 64);                  // hauteur du logo dans la plaque
+      html += `<span class="plaque" style="bottom:${-h * .72}px"><img src="../assets/logo-couleur.svg" alt="${C.nomChaine || ''}" style="height:${h}px"></span>`;
     }
     if (titre) html += `<span class="titre-zone" style="top:-22px"><svg viewBox="0 0 100 80"><use href="#i-parchemin"/></svg>${titre}</span>`;
     el.innerHTML = html;
@@ -107,14 +107,14 @@ const Composants = (() => {
   }
 
   // --- Bandeau d'infos : dernier aventurier, chevalier, tribut, objectif ---
-  // Cases affichées : config.js › bandeau (ceSoir, aventurier, chevalier, tribut, objectif ; false = cachée)
+  // Cases affichées : config.js › bandeau (ceSoir, follow, abonne, soutien, objectif ; false = cachée)
   function bandeau(parent, z, { compact = false } = {}) {
     const o = Evenements.objectif;
     const voir = cle => (C.bandeau || {})[cle] !== false;
     const items = [
       ...(compact ? [] : [['jour', 'parchemin', 'Ce soir', 1.7, 'ceSoir']]),
-      ['recrue', 'chapeau', 'Aventurier', 1, 'aventurier'],
-      ...(compact ? [] : [['abonne', 'bouclier', 'Chevalier', 1, 'chevalier'], ['soutien', 'grelot', 'Tribut', 1, 'tribut']]),
+      ['recrue', 'chapeau', 'Aventurier', 1, 'follow'],
+      ...(compact ? [] : [['abonne', 'bouclier', 'Chevalier', 1, 'abonne'], ['soutien', 'grelot', 'Tribut', 1, 'soutien']]),
       ['objectif', 'd20', o.titre || 'Objectif', 1.4, 'objectif'],
     ].filter(i => voir(i[4]));
     const el = creer(parent, 'bandeau carte' + (compact ? ' compact' : ''),

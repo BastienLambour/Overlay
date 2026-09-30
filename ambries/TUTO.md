@@ -249,6 +249,7 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 **Dans OBS :** geste A, puis geste C pour le placer.
 **Options** : `?x=80&y=970&l=1760&h=84` · `?compact=1` (dernier témoin + objectif) · `?test=1`
 **Nécessite** Streamer.bot (section 6).
+**Choisir les cases** : `reglages.html` › **Bandeau d'infos** (par exemple, décoche le dernier soutien si tu ne reçois ni dons ni bits, et le dernier abonné si ta chaîne n'est pas encore affiliée).
 
 ### 4.4 ⭐ Objectif — `sources/objectif.html`
 
@@ -333,7 +334,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 | Photo de profil | `profil.png` (800 × 800) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
 | Bannière de profil | `banniere.png` (1200 × 480) | … › **Marque** › Bannière de profil |
 | Écran hors-ligne | `hors-ligne.png` (1920 × 1080) | … › **Marque** › Bannière du lecteur vidéo |
-| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
 | Emotes | `emote-panique`, `lag`, `gg`, `oups`, `exclamation`, `coeur` (-112, -56, -28) | Tableau de bord › **Récompenses des spectateurs** › Emotes *(affilié ou partenaire)* |
 | Badges d'abonné | `badge-mois-1` (jauge 20), `-3` (40), `-6` (60), `-9` (80), `-12` (étoile) (-72, -36, -18) | Tableau de bord › **Récompenses des spectateurs** › Badges d'abonné |
 

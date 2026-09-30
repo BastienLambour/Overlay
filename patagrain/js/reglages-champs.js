@@ -55,9 +55,9 @@ window.ReglagesChamps = {
     ] },
     { titre: 'Bandeau d\'infos', icone: '📰', aide: 'La barre en bas des scènes Cam seule, Contenu et Jeu : décoche ce que tu ne veux pas voir.', champs: [
       { cle: 'bandeau.ceSoir', type: 'case', label: '« Ce soir » (ce que tu fais aujourd\'hui)' },
-      { cle: 'bandeau.aventurier', type: 'case', label: '« Aventurier » : dernier follow' },
-      { cle: 'bandeau.chevalier', type: 'case', label: '« Chevalier » : dernier abonné', aide: 'Seulement si ta chaîne est affiliée ou partenaire.' },
-      { cle: 'bandeau.tribut', type: 'case', label: '« Tribut » : dernier don ou bits', aide: 'Décoche si tu ne reçois ni dons ni bits.' },
+      { cle: 'bandeau.follow', type: 'case', label: '« Aventurier » : dernier follow' },
+      { cle: 'bandeau.abonne', type: 'case', label: '« Chevalier » : dernier abonné', aide: 'Seulement si ta chaîne est affiliée ou partenaire.' },
+      { cle: 'bandeau.soutien', type: 'case', label: '« Tribut » : dernier don ou bits', aide: 'Décoche si tu ne reçois ni dons ni bits.' },
       { cle: 'bandeau.objectif', type: 'case', label: 'L\'objectif et sa mini-jauge' },
     ] },
     { titre: 'Alertes', icone: '🔔', alertes: true, champs: [

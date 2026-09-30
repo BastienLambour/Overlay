@@ -69,8 +69,13 @@
 .cam-cadre .de { position: absolute; z-index: 3; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .3)); animation: vacille-de 4s ease-in-out infinite; }
 .cam-cadre .de.g { --r: -14deg; }
 .cam-cadre .de.d { --r: 12deg; animation-delay: -2s; }
-/* Le logo de la chaîne, à cheval sur le bas du cadre */
-.cam-cadre .logo-cadre { position: absolute; left: 50%; translate: -50% 0; z-index: 2; width: auto; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .3)); }
+/* La plaque dorée avec le logo, à cheval sur le bas du cadre */
+.cam-cadre .plaque {
+  position: absolute; left: 50%; translate: -50% 0; z-index: 2; display: flex; align-items: center;
+  background: var(--accent); padding: .18em 1.2em .22em; font-size: 20px;
+  clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%);
+}
+.cam-cadre .plaque img { width: auto; display: block; }
 /* Cadre « contenu » : plus sobre, sans décor */
 .cam-cadre.sobre .anneau .bord { fill: var(--surface); }
 .cam-cadre .titre-zone {

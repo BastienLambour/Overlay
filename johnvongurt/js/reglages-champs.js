@@ -48,6 +48,12 @@ window.ReglagesChamps = {
       { cle: 'objectif.cible', type: 'nombre', label: 'Objectif à atteindre', min: 1 },
       { cle: 'objectif.depart', type: 'nombre', label: 'Ton nombre ACTUEL', min: 0, aide: 'Ton nombre actuel de followers (ou d\'abonnés). Le changer remet le compteur à cette valeur.' },
     ] },
+    { titre: 'Bandeau d\'infos', icone: '📰', aide: 'La barre en bas des scènes : décoche ce que tu ne veux pas voir.', champs: [
+      { cle: 'bandeau.follow', type: 'case', label: '« Dernière recrue » : dernier follow' },
+      { cle: 'bandeau.abonne', type: 'case', label: '« Dernier abonné » : dernier abonné', aide: 'Seulement si ta chaîne est affiliée ou partenaire.' },
+      { cle: 'bandeau.soutien', type: 'case', label: '« Dernier soutien » : dernier don ou bits', aide: 'Décoche si tu ne reçois ni dons ni bits.' },
+      { cle: 'bandeau.objectif', type: 'case', label: 'L\'objectif et sa mini-jauge' },
+    ] },
     { titre: 'Alertes', icone: '🔔', alertes: true, champs: [
       { cle: 'alertes.duree', type: 'nombre', label: 'Durée d\'affichage (secondes)', min: 2 },
       { cle: 'alertes.son', type: 'case', label: 'Son des alertes' },

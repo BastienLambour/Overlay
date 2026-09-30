@@ -187,7 +187,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 ### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
 
-**À quoi ça sert** : l'écran « blabla » : accueil et discussion, ta cam en grand avec le logo de la chaîne dessous, le chat à côté (le bouffon dépasse du haut de la carte, ses grelots tintent à chaque message), le bandeau en bas.
+**À quoi ça sert** : l'écran « blabla » : accueil et discussion, ta cam en grand avec la plaque dorée au logo de la chaîne dessous, le chat à côté (le bouffon dépasse du haut de la carte, ses grelots tintent à chaque message), le bandeau en bas.
 
 **Dans OBS :**
 1. **Scènes › +** : « Cam seule ».
@@ -208,7 +208,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 ### 3.5 🖥 Contenu — `scenes/contenu.html`
 
-**À quoi ça sert** : le contenu (navigateur, vidéo, fenêtre…) à gauche, la cam (avec le logo dessous) et le chat empilés à droite (avec le bouffon, en plus petit).
+**À quoi ça sert** : le contenu (navigateur, vidéo, fenêtre…) à gauche, la cam (avec la plaque dorée au logo dessous) et le chat empilés à droite (avec le bouffon, en plus petit).
 
 **Dans OBS :**
 1. **Scènes › +** : « Contenu ».
@@ -298,7 +298,7 @@ Ces pages se posent **en plus**, dans n'importe quelle scène, pour composer tes
 1. Place ta webcam où tu veux et note sa position et sa taille (Ctrl + E).
 2. Geste A avec `sources/cam.html`, **au-dessus** de la webcam, puis geste C avec les mêmes chiffres : `?x=1450&y=740&l=420&h=236`.
 
-**Options** : `?nom=1` (le logo de la chaîne sous la cam) · `?decor=0` (sans chapeau ni dés) · `?apercu=1`
+**Options** : `?nom=1` (la plaque dorée avec le logo de la chaîne, sous la cam) · `?decor=0` (sans chapeau ni dés) · `?apercu=1`
 
 ---
 
