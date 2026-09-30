@@ -42,7 +42,13 @@
 
   window.KIT = {
     elements: [
-      { id: 'profil', groupe: 'profil', nom: 'Emblème d20', l: 800, h: 800, rendu: el => {
+      // Photo de profil : le bouffon (tête et chapeau), cadré pour le rond de Twitch
+      { id: 'profil', groupe: 'profil', nom: 'Le bouffon', l: 800, h: 800, rendu: el => {
+        el.innerHTML = `<div class="pg-fond"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 26px var(--accent), inset 0 0 0 40px var(--primaire-fonce)"></div>
+          <div style="position:absolute;inset:0">${Bouffon.svg('buste').replace(/viewBox="[^"]*"/, 'viewBox="-38 -20 476 476" width="800" height="800"')}</div>`;
+      } },
+      { id: 'profil-embleme', groupe: 'profil', nom: 'Emblème d20 (autre choix)', l: 800, h: 800, rendu: el => {
         el.innerHTML = `<div class="pg-fond"></div><img src="../assets/embleme-bleu.svg" alt="" style="position:absolute;left:110px;top:110px;width:580px;height:580px">`;
       } },
 
@@ -59,9 +65,16 @@
       { id: 'hors-ligne', groupe: 'hors-ligne', nom: 'Écran hors-ligne', l: 1920, h: 1080, rendu: el => {
         el.innerHTML = `<div class="pg-fond"></div>${fanions(23)}
           ${deco([['d20', 150, 260, 190, -12], ['d6', 1620, 220, 150, 14], ['grelot', 300, 760, 120, 10], ['d8', 1500, 740, 140, -8], ['d4', 900, 880, 110, 6]])}
-          <div class="pg-centre">
-            <img src="../assets/embleme-bleu.svg" alt="" style="width:230px;margin-bottom:26px">
-            <div class="pg-titre" style="font-size:120px">${K.horsLigne || 'Le bouffon se repose'}</div>
+          <!-- Le bouffon s'est endormi debout, la tête qui penche ; les « Z » s'envolent -->
+          <style>.pg-dort .bf-haut { transform: rotate(9deg) translateY(12px); transform-box: view-box; }
+            .pg-z { position: absolute; font: 800 var(--t) var(--f-titre); color: var(--texte); opacity: var(--o); transform: rotate(12deg); }</style>
+          <div class="pg-dort" style="position:absolute;left:170px;top:150px;width:370px;height:851px">${Bouffon.svg('pied', { expression: 'dort' })}</div>
+          <span class="pg-z" style="left:470px;top:250px;--t:70px;--o:.55">z</span>
+          <span class="pg-z" style="left:530px;top:170px;--t:95px;--o:.75">z</span>
+          <span class="pg-z" style="left:610px;top:70px;--t:130px;--o:.95">Z</span>
+          <div class="pg-centre" style="left:560px">
+            <img src="../assets/logo-couleur.svg" alt="" style="width:560px;margin-bottom:34px">
+            <div class="pg-titre" style="font-size:110px">${K.horsLigne || 'Le bouffon se repose'}</div>
             <div style="font:700 34px/1.5 var(--f-texte);color:var(--texte-doux);margin-top:30px">${planning}</div>
           </div>`;
       } },

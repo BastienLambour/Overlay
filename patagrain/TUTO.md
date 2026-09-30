@@ -35,7 +35,7 @@ patagrain/
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat…)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
-├── outils/              ← scripts : vidéos de transition, images de la chaîne, PDF, le bouffon
+├── outils/              ← scripts : vidéos de transition, images de la chaîne, PDF, le bouffon, et actualiser-obs.lua (pour OBS, 2.8)
 ├── assets/              ← logo, emblèmes, épée, chapeau, le bouffon, polices/
 ├── design/              ← moodboard et pistes de logo
 └── css/  js/            ← le moteur (pas besoin d'y toucher)
@@ -57,7 +57,7 @@ Toutes les pages sont dessinées en **1920 × 1080** et **s'adaptent toutes seul
 4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
    La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
-6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
+6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement (ou automatiquement avec le script de la section 2.8).
 
 Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
 La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
@@ -130,6 +130,22 @@ Les pages `sources/chat.html` et `sources/bandeau.html` servent seulement pour *
 
 Et quand tu changes de scène, le chat **réaffiche les derniers messages** (ceux des 10 dernières minutes, réglable dans `reglages.html` › **Le chat**) : il ne repart pas à vide.
 
+### 2.8 Actualiser toutes les sources d'un coup (après un changement de réglages)
+
+OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay en fournit un, sous forme de petit script OBS.
+
+1. OBS › **Outils › Scripts**.
+2. Onglet **Scripts** › **+** › choisis `outils/actualiser-obs.lua` (dans le dossier `patagrain`).
+3. À droite apparaissent :
+   - le bouton **Actualiser toutes les sources Navigateur** ;
+   - la case **Actualiser tout seul les sources de l'overlay quand config.js change** (cochée) : dès que tu cliques **Enregistrer** dans `reglages.html`, les sources se mettent à jour en 2 secondes, sans rien toucher ;
+   - le **Dossier de l'overlay** (trouvé tout seul).
+4. **Fermer**. Le script reste installé (OBS le recharge à chaque démarrage).
+
+Tu peux aussi lui donner un **raccourci clavier** : **Paramètres › Raccourcis clavier** › « Actualiser toutes les sources Navigateur ».
+
+> ⚠️ Une page actualisée repart de zéro : évite d'enregistrer des réglages pendant le compte à rebours de Starting soon.
+
 ---
 
 ## 3. Les scènes, fiche par fiche
@@ -171,7 +187,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 ### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
 
-**À quoi ça sert** : l'écran « blabla » : accueil et discussion, ta cam en grand, le chat à côté (le bouffon dépasse du haut de la carte, ses grelots tintent à chaque message), le bandeau en bas.
+**À quoi ça sert** : l'écran « blabla » : accueil et discussion, ta cam en grand avec le logo de la chaîne dessous, le chat à côté (le bouffon dépasse du haut de la carte, ses grelots tintent à chaque message), le bandeau en bas.
 
 **Dans OBS :**
 1. **Scènes › +** : « Cam seule ».
@@ -182,8 +198,8 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 | Canevas | Position (x, y) | Taille (l × h) |
 |---|---|---|
-| 2560 × 1440 | `93`, `200` | `1653` × `931` |
-| 1920 × 1080 | `70`, `150` | `1240` × `698` |
+| 2560 × 1440 | `93`, `133` | `1653` × `931` |
+| 1920 × 1080 | `70`, `100` | `1240` × `698` |
 
 6. Ordre final : `Global — Alertes` · `Overlay` · `Webcam`.
 
@@ -192,7 +208,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 ### 3.5 🖥 Contenu — `scenes/contenu.html`
 
-**À quoi ça sert** : le contenu (navigateur, vidéo, fenêtre…) à gauche, la cam et le chat empilés à droite (avec le bouffon, en plus petit).
+**À quoi ça sert** : le contenu (navigateur, vidéo, fenêtre…) à gauche, la cam (avec le logo dessous) et le chat empilés à droite (avec le bouffon, en plus petit).
 
 **Dans OBS :**
 1. **Scènes › +** : « Contenu ».
@@ -204,8 +220,8 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 | Source | Position 1440p | Taille 1440p | Position 1080p | Taille 1080p |
 |---|---|---|---|---|
-| Contenu | `80`, `173` | `1707` × `960` | `60`, `130` | `1280` × `720` |
-| Webcam | `1867`, `200` | `613` × `345` | `1400`, `150` | `460` × `259` |
+| Contenu | `80`, `133` | `1707` × `960` | `60`, `100` | `1280` × `720` |
+| Webcam | `1867`, `133` | `613` × `345` | `1400`, `100` | `460` × `259` |
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Contenu`.
 
@@ -213,7 +229,7 @@ Les phrases de la bulle : `reglages.html` › **Le bouffon**.
 
 ### 3.6 ⚔️ Jeu — `scenes/jeu.html`
 
-**À quoi ça sert** : le jeu en plein écran, une petite cam dans un coin, le chat en transparence et une barre fine. **Le chapeau posé sur la cam est celui du bouffon** : toutes les 60 secondes et à chaque follow, il se lève dessous, passe la tête, regarde à gauche, à droite, fait un clin d'œil, et redescend.
+**À quoi ça sert** : le jeu en plein écran, une petite cam dans un coin, le chat en transparence et une barre fine. **Le chapeau posé sur la cam est celui du bouffon** : environ toutes les 3 minutes (le délai varie un peu) et à chaque follow, il se lève dessous, passe la tête, regarde à gauche, à droite, fait un clin d'œil, puis replonge sous son chapeau, qui retombe en tanguant.
 
 **Dans OBS :**
 1. **Scènes › +** : « Jeu ».
@@ -235,7 +251,7 @@ Taille de la webcam : `560` × `315` en 1440p, `420` × `236` en 1080p.
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Jeu`.
 
 **Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?chat=0` · `?bandeau=0` · `?bouffon=0`
-**Le rythme du bouffon** : `reglages.html` › **Le bouffon** (« toutes les … secondes », « à chaque follow »).
+**Le rythme du bouffon** : `reglages.html` › **Le bouffon** (« environ toutes les … secondes » : 180 par défaut, et « à chaque follow »).
 
 ---
 
@@ -264,6 +280,7 @@ Ces pages se posent **en plus**, dans n'importe quelle scène, pour composer tes
 ### 4.3 📰 Bandeau — `sources/bandeau.html`
 
 **À quoi ça sert** : titre du jour, dernier aventurier (follow), dernier chevalier (abonné), dernier tribut (bits ou don) et objectif. Déjà dans les scènes Cam seule, Contenu et Jeu.
+**Choisir les cases** : `reglages.html` › **Bandeau d'infos** (par exemple, décoche « Tribut » si tu ne reçois ni dons ni bits, et « Chevalier » si ta chaîne n'est pas encore affiliée).
 **Dans OBS :** geste A avec `sources/bandeau.html`.
 **Options** : `?x=60&y=950&l=1800&h=100` · `?compact=1` (dernier aventurier + objectif) · `?test=1`
 
@@ -281,7 +298,7 @@ Ces pages se posent **en plus**, dans n'importe quelle scène, pour composer tes
 1. Place ta webcam où tu veux et note sa position et sa taille (Ctrl + E).
 2. Geste A avec `sources/cam.html`, **au-dessus** de la webcam, puis geste C avec les mêmes chiffres : `?x=1450&y=740&l=420&h=236`.
 
-**Options** : `?nom=1` (plaque dorée au nom de la chaîne) · `?decor=0` (sans chapeau ni dés) · `?apercu=1`
+**Options** : `?nom=1` (le logo de la chaîne sous la cam) · `?decor=0` (sans chapeau ni dés) · `?apercu=1`
 
 ---
 
@@ -348,15 +365,24 @@ Deux choses différentes :
    - Clique **Start Server**.
 5. Dans OBS, **clic droit sur la source d'alertes › Actualiser** (et sur les scènes Cam seule, Contenu, Jeu, pour le bandeau).
 
-✅ **À chaque live**, Streamer.bot doit être **lancé avant OBS** (ou actualise les sources après l'avoir lancé).
+✅ **À chaque live**, Streamer.bot doit être **lancé**. Avant ou après OBS, peu importe : l'overlay s'y reconnecte tout seul dès qu'il est là.
 
 > Si tu as changé le port ou mis un mot de passe dans Streamer.bot, reporte-les dans `reglages.html` › **Streamer.bot**.
 
 ### 6.3 Vérifier que l'overlay est bien branché
 
-1. Dans OBS, clic droit sur la source d'alertes › **Interagir**.
-2. Dans la fenêtre qui s'ouvre, appuie sur **F12**, puis clique sur l'onglet **Console**.
-3. Tu dois lire **`[Overlay] Connecté à Streamer.bot`**. Si tu lis « Déconnecté » ou rien du tout : voir la section 10.
+OBS n'a pas de console (F12) : l'overlay a donc son propre **journal**, affiché directement dans la source.
+
+1. Dans OBS, double-clic sur la source d'alertes (dans la scène « Global — Alertes »).
+2. Décoche **Fichier local** et colle dans **URL** l'adresse de la page suivie de `?journal=1` (geste C) :
+   `file:///G:/Projets/Overlay/patagrain/sources/alertes.html?journal=1`
+3. **OK** : un panneau sombre apparaît en haut à gauche de l'écran. Tu dois y lire **✅ Connecté à Streamer.bot**.
+   - « ⚠️ Déconnecté de Streamer.bot » : Streamer.bot n'est pas lancé, ou son serveur WebSocket n'est pas démarré (6.2).
+   - « ⚠️ Streamer.bot désactivé » : coche « Se connecter à Streamer.bot » dans `reglages.html`.
+4. Chaque événement reçu s'y ajoute (ex. `Twitch.Follow → follow · Pseudo`), avec **les données brutes** reçues de Streamer.bot en dessous.
+5. Une fois vérifié, **retire `?journal=1`** de l'adresse (sinon le panneau reste à l'écran pendant le live).
+
+Le journal marche sur toutes les pages (`?journal=1`), et aussi avec `?test=1` pour voir passer les fausses alertes.
 
 ### 6.4 Événement par événement
 
@@ -396,7 +422,7 @@ Le compteur avance à chaque follow (ou abonnement) reçu **pendant que OBS est 
 - **Sans Twitch** : chaque page accepte `?test=1` (fausses alertes toutes les 9 secondes, qui ne touchent pas au vrai compteur). Le plus simple : `reglages.html` › **Tester** › Alertes.
 - **Pour de vrai** : demande à un ami (ou à un deuxième compte à toi) de suivre la chaîne, pendant qu'OBS et Streamer.bot sont ouverts. L'alerte « Nouvel aventurier » doit arriver dans les secondes qui suivent.
 
-> ⚠️ **Pas encore vérifié sur un vrai live** : les noms exacts des informations envoyées par Streamer.bot ne sont pas documentés. L'overlay essaie plusieurs noms possibles et affiche chaque événement reçu dans la console (6.3). Si une alerte montre « Quelqu'un » ou « ? », copie la ligne de la console pour faire corriger l'overlay.
+> ⚠️ **Pas encore vérifié sur un vrai live** : les noms exacts des informations envoyées par Streamer.bot ne sont pas documentés. L'overlay essaie plusieurs noms possibles et affiche chaque événement reçu dans le journal (6.3). Si une alerte montre « Quelqu'un » ou « ? », fais une capture d'écran du journal (avec les données brutes) pour faire corriger l'overlay.
 
 ---
 
@@ -406,10 +432,10 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 
 | Visuel | Fichier | Où l'envoyer sur Twitch |
 |---|---|---|
-| Photo de profil | `profil.png` (800 × 800) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
+| Photo de profil | `profil.png` : le bouffon (800 × 800) · autre choix : `profil-embleme.png` (le d20) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
 | Bannière de profil | `banniere.png` (1200 × 480) | … › **Marque** › Bannière de profil |
 | Écran hors-ligne | `hors-ligne.png` (1920 × 1080) | … › **Marque** › Bannière du lecteur vidéo |
-| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
 | Emotes | `emote-nat20`, `nat1`, `gg`, `grelot`, `epee`, et le bouffon : `bouffon`, `bouffon-clin`, `bouffon-rire`, `bouffon-choc` (-112, -56, -28) | Tableau de bord › **Récompenses des spectateurs** › Emotes *(affilié ou partenaire)* |
 | Badges d'abonné | `badge-mois-1` (d4), `-3` (d6), `-6` (d8), `-9` (bouclier), `-12` (d20) (-72, -36, -18) | Tableau de bord › **Récompenses des spectateurs** › Badges d'abonné |
 
@@ -439,6 +465,7 @@ node outils/exporter-chaine.mjs
 | `?minutes=0.2` | *(Starting soon)* compte à rebours de 12 s, pour voir le lancer de d20 |
 | `?mode=complet` | *(transitions)* animation entière |
 | `?bouffon=0` · `?chat=0` · `?bandeau=0` | retire le bouffon, le chat ou le bandeau de la page |
+| `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 
 Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple : ouvre `index.html` (tout y tourne en mode test), ou `reglages.html` › **Tester**.
 
@@ -452,6 +479,7 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple :
 | Le vocabulaire des alertes (avec aperçu) | `reglages.html` › Alertes |
 | La durée, le volume ou le son des alertes | `reglages.html` › Alertes |
 | Les bots masqués, la mémoire du chat | `reglages.html` › Le chat |
+| Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Le bouffon (le cacher, son rythme en scène Jeu, sa bulle de fin) | `reglages.html` › Le bouffon |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`) |
 | Les couleurs | début de `css/theme.css` (palette « Royal bleu & or »), puis refaire les vidéos et le kit |
@@ -488,13 +516,13 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 → C'est la mémoire du chat (10 minutes). Règle-la (ou mets `0`) dans `reglages.html` › **Le chat**.
 
 **Les alertes ne s'affichent pas**
-→ Streamer.bot est-il lancé, serveur WebSocket **démarré** (port `8080`), compte Broadcaster connecté ? Regarde la console (6.3). Puis actualise la source d'alertes.
+→ Streamer.bot est-il lancé, serveur WebSocket **démarré** (port `8080`), compte Broadcaster connecté ? Regarde le journal (6.3, `?journal=1`). Puis actualise la source d'alertes.
 
 **On n'entend pas les grelots**
 → Coche **Contrôler l'audio via OBS** sur la source d'alertes, puis vérifie son volume dans le mélangeur. Et vérifie « Tintement des grelots » dans `reglages.html` › Alertes.
 
 **Une alerte s'affiche mal (pseudo manquant, « ? »…)**
-→ Console (6.3) : chaque événement reçu y est détaillé. Copie la ligne pour faire corriger l'overlay.
+→ Journal (6.3, `?journal=1`) : chaque événement reçu y est détaillé, avec ses données brutes. Fais-en une capture d'écran pour faire corriger l'overlay.
 
 **Le bouffon gêne sur une scène**
 → Ajoute `?bouffon=0` à l'adresse de cette scène (geste C), ou décoche-le dans `reglages.html` › **Le bouffon**.

@@ -53,6 +53,13 @@ window.ReglagesChamps = {
       { cle: 'objectif.cible', type: 'nombre', label: 'Objectif à atteindre', min: 1 },
       { cle: 'objectif.depart', type: 'nombre', label: 'Ton nombre ACTUEL', min: 0, aide: 'Ton nombre actuel de followers (ou d\'abonnés). Le changer remet le compteur à cette valeur.' },
     ] },
+    { titre: 'Bandeau d\'infos', icone: '📰', aide: 'La barre en bas des scènes Cam seule, Contenu et Jeu : décoche ce que tu ne veux pas voir.', champs: [
+      { cle: 'bandeau.ceSoir', type: 'case', label: '« Ce soir » (ce que tu fais aujourd\'hui)' },
+      { cle: 'bandeau.aventurier', type: 'case', label: '« Aventurier » : dernier follow' },
+      { cle: 'bandeau.chevalier', type: 'case', label: '« Chevalier » : dernier abonné', aide: 'Seulement si ta chaîne est affiliée ou partenaire.' },
+      { cle: 'bandeau.tribut', type: 'case', label: '« Tribut » : dernier don ou bits', aide: 'Décoche si tu ne reçois ni dons ni bits.' },
+      { cle: 'bandeau.objectif', type: 'case', label: 'L\'objectif et sa mini-jauge' },
+    ] },
     { titre: 'Alertes', icone: '🔔', alertes: true, champs: [
       { cle: 'alertes.duree', type: 'nombre', label: 'Durée d\'affichage (secondes)', min: 2 },
       { cle: 'alertes.son', type: 'case', label: 'Tintement des grelots' },
@@ -62,7 +69,7 @@ window.ReglagesChamps = {
     { titre: 'Le bouffon', icone: '🃏', champs: [
       { cle: 'bouffon.actif', type: 'case', label: 'Le bouffon est de sortie (tous les écrans)' },
       { cle: 'bouffon.alertes', type: 'case', label: 'Il descend avec chaque alerte, accroché à sa corde' },
-      { cle: 'bouffon.jeuToutesLes', type: 'nombre', label: 'Scène Jeu : il sort la tête toutes les … secondes', min: 0, aide: '0 = jamais tout seul.' },
+      { cle: 'bouffon.jeuToutesLes', type: 'nombre', label: 'Scène Jeu : il sort la tête environ toutes les … secondes', min: 0, aide: '180 = toutes les 3 minutes environ (le délai varie un peu). 0 = jamais tout seul.' },
       { cle: 'bouffon.jeuAuFollow', type: 'case', label: 'Scène Jeu : il sort la tête à chaque follow' },
       { cle: 'bouffon.bulles', type: 'liste', label: 'Écran Fin : ce que dit sa bulle', aide: 'Une phrase par ligne ; elles s\'alternent.' },
     ] },

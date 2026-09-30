@@ -28,7 +28,7 @@
 -->
 <div id="ecran"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@streamerbot/client/dist/streamerbot-client.js"></script>
+<script src="../js/streamerbot-client.js"></script>
 <script src="../config.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
@@ -58,7 +58,7 @@
     // il sort la tête jusqu'au menton… sauf si la cam est en haut : le chapeau ne doit pas sortir de l'écran
     perso.style.setProperty('--leve', Math.max(50 * s, Math.min(143 * s, haut - 181 * s - 4)) + 'px');
     const CB = CONFIG.bouffon || {};
-    Numeros.coucouJeu(perso, { toutesLes: CB.jeuToutesLes ?? 60 });
+    Numeros.coucouJeu(perso, { toutesLes: CB.jeuToutesLes ?? 180 });
     if (CB.jeuAuFollow !== false) Evenements.ecouter(e => { if (e && e.type === 'follow') perso.sortir(); });
     if (Commun.params.has('test')) setTimeout(perso.sortir, 1500);    // en test : une sortie tout de suite
   }

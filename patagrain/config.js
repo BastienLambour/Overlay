@@ -85,6 +85,16 @@ window.CONFIG = {
     depart: 0,           // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
   },
 
+  // --- Bandeau d'infos (en bas des scènes Cam seule, Contenu et Jeu) : ce qu'il affiche ---
+  // Mets false pour cacher une case, ex. tribut: false si tu ne reçois ni dons ni bits.
+  bandeau: {
+    ceSoir: true,        // « Ce soir » : ce que tu fais aujourd'hui
+    aventurier: true,    // dernier follow
+    chevalier: true,     // dernier abonné (chaîne affiliée ou partenaire)
+    tribut: true,        // dernier don ou bits
+    objectif: true,      // l'objectif et sa mini-jauge
+  },
+
   // --- Alertes ---
   alertes: {
     duree: 7,            // secondes d'affichage de chaque alerte
@@ -110,7 +120,7 @@ window.CONFIG = {
   bouffon: {
     actif: true,         // false = plus de bouffon nulle part
     alertes: true,       // il descend avec chaque alerte, accroché à sa corde
-    jeuToutesLes: 60,    // scène Jeu : il passe la tête sous son chapeau toutes les N secondes (0 = jamais tout seul)
+    jeuToutesLes: 180,    // scène Jeu : il passe la tête sous son chapeau environ toutes les N secondes (0 = jamais tout seul)
     jeuAuFollow: true,   // scène Jeu : … et à chaque nouveau follow
     // Écran Fin : ce que dit sa bulle (les phrases s'alternent)
     bulles: ["Merci d'être venus !", "À bientôt, aventuriers !"],
@@ -123,7 +133,7 @@ window.CONFIG = {
     planning: [],   // jours et heures de stream, ex. ["Mercredi", "20h30"]
     reseaux: [],    // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

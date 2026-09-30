@@ -131,7 +131,8 @@ const Numeros = (() => {
       el.classList.add('sort');
       clearTimeout(fin); fin = setTimeout(() => el.classList.remove('sort'), 10000);   // durée d'une sortie (--duree-coucou)
     };
-    if (toutesLes > 0) setInterval(el.sortir, toutesLes * 1000);
+    // Pas comme une horloge : le délai varie un peu (± 25 %) d'une sortie à l'autre
+    if (toutesLes > 0) (function prochaine() { setTimeout(() => { el.sortir(); prochaine(); }, toutesLes * 1000 * (.75 + Math.random() * .5)); })();
     return el;
   }
 

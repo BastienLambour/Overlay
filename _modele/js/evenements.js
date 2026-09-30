@@ -104,26 +104,53 @@ const Evenements = (() => {
   const ECOUTES = ['Twitch.Follow', 'Twitch.Sub', 'Twitch.ReSub', 'Twitch.GiftSub', 'Twitch.GiftBomb', 'Twitch.Cheer', 'Twitch.Raid',
     'StreamElements.Tip', 'Streamlabs.Donation', 'Kofi.Donation', 'TipeeeStream.Donation'];
 
+  // ---------- Journal à l'écran : ?journal=1 ----------
+  // Un panneau, visible dans OBS, qui montre l'état de la connexion à Streamer.bot et les derniers
+  // événements reçus avec leurs données brutes (pour vérifier ou faire corriger une alerte).
+  const JOURNAL = params.has('journal');
+  let panneau;
+  function journal(titre, detail = '', couleur = '#8FD0F5') {
+    if (!JOURNAL || !document.body) return;
+    if (!panneau) {
+      panneau = document.createElement('div');
+      panneau.setAttribute('style', 'position:fixed;left:16px;top:16px;z-index:99999;width:900px;max-height:calc(100vh - 32px);overflow:hidden;' +
+        'background:rgba(10,14,22,.92);color:#e8ecf2;font:14px/1.45 Consolas,monospace;border:3px solid #8FD0F5;border-radius:12px;padding:12px 16px');
+      panneau.innerHTML = '<div style="font-weight:700;font-size:18px;margin-bottom:6px">📋 Journal de l\'overlay (?journal=1)</div><div class="etat"></div><div class="liste"></div>';
+      document.body.appendChild(panneau);
+    }
+    const heure = new Date().toLocaleTimeString('fr-FR');
+    const ligne = document.createElement('div');
+    ligne.style.cssText = 'border-top:1px solid #2a3344;padding:5px 0;white-space:pre-wrap;overflow-wrap:anywhere';
+    const echap = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    ligne.innerHTML = `<b style="color:${couleur}">${heure} · ${echap(titre)}</b>${detail ? '\n' + echap(detail).slice(0, 700) : ''}`;
+    panneau.querySelector('.liste').prepend(ligne);
+    while (panneau.querySelector('.liste').children.length > 12) panneau.querySelector('.liste').lastElementChild.remove();
+  }
+  const etatJournal = t => { journal(t, '', t.startsWith('✅') ? '#8BD17C' : '#F5B82E'); };
+
   // ---------- Connexion ----------
   let connecte = false;
   function connecter() {
     const sb = C.streamerbot || {};
-    if (sb.actif === false) return;
+    if (sb.actif === false) return etatJournal('⚠️ Streamer.bot désactivé dans les réglages (streamerbot.actif)');
     if (!window.StreamerbotClient) {
       console.warn('[Overlay] Client Streamer.bot non chargé (connexion internet ?)');
-      return;
+      return etatJournal('⚠️ Client Streamer.bot non chargé : pas de connexion internet au démarrage de la page ?');
     }
+    etatJournal(`… connexion à Streamer.bot sur ${sb.hote || '127.0.0.1'}:${sb.port || 8080}`);
     const client = new window.StreamerbotClient({
       host: sb.hote || '127.0.0.1', port: sb.port || 8080, endpoint: '/',
       password: sb.motDePasse || undefined,
-      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); },
-      onDisconnect: () => { connecte = false; console.info('[Overlay] Déconnecté de Streamer.bot'); },
+      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); },
+      onDisconnect: () => { connecte = false; console.info('[Overlay] Déconnecté de Streamer.bot'); etatJournal('⚠️ Déconnecté de Streamer.bot (lancé ? serveur WebSocket démarré ?)'); },
     });
     ECOUTES.forEach(cle => {
       try {
         client.on(cle, msg => {
           console.debug('[Overlay] ' + cle, msg);   // utile pour vérifier le format reçu
           const e = depuisStreamerbot(cle, msg);
+          journal(`${cle} → ${e ? `${e.type} · ${e.nom}${e.montant ? ' · ' + e.montant : ''}${e.mois ? ' · ' + e.mois + ' mois' : ''}${e.nombre ? ' · ' + e.nombre : ''}${e.destinataire ? ' → ' + e.destinataire : ''}` : 'ignoré'}`,
+            'données reçues : ' + JSON.stringify((msg && msg.data) || msg));
           if (e) emettre(e);
         });
       } catch (err) { console.warn('[Overlay] Événement non géré par Streamer.bot : ' + cle); }
@@ -152,6 +179,8 @@ const Evenements = (() => {
   }
 
   function demarrer() {
+    if (JOURNAL) addEventListener('DOMContentLoaded', () => journal(test ? 'Mode test : fausses alertes' : 'Page chargée'));
+    if (JOURNAL && test) abonnes.push(e => e && journal(`test → ${e.type} · ${e.nom}`));
     if (test) simuler(); else connecter();
   }
 

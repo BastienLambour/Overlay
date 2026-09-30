@@ -122,7 +122,10 @@ Copiés **à l'identique** dans chaque overlay ; on ne les personnalise pas sur 
 Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `js/evenements.js` : Streamer.bot (WebSocket local) → événements normalisés
   `{ type, nom, montant, mois, nombre, destinataire }`, objectif persistant (localStorage
-  `overlay-<id>-etat`), mode test.
+  `overlay-<id>-etat`), mode test. `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
+  leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
+- `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
+  les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,
   encode en `.webm` transparent avec ffmpeg (60 i/s), affiche le point de transition Stinger.
   `node outils/generer-transitions.mjs [noms…] [cle=valeur…]`.
@@ -130,6 +133,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   (Edge headless, fond transparent, toutes les tailles demandées).
 - `outils/generer-pdf.mjs` : `TUTO.md` / `CONCEPT.md` → PDF (Edge headless, sans dépendance).
 - `outils/polices-locales.mjs` : Google Fonts de `theme.css` → fichiers dans `assets/polices/` + @font-face locales.
+- `outils/actualiser-obs.lua` : script OBS (Outils › Scripts) : bouton + raccourci « Actualiser toutes les sources
+  Navigateur », et actualisation automatique des sources de l'overlay quand `config.js` change. Seule exception au « tout
+  en Node » (c'est un script pour OBS lui-même).
 - `outils/capturer.mjs` : capture PNG d'une page, figée à des instants donnés
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;
   signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut.
@@ -150,7 +156,7 @@ Il garde en mémoire ses derniers messages entre les scènes (localStorage `over
 
 - **Alertes** : via **Streamer.bot** (gratuit, local). Les noms de champs des événements ne
   sont pas documentés : `evenements.js` essaie plusieurs clés et logue chaque événement en
-  console (OBS : clic droit › Interagir › F12). Pas encore validé sur un vrai live.
+  console et dans le journal `?journal=1` (OBS n'a pas de F12 dans « Interagir »). Pas encore validé sur un vrai live.
 - **Transitions** : une page HTML ne peut pas être une transition OBS → vidéo **Stinger**.
   Chaque page de transition gère `?mode=entree` (défaut) et `?mode=complet&capture=1`, et peut
   déclarer son point de coupe (`data-coupe` / `pointTransition()`).

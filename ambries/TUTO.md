@@ -115,6 +115,16 @@ La source séparée `sources/chat.html` (ou `sources/bandeau.html`) sert seuleme
 
 Quand tu changes de scène, le chat **réaffiche les derniers messages** (ceux des 10 dernières minutes, réglable dans `reglages.html` › **Le chat**) : il ne repart pas à vide.
 
+### 2.8 Actualiser toutes les sources d'un coup (après un changement de réglages)
+
+OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay en fournit un, sous forme de petit script OBS.
+
+1. OBS › **Outils › Scripts** › onglet **Scripts** › **+** › choisis `outils/actualiser-obs.lua` (dans le dossier `ambries`).
+2. À droite : le bouton **Actualiser toutes les sources Navigateur**, et la case **Actualiser tout seul les sources de l'overlay quand config.js change** (cochée) : après **Enregistrer** dans `reglages.html`, les sources se mettent à jour en 2 secondes.
+3. **Fermer** : le script reste installé. Raccourci clavier possible : **Paramètres › Raccourcis clavier** › « Actualiser toutes les sources Navigateur ».
+
+> ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
+
 ---
 
 ## 3. Les scènes, fiche par fiche
@@ -396,7 +406,7 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 → Coche **Contrôler l'audio via OBS** sur la source d'alertes et vérifie son volume dans le mélangeur.
 
 **Une alerte s'affiche mal (pseudo manquant, « ? »…)**
-→ Clic droit sur la source d'alertes › **Interagir**, puis **F12** › **Console** : chaque événement reçu y est détaillé. Copie la ligne pour faire corriger l'overlay.
+→ OBS n'a pas de console (F12) : ajoute `?journal=1` à l'adresse de la source d'alertes (décoche *Fichier local*, colle l'adresse de la page suivie de `?journal=1`). Un panneau affiche la connexion à Streamer.bot (« ✅ Connecté ») et chaque événement reçu avec ses données brutes : fais-en une capture d'écran pour faire corriger l'overlay, puis retire `?journal=1`.
 
 **La cam ne tombe pas pile dans le cadre**
 → Refais le geste B, et vérifie que la webcam est bien **sous** l'overlay.
