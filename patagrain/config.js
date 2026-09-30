@@ -1,7 +1,8 @@
 /* =====================================================================
    PATAGRAIN — Configuration de l'overlay : c'est ici qu'on modifie les textes.
-   Pas besoin de toucher au reste : enregistre, puis actualise la source
-   dans OBS (clic droit > Actualiser).
+   Le plus simple : ouvre reglages.html (un formulaire qui réécrit ce fichier).
+   Ou modifie-le à la main : enregistre, puis actualise la source dans OBS
+   (clic droit > Actualiser).
    ===================================================================== */
 window.CONFIG = {
   nomChaine: "Patagrain",
@@ -58,7 +59,7 @@ window.CONFIG = {
     ],
   },
 
-  // Messages qui défilent en bas des écrans Starting soon et Pause
+  // Messages qui défilent en bas des écrans Starting soon et Pause ({titreDuJour} est remplacé)
   messages: [
     "Installe-toi, prends à boire, l'aventure arrive",
     "Suis la chaîne pour rejoindre la guilde des aventuriers",
@@ -73,6 +74,7 @@ window.CONFIG = {
     maxMessages: 14,
     ignorer: ["nightbot", "streamelements", "streamlabs", "moobot", "fossabot", "wizebot", "sery_bot"],
     masquerCommandes: true,  // cache les messages qui commencent par « ! »
+    memoireMinutes: 10,      // en changeant de scène, le chat réaffiche les messages des N dernières minutes (0 = jamais)
   },
 
   // --- Objectif (bandeau et jauge) ---
@@ -103,13 +105,23 @@ window.CONFIG = {
     },
   },
 
+  // --- Le bouffon (la mascotte) sur les écrans ---
+  // Pour le cacher sur une seule page : ajoute ?bouffon=0 à son adresse.
+  bouffon: {
+    actif: true,         // false = plus de bouffon nulle part
+    alertes: true,       // il descend avec chaque alerte, accroché à sa corde
+    jeuToutesLes: 60,    // scène Jeu : il passe la tête sous son chapeau toutes les N secondes (0 = jamais tout seul)
+    jeuAuFollow: true,   // scène Jeu : … et à chaque nouveau follow
+    // Écran Fin : ce que dit sa bulle (les phrases s'alternent)
+    bulles: ["Merci d'être venus !", "À bientôt, aventuriers !"],
+  },
+
   // --- Kit de chaîne Twitch (chaine/kit.html) : textes des visuels de la chaîne ---
   chaine: {
     slogan: "Jeux vidéo & jeu de rôle, à la cour du bouffon",
     horsLigne: "Le bouffon se repose…",
-    planning: [                       // jours et heures de stream, ex. ["Mercredi", "20h30"]
-    ],
-    reseaux: [],                      // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
+    planning: [],   // jours et heures de stream, ex. ["Mercredi", "20h30"]
+    reseaux: [],    // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
     panneaux: ["À propos", "Planning", "Règles", "Soutenir"],
   },

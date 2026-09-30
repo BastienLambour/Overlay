@@ -28,6 +28,10 @@ const variable = nom => (theme.match(new RegExp(`--${nom}:\\s*([^;]+);`)) || [])
 const accent = (variable('accent') || '#3A9AD9').split(/\s/)[0];
 const policeTitre = variable('f-titre') || 'sans-serif';
 const importPolices = (theme.match(/@import url\([^)]+\);/) || [''])[0];
+// Polices locales déclarées dans theme.css (@font-face, fichiers dans assets/polices/) : chemins rendus
+// absolus, car la page du PDF est fabriquée dans un dossier temporaire (sinon titres en police de secours)
+const policesLocales = (theme.match(/@font-face\s*\{[^}]*\}/g) || []).map(bloc =>
+  bloc.replace(/url\((['"]?)([^'")]+)\1\)/g, (tout, q, u) => /^(https?:|data:|file:)/.test(u) ? tout : `url('${pathToFileURL(join(RACINE, 'css', u)).href}')`)).join('\n');
 let config = {};
 try { const s = readFileSync(join(RACINE, 'config.js'), 'utf8'); const w = {}; new Function('window', s)(w); config = w.CONFIG || {}; } catch {}
 const nomChaine = config.nomChaine || basename(RACINE);
@@ -103,6 +107,7 @@ const page = (titre, corps) => `<!DOCTYPE html><html lang="fr"><head><meta chars
 <style>
   ${importPolices}
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=JetBrains+Mono:wght@500&display=swap');
+  ${policesLocales}
   @page { size: A4; margin: 18mm 16mm 20mm; }
   :root { --accent: ${accent}; }
   * { box-sizing: border-box; }
@@ -133,8 +138,9 @@ ${corps}
 </body></html>`;
 
 // ---------- Edge sans fenêtre ----------
-const EDGE = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
-  .find(p => existsSync(p));
+// Edge (installé avec Windows), ou un autre navigateur Chromium indiqué par la variable NAVIGATEUR (Chrome, Chromium…)
+const EDGE = [process.env.NAVIGATEUR, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
+  .find(p => p && existsSync(p));
 if (!EDGE) { console.error('Microsoft Edge introuvable.'); process.exit(1); }
 const attendre = ms => new Promise(r => setTimeout(r, ms));
 const temp = mkdtempSync(join(tmpdir(), 'overlay-pdf-'));

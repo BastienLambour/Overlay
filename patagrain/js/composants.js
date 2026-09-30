@@ -48,10 +48,10 @@ const Composants = (() => {
   }
 
   // --- Cadre autour d'une zone transparente ---
-  //  decor : chapeau de bouffon au-dessus + dés dans les coins du bas
+  //  decor : chapeau de bouffon au-dessus + dés dans les coins du bas (chapeau: false = les dés seuls)
   //  nom   : plaque dorée avec le nom de la chaîne
   //  titre : petite étiquette en haut à gauche (pour le cadre « contenu »)
-  function cadre(parent, z, { decor = true, nom = true, titre = '', sobre = false, apercuTitre = 'Webcam' } = {}) {
+  function cadre(parent, z, { decor = true, chapeau = true, nom = true, titre = '', sobre = false, apercuTitre = 'Webcam' } = {}) {
     zoneApercu(parent, z, apercuTitre, apercuTitre !== 'Webcam');
     const b = borne(7, Math.min(z.l, z.h) * 0.022, 12), R = b + 14, r = 14;
     const L = z.l + 2 * b, H = z.h + 2 * b;
@@ -63,7 +63,8 @@ const Composants = (() => {
     if (decor) {
       const lc = borne(110, z.l * 0.22, 260), hc = lc * 214 / 392;   // proportions de assets/chapeau.svg
       const de = borne(40, Math.min(z.l, z.h) * 0.15, 86);
-      html += `<img class="chapeau" src="../assets/chapeau.svg" alt="" style="width:${lc}px;top:${-hc * .93 + b}px">
+      if (chapeau) html += `<img class="chapeau" src="../assets/chapeau.svg" alt="" style="width:${lc}px;top:${-hc * .93 + b}px">`;
+      html += `
         <svg class="de g" viewBox="0 0 100 100" style="width:${de}px;left:${-de * .36}px;bottom:${-de * .36}px"><use href="#i-d20"/></svg>
         <svg class="de d" viewBox="0 0 100 100" style="width:${de * .88}px;right:${-de * .34}px;bottom:${-de * .3}px"><use href="#i-d6"/></svg>`;
     }
@@ -77,13 +78,32 @@ const Composants = (() => {
   }
 
   // --- Chat : dans une carte « taverne », ou flottant sur le jeu ---
-  function chat(parent, z, { flottant = false, disparition = 0 } = {}) {
+  //  bouffon : { tete, depasse } — le bouffon prend la hauteur de l'en-tête (tete, en px) à droite,
+  //            et son chapeau dépasse de la carte de « depasse » px (nécessite bouffon.js et numeros.js)
+  function chat(parent, z, { flottant = false, disparition = 0, bouffon = null } = {}) {
     const el = flottant
       ? creer(parent, 'chat-flottant', '<div class="lignes"></div>', z)
       : creer(parent, 'taverne carte', `<div class="taverne-tete"><svg viewBox="0 0 60 70"><use href="#i-grelot"/></svg>
           <span class="titre">${(C.chat || {}).titre || 'La taverne'}</span></div><div class="lignes"></div>`, z);
     Chat.monter(el.querySelector('.lignes'), { disparition });
+    if (bouffon && !flottant && P.bouffon() && typeof Numeros !== 'undefined') bouffonTaverne(el, z, bouffon);
     return el;
+  }
+
+  // Le bouffon qui surveille la taverne : visible du haut du chapeau (y ≈ 4 du dessin) jusqu'au
+  // menton (y ≈ 320), coupé net par le trait sous l'en-tête, ses deux mains posées dessus.
+  function bouffonTaverne(carte, z, { tete = 100, depasse = 30 } = {}) {
+    const HAUT = 22, DROITE = 14;                       // marge haute de la carte, retrait à droite
+    carte.classList.add('avec-bouffon');
+    carte.style.setProperty('--haut-tete', tete + 'px');
+    const V = depasse + HAUT + tete, s = V / 316, L = 400 * s;
+    const boite = creer(carte, 'taverne-bouffon', '<div class="taverne-perso"></div>',
+      { x: z.l - DROITE - L, y: -depasse, l: L, h: V });
+    const perso = boite.firstElementChild;
+    Object.assign(perso.style, { width: L + 'px', top: V - 424 * s + 'px' });   // le trait tombe à y = 320 du dessin
+    const d = 58 * s;                                    // taille des mains
+    [.24, .76].forEach(f => creer(carte, 'taverne-main', '', { x: z.l - DROITE - L + f * L - d / 2, y: HAUT + tete - d * .55, l: d, h: d }));
+    Numeros.taverne(perso, carte.querySelector('.lignes'));
   }
 
   // --- Bandeau d'infos : dernier aventurier, chevalier, tribut, objectif ---

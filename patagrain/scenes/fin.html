@@ -5,6 +5,7 @@
 <title>Scène — Fin</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
 <style>
   .contenu { position: absolute; inset: 0 0 150px; padding-top: 70px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -17,13 +18,25 @@
   @keyframes plante { from { opacity: 0; transform: translateY(-60px) rotate(-20deg); } }
   .prochain { margin-top: 34px; padding: 20px 56px 24px; display: none; flex-direction: column; align-items: center; gap: 6px; }
   .prochain.visible { display: flex; }
+  /* Le bouffon dit au revoir, à gauche, sa bulle au-dessus de la tête */
+  .bouffon-fin { position: absolute; left: 80px; bottom: 150px; width: 226px; height: 520px; }
+  .bouffon-fin .bouffon-svg { width: 100%; height: 100%; }
+  .bulle-fin { position: absolute; left: 40px; bottom: 680px; white-space: nowrap; transform-origin: 153px 100%;
+    padding: 14px 30px 18px; border-radius: 28px; background: var(--texte); color: var(--fond);
+    font: 800 44px/1.1 var(--f-titre); box-shadow: var(--ombre); }
+  .bulle-fin::after { content: ""; position: absolute; left: 153px; top: 100%; translate: -50% -2px;   /* la pointe vise sa tête */
+    border: 18px solid transparent; border-top: 26px solid var(--texte); }
+  .bulle-fin.change { animation: bulle-change .5s var(--rebond); }
+  @keyframes bulle-change { from { scale: .6; } }
   .prochain .texte { font: 800 54px/1.1 var(--f-titre); }
 </style>
 </head>
 <body>
 <!--
   Écran « Fin » (1920 × 1080, plein écran).
-  Options : ?prochainStream=Jeudi%2020h30 (carte « Prochaine quête ») · ?titre=… · ?sousTitre=…
+  Le bouffon dit au revoir : coucou et clin d'œil, courbette, saut de joie ; sa bulle alterne les
+  phrases de config.js › bouffon.bulles.
+  Options : ?bouffon=0 · ?prochainStream=Jeudi%2020h30 (carte « Prochaine quête ») · ?titre=… · ?sousTitre=…
 -->
 <div id="ecran" class="plein">
   <div class="fond-attente"></div>
@@ -41,6 +54,9 @@
     </div>
   </div>
 
+  <div class="bouffon-fin entree" style="--retard:.5s" id="bouffon"></div>
+  <div class="bulle-fin entree" style="--retard:.9s" id="bulle"></div>
+
   <div class="bandeau-messages carte entree" style="--retard:.7s">
     <svg viewBox="0 0 60 70"><use href="#i-grelot"/></svg><span class="message" id="message"></span>
   </div>
@@ -48,6 +64,8 @@
 
 <script src="../config.js"></script>
 <script src="../js/commun.js"></script>
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
 <script>
   const P = Commun, R = CONFIG.fin;
   P.demarrer();
@@ -55,6 +73,14 @@
   P.fanions(document.getElementById('fanions'));
   P.decor(document.getElementById('decor'));
   P.messages(document.getElementById('message'), R.messages);
+
+  const bulle = document.getElementById('bulle');
+  if (P.bouffon()) {
+    Numeros.auRevoir(document.getElementById('bouffon'), bulle);
+    // la bulle fait un petit « pop » à chaque nouvelle phrase
+    new MutationObserver(() => { bulle.classList.remove('change', 'entree'); void bulle.offsetWidth; bulle.classList.add('change'); })
+      .observe(bulle, { childList: true });
+  } else { bulle.remove(); document.getElementById('bouffon').remove(); }
 </script>
 </body>
 </html>

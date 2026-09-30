@@ -165,7 +165,9 @@
 @keyframes alerte-sort { to { opacity: 0; transform: translateY(-60px) scale(.85); } }
 .alerte-icone { width: 130px; height: 130px; flex: none; border-radius: 22px; background: var(--fond); display: grid; place-items: center; transform-origin: 50% 12%; }
 .alerte.grande .alerte-icone { width: 160px; height: 160px; }
-.alerte-icone > * { width: 76%; max-height: 80%; }
+/* taille fixe (et non en %) : l'épée du raid, très haute, restait sinon plus grande que la case */
+.alerte-icone > * { width: 76%; height: 100px; object-fit: contain; }
+.alerte.grande .alerte-icone > * { height: 124px; }
 .alerte.entre .alerte-icone { animation: tinte 1.4s .5s ease-in-out 2; }
 .alerte-titre { font: 900 24px var(--f-texte); letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
 .alerte-nom { font: 800 76px/1 var(--f-titre); display: inline-block; margin: 4px 0 6px; overflow-wrap: anywhere; }

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patagrain — Réglages</title>
+<!-- Réglages de l'overlay : un formulaire qui réécrit config.js.
+     Ouvre ce fichier dans Edge ou Chrome (double-clic), change ce que tu veux, clique « Enregistrer ».
+     La première fois, choisis le fichier config.js de ce dossier : ensuite la page s'en souvient. -->
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/composants.css">
+<style>
+  html, body { width: auto; height: auto; overflow: auto; background: var(--fond); }
+  main { max-width: 1060px; margin: 0 auto; padding: 28px 16px 140px; }
+  .logo { width: min(420px, 80%); margin: 0 auto 6px; }
+  h1 { font: 800 56px/1.1 var(--f-titre); text-align: center; }
+  .intro { text-align: center; color: var(--texte-doux); font-size: 18px; max-width: 64ch; margin: 8px auto 0; line-height: 1.55; }
+  a { color: var(--accent); }
+
+  /* Barre d'enregistrement, toujours visible en bas */
+  .barre { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--surface); border-top: 4px solid var(--accent);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 18px; padding: 14px 16px; box-shadow: 0 -8px 20px rgba(0,0,0,.35); }
+  button { font: 900 17px var(--f-texte); border-radius: 12px; padding: 12px 22px; cursor: pointer; border: 3px solid var(--accent); }
+  .principal { background: var(--accent); color: #1b1b1b; }
+  .secondaire { background: transparent; color: var(--texte); border-color: var(--texte-doux); }
+  button:disabled { opacity: .45; cursor: default; }
+  #statut { color: var(--texte-doux); font-weight: 700; max-width: 60ch; }
+  #statut.etat-ok { color: #8BD17C; } #statut.etat-attention { color: var(--accent); }
+
+  /* Sections */
+  .section { background: var(--surface); border-radius: 18px; padding: 22px 26px 26px; margin-top: 26px; box-shadow: var(--ombre); }
+  .section h2 { font: 800 34px/1.1 var(--f-titre); color: var(--texte); display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .section h2 svg, .section h2 img { width: 40px; height: 40px; }
+  .champs { display: grid; gap: 16px 24px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+  .champ { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .champ.large { grid-column: 1 / -1; }
+  .champ > span { font: 800 15px var(--f-texte); color: var(--texte); }
+  .champ small { color: var(--texte-doux); font-size: 14px; line-height: 1.4; }
+  input[type=text], input[type=number], input[type=password], input[type=time], select, textarea {
+    font: 600 17px var(--f-texte); color: var(--texte); background: var(--fond); border: 2px solid color-mix(in srgb, var(--texte-doux) 35%, transparent);
+    border-radius: 10px; padding: 10px 12px; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 96px; line-height: 1.45; }
+  input[type=time] { color-scheme: dark; }
+  .case { flex-direction: row; align-items: center; gap: 12px; cursor: pointer; }
+  .case input { width: 24px; height: 24px; accent-color: var(--accent); flex: none; }
+  .case > span { font-weight: 700; }
+  .modifie > span::after { content: " •"; color: var(--accent); }
+
+  /* Vocabulaire des alertes */
+  .alertes-textes { display: grid; gap: 14px; margin-top: 22px; }
+  .ligne-alerte { display: grid; grid-template-columns: 170px 1fr 1.4fr; gap: 12px; align-items: center; }
+  .ligne-alerte b { font: 800 16px var(--f-texte); }
+  .apercu-alertes { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin-top: 22px; }
+  .apercu-alertes .alerte { position: relative; left: auto; translate: none; zoom: .42; min-width: 0; width: 100%; max-width: none; }
+  .aide-variables { margin-top: 10px; color: var(--texte-doux); font-size: 14px; }
+  .aide-variables code { color: var(--accent); font-weight: 800; }
+  .tests { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .tests a { text-decoration: none; font-weight: 800; padding: 8px 14px; border: 2px solid var(--accent); border-radius: 10px; }
+  @media (max-width: 700px) {
+    .ligne-alerte { grid-template-columns: 1fr; }
+    h1 { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="assets/logo-couleur.svg" alt="Patagrain">
+  <h1>Réglages</h1>
+  <p class="intro">Tous les textes et réglages de l'overlay. Change ce que tu veux, puis clique <b>Enregistrer</b> en bas :
+    la page réécrit le fichier <code>config.js</code>. Ensuite, dans OBS : clic droit sur les sources › <b>Actualiser</b>.
+    <br>Un point doré <span style="color:var(--accent)">•</span> marque ce qui a changé depuis le dernier enregistrement.</p>
+  <div id="formulaire"></div>
+
+  <section class="section">
+    <h2>Tester</h2>
+    <p style="color:var(--texte-doux)">Ces liens ouvrent les pages en <b>mode test</b> (fausses alertes, faux messages), avec les réglages <b>enregistrés</b>.</p>
+    <div class="tests">
+      <a href="sources/alertes.html?test=1" target="_blank">🔔 Alertes</a>
+      <a href="scenes/demarrage.html?minutes=0.2" target="_blank">🎭 Starting soon (12 s)</a>
+      <a href="scenes/pause.html?test=1&minutes=1" target="_blank">🔥 Pause</a>
+      <a href="scenes/cam-seule.html?test=1" target="_blank">💬 Cam seule</a>
+      <a href="scenes/contenu.html?test=1" target="_blank">🖥 Contenu</a>
+      <a href="scenes/jeu.html?test=1" target="_blank">🎮 Jeu</a>
+      <a href="scenes/fin.html?prochainStream=Jeudi%2020h30" target="_blank">👋 Fin</a>
+      <a href="index.html" target="_blank">🏰 Tout voir</a>
+    </div>
+  </section>
+</main>
+
+<div class="barre">
+  <button class="principal" id="enregistrer">💾 Enregistrer config.js</button>
+  <button class="secondaire" id="annuler" disabled>↺ Annuler les changements</button>
+  <span id="statut">Rien n'a changé.</span>
+</div>
+
+<script src="config.js"></script>
+<script src="js/commun.js"></script>
+<script src="js/reglages.js"></script>
+<script>
+  const R = Reglages;
+  const lire = (o, chemin) => chemin.split('.').reduce((x, k) => (x == null ? x : x[k]), o);
+  const ecrireCle = (o, chemin, v) => { const k = chemin.split('.'); const fin = k.pop(); k.reduce((x, c) => (x[c] ??= {}), o)[fin] = v; };
+  const copie = o => JSON.parse(JSON.stringify(o));
+  const echapper = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const ico = nom => Commun.ico(nom).replaceAll('../assets/', 'assets/');
+
+  const enregistre = copie(window.CONFIG || {});   // ce qu'il y a dans config.js
+  let valeurs = copie(enregistre);                  // ce qu'il y a dans le formulaire
+
+  // ---------- Conversion champ <-> valeur ----------
+  function versChamp(type, v) {
+    if (type === 'liste') return (v || []).join('\n');
+    if (type === 'paires') return (v || []).map(p => p.join(' | ')).join('\n');
+    return v ?? '';
+  }
+  function depuisChamp(type, el) {
+    if (type === 'case') return el.checked;
+    if (type === 'nombre') return el.value === '' ? 0 : Number(el.value);
+    if (type === 'liste') return el.value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (type === 'paires') return el.value.split('\n').map(s => s.trim()).filter(Boolean).map(s => { const [a, ...b] = s.split('|'); return [a.trim(), b.join('|').trim()]; });
+    return el.value;
+  }
+
+  // ---------- Construction du formulaire ----------
+  function champHTML(c) {
+    const v = lire(valeurs, c.cle), id = 'c-' + c.cle.replaceAll('.', '-');
+    const aide = c.aide ? `<small>${echapper(c.aide)}</small>` : '';
+    let saisie;
+    switch (c.type) {
+      case 'case': return `<label class="champ case" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v !== false ? 'checked' : ''}><span>${echapper(c.label)}</span></label>`;
+      case 'nombre': saisie = `<input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 1}">`; break;
+      case 'heure': saisie = `<input id="${id}" type="time" value="${echapper(v)}">`; break;
+      case 'secret': saisie = `<input id="${id}" type="password" value="${echapper(v)}" autocomplete="off">`; break;
+      case 'choix': saisie = `<select id="${id}">${c.options.map(([val, lib]) => `<option value="${val}" ${val === v ? 'selected' : ''}>${echapper(lib)}</option>`).join('')}</select>`; break;
+      case 'liste': case 'paires': saisie = `<textarea id="${id}" rows="${Math.min(8, Math.max(3, (v || []).length + 1))}">${echapper(versChamp(c.type, v))}</textarea>`; break;
+      default: saisie = `<input id="${id}" type="text" value="${echapper(v)}">`;
+    }
+    const large = ['liste', 'paires'].includes(c.type) ? ' large' : '';
+    return `<label class="champ${large}" data-cle="${c.cle}"><span>${echapper(c.label)}</span>${saisie}${aide}</label>`;
+  }
+
+  function alertesHTML() {
+    const lignes = R.ALERTES.map(([cle, lib]) => {
+      const t = lire(valeurs, `alertes.textes.${cle}`) || {};
+      return `<div class="ligne-alerte"><b>${echapper(lib)}</b>
+        <label class="champ" data-cle="alertes.textes.${cle}.titre"><input type="text" data-texte-alerte="${cle}.titre" value="${echapper(t.titre)}" aria-label="Titre ${echapper(lib)}"></label>
+        <label class="champ" data-cle="alertes.textes.${cle}.message"><input type="text" data-texte-alerte="${cle}.message" value="${echapper(t.message)}" aria-label="Message ${echapper(lib)}"></label></div>`;
+    }).join('');
+    return `<h3 style="font:800 26px var(--f-titre);margin-top:26px">Le vocabulaire des alertes</h3>
+      <p class="aide-variables">Titre à gauche, message à droite. Remplacés automatiquement : <code>{nom}</code> (le pseudo, affiché en gros),
+        <code>{montant}</code> (bits, don, spectateurs du raid), <code>{mois}</code>, <code>{nombre}</code> (abonnements offerts), <code>{destinataire}</code>.</p>
+      <div class="alertes-textes">${lignes}</div>
+      <h3 style="font:800 26px var(--f-titre);margin-top:26px">Aperçu</h3><div class="apercu-alertes" id="apercu-alertes"></div>`;
+  }
+
+  function construire() {
+    document.getElementById('formulaire').innerHTML = R.SECTIONS.map(s => `<section class="section">
+      <h2>${ico(s.icone)}${echapper(s.titre)}</h2>
+      <div class="champs">${s.champs.map(champHTML).join('')}</div>
+      ${s.alertes ? alertesHTML() : ''}</section>`).join('');
+    apercuAlertes();
+  }
+
+  // ---------- Aperçu des alertes (mêmes styles que la vraie source) ----------
+  const ICONES = { follow: 'chapeau', sub: 'bouclier', resub: 'bouclier', giftsub: 'parchemin', giftbomb: 'parchemin', bits: 'grelot', raid: 'epee', don: 'embleme', objectif: 'd20' };
+  const EXEMPLE = { nom: 'SirMachin', montant: 500, mois: 7, nombre: 5, destinataire: 'DameTruc' };
+  function apercuAlertes() {
+    const boite = document.getElementById('apercu-alertes');
+    if (!boite) return;
+    boite.innerHTML = R.ALERTES.map(([cle]) => {
+      const t = lire(valeurs, `alertes.textes.${cle}`) || {};
+      const ex = { ...EXEMPLE, montant: { don: '5,00 €', raid: 42 }[cle] ?? 500, nom: cle === 'objectif' ? `${valeurs.objectif?.cible} / ${valeurs.objectif?.cible}` : 'SirMachin' };
+      const grande = ['raid', 'giftbomb', 'objectif'].includes(cle);
+      return `<div class="alerte${grande ? ' grande' : ''}"><div class="alerte-icone">${ico(ICONES[cle])}</div><div>
+        <div class="alerte-titre">${echapper(t.titre)}</div><div class="alerte-nom">${echapper(ex.nom)}</div>
+        <div class="alerte-msg">${echapper(Commun.remplir(t.message, ex))}</div></div></div>`;
+    }).join('');
+  }
+
+  // ---------- Suivi des changements ----------
+  const tousLesChamps = () => R.SECTIONS.flatMap(s => s.champs);
+  function relire() {
+    tousLesChamps().forEach(c => {
+      const el = document.getElementById('c-' + c.cle.replaceAll('.', '-'));
+      if (!el) return;
+      let v = depuisChamp(c.type, el);
+      if (c.cle === 'chaineTwitch') v = String(v).trim().toLowerCase().replace(/^.*twitch\.tv\//, '').replace(/[^a-z0-9_]/g, '');
+      ecrireCle(valeurs, c.cle, v);
+    });
+    document.querySelectorAll('[data-texte-alerte]').forEach(el => ecrireCle(valeurs, 'alertes.textes.' + el.dataset.texteAlerte, el.value));
+    // Un point doré sur chaque réglage modifié
+    let n = 0;
+    document.querySelectorAll('[data-cle]').forEach(l => {
+      const diff = JSON.stringify(lire(valeurs, l.dataset.cle)) !== JSON.stringify(lire(enregistre, l.dataset.cle));
+      l.classList.toggle('modifie', diff); if (diff) n++;
+    });
+    document.getElementById('annuler').disabled = !n;
+    statut(n ? `${n} réglage${n > 1 ? 's' : ''} modifié${n > 1 ? 's' : ''}, pas encore enregistré${n > 1 ? 's' : ''}.` : 'Rien n\'a changé.', n ? 'etat-attention' : '');
+    apercuAlertes();
+    return n;
+  }
+  const statut = (t, classe = '') => { const s = document.getElementById('statut'); s.textContent = t; s.className = classe; };
+  document.addEventListener('input', relire);
+  document.addEventListener('change', relire);
+  addEventListener('beforeunload', e => { if (!document.getElementById('annuler').disabled) e.preventDefault(); });
+
+  // ---------- Enregistrement ----------
+  // Edge et Chrome savent réécrire un fichier choisi (et s'en souviennent) ; sinon, on télécharge le nouveau config.js.
+  const BASE = 'overlay-' + (enregistre.id || 'patagrain') + '-reglages';
+  const base = () => new Promise((ok, ko) => { const r = indexedDB.open(BASE, 1); r.onupgradeneeded = () => r.result.createObjectStore('fichiers'); r.onsuccess = () => ok(r.result); r.onerror = ko; });
+  async function poigneeGardee() {
+    try { const db = await base(); return await new Promise(ok => { const r = db.transaction('fichiers').objectStore('fichiers').get('config'); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }); }
+    catch (e) { return null; }
+  }
+  async function garderPoignee(h) {
+    try { const db = await base(); db.transaction('fichiers', 'readwrite').objectStore('fichiers').put(h, 'config'); } catch (e) {}
+  }
+
+  async function enregistrer() {
+    relire();
+    const texte = R.ecrire(valeurs);
+    if (window.showSaveFilePicker) {
+      try {
+        let h = await poigneeGardee();
+        if (h && (await h.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await h.requestPermission({ mode: 'readwrite' })) !== 'granted') h = null;
+        if (!h) {
+          statut('Choisis le fichier config.js du dossier de l\'overlay (à côté de reglages.html), puis « Enregistrer » et « Oui » pour le remplacer.', 'etat-attention');
+          h = await showSaveFilePicker({ suggestedName: 'config.js', types: [{ description: 'Configuration de l\'overlay', accept: { 'text/javascript': ['.js'] } }] });
+        }
+        if (h.name !== 'config.js') { statut(`⚠️ Tu as choisi « ${h.name} » : il faut choisir config.js. Réessaie.`, 'etat-attention'); return; }
+        const w = await h.createWritable(); await w.write(texte); await w.close();
+        await garderPoignee(h);
+        Object.assign(enregistre, copie(valeurs)); relire();
+        statut('✅ config.js enregistré. Dans OBS : clic droit sur les sources › Actualiser.', 'etat-ok');
+        return;
+      } catch (e) {
+        if (e.name === 'AbortError') return statut('Enregistrement annulé.', 'etat-attention');
+        console.warn('[Réglages] écriture directe impossible, téléchargement à la place', e);
+      }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([texte], { type: 'text/javascript' }));
+    a.download = 'config.js'; a.click();
+    statut('⬇️ Un nouveau config.js a été téléchargé : mets-le à la place de l\'ancien, dans le dossier de l\'overlay.', 'etat-ok');
+  }
+
+  document.getElementById('enregistrer').onclick = enregistrer;
+  document.getElementById('annuler').onclick = () => { valeurs = copie(enregistre); construire(); relire(); };
+  construire();
+  relire();
+  // Ctrl + S enregistre aussi
+  addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); enregistrer(); } });
+</script>
+</body>
+</html>

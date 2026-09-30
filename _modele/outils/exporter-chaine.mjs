@@ -23,8 +23,9 @@ const SORTIE = join(RACINE, 'chaine', 'export');
 const PORT = 9335;
 const choix = process.argv.slice(2);
 
-const EDGE = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
-  .find(p => existsSync(p));
+// Edge (installé avec Windows), ou un autre navigateur Chromium indiqué par la variable NAVIGATEUR (Chrome, Chromium…)
+const EDGE = [process.env.NAVIGATEUR, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
+  .find(p => p && existsSync(p));
 if (!EDGE) { console.error('Microsoft Edge introuvable.'); process.exit(1); }
 
 const attendre = ms => new Promise(r => setTimeout(r, ms));

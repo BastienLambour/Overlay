@@ -19,8 +19,9 @@
 .cligne .bf-oeil-g, .cligne .bf-oeil-d { animation: bf-cligne 5s infinite; }
 .ding .bf-chapeau { animation: bf-grelots .9s ease-in-out; }
 
-/* Les cheveux de dos se balancent doucement, un peu en retard sur la tête (pivot : le haut du crâne) */
-.bouffon-svg .bf-cheveux { transform-box: view-box; transform-origin: 200px 150px; animation: bf-cheveux 3.4s ease-in-out infinite; }
+/* Les cheveux de dos : immobiles au repos (pas de balancier qui tourne tout seul), ils ne bougent
+   qu'en réaction à ses mouvements, avec un léger retard (pivot : le haut du crâne) */
+.bouffon-svg .bf-cheveux { transform-box: view-box; transform-origin: 200px 150px; }
 @keyframes bf-cheveux { 0%, 100% { transform: skewX(3deg); } 50% { transform: skewX(-3deg); } }
 /* … et ils rebondissent quand il bouge vite (sauts, sursaut, jongle, nouveau message) */
 @keyframes bf-cheveux-hop { 0%, 100% { transform: none; } 20% { transform: scaleY(1.05); } 45% { transform: scaleY(.9) skewX(-4deg); } 70% { transform: scaleY(1.04) skewX(3deg); } }
@@ -83,6 +84,19 @@
 @keyframes sl-clin { 0%, 38%, 62%, 100% { transform: scaleY(1); } 42%, 58% { transform: scaleY(0); } }
 @keyframes sl-clin-trait { 0%, 38%, 62%, 100% { opacity: 0; } 42%, 58% { opacity: 1; } }
 
+/* Fin du compte à rebours : il lance un d20 (Numeros.cirque → el.lancerD20), qui retombe sur 20 */
+.lance .bf-epaule-d { animation: ln-bras 1.2s ease-in-out both; }
+.lance .bf-coude-d { animation: ln-coude 1.2s ease-in-out both; }
+.lance .bf-tout { animation: ln-corps 1.2s ease-in-out both; }
+.lance .bf-haut { transform: rotate(6deg); transition: transform .4s; }
+@keyframes ln-bras { 0% { transform: rotate(0); } 35% { transform: rotate(50deg); } 50% { transform: rotate(-160deg); } 100% { transform: rotate(-150deg); } }
+@keyframes ln-coude { 0% { transform: rotate(0); } 35% { transform: rotate(-60deg); } 50%, 100% { transform: rotate(-5deg); } }
+@keyframes ln-corps { 35% { transform: rotate(3deg); } 55% { transform: rotate(-4deg) translateY(-10px); } 100% { transform: none; } }
+.d20-lance { position: absolute; left: 0; top: 0; width: 150px; height: 150px; opacity: 0; z-index: 5; filter: drop-shadow(0 8px 0 rgba(0, 0, 0, .3)); }
+.d20-lance svg { width: 100%; height: 100%; }
+.d20-lance.critique::after { content: ""; position: absolute; inset: -30px; border-radius: 50%; border: 8px solid var(--accent); animation: critique 1s ease-out 2 both; }
+@keyframes critique { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+
 /* =====================================================================
    2. AU COIN DU FEU (Pause) — piloté par Numeros.feu :
       dodo (il rêve d'un d20 qui roule) → réveil (le dé tombe sur 1 !) →
@@ -115,11 +129,31 @@
 .chamallow .bf-oeil-g, .chamallow .bf-oeil-d { transform: translate(4px, 2px); transition: transform .4s; }
 @keyframes ch-grille { 0%, 15% { fill: #FFFFFF; } 55% { fill: #F1D29A; } 90%, 100% { fill: #B06A33; } }
 /* Il le croque : il le fait glisser du bâton (qui disparaît) et la main le porte DEVANT sa bouche */
-.croque .bf-epaule-d { transform: rotate(84deg); }
-.croque .bf-coude-d { transform: rotate(95deg); }
+.croque .bf-epaule-d { transform: rotate(68deg); }
+.croque .bf-coude-d { transform: rotate(104.5deg); }
 .croque .bfx-tige { opacity: 0; transition: opacity .3s; }
-.croque .bfx-guimauve { fill: #B06A33; transform: translateY(-282px); transition: transform .5s ease-out; animation: ch-croque 1.8s ease-in both; }
-@keyframes ch-croque { 0%, 55% { opacity: 1; } 62%, 100% { opacity: 0; } }
+.croque .bfx-guimauve { fill: #B06A33; transform: translateY(-277px); transition: transform .5s ease-out; animation: ch-croque 2.6s ease-in both; }
+.bouffon-svg.bouffon-pied g.bfx-guimauve { transform-box: fill-box; transform-origin: 50% 50%; }
+/* une première bouchée (il rétrécit de moitié)… puis il n'en reste rien */
+@keyframes ch-croque { 0%, 42% { opacity: 1; scale: 1; } 48%, 58% { opacity: 1; scale: .6; } 64%, 100% { opacity: 0; scale: .3; } }
+/* Le décor du coin du feu, dans un conteneur .bfx-scene au format 16:9 (unités cqw/cqh) :
+   le même dans la démo du moodboard et dans la vraie scène Pause */
+.bfx-scene { container-type: size; }
+.bfx-scene > * { position: absolute; }
+.bfx-p-feu { height: 74cqh; width: 32.2cqh; left: calc(38% - 16.1cqh); bottom: -13cqh; z-index: 2; }
+.bfx-buche { z-index: 3; left: 16cqw; width: 58cqw; bottom: 3cqh; height: 13cqh; border-radius: 7cqh; background: #6B4226; box-shadow: inset 0 -2cqh 0 #54331C; }
+.bfx-feu { width: 19cqw; left: 55cqw; bottom: 8cqh; z-index: 1; }
+.bfx-feu path { transform-box: fill-box; transform-origin: 50% 100%; animation: bfx-vacille 1.4s ease-in-out infinite; }
+.bfx-feu path:nth-child(2) { animation-duration: 1.1s; } .bfx-feu path:nth-child(3) { animation-duration: .8s; }
+@keyframes bfx-vacille { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(.94, 1.08) skewX(3deg); } 60% { transform: scale(1.04, .95) skewX(-2deg); } }
+.bfx-zzz { left: 24cqw; top: 22cqh; --taille-z: 11cqh; z-index: 4; }
+.bfx-zzz .bfx-z { color: var(--texte); text-shadow: 0 .4cqh 0 rgba(0,0,0,.3); }
+.bfx-reve { left: 46cqw; top: 3cqh; width: 30cqw; height: 34cqh; }
+.bfx-reve .nuage { position: absolute; left: 12%; top: 0; width: 88%; height: 78%; border-radius: 50%; background: var(--texte);
+  box-shadow: -4cqw 3cqh 0 -1cqh var(--texte), 4cqw 4cqh 0 -1.4cqh var(--texte); display: grid; place-items: center; }
+.bfx-reve .nuage svg { width: 42%; }
+.bfx-reve .b1 { left: 4%; bottom: 8%; width: 3cqh; height: 3cqh; } .bfx-reve .b2 { left: -4%; bottom: -8%; width: 1.8cqh; height: 1.8cqh; }
+.bfx-zzz .bfx-z:nth-child(2) { left: 2cqh; } .bfx-zzz .bfx-z:nth-child(3) { left: 4cqh; }
 /* Les « Z » qui s'envolent */
 .bfx-z { position: absolute; font: 800 var(--taille-z, 44px)/1 var(--f-titre); color: var(--texte-doux); opacity: 0; }
 .dort .bfx-z { animation: sn-z 3s infinite; }
@@ -145,6 +179,14 @@
 .guette.ding .bf-cheveux { animation: bf-cheveux-hop .7s ease-out .05s both; }
 @keyframes gt-hop { 40% { transform: translateY(-14px); } }
 
+/* Dans les vraies scènes : il prend la hauteur de l'en-tête « La taverne », à droite ;
+   on ne voit que sa tête, son chapeau (qui dépasse de la carte) et ses deux mains posées sur le trait */
+.taverne.avec-bouffon .taverne-tete { height: var(--haut-tete); border-bottom: 4px solid color-mix(in srgb, var(--fond) 80%, transparent); align-items: center; }
+.taverne-bouffon { position: absolute; overflow: hidden; pointer-events: none; }
+.taverne-perso { position: absolute; left: 0; }
+.taverne-perso .bouffon-svg { width: 100%; height: auto; }
+.taverne-main { position: absolute; border-radius: 50%; background: #F0C8A4; box-shadow: inset 0 -.18em 0 #DDA982; }
+
 /* =====================================================================
    4. IL DESCEND AVEC L'ALERTE (Alertes) — une main tient la corde, l'autre salue
    La main droite (levée) est au point (328, 228) du dessin : c'est là que passe la corde.
@@ -159,6 +201,25 @@
 @keyframes rp-salue { from { transform: rotate(48deg); } to { transform: rotate(78deg); } }
 @keyframes rp-jambe { from { transform: rotate(-9deg); } to { transform: rotate(12deg); } }
 
+/* Dans la vraie source Alertes : la carte descend du plafond sur deux cordes, le bouffon sur une
+   troisième, à droite ; il se balance à l'arrivée, puis tout remonte (sources/alertes.html) */
+.suspension { position: absolute; left: 50%; translate: -50% 0; animation: susp-descend 1.2s cubic-bezier(.34, 1.3, .64, 1) both; }
+.suspension.sort { animation: susp-remonte .8s ease-in both; }
+@keyframes susp-descend { from { transform: translateY(var(--hors, -1000px)); } }
+@keyframes susp-remonte { to { transform: translateY(var(--hors, -1000px)); } }
+.suspension .alerte { position: relative; left: auto; translate: none; }
+.suspension .alerte.entre { animation: none; }
+.suspension .corde { position: absolute; bottom: 100%; width: 10px; height: 1400px; margin-left: -5px; border-radius: 5px;
+  background: repeating-linear-gradient(160deg, #C79A3B 0 10px, #8E6A22 10px 20px); }
+.suspension .corde.g { left: 12%; }
+.suspension .corde.d { left: 88%; }
+.suspension .corde.b { left: calc(100% + 110px); bottom: calc(100% + 20px); }
+/* Le bouffon (432 px de haut) : sa main levée (82 % / 36,7 % du dessin) tient le bout de la corde « b » */
+.suspension .bouffon-corde { position: absolute; left: calc(100% + 110px - 154px); top: -178px; width: 188px; height: 432px;
+  transform-origin: 82% 36.7%; animation: susp-balance 2.8s ease-in-out .9s both; }
+.suspension .bouffon-corde .bouffon-svg { width: 100%; height: 100%; }
+@keyframes susp-balance { 0%, 100% { transform: rotate(0); } 18% { transform: rotate(8deg); } 42% { transform: rotate(-6deg); } 66% { transform: rotate(3deg); } 84% { transform: rotate(-1deg); } }
+
 /* =====================================================================
    5. IL SE CACHE SOUS SON CHAPEAU, POSÉ SUR LA CAM (Jeu)
    Au repos on ne voit que son chapeau sur la cam ; il se lève : sa tête apparaît
@@ -171,6 +232,13 @@
   58% { transform: translate(0, 0) scaleY(1); } 59.5%, 61% { transform: translate(0, 0) scaleY(0); } 62.5%, 100% { transform: translate(0, 0) scaleY(1); } }
 .coucou-jeu .bf-chapeau { animation: cj-chapeau var(--duree-coucou, 10s) ease-in-out infinite; transform-origin: 200px 196px; transform-box: view-box; }
 @keyframes cj-chapeau { 0%, 24% { transform: rotate(0); } 30% { transform: rotate(-6deg); } 36%, 62% { transform: rotate(3deg); } 68%, 100% { transform: rotate(0); } }
+
+/* Dans la vraie scène Jeu (classe « une-fois ») : il reste caché, et ne sort que quand
+   Numeros.coucouJeu ajoute « sort » (toutes les X secondes, et à chaque follow). --leve : hauteur de la sortie */
+.coucou-jeu.une-fois:not(.sort) .bf-oeil-g, .coucou-jeu.une-fois:not(.sort) .bf-oeil-d, .coucou-jeu.une-fois:not(.sort) .bf-chapeau { animation: none; }
+.coucou-jeu.une-fois.sort .bf-oeil-g, .coucou-jeu.une-fois.sort .bf-oeil-d, .coucou-jeu.une-fois.sort .bf-chapeau { animation-iteration-count: 1; }
+.coucou-jeu.une-fois.sort { animation: cj-leve var(--duree-coucou, 10s) ease-in-out both; }
+@keyframes cj-leve { 0%, 22% { transform: translateY(0); } 30%, 64% { transform: translateY(calc(-1 * var(--leve, 60px))); } 70%, 100% { transform: translateY(0); } }
 
 /* =====================================================================
    6. IL DIT AU REVOIR (Fin) — piloté par Numeros.auRevoir : coucou → courbette → saut de joie

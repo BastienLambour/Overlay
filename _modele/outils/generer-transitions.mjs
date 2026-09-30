@@ -36,8 +36,9 @@ const TRANSITIONS = noms.length ? noms
 const requete = options.map(o => { const [k, ...v] = o.split('='); return `&${encodeURIComponent(k)}=${encodeURIComponent(v.join('='))}`; }).join('');
 const suffixe = options.map(o => '-' + o.split('=').slice(1).join('=').replace(/[^\w-]/g, '')).join('');
 
-const EDGE = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
-  .find(p => existsSync(p));
+// Edge (installé avec Windows), ou un autre navigateur Chromium indiqué par la variable NAVIGATEUR (Chrome, Chromium…)
+const EDGE = [process.env.NAVIGATEUR, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
+  .find(p => p && existsSync(p));
 if (!EDGE) { console.error('Microsoft Edge introuvable.'); process.exit(1); }
 const FFMPEG = [process.env.FFMPEG, 'ffmpeg', 'G:/Applications/ffmpeg/bin/ffmpeg.exe']
   .filter(Boolean).find(f => { try { return spawnSync(f, ['-version']).status === 0; } catch { return false; } });

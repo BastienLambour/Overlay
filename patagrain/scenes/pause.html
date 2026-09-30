@@ -5,32 +5,29 @@
 <title>Scène — Pause</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
 <style>
-  .gauche { position: absolute; left: 80px; top: 110px; width: 1060px; bottom: 170px;
+  .gauche { position: absolute; left: 80px; top: 104px; width: 1060px; bottom: 160px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  .logo { width: 560px; }
-  .feu { width: 230px; margin-top: 26px; }
-  .titre-principal { font-size: 124px; margin-top: 6px; }
-  .sous-titre { font: 700 44px var(--f-texte); color: var(--texte-doux); margin-top: 4px; }
-  .retour { margin-top: 30px; padding: 14px 46px 18px; display: none; flex-direction: column; align-items: center; }
+  .logo { width: 330px; }
+  /* Le coin du feu (même décor que la démo du moodboard, au format 16:9) */
+  .coin-du-feu { position: relative; width: 760px; aspect-ratio: 16 / 9; margin-bottom: 10px;
+    clip-path: inset(-60% -60% 3% -60%); }   /* ses jambes sont cachées sous la bûche, comme dans la démo */
+  .titre-principal { font-size: 104px; }
+  .sous-titre { font: 700 40px var(--f-texte); color: var(--texte-doux); margin-top: 2px; }
+  .retour { margin-top: 18px; padding: 10px 44px 14px; display: none; flex-direction: column; align-items: center; }
   .retour.visible { display: flex; }
-  .retour .chiffres { font: 900 84px/1 var(--f-texte); font-variant-numeric: tabular-nums; letter-spacing: 3px; }
+  .retour .chiffres { font: 900 72px/1 var(--f-texte); font-variant-numeric: tabular-nums; letter-spacing: 3px; }
   .bandeau-messages { left: 610px; min-width: 880px; }
-
-  /* Feu de camp */
-  .flamme { transform-box: fill-box; transform-origin: 50% 100%; animation: vacille 1.6s ease-in-out infinite; }
-  .flamme.f2 { animation-duration: 1.2s; animation-delay: -.4s; }
-  .flamme.f3 { animation-duration: .9s; animation-delay: -.2s; }
-  @keyframes vacille { 0%, 100% { transform: scale(1, 1) skewX(0); } 25% { transform: scale(.94, 1.08) skewX(3deg); } 50% { transform: scale(1.04, .95) skewX(-2deg); } 75% { transform: scale(.97, 1.05) skewX(2deg); } }
-  .braise { animation: monte 2.4s ease-out infinite; opacity: 0; }
-  .braise.b2 { animation-delay: .8s; } .braise.b3 { animation-delay: 1.6s; }
-  @keyframes monte { 0% { opacity: 0; transform: translate(0, 0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), -70px); } }
 </style>
 </head>
 <body>
 <!--
-  Écran « Pause » (1920 × 1080, plein écran) : feu de camp + chat « La taverne ».
+  Écran « Pause » (1920 × 1080, plein écran) : le bouffon au coin du feu + chat « La taverne ».
+  Il rêve d'un d20 qui roule ; quand il tombe sur 1, il se réveille en sursaut, grille un chamallow,
+  le croque, et se rendort (en boucle, environ 16 s).
   Options : ?minutes=10 (compte à rebours « Retour dans ») · ?titre=… · ?sousTitre=… · ?test=1 (faux messages)
+            ?chat=0 (sans le chat) · ?bouffon=0 (le feu seul)
 -->
 <div id="ecran" class="plein">
   <div class="fond-attente"></div>
@@ -39,17 +36,20 @@
 
   <div class="gauche">
     <div class="entree"><img class="logo flotte" src="../assets/logo-couleur.svg" alt="Patagrain"></div>
-    <svg class="feu entree" style="--retard:.1s" viewBox="0 0 200 150" aria-hidden="true">
-      <ellipse cx="100" cy="140" rx="80" ry="8" fill="#000" opacity=".25"/>
-      <path class="flamme" d="M100 8 C122 40 150 58 142 96 C136 122 118 132 100 132 C82 132 62 122 58 96 C52 62 86 48 100 8 Z" fill="#F0782E"/>
-      <path class="flamme f2" d="M102 40 C116 62 132 76 126 102 C122 120 112 128 100 128 C88 128 76 120 74 102 C72 80 94 70 102 40 Z" fill="var(--accent)"/>
-      <path class="flamme f3" d="M100 76 C108 90 116 98 113 112 C111 122 106 126 100 126 C94 126 88 122 87 112 C86 100 96 94 100 76 Z" fill="var(--texte)"/>
-      <rect x="38" y="118" width="124" height="18" rx="9" fill="#7A4A2A" transform="rotate(-12 100 127)"/>
-      <rect x="38" y="118" width="124" height="18" rx="9" fill="#5E3820" transform="rotate(12 100 127)"/>
-      <circle class="braise" cx="96" cy="60" r="4" fill="var(--accent)" style="--dx:-18px"/>
-      <circle class="braise b2" cx="108" cy="70" r="3" fill="var(--accent)" style="--dx:16px"/>
-      <circle class="braise b3" cx="100" cy="66" r="3.5" fill="#F0782E" style="--dx:-6px"/>
-    </svg>
+    <div class="coin-du-feu bfx-scene entree" style="--retard:.1s" id="coin-du-feu">
+      <div class="bfx-p-feu" id="bouffon"></div>
+      <div class="bfx-buche"></div>
+      <svg class="bfx-feu" viewBox="0 0 200 150" aria-hidden="true">
+        <path d="M100 8 C122 40 150 58 142 96 C136 122 118 132 100 132 C82 132 62 122 58 96 C52 62 86 48 100 8 Z" fill="#F0782E"/>
+        <path d="M102 40 C116 62 132 76 126 102 C122 120 112 128 100 128 C88 128 76 120 74 102 C72 80 94 70 102 40 Z" fill="var(--accent)"/>
+        <path d="M100 76 C108 90 116 98 113 112 C111 122 106 126 100 126 C94 126 88 122 87 112 C86 100 96 94 100 76 Z" fill="var(--texte)"/>
+        <rect x="38" y="118" width="124" height="18" rx="9" fill="#7A4A2A" transform="rotate(-12 100 127)"/>
+        <rect x="38" y="118" width="124" height="18" rx="9" fill="#5E3820" transform="rotate(12 100 127)"/></svg>
+      <div class="bfx-zzz"><span class="bfx-z">z</span><span class="bfx-z z2">z</span><span class="bfx-z z3">Z</span></div>
+      <div class="bfx-reve"><span class="bulle b1"></span><span class="bulle b2"></span><div class="nuage">
+        <svg viewBox="0 0 100 100" class="de-reve"><polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="var(--primaire)"/><polygon points="50,24 78,70 22,70" fill="var(--accent)"/>
+          <text class="bfx-chiffre" x="50" y="62" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="24" fill="#1B3A66">20</text></svg></div></div>
+    </div>
     <h1 class="titre titre-principal entree" style="--retard:.2s" data-texte="pause.titre"></h1>
     <p class="sous-titre entree" style="--retard:.3s" data-texte="pause.sousTitre"></p>
     <div class="retour carte bordee entree" style="--retard:.4s" id="retour">
@@ -67,15 +67,22 @@
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const P = Commun, R = CONFIG.pause;
   const ecran = document.getElementById('ecran');
-  Composants.chat(ecran, { x: 1230, y: 110, l: 600, h: 880 }).classList.add('entree');
+  if (P.params.get('chat') !== '0') Composants.chat(ecran, { x: 1230, y: 110, l: 600, h: 880 }).classList.add('entree');
   P.demarrer();
   P.fanions(document.getElementById('fanions'));
   P.decor(document.getElementById('decor'));
   P.messages(document.getElementById('message'));
+
+  // Le bouffon au coin du feu (sans lui : le feu et la bûche seuls)
+  const coin = document.getElementById('coin-du-feu');
+  if (P.bouffon()) Numeros.feu(document.getElementById('bouffon'), coin);
+  else coin.querySelectorAll('#bouffon, .bfx-zzz, .bfx-reve').forEach(el => el.remove());
 
   const minutes = Number(P.params.get('minutes') ?? R.minutes);
   if (minutes > 0) {

@@ -33,6 +33,9 @@
 - **Sources** : alertes, chat, bandeau d'infos, objectif « Guilde des aventuriers » (l'épée avance), cadre cam (chapeau au-dessus, dés en bas).
 - **Transitions** (toutes avec le bouffon) : **rideau** — le bouffon machiniste tire la corde (Starting soon → Cam seule, vers la Fin) ; **coup d'épée** — le bouffon bretteur tranche l'écran (Cam seule → Jeu) ; **jet de dé** — le bouffon équilibriste marche sur le dé qui roule (Jeu ↔ Pause, Contenu). La page de grimoire est abandonnée.
 - **Chaîne Twitch** : bannière, écran hors-ligne, panneaux de bio, emotes, badges d'abonné — fait (`chaine/`), à valider.
+- **Le bouffon sur chaque écran** (validé, intégré) : Starting soon = numéro de cirque (jongle, poirier, salut) et, à zéro, il lance un d20 qui retombe sur 20 ; Pause = il rêve au coin du feu d'un d20 qui tombe sur 1, se réveille, grille un chamallow au bout des flammes, le croque devant sa bouche et se rendort ; Cam seule et Contenu = il dépasse du haut de la carte du chat (tête, chapeau, deux mains), ses grelots tintent à chaque message ; Alertes = la carte descend du plafond sur deux cordes, lui sur une troisième, une main levée, il salue de l'autre ; Jeu = le chapeau posé sur la cam est le sien, il sort la tête toutes les 60 s et à chaque follow ; Fin = coucou, courbette, saut de joie, bulle qui alterne ses phrases. Ses cheveux de dos ne bougent qu'en réaction à ses mouvements. Briques : `css/bouffon.css`, `js/numeros.js` ; réglages `config.js › bouffon`, `?bouffon=0` par page.
+- **Réglages sans toucher au code** : `reglages.html`, un formulaire (par écran, avec aperçu des alertes) qui réécrit `config.js` (Edge/Chrome : écriture directe ; sinon téléchargement). Le modèle du fichier est dans `js/reglages.js` : tout nouveau réglage doit y être ajouté.
+- **Chat et bandeau intégrés aux scènes** (décision) : gardés dans les scènes (placés au pixel près à côté des trous, le bouffon accoudé au chat) ; `?chat=0` / `?bandeau=0` pour les retirer et utiliser `sources/chat.html` / `bandeau.html` à la place. Le chat garde en mémoire ses messages des 10 dernières minutes (`chat.memoireMinutes`) : il ne repart pas à vide en changeant de scène.
 - **Contraintes** : tout en français, facilement éditable.
 
 ## Décisions prises
@@ -52,19 +55,19 @@
 | Élément | État |
 |---|---|
 | Moodboard (+ pistes de logo `design/logos.html`) | ✅ |
-| Écrans et scènes | ✅ |
+| Écrans et scènes (avec le bouffon) | ✅ |
+| Page de réglages `reglages.html` | ✅ (écriture du fichier testée seulement en génération, pas le clic « Enregistrer » dans Edge) |
 | Sources | ✅ |
 | Transitions bouffon (vidéos Stinger : rideau 1400 ms, épée 700 ms, dé 1750 ms) | ✅ |
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
-| TUTO.md | ✅ (coordonnées en 1080p et 1440p) |
+| TUTO.md | ✅ (coordonnées en 1080p et 1440p ; §6 : chat, Streamer.bot, chaque événement, dons, objectif) |
 | Testé dans OBS / avec Streamer.bot | ⬜ |
 
 ## À faire / questions ouvertes
 
-- [ ] **Le bouffon dans l'overlay** — démos dans le moodboard, **à valider** avant intégration : Starting soon = numéro de cirque (jongle avec 3 dés, poirier, salut ; d20 sur 20 à la fin du compte à rebours) ; Pause = il rêve d'un d20 qui roule, se réveille en sursaut quand il tombe sur 1, grille un chamallow au bout des flammes, le croque (devant sa bouche) et se rendort ; ses cheveux de dos se balancent sur toutes les démos ; Cam seule et Contenu = il dépasse de la carte du chat (validé : « Top ! ») ; Alertes = il descend avec l'alerte, tenant la corde d'une main, décalé sur le côté ; Jeu = le chapeau posé sur la cam est le sien, il se lève dessous et passe la tête ; Fin = coucou, courbette, saut de joie, bulle « Merci d'être venus ! » / « À bientôt, aventuriers ! ». Briques : `css/bouffon.css`, `js/numeros.js`.
-
-- [ ] Confirmer l'identifiant Twitch exact (`chaineTwitch` dans `config.js`).
-- [ ] Remplir `objectif.depart` avec le nombre actuel de followers.
+- [ ] Confirmer l'identifiant Twitch exact (`reglages.html` › La chaîne).
+- [ ] Remplir « Ton nombre ACTUEL » de followers (`reglages.html` › Objectif).
+- [ ] Regarder les écrans avec le bouffon en continu (rythme, taille) et dire ce qui va ou pas.
 - [ ] Installer Streamer.bot et vérifier les premiers vrais événements (console F12).
 - [ ] Valider le kit de chaîne Twitch (`chaine/kit.html`) puis l'envoyer sur Twitch (TUTO §7).
 
@@ -86,3 +89,4 @@
 - **2026-09-30** — Polices passées en local (`assets/polices/`) ; logo à contour crème (`assets/logo-contour.svg`, utilisé en scène Jeu) ; 4 emotes à sa tête (bouffon, clin d'œil, mort de rire, choqué) ; expressions « endormi » et « sans chapeau » ajoutées au dessin ; correction : les facettes claires du mini-d20 du logo s'affichaient en noir. Idées du bouffon sur chaque écran → 6 démos dans le moodboard, à valider.
 - **2026-09-30** — Retours sur les démos du bouffon : cirque trop discret (amplifié, démos agrandies), Pause → histoire du rêve (d20 qui tombe sur 1, réveil, chamallow), alertes → une main sur la corde, décalé sur le côté, Jeu → c'est son propre chapeau qui est sur la cam, Fin → plus de mouvement. Cam seule validée. Vitrine : ajout des aperçus chat, bandeau et cadre cam ; transitions rejouées en boucle.
 - **2026-09-30** — Retours sur la démo Pause : le chamallow se voyait derrière (sa tête et ses cheveux le cachaient quand il croquait) → le bras droit passe devant la tête, le chamallow glisse du bâton et arrive devant sa bouche ; bâton allongé pour que le chamallow grille bien au bout des flammes. « Le fond de ses cheveux ne bouge pas » → les cheveux de dos se balancent en permanence et rebondissent aux sauts, au sursaut, en jonglant et à chaque message (`.bf-cheveux`, dessin régénéré).
+- **2026-09-30** — Retours : le chamallow n'était pas devant sa bouche → bras recalculé, il arrive pile sur la bouche et y reste plus longtemps (bouchée en deux temps). « Les cheveux qui pendent au rythme du chapeau, c'est bizarre » → plus de balancement permanent (il avait le même tempo que le chapeau) : les cheveux ne réagissent qu'à ses mouvements. Animations validées (« top ! ») → **intégrées aux vrais écrans**, aux alertes et à la scène Jeu. Question « chat et bandeau en dur ou en .html ? » → gardés dans les scènes, options `?chat=0`/`?bandeau=0`, et mémoire du chat entre scènes. Demande d'une page pour gérer la config → `reglages.html`. TUTO complété (chat, Streamer.bot, chaque événement, dons, objectif, tests). Corrigé au passage : l'épée de l'alerte Raid débordait de sa case. Outils communs : variable `NAVIGATEUR` (un autre navigateur qu'Edge), recopiés dans les 4 overlays.

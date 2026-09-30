@@ -5,6 +5,7 @@
 <title>Scène — Contenu</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
 </head>
 <body>
 <!--
@@ -12,6 +13,8 @@
   Dans OBS, place tes sources SOUS cette source, dans les zones :
     Contenu : x 60   · y 130 · 1280 × 720 px
     Webcam  : x 1400 · y 150 · 460 × 259 px
+  Le bouffon dépasse de la carte du chat ; ses grelots tintent à chaque message.
+  Options : ?chat=0 (sans le chat : pour mettre sources/chat.html à la place) · ?bandeau=0 · ?bouffon=0
   (ouvre contenu.html?apercu=1 pour voir les zones, ?test=1 pour de faux messages)
   Option : ?titre=Mon%20titre   étiquette au-dessus du contenu (vide pour la masquer : ?titre=)
 -->
@@ -22,6 +25,8 @@
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
@@ -33,8 +38,9 @@
   Composants.entete(ecran);
   Composants.cadre(ecran, CONTENU, { decor: false, nom: false, titre: p.has('titre') ? p.get('titre') : CONFIG.titreDuJour, apercuTitre: 'Contenu' });
   Composants.cadre(ecran, CAM);
-  Composants.chat(ecran, { x: 1390, y: 470, l: 480, h: 420 });
-  Composants.bandeau(ecran, { x: 60, y: 930, l: 1800, h: 100 });
+  const voir = cle => Commun.params.get(cle) !== '0';
+  if (voir('chat')) Composants.chat(ecran, { x: 1390, y: 470, l: 480, h: 420 }, { bouffon: { tete: 80, depasse: 12 } });
+  if (voir('bandeau')) Composants.bandeau(ecran, { x: 60, y: 930, l: 1800, h: 100 });
 
   Commun.demarrer();
   Evenements.demarrer();

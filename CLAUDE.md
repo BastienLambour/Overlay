@@ -91,6 +91,10 @@ Conventions :
   `node outils/generer-pdf.mjs` produit `TUTO.pdf` et `CONCEPT.pdf` (mise en page aux couleurs du
   thème). Les régénérer après chaque modification d'un `.md`. Vérification visuelle :
   `APERCU=<dossier> node outils/generer-pdf.mjs` enregistre une capture PNG de chaque document.
+- **`reglages.html` — réglages sans code** (fait pour Patagrain, à reprendre ailleurs) : formulaire par écran, avec
+  aperçu des alertes, qui réécrit tout `config.js` (Edge/Chrome : écriture directe via `showSaveFilePicker`, sinon
+  téléchargement). Le modèle du fichier, commentaires compris, est dans `js/reglages.js` (`Reglages.ecrire`) : un
+  nouveau réglage s'ajoute là ET dans `SECTIONS`, sinon la page l'effacerait.
 - **`design/moodboard.html`** : barre de réglages en haut (sans `backdrop-filter` : il bloque le
   rendu au-dessus des iframes animées → écran noir), en-tête, puis `01 Couleurs` · `02 Typographies` ·
   `03 <élément signature>` · `04 Motifs & symboles` · `05 Composants` (alertes + tableau du
@@ -142,6 +146,8 @@ existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitc
 - **Transitions** : une page HTML ne peut pas être une transition OBS → vidéo **Stinger**.
   Chaque page de transition gère `?mode=entree` (défaut) et `?mode=complet&capture=1`, et peut
   déclarer son point de coupe (`data-coupe` / `pointTransition()`).
+- **Navigateur des outils** : Edge par défaut ; `NAVIGATEUR=<chemin de chrome/chromium>` pour en utiliser un autre
+  (ex. dans un conteneur Linux, avec un petit script qui ajoute `--no-sandbox`).
 - **ffmpeg** : `G:\Applications\ffmpeg\bin\ffmpeg.exe` (hors PATH, trouvé par le script).
 - **OBS** : source Navigateur 1920×1080, cocher « Actualiser le navigateur quand la scène
   devient active » pour les écrans animés. Webcam : Ctrl+E, zone de délimitation

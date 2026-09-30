@@ -5,6 +5,7 @@
 <title>Scène — Starting soon</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
 <style>
   .contenu { position: absolute; inset: 0 0 150px; padding-top: 70px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -17,6 +18,9 @@
   .compteur .etiquette svg { width: 40px; animation: lancer 10s var(--rebond) infinite; }
   .chiffres { font: 900 112px/1 var(--f-texte); font-variant-numeric: tabular-nums; letter-spacing: 4px; }
   .chiffres.fini { font: 800 88px/1.2 var(--f-titre); color: var(--accent); animation: entree .8s var(--rebond) both; }
+  /* Le bouffon et son numéro de cirque, à gauche (il se tient debout sur le bandeau de messages) */
+  .bouffon-cirque { position: absolute; left: 80px; bottom: 150px; width: 226px; height: 520px; }
+  .bouffon-cirque .bouffon-svg { width: 100%; height: 100%; }
   @keyframes lancer { 0%, 88% { transform: rotate(0); } 100% { transform: rotate(720deg); } }
 </style>
 </head>
@@ -24,7 +28,8 @@
 <!--
   Écran « Starting soon » (1920 × 1080, plein écran).
   Coche « Actualiser le navigateur quand la scène devient active » : le compte à rebours repart à chaque fois.
-  Options : ?minutes=10  (durée)  ·  ?heure=20:30  (heure fixe)  ·  ?titre=…  ·  ?titreDuJour=…
+  Le bouffon fait son numéro de cirque (jongle, poirier, salut) ; à zéro, il lance un d20 qui retombe sur 20.
+  Options : ?minutes=10  (durée)  ·  ?heure=20:30  (heure fixe)  ·  ?titre=…  ·  ?titreDuJour=…  ·  ?bouffon=0
 -->
 <div id="ecran" class="plein">
   <div class="fond-attente"></div>
@@ -43,6 +48,8 @@
     </div>
   </div>
 
+  <div class="bouffon-cirque entree" style="--retard:.5s" id="bouffon"></div>
+
   <div class="bandeau-messages carte entree" style="--retard:.6s">
     <svg viewBox="0 0 60 70"><use href="#i-grelot"/></svg><span class="message" id="message"></span>
   </div>
@@ -50,6 +57,8 @@
 
 <script src="../config.js"></script>
 <script src="../js/commun.js"></script>
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
 <script>
   const P = Commun, R = CONFIG.demarrage;
   P.demarrer();
@@ -58,9 +67,11 @@
   P.messages(document.getElementById('message'));
 
   const chiffres = document.getElementById('chiffres');
+  const bouffon = P.bouffon() ? Numeros.cirque(document.getElementById('bouffon')) : null;
+  const fini = () => { chiffres.textContent = R.texteFin; chiffres.classList.add('fini'); };
   P.compteARebours(chiffres, { heure: P.params.get('heure') || R.heure, minutes: P.params.get('minutes') ?? R.minutes }, () => {
-    chiffres.textContent = R.texteFin;
-    chiffres.classList.add('fini');
+    // À zéro : le bouffon lance le d20, qui retombe sur 20 à côté du compteur… et les dés sont jetés !
+    if (bouffon) bouffon.lancerD20(document.querySelector('.compteur'), fini); else fini();
   });
 </script>
 </body>

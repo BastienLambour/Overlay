@@ -5,11 +5,14 @@
 <title>Source — Alertes</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
 </head>
 <body>
 <!--
   Source d'alertes : à ajouter en haut de chaque scène (1920 × 1080).
   Coche « Contrôler l'audio via OBS » pour entendre et régler le tintement des grelots.
+  La carte descend du plafond sur deux cordes ; le bouffon, accroché d'une main à une troisième
+  corde, salue de l'autre (config.js › bouffon.alertes ; ?bouffon=0 pour une carte seule).
   Options d'URL :
     ?position=haut | centre | bas   (défaut : haut)
     ?test=1   fait défiler des alertes d'exemple
@@ -21,6 +24,8 @@
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/son.js"></script>
+<script src="../js/bouffon.js"></script>
+<script src="../js/numeros.js"></script>
 <script>
   const P = Commun;
   P.demarrer();
@@ -32,6 +37,7 @@
   const ICONES = { follow: 'chapeau', sub: 'bouclier', resub: 'bouclier', giftsub: 'parchemin', giftbomb: 'parchemin',
     bits: 'grelot', raid: 'epee', don: 'embleme', objectif: 'd20' };
   const GRANDES = ['raid', 'giftbomb', 'objectif'];
+  const AVEC_BOUFFON = P.bouffon('alertes');
 
   // --- File d'attente : une alerte à la fois ---
   const file = [];
@@ -60,12 +66,29 @@
     el.querySelector('.alerte-nom').textContent = e.nom || '';
     el.querySelector('.alerte-msg').textContent = P.remplir(t.message, e);
     if (grande) P.fanions(el.querySelector('.fanions'), 15);
-    ecran.appendChild(el);
+
+    // Avec le bouffon : la carte est suspendue à deux cordes, lui à une troisième, et tout descend du plafond
+    let bloc = el;
+    if (AVEC_BOUFFON) {
+      bloc = document.createElement('div');
+      bloc.className = 'suspension';
+      bloc.style.top = Y + 'px';
+      bloc.style.setProperty('--hors', -(Y + 700) + 'px');
+      el.style.top = '';
+      bloc.innerHTML = '<div class="corde g"></div><div class="corde d"></div><div class="corde b"></div>';
+      bloc.appendChild(el);
+      const perso = document.createElement('div');
+      perso.className = 'bouffon-corde';
+      bloc.appendChild(perso);
+      Numeros.rappel(perso);
+    }
+    ecran.appendChild(bloc);
     Son.jouer(e.type);
 
     setTimeout(() => {
-      el.classList.remove('entre'); el.classList.add('sort');
-      setTimeout(() => { el.remove(); fini(); }, 500);
+      if (AVEC_BOUFFON) bloc.classList.add('sort');                 // tout remonte au plafond
+      else { el.classList.remove('entre'); el.classList.add('sort'); }
+      setTimeout(() => { bloc.remove(); fini(); }, AVEC_BOUFFON ? 800 : 500);
     }, (CA.duree || 7) * 1000);
   }
 

@@ -91,6 +91,10 @@ const Commun = (() => {
     })();
   }
 
+  // --- Le bouffon est-il de sortie ? (config.js › bouffon.actif, ou ?bouffon=0 dans l'adresse) ---
+  const bouffon = cle => (C.bouffon || {}).actif !== false && params.get('bouffon') !== '0' &&
+    (!cle || (C.bouffon || {})[cle] !== false);
+
   function demarrer() {
     injecterIcones();
     remplirTextes();
@@ -101,5 +105,5 @@ const Commun = (() => {
   // Les icônes doivent exister avant que les composants ne soient construits
   if (document.body) injecterIcones(); else addEventListener('DOMContentLoaded', injecterIcones);
 
-  return { C, params, lire, remplir, ico, fanions, decor, messages, compteARebours, demarrer };
+  return { C, params, lire, remplir, ico, fanions, decor, messages, compteARebours, bouffon, demarrer };
 })();
