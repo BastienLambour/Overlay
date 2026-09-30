@@ -6,14 +6,26 @@
    n'est pas affiché ; un réglage de config.js absent d'ici apparaît dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure
+   Couleurs : section { ambiances: true } avec des champs type 'couleur' (cle 'couleurs.<variable>', defaut: '#…'),
+             et ambiances: [{ nom, valeurs: { 'couleurs.accent': '#…', … } }] pour les boutons en un clic.
    Options : logo (image en haut), scripts / styles (chargés pour l'aperçu),
              apercuAlerte(type, { titre, nom, message }) → HTML d'une alerte aux couleurs de l'overlay
    ===================================================================== */
 window.ReglagesChamps = {
+  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  ambiances: [
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.accent': '#FF7A1A', 'couleurs.fond': '#140B1A' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.accent': '#D63A3A', 'couleurs.fond': '#0E2317' } },
+    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.accent': '', 'couleurs.fond': '' } },
+  ],
   sections: [
     { titre: 'La chaîne', icone: '📺', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
+    ] },
+    { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
+      { cle: 'couleurs.accent', type: 'couleur', label: 'Couleur principale', defaut: '#FF9F1C' },
+      { cle: 'couleurs.fond', type: 'couleur', label: 'Fond', defaut: '#101418' },
     ] },
     { titre: 'Démarrage', icone: '⏳', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },

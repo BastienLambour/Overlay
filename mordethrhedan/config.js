@@ -28,6 +28,15 @@ window.CONFIG = {
     animation: true,    // éclats qui respirent très doucement (false = fond fixe)
   },
 
+  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
+  // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
+  // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
+  couleurs: {
+    fond:             "",   // Fond (autour de ton image)
+    texte:            "",   // Texte
+    doux:             "",   // Texte secondaire
+  },
+
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
   // les follows, abonnements, bits, raids et dons. Voir TUTO.md.

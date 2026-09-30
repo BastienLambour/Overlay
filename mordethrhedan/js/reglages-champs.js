@@ -6,13 +6,23 @@
            paires (« A | B » par ligne) · choix · secret · heure
    ===================================================================== */
 window.ReglagesChamps = {
+  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  ambiances: [
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.fond': '#0A0508', 'couleurs.texte': '', 'couleurs.doux': '', 'couleur': 'orange' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.fond': '#03100A', 'couleurs.texte': '', 'couleurs.doux': '', 'couleur': 'rouge' } },
+    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.fond': '', 'couleurs.texte': '', 'couleurs.doux': '', 'couleur': 'vert' } },
+  ],
+
   sections: [
     { titre: 'La chaîne', icone: '💎', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
     ] },
-    { titre: 'Couleur et fond', icone: '🎨', champs: [
+    { titre: 'Couleur et fond', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. La couleur des cadres et des éclats se règle juste au-dessus (« Couleur des cadres et des éclats »).', champs: [
       { cle: 'couleur', type: 'texte', label: 'Couleur des cadres et des éclats', aide: 'vert, rouge, bleu, violet, orange, cyan, jaune, rose — ou un code couleur, ex. #FFD400. Aussi source par source : jeu.html?couleur=rouge' },
+      { cle: 'couleurs.fond', type: 'couleur', label: 'Fond (autour de ton image)', defaut: '#050607' },
+      { cle: 'couleurs.texte', type: 'couleur', label: 'Texte', defaut: '#F2F5F3' },
+      { cle: 'couleurs.doux', type: 'couleur', label: 'Texte secondaire', defaut: '#9AA3A0' },
       { cle: 'halo', type: 'choix', label: 'Halo autour des cadres', options: [['leger', 'Léger'], ['moyen', 'Moyen'], ['fort', 'Fort']] },
       { cle: 'fond.graine', type: 'nombre', label: 'Motif des facettes (un nombre)', aide: 'Change ce nombre pour obtenir un autre motif.' },
       { cle: 'fond.animation', type: 'case', label: 'Les éclats du fond respirent doucement', aide: 'Décoché = fond fixe.' },

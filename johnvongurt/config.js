@@ -14,6 +14,18 @@ window.CONFIG = {
   // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "johnvongurt",
 
+  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
+  // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
+  // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
+  couleurs: {
+    accent:           "",   // Accent (orange « attention »)
+    flamme:           "",   // Flamme de la fusée
+    fond:             "",   // Fond
+    "fond-2":         "",   // Fond des cadres
+    trait:            "",   // Traits et texte
+    doux:             "",   // Texte secondaire
+  },
+
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
   // les follows, abonnements, bits, raids et dons. Voir le guide (index.html).

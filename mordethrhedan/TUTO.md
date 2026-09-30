@@ -371,7 +371,8 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif.
 
 | Je veux changer… | Où |
 |---|---|
-| La couleur partout | `config.js` › `couleur` (`vert`, `rouge`, `bleu`, `violet`, `orange`, `cyan`, `jaune`, `rose` ou `"#FFD400"`) |
+| Une ambiance (Halloween, Noël…) | `reglages.html` › Couleur et fond (voir ci-dessous) |
+| La couleur partout | `reglages.html` › Couleur et fond, ou `config.js` › `couleur` (`vert`, `rouge`, `bleu`, `violet`, `orange`, `cyan`, `jaune`, `rose` ou `"#FFD400"`) |
 | La couleur d'une seule scène | `?couleur=rouge` dans l'adresse de l'overlay (pratique pour une scène « Jeu rouge ») |
 | Le halo | `config.js` › `halo` (`leger`, `moyen`, `fort`) |
 | Le motif du fond / son animation | `config.js` › `fond.graine` / `fond.animation` |
@@ -381,6 +382,14 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif.
 | Remettre l'objectif à zéro | changer `objectif.depart` dans `config.js` |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
+
+### Changer d'ambiance (Halloween, Noël…) en un clic
+
+1. Ouvre `reglages.html` › section **Couleurs** — la couleur des cadres et des éclats y est aussi, dans « Couleur et fond ».
+2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
+3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
+
+Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les dans PowerShell, dans le dossier de l'overlay : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
 
 ---
 

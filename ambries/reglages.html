@@ -56,6 +56,7 @@
   .rg-case > span { font-weight: 700; flex: 1; }
   .rg-case small { flex-basis: 100%; }
   .rg-modifie > span::after { content: " •"; color: var(--rg-accent); }
+  .rg-modifie > span.rg-couleur::after { content: none; }
 
   .rg-alertes { display: grid; gap: 12px; margin-top: 12px; }
   .rg-ligne-alerte { display: grid; grid-template-columns: 170px 1fr 1.4fr; gap: 12px; align-items: center; }
@@ -65,6 +66,18 @@
   .rg-apercu b { color: var(--rg-accent); text-transform: uppercase; letter-spacing: .08em; font-size: 14px; }
   .rg-apercu strong { font: 800 30px/1.1 var(--rg-titre); }
   .rg-apercu span { color: var(--rg-doux); }
+  .rg-couleur { display: flex; gap: 8px; align-items: center; }
+  .rg-couleur input[type=color] { width: 52px; height: 46px; padding: 2px; border: 2px solid color-mix(in srgb, var(--rg-texte) 25%, transparent);
+    border-radius: 10px; background: var(--rg-fond); cursor: pointer; flex: none; }
+  .rg-page .rg-couleur input[type=text] { flex: 1; min-width: 0; font-family: ui-monospace, Consolas, monospace; }
+  .rg-couleur button, .rg-ambiance { font: 800 16px var(--rg-police); color: var(--rg-texte); background: var(--rg-fond); cursor: pointer;
+    border: 2px solid color-mix(in srgb, var(--rg-texte) 25%, transparent); border-radius: 10px; }
+  .rg-couleur button { width: 46px; height: 46px; flex: none; }
+  .rg-ambiances { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .rg-ambiance { padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .rg-ambiance:hover, .rg-couleur button:hover { border-color: var(--rg-accent); }
+  .rg-ambiance span { display: flex; gap: 3px; }
+  .rg-ambiance i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .35); }
   .rg-tests { display: flex; flex-wrap: wrap; gap: 10px; }
   .rg-tests a { text-decoration: none; font-weight: 800; padding: 8px 14px; border: 2px solid var(--rg-accent); border-radius: 10px; }
 
@@ -101,6 +114,7 @@
 </div>
 
 <script src="config.js"></script>
+<script src="js/couleurs.js"></script>
 <script src="js/reglages-champs.js"></script>
 <script src="js/reglages.js"></script>
 <script>

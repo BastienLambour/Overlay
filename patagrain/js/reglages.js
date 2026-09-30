@@ -235,6 +235,13 @@ window.CONFIG = ${formater(config)};
         case 'case': return `<label class="rg-champ rg-case" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''}><span>${echapper(c.label)}</span>${aide}</label>`;
         case 'nombre': saisie = `<input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 'any'}">`; break;
         case 'heure': saisie = `<input id="${id}" type="time" value="${echapper(v)}">`; break;
+        // Une couleur : le nuancier, le code (ex. #FF7A1A, vide = couleur d'origine du thème) et ↺ pour revenir à l'origine
+        case 'couleur': {
+          const hex = /^#[0-9a-f]{6}$/i.test(v || '') ? v : (c.defaut || '#888888');
+          saisie = `<span class="rg-couleur"><input type="color" data-pour="${id}" value="${hex}" aria-label="Choisir la couleur">
+            <input id="${id}" type="text" value="${echapper(v)}" placeholder="d'origine${c.defaut ? ' : ' + echapper(c.defaut) : ''}" spellcheck="false">
+            <button type="button" class="rg-origine" data-pour="${id}" data-defaut="${echapper(c.defaut || '')}" title="Revenir à la couleur d'origine">↺</button></span>`; break;
+        }
         case 'secret': saisie = `<input id="${id}" type="password" value="${echapper(v)}" autocomplete="off">`; break;
         case 'choix': saisie = `<select id="${id}">${c.options.map(([val, lib]) => `<option value="${echapper(val)}" ${val === v ? 'selected' : ''}>${echapper(lib)}</option>`).join('')}</select>`; break;
         case 'liste': case 'paires': saisie = `<textarea id="${id}" rows="${Math.min(8, Math.max(3, (v || []).length + 1))}">${echapper(versChamp(c.type, v))}</textarea>`; break;
@@ -272,11 +279,22 @@ window.CONFIG = ${formater(config)};
       }).join('');
     }
 
+    // Les ambiances toutes prêtes (reglages-champs.js › ambiances) : un clic remplit les couleurs
+    function ambiancesHTML() {
+      const pastilles = v => Object.values(v).filter(x => /^#[0-9a-f]{3,8}$/i.test(x)).slice(0, 5)
+        .map(x => `<i style="background:${x}"></i>`).join('');
+      return `<h3>En un clic</h3><div class="rg-ambiances">${RC.ambiances.map((a, i) =>
+        `<button type="button" class="rg-ambiance" data-ambiance="${i}">${echapper(a.nom)}<span>${pastilles(a.valeurs)}</span></button>`).join('')}</div>
+        <p class="rg-aide">Puis <b>Enregistrer</b> : toutes les pages de l'overlay prennent ces couleurs. Les vidéos de transition et les images du kit
+          de chaîne, elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
+    }
+
     function construire() {
       document.getElementById('rg-formulaire').innerHTML = sections.map(s => `<section class="rg-section">
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
         <div class="rg-champs">${s.champs.map(champHTML).join('')}</div>
+        ${s.ambiances && (RC.ambiances || []).length ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();
     }
@@ -352,6 +370,27 @@ window.CONFIG = ${formater(config)};
     document.getElementById('rg-tests').innerHTML = (RC.tests || []).map(([lib, url]) => `<a href="${url}" target="_blank">${echapper(lib)}</a>`).join('')
       + '<a href="index.html" target="_blank">🏠 Tout voir</a>';
 
+    // Couleurs : le nuancier et le code restent d'accord ; ↺ remet la couleur d'origine ; les ambiances remplissent tout
+    document.addEventListener('input', e => {
+      const t = e.target;
+      if (t.type === 'color' && t.dataset.pour) document.getElementById(t.dataset.pour).value = t.value;
+      else if (t.closest && t.closest('.rg-couleur') && /^#[0-9a-f]{6}$/i.test(t.value.trim())) t.parentElement.querySelector('input[type=color]').value = t.value.trim();
+    }, true);
+    document.addEventListener('click', e => {
+      const origine = e.target.closest && e.target.closest('.rg-origine');
+      if (origine) {
+        e.preventDefault();
+        document.getElementById(origine.dataset.pour).value = '';
+        if (origine.dataset.defaut) origine.parentElement.querySelector('input[type=color]').value = origine.dataset.defaut;
+        return relire();
+      }
+      const bouton = e.target.closest && e.target.closest('[data-ambiance]');
+      if (bouton) {
+        relire();                                             // garde ce qui a déjà été tapé ailleurs
+        Object.entries(RC.ambiances[bouton.dataset.ambiance].valeurs).forEach(([cle, v]) => { if (lire(enregistre, cle) !== undefined) ecrireCle(valeurs, cle, v); });
+        construire(); relire();
+      }
+    });
     document.addEventListener('input', relire);
     document.addEventListener('change', relire);
     addEventListener('beforeunload', e => { if (changements().length) e.preventDefault(); });

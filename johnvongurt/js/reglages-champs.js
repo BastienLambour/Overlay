@@ -6,12 +6,27 @@
            paires (« A | B » par ligne) · choix · secret · heure
    ===================================================================== */
 window.ReglagesChamps = {
+  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  ambiances: [
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.accent': '#FF6A00', 'couleurs.flamme': '#B57CFF', 'couleurs.fond': '#0E0812', 'couleurs.fond-2': '#180D1E', 'couleurs.trait': '#F3E8FF', 'couleurs.doux': '' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.accent': '#E63946', 'couleurs.flamme': '#F5C542', 'couleurs.fond': '#06130C', 'couleurs.fond-2': '#0C1F14', 'couleurs.trait': '#EEF6EF', 'couleurs.doux': '' } },
+    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.accent': '', 'couleurs.flamme': '', 'couleurs.fond': '', 'couleurs.fond-2': '', 'couleurs.trait': '', 'couleurs.doux': '' } },
+  ],
+
   sections: [
     { titre: 'La chaîne', icone: '🚀', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
       { cle: 'scenes.grade', type: 'texte', label: 'Ton grade', aide: 'Affiché sous la cam : « John Von Gurt — Commandant ».' },
       { cle: 'scenes.statutEnDirect', type: 'texte', label: 'Statut pendant le live' },
+    ] },
+    { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
+      { cle: 'couleurs.accent', type: 'couleur', label: 'Accent (orange « attention »)', defaut: '#FF9F1C' },
+      { cle: 'couleurs.flamme', type: 'couleur', label: 'Flamme de la fusée', defaut: '#FFE08A' },
+      { cle: 'couleurs.fond', type: 'couleur', label: 'Fond', defaut: '#0B0E13' },
+      { cle: 'couleurs.fond-2', type: 'couleur', label: 'Fond des cadres', defaut: '#11151C' },
+      { cle: 'couleurs.trait', type: 'couleur', label: 'Traits et texte', defaut: '#E6EAEE' },
+      { cle: 'couleurs.doux', type: 'couleur', label: 'Texte secondaire', defaut: '#7C8793' },
     ] },
     { titre: 'Démarrage (la fusée sur le pas de tir)', icone: '⏱️', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },

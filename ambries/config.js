@@ -18,6 +18,20 @@ window.CONFIG = {
   // Petite phrase fétiche, reprise sur les écrans et la bannière
   devise: "10 % skill · 90 % d'excuses",
 
+  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
+  // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
+  // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
+  couleurs: {
+    violet:           "",   // Néon principal (violet)
+    mauve:            "",   // Mauve
+    accent:           "",   // Néon secondaire (rose)
+    lilas:            "",   // Lilas (reflets clairs)
+    fond:             "",   // Fond (nuit violette)
+    "fond-2":         "",   // Fond, plus clair
+    surface:          "",   // Cartes et bulles
+    texte:            "",   // Texte
+  },
+
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
   // les follows, abonnements, bits, raids et dons. Voir TUTO.md.

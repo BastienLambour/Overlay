@@ -361,10 +361,19 @@ Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple :
 | La durée, le volume ou le son des alertes | `config.js` › `alertes.duree`, `alertes.volume`, `alertes.son` |
 | Les bots masqués du chat | `config.js` › `chat.ignorer` |
 | Les visuels de la chaîne | `config.js` › `chaine` (puis `node outils/exporter-chaine.mjs`) |
-| Les couleurs, les polices | début de `css/theme.css` |
+| Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) |
+| Les couleurs d'origine, les polices | début de `css/theme.css` |
 | Remettre l'objectif à zéro | changer `objectif.depart` dans `config.js` |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
+
+### Changer d'ambiance (Halloween, Noël…) en un clic
+
+1. Ouvre `reglages.html` › section **Couleurs**.
+2. Clique **🎃 Halloween** (ou **🎄 Noël**), ou change une couleur à la main (le nuancier, ou un code comme `#FF7A1A`). **↺** remet la couleur d'origine d'une seule couleur ; **↺ Couleurs d'origine** les remet toutes.
+3. **Enregistrer**, puis actualise les sources dans OBS (ou laisse faire le script de la section 2) : toutes les scènes, sources et alertes prennent ces couleurs.
+
+Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les dans PowerShell, dans le dossier de l'overlay : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
 
 ---
 

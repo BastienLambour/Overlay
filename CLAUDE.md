@@ -77,7 +77,8 @@ Conventions :
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `streamerbot`, `demarrage`,
   `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `anonyme`, `textes`), `test.noms`,
-  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
+  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
+  `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
   compteur), `?apercu=1` (montre les zones cam/jeu), `?reinitialiser` (remet l'objectif à zéro),
   `?minutes=10` (compte à rebours), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite`.
@@ -125,6 +126,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `{ type, nom, montant, mois, nombre, destinataire }`, objectif persistant (localStorage
   `overlay-<id>-etat`), mode test. `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
   leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
+- `js/couleurs.js` : applique `config.js › couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
+  `reglages.html` › Couleurs). Chargé juste après `config.js` sur CHAQUE page (sauf le moodboard). Les images (logo SVG en
+  `<img>`, PNG) ne suivent pas ; vidéos de transition et kit : à refaire avec les outils.
 - `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
   les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,

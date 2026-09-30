@@ -6,11 +6,28 @@
            paires (« A | B » par ligne) · choix · secret · heure
    ===================================================================== */
 window.ReglagesChamps = {
+  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  ambiances: [
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.violet': '#FF7A1A', 'couleurs.mauve': '#FFB266', 'couleurs.accent': '#B57CFF', 'couleurs.lilas': '#FFE3CC', 'couleurs.fond': '#160A1E', 'couleurs.fond-2': '', 'couleurs.surface': '', 'couleurs.texte': '' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.violet': '#2FD37A', 'couleurs.mauve': '#8CF0B5', 'couleurs.accent': '#FF4D4D', 'couleurs.lilas': '#E0FFEC', 'couleurs.fond': '#07170F', 'couleurs.fond-2': '#0D2418', 'couleurs.surface': '#143322', 'couleurs.texte': '' } },
+    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.violet': '', 'couleurs.mauve': '', 'couleurs.accent': '', 'couleurs.lilas': '', 'couleurs.fond': '', 'couleurs.fond-2': '', 'couleurs.surface': '', 'couleurs.texte': '' } },
+  ],
+
   sections: [
     { titre: 'La chaîne', icone: '💜', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
       { cle: 'devise', type: 'texte', label: 'Ta devise', aide: 'Petite phrase fétiche, reprise sur les écrans et la bannière.' },
+    ] },
+    { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
+      { cle: 'couleurs.violet', type: 'couleur', label: 'Néon principal (violet)', defaut: '#A855F7' },
+      { cle: 'couleurs.mauve', type: 'couleur', label: 'Mauve', defaut: '#C084FC' },
+      { cle: 'couleurs.accent', type: 'couleur', label: 'Néon secondaire (rose)', defaut: '#FF4FD8' },
+      { cle: 'couleurs.lilas', type: 'couleur', label: 'Lilas (reflets clairs)', defaut: '#EBDDFF' },
+      { cle: 'couleurs.fond', type: 'couleur', label: 'Fond (nuit violette)', defaut: '#12081F' },
+      { cle: 'couleurs.fond-2', type: 'couleur', label: 'Fond, plus clair', defaut: '#1D0F33' },
+      { cle: 'couleurs.surface', type: 'couleur', label: 'Cartes et bulles', defaut: '#28164A' },
+      { cle: 'couleurs.texte', type: 'couleur', label: 'Texte', defaut: '#F6EEFF' },
     ] },
     { titre: 'Démarrage', icone: '⏳', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },

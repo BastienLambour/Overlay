@@ -11,11 +11,27 @@ window.ReglagesChamps = {
   scripts: ['js/commun.js'],
   styles: ['css/composants.css'],
 
+  // Ambiances en un clic (section Couleurs) : les couleurs non citées reviennent à celles du thème
+  ambiances: [
+    { nom: '🎃 Halloween', valeurs: { 'couleurs.primaire': '#FF7A1A', 'couleurs.primaire-fonce': '#B34700', 'couleurs.accent': '#B57CFF', 'couleurs.accent-2': '#FFB266', 'couleurs.fond': '#140B1A', 'couleurs.surface': '#24142D', 'couleurs.texte': '' } },
+    { nom: '🎄 Noël', valeurs: { 'couleurs.primaire': '#D63A3A', 'couleurs.primaire-fonce': '#962020', 'couleurs.accent': '#F5C542', 'couleurs.accent-2': '#8FE0A0', 'couleurs.fond': '#0E2317', 'couleurs.surface': '#173524', 'couleurs.texte': '' } },
+    { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.primaire': '', 'couleurs.primaire-fonce': '', 'couleurs.accent': '', 'couleurs.accent-2': '', 'couleurs.fond': '', 'couleurs.surface': '', 'couleurs.texte': '' } },
+  ],
+
   sections: [
     { titre: 'La chaîne', icone: '🎩', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
       { cle: 'titreDuJour', type: 'texte', label: 'Ce que tu fais aujourd\'hui', aide: 'Affiché sur Starting soon, le bandeau et la scène Contenu.' },
+    ] },
+    { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. Le logo, le chapeau posé sur les cams et l\'emblème sont des images : ils gardent leurs couleurs.', champs: [
+      { cle: 'couleurs.primaire', type: 'couleur', label: 'Couleur principale (le bleu)', defaut: '#3A9AD9' },
+      { cle: 'couleurs.primaire-fonce', type: 'couleur', label: 'Couleur principale, en foncé', defaut: '#1F6FA8' },
+      { cle: 'couleurs.accent', type: 'couleur', label: 'L\'or (couronne, grelots, titres)', defaut: '#F5B82E' },
+      { cle: 'couleurs.accent-2', type: 'couleur', label: 'Bleu glacier (fanions, badge « en direct »)', defaut: '#8FD0F5' },
+      { cle: 'couleurs.fond', type: 'couleur', label: 'Fond (bleu nuit)', defaut: '#152238' },
+      { cle: 'couleurs.surface', type: 'couleur', label: 'Cartes (chat, bandeau, alertes)', defaut: '#1E3050' },
+      { cle: 'couleurs.texte', type: 'couleur', label: 'Texte (crème)', defaut: '#FFF3DC' },
     ] },
     { titre: 'Starting soon', icone: '🎭', champs: [
       { cle: 'demarrage.titre', type: 'texte', label: 'Titre' },

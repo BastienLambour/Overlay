@@ -17,6 +17,19 @@ window.CONFIG = {
   // Ce que tu fais aujourd'hui (écrans d'attente et bandeau)
   titreDuJour: "Donjons & Dragons — La quête du grelot perdu",
 
+  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
+  // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
+  // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
+  couleurs: {
+    primaire:         "",   // Couleur principale (le bleu)
+    "primaire-fonce": "",   // Couleur principale, en foncé
+    accent:           "",   // L'or (couronne, grelots, titres)
+    "accent-2":       "",   // Bleu glacier (fanions, badge « en direct »)
+    fond:             "",   // Fond (bleu nuit)
+    surface:          "",   // Cartes (chat, bandeau, alertes)
+    texte:            "",   // Texte (crème)
+  },
+
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
   // les follows, abonnements, bits, raids et dons. Voir TUTO.md.

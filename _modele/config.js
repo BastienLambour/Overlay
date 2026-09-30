@@ -15,6 +15,14 @@ window.CONFIG = {
   // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "<pseudo>",
 
+  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
+  // Un code couleur (ex. "#FF7A1A") remplace la variable du même nom de css/theme.css ; vide = la couleur d'origine.
+  // Mettre ici les couleurs principales du thème (leurs noms dans theme.css, sans les « -- »).
+  couleurs: {
+    accent: "",          // <couleur principale du thème>
+    fond: "",            // fond
+  },
+
   // ---------------------------------------------------------------------
   // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
   // les follows, abonnements, bits, raids et dons. Voir TUTO.md.
