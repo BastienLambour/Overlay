@@ -135,7 +135,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `<img>`, PNG) ne suivent pas ; vidéos de transition et kit : à refaire avec les outils.
 - `js/options.js` : `config.js › options.<page>` (nom du fichier sans .html) ajouté à l'adresse de la page via
   `history.replaceState`, comme si on l'avait écrit dans OBS (true = rien, false/"aucune" = 0) ; une option déjà dans
-  l'adresse passe avant. Chargé juste après `couleurs.js` sur CHAQUE page. Réglé dans `reglages.html` › Options des scènes.
+  l'adresse passe avant. Ce qu'il ajoute est noté (`depuisReglages=chat,cam`) et retiré au chargement suivant :
+  une actualisation OBS recharge l'adresse modifiée, sinon un réglage remis resterait bloqué. Chargé juste après `couleurs.js` sur CHAQUE page. Réglé dans `reglages.html` › Options des scènes.
 - `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
   les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,
