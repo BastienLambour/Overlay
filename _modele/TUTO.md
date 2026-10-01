@@ -80,7 +80,10 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 
 ### 2.8 Actualiser toutes les sources d'un coup (après un changement de réglages)
 <OBS › Outils › Scripts › + › outils/actualiser-obs.lua : bouton, case « tout seul quand les réglages changent » (config.js ou mes-reglages.js), raccourci clavier ;
- une page actualisée repart de zéro>
+ une page actualisée repart de zéro ;
+ #### Placer les webcams tout seul : bouton « Placer les webcams sur toutes les scènes (et les ajouter là où elles manquent) » + case
+ « Replacer tout seul » ; nom de la webcam avec « cam » ; carte d'acquisition jamais déplacée ; « Pas de webcam » = cachée ; js/zones.js ; 1440p converti ;
+ rognage auto OBS 30.1+>
 
 ---
 

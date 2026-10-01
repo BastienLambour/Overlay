@@ -136,6 +136,17 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 > ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
 
+#### Placer les webcams tout seul (le même script)
+
+Dans la même fenêtre **Outils › Scripts**, le script a aussi :
+
+- le bouton **Placer les webcams sur toutes les scènes (et les ajouter là où elles manquent)** : dans chaque scène qui affiche une page de l'overlay (`scenes/jeu.html`, `contenu.html`, `cam-seule.html`…), ta webcam est mise **pile dans sa zone**, à la bonne taille, et rognée. Si une scène n'a pas encore de webcam, elle y est ajoutée, juste sous l'overlay ;
+- la case **Replacer tout seul les webcams quand les réglages changent** (cochée) : tu changes la webcam de la scène Jeu dans `reglages.html` › **Options des scènes**, tu enregistres… et dans OBS la webcam se déplace en même temps que son cadre.
+
+Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (ex. « Webcam ») ; elle peut être rangée dans le groupe de la cam (fiche 3.6). Une carte d'acquisition de console n'est jamais déplacée (sauf si son nom contient « cam »). Une scène réglée **Pas de webcam** : la webcam y est cachée, puis réaffichée quand tu la remets. Les positions viennent de `js/zones.js` (les mêmes que dans les fiches ci-dessous) ; si ton canevas est en 1440p, le script fait la conversion tout seul.
+
+> Le rognage automatique demande **OBS 30.1 ou plus récent**. Avec un OBS plus ancien, si la webcam déborde de son cadre : clic droit › **Transformer** › **Rogner** à la main (geste B).
+
 ---
 
 ## 3. Les scènes, fiche par fiche
@@ -241,6 +252,8 @@ Trois dispositions, toutes avec le **même fond** qui se voit là où tu n'as mi
 | `bas-droite` | `1544`, `724` |
 
 > ⚠️ Si tu écris le coin dans l'adresse (`?cam=bas-droite`) au lieu des réglages, mets **le même** sur `scenes/jeu.html` et sur `sources/cam.html`.
+
+**Position perso** (au pixel près) : `reglages.html` › **Options des scènes** › **La webcam de la scène Jeu** › **Position perso** (X, Y, largeur, hauteur, ou fais glisser la cam sur le plan) ; ou dans l'adresse : `?cam=1200,700,420,236`. **Le plus simple pour la poser dans OBS** : le bouton **Placer les webcams** du script `actualiser-obs.lua` (voir 2.9), qui suit aussi la position perso.
 
 **Options** : `?cam=0` sur `scenes/jeu.html` (pas de webcam : pas de groupe, le pseudo est alors affiché par l'overlay, en haut à gauche) · cadre sans le pseudo : `reglages.html` › **Options des scènes** › « Jeu : ton pseudo sur le cadre de la cam » décoché (ou `?pseudo=0` sur `sources/cam.html`) · `?couleur=rouge`
 
@@ -508,6 +521,7 @@ node outils/exporter-chaine.mjs
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 | `?chat=0` | retire le chat intégré à la scène |
 | `?cam=0` | *(Jeu)* pas de webcam : le cadre de la cam disparaît |
+| `?cam=1200,700,420,236` | *(Jeu)* webcam à une position perso : x, y, largeur, hauteur (pixels 1920 × 1080) |
 | `?minutes=0.5` | *(démarrage)* compte à rebours de 30 s |
 | `?couleur=rouge` | essaie une autre couleur |
 
@@ -521,7 +535,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 
 | Je veux changer… | Où |
 |---|---|
-| Le coin de la webcam, pas de webcam, le chat d'un écran | `reglages.html` › Options des scènes |
+| Le coin ou la position exacte de la webcam, pas de webcam, le chat d'un écran | `reglages.html` › Options des scènes |
 | Une ambiance (Halloween, Noël…) | `reglages.html` › Couleur et fond (voir ci-dessous) |
 | La couleur partout | `reglages.html` › Couleur et fond, ou `config.js` › `couleur` (`vert`, `rouge`, `bleu`, `violet`, `orange`, `cyan`, `jaune`, `rose` ou `"#FFD400"`) |
 | La couleur d'une seule scène | `?couleur=rouge` dans l'adresse de l'overlay (pratique pour une scène « Jeu rouge ») |
@@ -569,7 +583,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
-| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -612,6 +626,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → Dans OBS : clic droit sur la source › **Propriétés** › **Actualiser le cache de la page actuelle**.
 
 **La cam ne tombe pas pile dans le cadre**
+→ Le plus simple : OBS › **Outils › Scripts** › `actualiser-obs.lua` › **Placer les webcams sur toutes les scènes** (le nom de ta webcam doit contenir « cam »). Sinon :
 → Refais le geste B, et vérifie que la webcam est bien **sous** l'overlay.
 
 ---

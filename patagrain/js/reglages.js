@@ -243,7 +243,25 @@ window.MES_REGLAGES = ${formater(perso)};
       const titre = lire(enregistre, `alertes.textes.${k}.titre`);
       return { cle: `alertes.sons.${k}`, type: 'son', son: k, label: (nomsAlertes[k] || k) + (titre ? ` — « ${titre} »` : '') };
     });
-    const sections = (RC.sections || []).map(s => ({ ...s, champs: [...(s.champs || []), ...(s.sons ? champsSons() : [])].filter(c => lire(enregistre, c.cle) !== undefined || c.ajouter) }))
+    // Section « scenes: true » : config.js › options en TABLEAU (une ligne par scène, une colonne par élément) ;
+    // une webcam à préréglages (scène Jeu, d'après js/zones.js) a son bloc : préréglages + coordonnées, position perso, plan
+    const NOMS_SCENES = { demarrage: 'Démarrage', pause: 'Pause', fin: 'Fin', 'cam-seule': 'Cam seule', contenu: 'Contenu', jeu: 'Jeu',
+      speedrun: 'Speedrun', cam: 'Cadre de la cam', ...(RC.scenes || {}) };
+    const NOMS_ELEMENTS = { cam: '📷 Webcam', chat: '💬 Chat', bandeau: '📰 Bandeau', bouffon: '🎭 Mascotte', pseudo: '🏷️ Pseudo', ...(RC.elements || {}) };
+    const NOMS_COINS = { 'bas-droite': 'En bas à droite', 'bas-gauche': 'En bas à gauche', 'haut-droite': 'En haut à droite', 'haut-gauche': 'En haut à gauche' };
+    const zonesCam = () => (typeof Options !== 'undefined' ? Options.zonesCam() : {});
+    const ordre = (liste, ref) => [...liste].sort((a, b) => { const i = ref.indexOf(a), j = ref.indexOf(b); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); });
+    const champsScenes = () => {
+      const o = lire(enregistre, 'options') || {};
+      return ordre(Object.keys(o), Object.keys(NOMS_SCENES)).flatMap(sc => ordre(Object.keys(o[sc] || {}), Object.keys(NOMS_ELEMENTS)).map(el => {
+        const v = o[sc][el], prereglages = el === 'cam' && (zonesCam()[sc] || {}).prereglages;
+        return { cle: `options.${sc}.${el}`, scene: sc, element: el, type: prereglages ? 'cam' : typeof v === 'boolean' ? 'case' : 'texte',
+          label: `${NOMS_SCENES[sc] || sc} : ${(NOMS_ELEMENTS[el] || el).replace(/^[^\p{L}]+/u, '')}` };
+      }));
+    };
+    const sections = (RC.sections || []).map(s => ({ ...s, champs: [...(s.scenes ? champsScenes() : []), ...(s.champs || []), ...(s.sons ? champsSons() : [])]
+      .filter((c, i, l) => l.findIndex(x => x.cle === c.cle) === i)
+      .filter(c => lire(enregistre, c.cle) !== undefined || c.ajouter) }))
       .filter(s => !s.sons || s.champs.length);
     const decrits = new Set(sections.flatMap(s => s.champs.map(c => c.cle)));
     const alertes = Object.keys(lire(enregistre, 'alertes.textes') || {});
@@ -255,6 +273,12 @@ window.MES_REGLAGES = ${formater(perso)};
     const versChamp = (type, v) => type === 'liste' ? (v || []).join('\n') : type === 'paires' ? (v || []).map(p => p.join(' | ')).join('\n') : (v ?? '');
     function depuisChamp(c, el) {
       if (c.type === 'case') return el.checked;
+      if (c.type === 'cam') {                       // un préréglage, « aucune », ou { x, y, l, h }
+        const choix = (el.querySelector('input[type=radio]:checked') || {}).value || '';
+        if (choix !== 'perso') return choix;
+        const n = k => Math.round(Number(document.getElementById(`${el.id}-${k}`).value) || 0);
+        return { x: n('x'), y: n('y'), l: n('l'), h: n('h') };
+      }
       if (c.type === 'nombre') return el.value === '' ? 0 : Number(el.value);
       if (c.type === 'liste') return el.value.split('\n').map(s => s.trim()).filter(Boolean);
       if (c.type === 'paires') return el.value.split('\n').map(s => s.trim()).filter(Boolean).map(s => { const [a, ...b] = s.split('|'); return [a.trim(), b.join('|').trim()]; });
@@ -340,14 +364,93 @@ window.MES_REGLAGES = ${formater(perso)};
           elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
     }
 
+    // ---------- Options des scènes ----------
+    const coordonnees = p => `x ${p.x} · y ${p.y} · ${p.l} × ${p.h}`;
+    function scenesHTML(s) {
+      const champs = s.champs.filter(c => c.scene);
+      if (!champs.length) return '';
+      const lignes = [...new Set(champs.map(c => c.scene))];
+      const colonnes = ordre([...new Set(champs.map(c => c.element))], Object.keys(NOMS_ELEMENTS));
+      const cellule = (sc, el) => {
+        const c = champs.find(x => x.scene === sc && x.element === el);
+        if (!c) return '<td class="rg-vide" title="Pas dans cette scène">—</td>';
+        const id = idChamp(c.cle), v = lire(valeurs, c.cle);
+        if (c.type === 'case') return `<td><label class="rg-bascule" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''} aria-label="${echapper(c.label)}"><i></i></label></td>`;
+        if (c.type === 'cam') return `<td><a href="#${id}" class="rg-resume-cam" data-resume="${id}" data-cle="${c.cle}"></a></td>`;
+        return `<td><label data-cle="${c.cle}"><input id="${id}" type="text" value="${echapper(v)}" aria-label="${echapper(c.label)}"></label></td>`;
+      };
+      const tableau = `<div class="rg-defile"><table class="rg-scenes"><thead><tr><th></th>${colonnes.map(el => `<th>${echapper(NOMS_ELEMENTS[el] || el)}</th>`).join('')}</tr></thead>
+        <tbody>${lignes.map(sc => `<tr><th>${echapper(NOMS_SCENES[sc] || sc)}</th>${colonnes.map(el => cellule(sc, el)).join('')}</tr>`).join('')}</tbody></table></div>`;
+      return tableau + champs.filter(c => c.type === 'cam').map(camHTML).join('') + zonesFixesHTML();
+    }
+
+    // Le bloc de la webcam d'une scène à préréglages : choix, coordonnées, position perso, plan
+    function camHTML(c) {
+      const id = idChamp(c.cle), z = zonesCam()[c.scene], v = lire(valeurs, c.cle);
+      const choix = v && typeof v === 'object' ? 'perso' : (v === 'aucune' || v === false || v === '0') ? 'aucune' : (z.prereglages[v] ? v : z.defaut);
+      const r = (choix === 'perso' && Options.cam(c.scene, v)) || z.prereglages[choix] || z.prereglages[z.defaut];
+      const radio = (val, titre, detail) => `<label class="rg-coin"><input type="radio" name="${id}" value="${val}" ${choix === val ? 'checked' : ''}>
+        <span><b>${titre}</b>${detail ? `<small>${detail}</small>` : ''}</span></label>`;
+      const n = (k, lib) => `<label class="rg-num"><span>${lib}</span><input type="number" id="${id}-${k}" value="${r[k]}" step="1"></label>`;
+      return `<div class="rg-cam" id="${id}" data-cle="${c.cle}" data-scene="${c.scene}">
+        <h3>📷 La webcam de la scène ${echapper(NOMS_SCENES[c.scene] || c.scene)}</h3>
+        <div class="rg-cam-corps">
+          <div><svg class="rg-plan" viewBox="0 0 1920 1080" role="img" aria-label="Plan de l'écran : où est la webcam"></svg>
+            <p class="rg-aide">Le plan de l'écran (1920 × 1080). Fais glisser le cadre de la cam, ou clique un emplacement en pointillés.</p></div>
+          <div class="rg-coins">${Object.entries(z.prereglages).map(([k, p]) => radio(k, NOMS_COINS[k] || k, coordonnees(p))).join('')}
+            ${radio('perso', 'Position perso', 'au pixel près : X et Y = le coin en haut à gauche de la cam')}
+            <div class="rg-nums">${n('x', 'X')}${n('y', 'Y')}${n('l', 'Largeur')}${n('h', 'Hauteur')}</div>
+            ${radio('aucune', 'Pas de webcam', 'ni cadre, ni webcam dans cette scène')}</div>
+        </div>
+        <p class="rg-aide rg-obs" id="${id}-obs"></p></div>`;
+    }
+
+    // Les scènes où la webcam a une place fixe (pour la poser dans OBS, ou vérifier le script)
+    function zonesFixesHTML() {
+      const fixes = Object.entries(zonesCam()).filter(([, z]) => !z.prereglages);
+      if (!fixes.length) return '';
+      return `<h3>📐 La webcam dans les autres scènes (place fixe)</h3>
+        <div class="rg-defile"><table class="rg-scenes rg-fixes"><tbody>${fixes.map(([sc, z]) =>
+          `<tr><th>${echapper(NOMS_SCENES[sc] || sc)}</th><td>${coordonnees(z)}</td></tr>`).join('')}</tbody></table></div>
+        <p class="rg-aide">Pixels en 1920 × 1080 (X, Y = le coin en haut à gauche). Le script OBS <code>outils/actualiser-obs.lua</code>
+          place la webcam tout seul dans toutes ces scènes (bouton « Placer les webcams »), et la replace quand tu enregistres ici.</p>`;
+    }
+
+    // Met à jour les blocs webcam (coordonnées, plan, résumé dans le tableau) d'après ce qui est coché
+    function majScenes() {
+      document.querySelectorAll('.rg-cam').forEach(bloc => {
+        const id = bloc.id, z = zonesCam()[bloc.dataset.scene];
+        if (!z || !z.prereglages) return;
+        const choix = (bloc.querySelector('input[type=radio]:checked') || {}).value;
+        const cles = ['x', 'y', 'l', 'h'], champ = k => document.getElementById(`${id}-${k}`);
+        if (z.prereglages[choix]) cles.forEach(k => { champ(k).value = z.prereglages[choix][k]; });
+        cles.forEach(k => { champ(k).disabled = choix !== 'perso'; });
+        const r = choix === 'aucune' ? null : Object.fromEntries(cles.map(k => [k, Math.round(Number(champ(k).value) || 0)]));
+        const pointilles = Object.entries(z.prereglages).map(([k, p]) =>
+          `<rect class="rg-plan-coin" data-coin="${k}" x="${p.x}" y="${p.y}" width="${p.l}" height="${p.h}" rx="12"><title>${echapper(NOMS_COINS[k] || k)}</title></rect>`).join('');
+        bloc.querySelector('.rg-plan').innerHTML = `<rect class="rg-plan-jeu" x="0" y="0" width="1920" height="1080"/>
+          <text class="rg-plan-texte" x="960" y="560">${r ? 'le jeu' : 'le jeu — pas de webcam'}</text>${pointilles}
+          ${r ? `<rect class="rg-plan-cam" x="${r.x}" y="${r.y}" width="${Math.max(10, r.l)}" height="${Math.max(10, r.h)}" rx="12"/>
+            <text class="rg-plan-legende" x="${r.x + r.l / 2}" y="${r.y + r.h / 2 + 18}">📷 ${r.x}, ${r.y}</text>` : ''}`;
+        const resume = document.querySelector(`[data-resume="${id}"]`);
+        if (resume) resume.textContent = !r ? '✖ Pas de webcam' : choix === 'perso' ? `📍 Perso (${r.x}, ${r.y})` : '📍 ' + (NOMS_COINS[choix] || choix);
+        document.getElementById(`${id}-obs`).innerHTML = r
+          ? `Dans OBS, la webcam va en <b>x ${r.x} · y ${r.y}</b>, taille <b>${r.l} × ${r.h}</b> (pixels en 1920 × 1080). Le script
+            <code>outils/actualiser-obs.lua</code> l'y place tout seul quand tu enregistres.`
+          : 'Pas de cadre de webcam dans cette scène ; le script OBS y cache la webcam.';
+      });
+    }
+
     function construire() {
       document.getElementById('rg-formulaire').innerHTML = sections.map(s => `<section class="rg-section">
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
-        <div class="rg-champs">${s.champs.map(champHTML).join('')}</div>
+        ${s.scenes ? scenesHTML(s) : ''}
+        <div class="rg-champs">${s.champs.filter(c => !c.scene).map(champHTML).join('')}</div>
         ${s.ambiances ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();
+      majScenes();
     }
 
     const statut = (t, classe = '') => { const s = document.getElementById('rg-statut'); s.textContent = t; s.className = classe; };
@@ -365,6 +468,7 @@ window.MES_REGLAGES = ${formater(perso)};
       document.getElementById('rg-annuler').disabled = !n;
       statut(n ? `${n} réglage${n > 1 ? 's' : ''} modifié${n > 1 ? 's' : ''}, pas encore enregistré${n > 1 ? 's' : ''}.` : 'Rien n\'a changé.', n ? 'rg-attention' : '');
       apercus();
+      majScenes();
       return liste;
     }
 
@@ -473,6 +577,29 @@ window.MES_REGLAGES = ${formater(perso)};
       if (t.type === 'color' && t.dataset.pour) document.getElementById(t.dataset.pour).value = t.value;
       else if (t.closest && t.closest('.rg-couleur') && /^#[0-9a-f]{6}$/i.test(t.value.trim())) t.parentElement.querySelector('input[type=color]').value = t.value.trim();
     }, true);
+    // Le plan de la webcam : glisser le cadre (→ position perso), ou cliquer un emplacement en pointillés (→ ce préréglage)
+    document.addEventListener('pointerdown', e => {
+      const plan = e.target.closest && e.target.closest('.rg-plan');
+      if (!plan) return;
+      const bloc = plan.closest('.rg-cam'), coin = e.target.dataset && e.target.dataset.coin;
+      e.preventDefault();
+      if (coin) { bloc.querySelector(`input[type=radio][value="${coin}"]`).checked = true; relire(); return; }
+      bloc.querySelector('input[type=radio][value="perso"]').checked = true;
+      majScenes();
+      const champ = k => document.getElementById(`${bloc.id}-${k}`);
+      const l = Number(champ('l').value) || 100, h = Number(champ('h').value) || 100;
+      const bouger = ev => {
+        const b = plan.getBoundingClientRect();
+        const x = (ev.clientX - b.left) * 1920 / b.width - l / 2, y = (ev.clientY - b.top) * 1080 / b.height - h / 2;
+        champ('x').value = Math.round(Math.max(0, Math.min(1920 - l, x)));
+        champ('y').value = Math.round(Math.max(0, Math.min(1080 - h, y)));
+        relire();
+      };
+      bouger(e);
+      const fin = () => { removeEventListener('pointermove', bouger); removeEventListener('pointerup', fin); };
+      addEventListener('pointermove', bouger);
+      addEventListener('pointerup', fin);
+    });
     document.addEventListener('click', e => {
       const origine = e.target.closest && e.target.closest('.rg-origine');
       if (origine) {

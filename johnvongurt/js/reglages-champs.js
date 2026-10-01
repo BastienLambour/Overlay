@@ -4,6 +4,7 @@
    Un réglage absent d'ici apparaît quand même, dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
+           (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
    ===================================================================== */
 window.ReglagesChamps = {
   // Pour l'aperçu des alertes aux couleurs de l'overlay (icônes et styles des vraies alertes)
@@ -30,15 +31,7 @@ window.ReglagesChamps = {
       { cle: 'scenes.grade', type: 'texte', label: 'Ton grade', aide: 'Affiché sous la cam : « John Von Gurt — Commandant ».' },
       { cle: 'scenes.statutEnDirect', type: 'texte', label: 'Statut pendant le live' },
     ] },
-    { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
-      { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite','En bas à droite'],['bas-gauche','En bas à gauche'],['haut-droite','En haut à droite'],['haut-gauche','En haut à gauche'],['aucune','Pas de webcam']] },
-      { cle: 'options.jeu.chat', type: 'case', label: 'Jeu : le chat' },
-      { cle: 'options.jeu.bandeau', type: 'case', label: 'Jeu : le bandeau' },
-      { cle: 'options.contenu.cam', type: 'case', label: 'Contenu : une webcam' },
-      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat' },
-      { cle: 'options.contenu.bandeau', type: 'case', label: 'Contenu : le bandeau' },
-      { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
-      { cle: 'options.cam-seule.bandeau', type: 'case', label: 'Cam seule : le bandeau' },
+    { titre: 'Options des scènes', icone: '🎬', scenes: true, aide: 'Ce qui s\'affiche dans chaque scène (allumé = affiché). C\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes ; une option écrite dans l\'adresse d\'une source passe avant.', champs: [
       { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [

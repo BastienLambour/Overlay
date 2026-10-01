@@ -25,6 +25,7 @@
 <script src="../mes-reglages.js"></script>
 <script src="../js/couleurs.js"></script>
 <script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/fond.js"></script>
 <script src="../js/chat.js"></script>
@@ -34,8 +35,8 @@
 <script>
   Commun.demarrer();
   const ecran = document.getElementById('ecran');
-  const coin = Commun.params.get('cam') || (((Commun.C.options || {}).jeu || {}).cam) || 'haut-gauche';
-  const z = Composants.zoneURL(Scenes.zoneCam(coin === 'aucune' || coin === '0' ? 'haut-gauche' : coin));
+  // La webcam de la scène Jeu (js/zones.js) : ?cam= de cette source, sinon les réglages (Options des scènes › Jeu)
+  const z = Composants.zoneURL(Scenes.zoneCam());
   Composants.zoneApercu(ecran, z, 'Webcam');
   Composants.coinsBouches(ecran, z);
   Composants.cadre(ecran, z);

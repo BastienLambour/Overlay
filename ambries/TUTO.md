@@ -139,6 +139,17 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 > ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
 
+#### Placer les webcams tout seul (le même script)
+
+Dans la même fenêtre **Outils › Scripts**, le script a aussi :
+
+- le bouton **Placer les webcams sur toutes les scènes (et les ajouter là où elles manquent)** : dans chaque scène qui affiche une page de l'overlay (`scenes/jeu.html`, `contenu.html`, `cam-seule.html`…), ta webcam est mise **pile dans sa zone**, à la bonne taille, et rognée. Si une scène n'a pas encore de webcam, elle y est ajoutée, juste sous l'overlay ;
+- la case **Replacer tout seul les webcams quand les réglages changent** (cochée) : tu changes la webcam de la scène Jeu dans `reglages.html` › **Options des scènes**, tu enregistres… et dans OBS la webcam se déplace en même temps que son cadre.
+
+Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (ex. « Webcam »). Une carte d'acquisition de console n'est jamais déplacée (sauf si son nom contient « cam »). Une scène réglée **Pas de webcam** : la webcam y est cachée, puis réaffichée quand tu la remets. Les positions viennent de `js/zones.js` (les mêmes que dans les fiches ci-dessous) ; si ton canevas est en 1440p, le script fait la conversion tout seul.
+
+> Le rognage automatique demande **OBS 30.1 ou plus récent**. Avec un OBS plus ancien, si la webcam déborde de son cadre : clic droit › **Transformer** › **Rogner** à la main (geste B).
+
 ---
 
 ## 3. Les scènes, fiche par fiche
@@ -234,7 +245,9 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Jeu`.
 
-**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
+**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place) · `?cam=1200,700,420,236` (position perso : x, y, largeur, hauteur).
+
+**Position perso** (au pixel près) : `reglages.html` › **Options des scènes** › **La webcam de la scène Jeu** › **Position perso** (X, Y, largeur, hauteur, ou fais glisser la cam sur le plan) ; ou dans l'adresse : `?cam=1200,700,420,236`. **Le plus simple pour la poser dans OBS** : le bouton **Placer les webcams** du script `actualiser-obs.lua` (voir 2.8), qui suit aussi la position perso.
 
 ---
 
@@ -460,6 +473,7 @@ node outils/exporter-chaine.mjs
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 | `?chat=0` · `?bandeau=0` | retire le chat ou le bandeau intégré à la scène |
 | `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
+| `?cam=1200,700,420,236` | *(Jeu)* webcam à une position perso : x, y, largeur, hauteur (pixels 1920 × 1080) |
 | `?minutes=0.5` | *(démarrage)* compte à rebours de 30 s, pour voir la fin vite |
 | `?reinitialiser` | remet le compteur de l'objectif à sa valeur de départ |
 
@@ -483,7 +497,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`, voir « Les scripts ») |
 | L'avatar | remplace `assets/avatar.png` (carré, 800 × 800 conseillé), puis refais vidéos et images |
-| Le coin de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
+| Le coin ou la position exacte de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) |
 | Les couleurs d'origine, les polices | début de `css/theme.css` |
 | Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
@@ -524,7 +538,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
-| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -564,6 +578,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → OBS n'a pas de console (F12) : ajoute `?journal=1` à l'adresse de la source d'alertes (décoche *Fichier local*, colle l'adresse de la page suivie de `?journal=1`). Un panneau affiche la connexion à Streamer.bot (« ✅ Connecté ») et chaque événement reçu avec ses données brutes : fais-en une capture d'écran pour faire corriger l'overlay, puis retire `?journal=1`.
 
 **La cam ne tombe pas pile dans le cadre**
+→ Le plus simple : OBS › **Outils › Scripts** › `actualiser-obs.lua` › **Placer les webcams sur toutes les scènes** (le nom de ta webcam doit contenir « cam »). Sinon :
 → Refais le geste B, et vérifie que la webcam est bien **sous** l'overlay.
 
 **Le compte à rebours ou le chrono de pause ne repart pas de zéro**

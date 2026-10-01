@@ -59,7 +59,7 @@ G:\Projets\Overlay\
 ├── TUTO.md / .pdf      ← tutoriel complet, une fiche OBS par page (modèle : _modele/TUTO.md)
 ├── chaine/             ← kit de chaîne Twitch : kit.html + elements.js, export/ (PNG)
 ├── css/  theme.css (variables) · composants.css · [transitions.css]
-├── js/   commun.js (objet global `Commun`) · composants.js · chat.js · evenements.js
+├── js/   commun.js (objet global `Commun`) · composants.js · chat.js · evenements.js · zones.js (zones de la webcam)
 │         son.js · transition.js · [scenes.js, fond.js…]
 ├── scenes/     demarrage · pause · fin · cam-seule · contenu · jeu  (+ scènes propres)
 ├── sources/    alertes · chat · objectif · bandeau · cam            (+ sources propres)
@@ -118,6 +118,10 @@ Conventions :
   fournit `apercuAlerte(type, { titre, nom, message })` (+ `styles` / `scripts` de ses vraies alertes) : l'aperçu du
   vocabulaire des alertes a le vrai rendu de l'overlay, pas une carte générique. `logo` (image en haut) si l'overlay en a un. Tout réglage de
   config.js non décrit apparaît dans « Autres réglages ».
+  **Options des scènes** (`scenes: true`) : tableau construit depuis `config.js › options` (lignes = scènes, colonnes =
+  éléments, interrupteurs ; noms dans `ReglagesChamps.scenes` / `.elements`), et pour une webcam à préréglages (js/zones.js) un bloc :
+  préréglages avec leurs coordonnées, « Position perso » X/Y/Largeur/Hauteur, « Pas de webcam », plan 16:9 où l'on glisse la cam.
+  On n'écrit plus les `options.*` une par une dans reglages-champs.js.
   **Mes ambiances** (section Couleurs, `ambiances: true`) : le streamer nomme les couleurs affichées et clique
   💾 → `mes-reglages.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
   les autres changements en attente ; un clic remet toutes les valeurs de la section (couleur non citée = d'origine),
@@ -158,6 +162,12 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `history.replaceState`, comme si on l'avait écrit dans OBS (true = rien, false/"aucune" = 0) ; une option déjà dans
   l'adresse passe avant. Ce qu'il ajoute est noté (`depuisReglages=chat,cam`) et retiré au chargement suivant :
   une actualisation OBS recharge l'adresse modifiée, sinon un réglage remis resterait bloqué. Chargé juste après `couleurs.js` sur CHAQUE page. Réglé dans `reglages.html` › Options des scènes.
+  Objet global `Options` : `Options.cam(scène)` = la zone de la webcam d'après `js/zones.js` et l'option `cam` (préréglage,
+  « 0 »/« aucune » → null, position perso `{ x, y, l, h }` en config = `?cam=x,y,l,h` dans l'adresse) + `droite`/`bas` (le chat se met en face).
+- `js/zones.js` (PROPRE à l'overlay, gabarit dans `_modele/js/`, chargé après `options.js` sur les scènes, `sources/cam.html` et `reglages.html`) :
+  `window.ZONES = { cam: { "cam-seule": {x,y,l,h}, contenu: {…}, jeu: { defaut, prereglages: { "bas-droite": {…} } } } }`, écrit
+  comme du JSON. SEULE source des positions de la webcam : les scènes, reglages.html (tableau + plan) et le script OBS le lisent ;
+  ne jamais recopier ces chiffres dans une scène.
 - `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
   les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,
@@ -168,8 +178,12 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `outils/generer-pdf.mjs` : `TUTO.md` / `CONCEPT.md` → PDF (Edge headless, sans dépendance).
 - `outils/polices-locales.mjs` : Google Fonts de `theme.css` → fichiers dans `assets/polices/` + @font-face locales.
 - `outils/actualiser-obs.lua` : script OBS (Outils › Scripts) : bouton + raccourci « Actualiser toutes les sources
-  Navigateur », et actualisation automatique des sources de l'overlay quand `config.js` ou `mes-reglages.js` change. Seule exception au « tout
-  en Node » (c'est un script pour OBS lui-même).
+  Navigateur », et actualisation automatique des sources de l'overlay quand `config.js` ou `mes-reglages.js` change ; bouton « Placer les
+  webcams » (+ case « Replacer tout seul ») : lit config.js + mes-reglages.js + js/zones.js (petit lecteur d'objets JS → tables Lua),
+  trouve dans chaque scène la source Navigateur `<overlay>/scenes/<page>.html` (et son `?cam=`), y pose la webcam (nom contenant
+  « cam », sinon le seul périphérique de capture, jamais en Jeu/Speedrun), échelle du canevas comprise (1440p), groupes compris ;
+  l'ajoute sous l'overlay si elle manque ; la cache si « Pas de webcam ». Testé hors OBS avec fengari (Lua en JS) + un faux OBS.
+  Seule exception au « tout en Node » (c'est un script pour OBS lui-même). Lua 5.1 (LuaJIT d'OBS) : pas de goto, utf8, //.
 - `outils/capturer.mjs` : capture PNG d'une page, figée à des instants donnés
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;
   signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut.

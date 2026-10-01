@@ -19,7 +19,8 @@ window.CONFIG = {
   afficherZones: false,
 
   // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
-  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
+  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche", "aucune",
+  // ou une position perso { x: 1200, y: 700, l: 420, h: 236 } (pixels 1920 × 1080). Les préréglages et leurs coordonnées : js/zones.js.
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
   options: {
     jeu: { cam: "bas-droite", chat: true, bandeau: true },

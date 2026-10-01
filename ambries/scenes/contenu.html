@@ -21,14 +21,15 @@
 <script src="../mes-reglages.js"></script>
 <script src="../js/couleurs.js"></script>
 <script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
-  const CAM = { x: 60, y: 220, l: 480, h: 270 };
+  const CAM = Options.cam('contenu');              // zone de la webcam : js/zones.js ; ?cam=0 = pas de webcam
+  const sansCam = !CAM;
   const CONTENU = { x: 590, y: 200, l: 1270, h: 714 };
 
   Composants.fondDecoupe(ecran, sansCam ? [CONTENU] : [CAM, CONTENU]);

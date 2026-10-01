@@ -63,6 +63,49 @@
   .rg-modifie > span::after { content: " •"; color: var(--rg-accent); }
   .rg-modifie > span.rg-couleur::after { content: none; }
 
+  /* Options des scènes : le tableau (interrupteurs) et le bloc de la webcam (plan, préréglages, position perso) */
+  .rg-defile { overflow-x: auto; }
+  .rg-scenes { border-collapse: separate; border-spacing: 0; width: 100%; margin: 4px 0 10px; font-size: 16px; }
+  .rg-scenes th, .rg-scenes td { padding: 10px 12px; text-align: center; border-bottom: 1px solid color-mix(in srgb, var(--rg-texte) 14%, transparent); }
+  .rg-scenes thead th { font-weight: 800; font-size: 14px; color: var(--rg-doux); white-space: nowrap; }
+  .rg-scenes tbody th { text-align: left; font-weight: 800; white-space: nowrap; }
+  .rg-scenes tbody tr:hover { background: color-mix(in srgb, var(--rg-texte) 5%, transparent); }
+  .rg-vide { color: color-mix(in srgb, var(--rg-texte) 30%, transparent); }
+  .rg-fixes td { text-align: left; font-family: ui-monospace, Consolas, monospace; }
+  .rg-bascule { position: relative; display: inline-block; width: 52px; height: 30px; cursor: pointer; vertical-align: middle; }
+  .rg-bascule input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .rg-bascule i { position: absolute; inset: 0; border-radius: 30px; background: color-mix(in srgb, var(--rg-texte) 22%, transparent); transition: background .15s; }
+  .rg-bascule i::after { content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--rg-texte); transition: transform .15s; }
+  .rg-bascule input:checked + i { background: var(--rg-accent); }
+  .rg-bascule input:checked + i::after { transform: translateX(22px); background: #111; }
+  .rg-bascule input:focus-visible + i { outline: 3px solid var(--rg-accent); outline-offset: 2px; }
+  .rg-bascule.rg-modifie::after { content: "•"; position: absolute; right: -14px; top: 0; color: var(--rg-accent); font-weight: 900; }
+  .rg-resume-cam { font-weight: 800; white-space: nowrap; text-decoration: none; }
+  .rg-resume-cam.rg-modifie::after, .rg-cam.rg-modifie h3::after { content: " •"; color: var(--rg-accent); }
+  .rg-cam { margin-top: 18px; padding: 16px 18px; border-radius: 14px; background: color-mix(in srgb, var(--rg-fond) 70%, transparent); scroll-margin-top: 20px; }
+  .rg-cam h3 { margin-top: 0; }
+  .rg-cam-corps { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .rg-plan { width: 100%; display: block; border-radius: 10px; touch-action: none; cursor: crosshair; user-select: none; }
+  .rg-plan-jeu { fill: color-mix(in srgb, var(--rg-texte) 8%, var(--rg-fond)); stroke: color-mix(in srgb, var(--rg-texte) 30%, transparent); stroke-width: 6; }
+  .rg-plan-texte { fill: color-mix(in srgb, var(--rg-texte) 35%, transparent); font: 700 54px var(--rg-police); text-anchor: middle; }
+  .rg-plan-coin { fill: transparent; stroke: color-mix(in srgb, var(--rg-texte) 45%, transparent); stroke-width: 6; stroke-dasharray: 22 14; cursor: pointer; }
+  .rg-plan-coin:hover { stroke: var(--rg-accent); fill: color-mix(in srgb, var(--rg-accent) 12%, transparent); }
+  .rg-plan-cam { fill: color-mix(in srgb, var(--rg-accent) 45%, transparent); stroke: var(--rg-accent); stroke-width: 8; cursor: grab; }
+  .rg-plan-legende { fill: var(--rg-texte); font: 800 44px var(--rg-police); text-anchor: middle; pointer-events: none; }
+  .rg-coins { display: flex; flex-direction: column; gap: 6px; }
+  .rg-coin { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; }
+  .rg-coin:hover { border-color: color-mix(in srgb, var(--rg-texte) 20%, transparent); }
+  .rg-coin:has(input:checked) { border-color: var(--rg-accent); background: color-mix(in srgb, var(--rg-accent) 10%, transparent); }
+  .rg-coin input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--rg-accent); flex: none; }
+  .rg-coin span { display: flex; flex-direction: column; }
+  .rg-coin small { color: var(--rg-doux); font-size: 13px; font-family: ui-monospace, Consolas, monospace; }
+  .rg-nums { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0 0 6px 40px; }
+  .rg-num { display: flex; flex-direction: column; gap: 2px; font-size: 13px; font-weight: 700; color: var(--rg-doux); }
+  .rg-page .rg-num input { padding: 8px; font-size: 16px; }
+  .rg-page .rg-num input:disabled { opacity: .5; }
+  .rg-obs { margin-bottom: 0; }
+  @media (max-width: 760px) { .rg-cam-corps { grid-template-columns: 1fr; } .rg-nums { margin-left: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
   .rg-alertes { display: grid; gap: 12px; margin-top: 12px; }
   .rg-ligne-alerte { display: grid; grid-template-columns: 170px 1fr 1.4fr; gap: 12px; align-items: center; }
   .rg-apercus { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); margin-top: 12px; }
@@ -139,6 +182,7 @@
 <script src="mes-reglages.js"></script>
 <script src="js/couleurs.js"></script>
 <script src="js/options.js"></script>
+<script src="js/zones.js"></script>
 <script src="js/reglages-champs.js"></script>
 <script src="js/reglages.js"></script>
 <script>

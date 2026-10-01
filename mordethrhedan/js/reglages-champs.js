@@ -4,6 +4,7 @@
    Un réglage absent d'ici apparaît quand même, dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
+           (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
    ===================================================================== */
 window.ReglagesChamps = {
   // Pour l'aperçu des alertes : la couleur d'accent de l'overlay (config.js › couleur)
@@ -16,20 +17,16 @@ window.ReglagesChamps = {
     { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.fond': '', 'couleurs.texte': '', 'couleurs.doux': '', 'couleur': 'vert' } },
   ],
 
+  // Options des scènes : noms des lignes et colonnes du tableau (en plus de ceux par défaut)
+  scenes: { cam: 'Cadre de la cam (Jeu)' },
+  elements: { pseudo: '🏷️ Pseudo sur le cadre' },
+
   sections: [
     { titre: 'La chaîne', icone: '💎', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
     ] },
-    { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
-      { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite','En bas à droite'],['bas-gauche','En bas à gauche'],['haut-droite','En haut à droite'],['haut-gauche','En haut à gauche'],['aucune','Pas de webcam']] },
-      { cle: 'options.cam.pseudo', type: 'case', label: 'Jeu : ton pseudo sur le cadre de la cam', aide: 'Il disparaît avec le groupe de la cam dans OBS. Décoché = cadre de cam sans pseudo.' },
-      { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
-      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat (case en bas à gauche)' },
-      { cle: 'options.speedrun.chat', type: 'case', label: 'Speedrun : le chat (décoché = ton LiveSplit visible)' },
-      { cle: 'options.demarrage.chat', type: 'case', label: 'Démarrage : le chat' },
-      { cle: 'options.pause.chat', type: 'case', label: 'Pause : le chat' },
-      { cle: 'options.fin.chat', type: 'case', label: 'Fin : le chat' },
+    { titre: 'Options des scènes', icone: '🎬', scenes: true, aide: 'Ce qui s\'affiche dans chaque scène (allumé = affiché). Speedrun : chat éteint = ton LiveSplit visible à la place. Cadre de la cam (sources/cam.html) : ton pseudo sur le cadre, qui disparaît avec le groupe de la cam dans OBS. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
       { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleur et fond', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. La couleur des cadres et des éclats se règle juste au-dessus (« Couleur des cadres et des éclats »).', champs: [

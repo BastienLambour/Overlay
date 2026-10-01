@@ -23,7 +23,7 @@
   Le chat se place automatiquement du côté opposé à la cam.
   Le chapeau posé sur la cam est celui du bouffon : de temps en temps (config.js › bouffon.jeuToutesLes)
   et à chaque follow, il se lève dessous, passe la tête, regarde à gauche, à droite, clin d'œil, et redescend.
-  Options : ?cam=0 (pas de webcam : ni cadre ni bouffon) · ?chat=0 · ?bandeau=0 · ?bouffon=0
+  Options : ?cam=bas-gauche (préréglage, voir js/zones.js) · ?cam=1200,700,420,236 (position perso x,y,largeur,hauteur) · ?cam=0 (pas de webcam : ni cadre ni bouffon) · ?chat=0 · ?bandeau=0 · ?bouffon=0
   (ouvre jeu.html?apercu=1 pour voir les zones, ?test=1 pour de faux messages)
 -->
 <div id="ecran"></div>
@@ -33,6 +33,7 @@
 <script src="../mes-reglages.js"></script>
 <script src="../js/couleurs.js"></script>
 <script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
@@ -41,11 +42,11 @@
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
-  const coin = sansCam ? 'bas-droite' : Commun.params.get('cam') || 'bas-droite';
-  const L = 420, H = 236;
-  const droite = coin.includes('droite'), bas = coin.includes('bas');
-  const CAM = { x: droite ? 1920 - 50 - L : 50, y: bas ? 1080 - 104 - H : 130, l: L, h: H };
+  // La webcam (js/zones.js) : un préréglage, une position perso, ou ?cam=0 (pas de webcam : ni cadre ni bouffon)
+  const CAM = Options.cam('jeu');
+  const sansCam = !CAM;
+  const droite = sansCam || CAM.droite;              // le chat et le logo se mettent du côté opposé
+  const L = sansCam ? 0 : CAM.l, H = sansCam ? 0 : CAM.h;
   const CHAT = { x: droite ? 50 : 1920 - 50 - 440, y: 470, l: 440, h: 440 };
 
   const voir = cle => Commun.params.get(cle) !== '0';

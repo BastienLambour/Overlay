@@ -27,14 +27,17 @@
 <script src="../mes-reglages.js"></script>
 <script src="../js/couleurs.js"></script>
 <script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const sansCam = Commun.params.get('cam') === '0';   // ?cam=0 : pas de webcam, pas de cadre de cam
-  const { droite, z: CAM } = sansCam ? { droite: true, z: null } : Composants.coinCam(400, 225);
+  // La webcam (js/zones.js) : un préréglage, une position perso, ou ?cam=0 (pas de webcam)
+  const CAM = Options.cam('jeu');
+  const sansCam = !CAM;
+  const droite = sansCam || CAM.droite;
   // Le chat se met du côté opposé à la cam
   const CHAT = { x: droite ? 60 : 1920 - 60 - 440, y: 520, l: 440, h: 420 };
 

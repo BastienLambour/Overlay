@@ -20,13 +20,14 @@
 <script src="../mes-reglages.js"></script>
 <script src="../js/couleurs.js"></script>
 <script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
 <script src="../js/evenements.js"></script>
 <script src="../js/chat.js"></script>
 <script src="../js/composants.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
-  const CAM = { x: 80, y: 200, l: 1260, h: 709 };
+  const CAM = Options.cam('cam-seule', true);      // zone de la webcam : js/zones.js (toujours une cam ici)
 
   Composants.fondDecoupe(ecran, [CAM]);
   Composants.entete(ecran);

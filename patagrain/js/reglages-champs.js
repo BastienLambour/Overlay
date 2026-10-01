@@ -4,6 +4,7 @@
    Un réglage absent d'ici apparaît quand même, dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
+           (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
    ===================================================================== */
 window.ReglagesChamps = {
   logo: 'assets/logo-couleur.svg',
@@ -18,28 +19,17 @@ window.ReglagesChamps = {
     { nom: '↺ Couleurs d\'origine', valeurs: { 'couleurs.primaire': '', 'couleurs.primaire-fonce': '', 'couleurs.accent': '', 'couleurs.accent-2': '', 'couleurs.fond': '', 'couleurs.surface': '', 'couleurs.texte': '' } },
   ],
 
+  // Options des scènes : noms des lignes et colonnes du tableau (en plus de ceux par défaut)
+  scenes: { demarrage: 'Starting soon' },
+  elements: { bouffon: '🃏 Bouffon' },
+
   sections: [
     { titre: 'La chaîne', icone: '🎩', champs: [
       { cle: 'nomChaine', type: 'texte', label: 'Nom affiché sur l\'overlay' },
       { cle: 'chaineTwitch', type: 'twitch', label: 'Identifiant Twitch', aide: 'Celui de l\'adresse twitch.tv/…, en minuscules. Sert à lire le chat (aucun mot de passe).' },
       { cle: 'titreDuJour', type: 'texte', label: 'Ce que tu fais aujourd\'hui', aide: 'Affiché sur Starting soon, le bandeau et la scène Contenu.' },
     ] },
-    { titre: 'Options des scènes', icone: '🎬', aide: 'Ce qui s\'affiche dans chaque scène : c\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes. Une option écrite dans l\'adresse d\'une source passe avant.', champs: [
-      { cle: 'options.jeu.cam', type: 'choix', label: 'Jeu : la webcam', options: [['bas-droite','En bas à droite'],['bas-gauche','En bas à gauche'],['haut-droite','En haut à droite'],['haut-gauche','En haut à gauche'],['aucune','Pas de webcam']] },
-      { cle: 'options.jeu.chat', type: 'case', label: 'Jeu : le chat' },
-      { cle: 'options.jeu.bandeau', type: 'case', label: 'Jeu : le bandeau' },
-      { cle: 'options.jeu.bouffon', type: 'case', label: 'Jeu : le bouffon sous son chapeau' },
-      { cle: 'options.contenu.cam', type: 'case', label: 'Contenu : une webcam' },
-      { cle: 'options.contenu.chat', type: 'case', label: 'Contenu : le chat' },
-      { cle: 'options.contenu.bandeau', type: 'case', label: 'Contenu : le bandeau' },
-      { cle: 'options.contenu.bouffon', type: 'case', label: 'Contenu : le bouffon sur le chat' },
-      { cle: 'options.cam-seule.chat', type: 'case', label: 'Cam seule : le chat' },
-      { cle: 'options.cam-seule.bandeau', type: 'case', label: 'Cam seule : le bandeau' },
-      { cle: 'options.cam-seule.bouffon', type: 'case', label: 'Cam seule : le bouffon sur le chat' },
-      { cle: 'options.pause.chat', type: 'case', label: 'Pause : le chat' },
-      { cle: 'options.pause.bouffon', type: 'case', label: 'Pause : le bouffon au coin du feu' },
-      { cle: 'options.demarrage.bouffon', type: 'case', label: 'Starting soon : le bouffon' },
-      { cle: 'options.fin.bouffon', type: 'case', label: 'Fin : le bouffon' },
+    { titre: 'Options des scènes', icone: '🎬', scenes: true, aide: 'Ce qui s\'affiche dans chaque scène (allumé = affiché). C\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes ; une option écrite dans l\'adresse d\'une source passe avant.', champs: [
       { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine. Le logo, le chapeau posé sur les cams et l\'emblème sont des images : ils gardent leurs couleurs.', champs: [

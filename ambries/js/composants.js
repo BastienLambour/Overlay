@@ -138,11 +138,5 @@ const Composants = (() => {
   }
 
   // --- Position d'une petite cam dans un coin (?cam=bas-droite…) ---
-  function coinCam(l, h, { marge = 64, haut = 190, bas = 120 } = {}) {
-    const coin = params.get('cam') || 'bas-droite';
-    const droite = coin.includes('droite'), enBas = !coin.includes('haut');
-    return { coin, droite, z: { x: droite ? 1920 - marge - l : marge, y: enBas ? 1080 - bas - h : haut, l, h } };
-  }
-
-  return { zones, zoneURL, coinCam, fondDecoupe, zoneApercu, entete, cadre, chat, bandeau, objectif, creer, rejouer };
+  return { zones, zoneURL, fondDecoupe, zoneApercu, entete, cadre, chat, bandeau, objectif, creer, rejouer };
 })();

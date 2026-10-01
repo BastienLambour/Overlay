@@ -160,6 +160,17 @@ Tu peux aussi lui donner un **raccourci clavier** : **Paramètres › Raccourcis
 
 > ⚠️ Une page actualisée repart de zéro : évite d'enregistrer des réglages pendant le compte à rebours de Starting soon.
 
+#### Placer les webcams tout seul (le même script)
+
+Dans la même fenêtre **Outils › Scripts**, le script a aussi :
+
+- le bouton **Placer les webcams sur toutes les scènes (et les ajouter là où elles manquent)** : dans chaque scène qui affiche une page de l'overlay (`scenes/jeu.html`, `contenu.html`, `cam-seule.html`…), ta webcam est mise **pile dans sa zone**, à la bonne taille, et rognée. Si une scène n'a pas encore de webcam, elle y est ajoutée, juste sous l'overlay ;
+- la case **Replacer tout seul les webcams quand les réglages changent** (cochée) : tu changes la webcam de la scène Jeu dans `reglages.html` › **Options des scènes**, tu enregistres… et dans OBS la webcam se déplace en même temps que son cadre.
+
+Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (ex. « Webcam »). Une carte d'acquisition de console n'est jamais déplacée (sauf si son nom contient « cam »). Une scène réglée **Pas de webcam** : la webcam y est cachée, puis réaffichée quand tu la remets. Les positions viennent de `js/zones.js` (les mêmes que dans les fiches ci-dessous) ; si ton canevas est en 1440p, le script fait la conversion tout seul.
+
+> Le rognage automatique demande **OBS 30.1 ou plus récent**. Avec un OBS plus ancien, si la webcam déborde de son cadre : clic droit › **Transformer** › **Rogner** à la main (geste B).
+
 ---
 
 ## 3. Les scènes, fiche par fiche
@@ -264,7 +275,9 @@ Taille de la webcam : `560` × `315` en 1440p, `420` × `236` en 1080p.
 
 7. Ordre final : `Global — Alertes` · `Overlay` · `Webcam` · `Jeu`.
 
-**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?chat=0` · `?bandeau=0` · `?bouffon=0` · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place).
+**Options** : `?cam=bas-gauche` (le chat passe automatiquement de l'autre côté) · `?chat=0` · `?bandeau=0` · `?bouffon=0` · `?cam=0` (pas de webcam : pas de cadre, n'ajoute pas la source Webcam ; le chat reste à sa place) · `?cam=1200,700,420,236` (position perso : x, y, largeur, hauteur).
+
+**Position perso** (au pixel près) : `reglages.html` › **Options des scènes** › **La webcam de la scène Jeu** › **Position perso** (X, Y, largeur, hauteur, ou fais glisser la cam sur le plan) ; ou dans l'adresse : `?cam=1200,700,420,236`. **Le plus simple pour la poser dans OBS** : le bouton **Placer les webcams** du script `actualiser-obs.lua` (voir 2.8), qui suit aussi la position perso.
 **Le rythme du bouffon** : `reglages.html` › **Le bouffon** (« environ toutes les … secondes » : 180 par défaut, et « à chaque follow »).
 
 ---
@@ -507,6 +520,7 @@ node outils/exporter-chaine.mjs
 | `?mode=complet` | *(transitions)* animation entière |
 | `?bouffon=0` · `?chat=0` · `?bandeau=0` | retire le bouffon, le chat ou le bandeau de la page |
 | `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
+| `?cam=1200,700,420,236` | *(Jeu)* webcam à une position perso : x, y, largeur, hauteur (pixels 1920 × 1080) |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
 
 Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple : ouvre `index.html` (tout y tourne en mode test), ou `reglages.html` › **Tester**.
@@ -527,7 +541,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Le bouffon (le cacher, son rythme en scène Jeu, sa bulle de fin) | `reglages.html` › Le bouffon |
 | Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`) |
-| Le coin de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
+| Le coin ou la position exacte de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) ; les couleurs d'origine sont au début de `css/theme.css` (palette « Royal bleu & or ») |
 | Les polices | fichiers dans `assets/polices/` (déjà fournis : Grenze Gotisch et Nunito), déclarés au début de `css/theme.css` |
 | Le dessin du bouffon ou de son chapeau | `outils/generer-bouffon.mjs` : `node outils/generer-bouffon.mjs` refait le bouffon, le chapeau et le logo, puis refaire les vidéos et le kit |
@@ -569,7 +583,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
-| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs ou du bouffon | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -622,6 +636,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → Ajoute `?bouffon=0` à l'adresse de cette scène (geste C), ou décoche-le dans `reglages.html` › **Le bouffon**.
 
 **La cam ne tombe pas pile dans le cadre**
+→ Le plus simple : OBS › **Outils › Scripts** › `actualiser-obs.lua` › **Placer les webcams sur toutes les scènes** (le nom de ta webcam doit contenir « cam »). Sinon :
 → Refais le geste B avec les chiffres de ton canevas, et vérifie que la webcam est bien **sous** l'overlay.
 
 **Le compte à rebours ne repart pas de zéro**
