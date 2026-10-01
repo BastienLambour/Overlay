@@ -67,11 +67,12 @@
     if (CB.jeuAuFollow !== false) Evenements.ecouter(e => { if (e && e.type === 'follow') perso.sortir(); });
     if (Commun.params.has('test')) setTimeout(perso.sortir, 1500);    // en test : une sortie tout de suite
   }
-  if (!sansCam) Composants.cadre(ecran, CAM, { nom: false, chapeau: !bouffon });
+  // Le cadre de la cam, avec la plaque dorée et le logo dessous (comme Contenu et Cam seule)
+  if (!sansCam) Composants.cadre(ecran, CAM, { chapeau: !bouffon });
   if (voir('chat')) Composants.chat(ecran, CHAT, { flottant: true, disparition: 45 });
   if (voir('bandeau')) Composants.bandeau(ecran, { x: 560, y: 1000, l: 800, h: 64 }, { compact: true });
-  // Petit logo discret en haut, du côté opposé à la cam
-  Composants.creer(ecran, 'signature', '<img src="../assets/logo-contour.svg" alt="">').style[droite ? 'left' : 'right'] = '50px';
+  // Sans webcam (donc sans plaque) : un petit logo discret en haut à gauche, pour que la chaîne reste signée
+  if (sansCam) Composants.creer(ecran, 'signature', '<img src="../assets/logo-contour.svg" alt="">').style.left = '50px';
 
   Commun.demarrer();
   Evenements.demarrer();
