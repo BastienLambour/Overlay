@@ -169,6 +169,33 @@ window.CONFIG = ${formater(config)};
   function executer(texte) { const w = {}; Function('window', texte)(w); return w.CONFIG; }
 
   // =====================================================================
+  // 2 bis. mes-reglages.js : SEULEMENT ce que le streamer a changé
+  // config.js = les valeurs par défaut (remplacé à chaque mise à jour de l'overlay) ;
+  // mes-reglages.js = ses réglages, appliqués par-dessus (js/couleurs.js) et jamais touchés par une mise à jour.
+  // =====================================================================
+  // Ce qui, dans « valeurs », diffère des valeurs par défaut (objets comparés clé par clé, listes en entier)
+  function difference(valeurs, defaut) {
+    const d = {};
+    for (const [k, v] of Object.entries(valeurs || {})) {
+      const base = (defaut || {})[k];
+      if (v && typeof v === 'object' && !Array.isArray(v) && base && typeof base === 'object' && !Array.isArray(base)) {
+        const sous = difference(v, base);
+        if (Object.keys(sous).length) d[k] = sous;
+      } else if (JSON.stringify(v) !== JSON.stringify(base)) d[k] = v;
+    }
+    return d;
+  }
+  const fichierPerso = (perso, nom) => `/* =====================================================================
+   MES RÉGLAGES — ${String(nom || '').toUpperCase()}
+   Ce que tu as changé dans reglages.html, appliqué PAR-DESSUS config.js (les valeurs par défaut).
+   Écrit par reglages.html : le plus simple pour le modifier, c'est d'ouvrir reglages.html.
+   ⚠️ Lors d'une mise à jour de l'overlay, GARDE CE FICHIER : config.js peut être remplacé, tes réglages restent ici.
+   ===================================================================== */
+window.MES_REGLAGES = ${formater(perso)};
+`;
+  function executerPerso(texte) { const w = {}; Function('window', texte)(w); return w.MES_REGLAGES; }
+
+  // =====================================================================
   // 3. La page
   // =====================================================================
   const lire = (o, chemin) => chemin.split('.').reduce((x, k) => (x == null ? x : x[k]), o);
@@ -202,7 +229,8 @@ window.CONFIG = ${formater(config)};
 
   function demarrer() {
     const RC = window.ReglagesChamps || { sections: [] };
-    const enregistre = copie(window.CONFIG);          // ce qu'il y a dans config.js
+    const defaut = copie(window.CONFIG_DEFAUT || window.CONFIG);   // config.js seul (les valeurs par défaut)
+    const enregistre = copie(window.CONFIG);          // config.js + mes-reglages.js (déjà fusionnés par js/couleurs.js)
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';
     document.title = `${nom} — Réglages`;
@@ -290,7 +318,7 @@ window.CONFIG = ${formater(config)};
     }
 
     // Les ambiances : celles toutes prêtes (reglages-champs.js › ambiances), puis celles créées ici
-    // et gardées dans config.js › ambiances : [{ nom: "Batman", valeurs: { "couleurs.accent": "#F5C518", … } }]
+    // et gardées dans mes-reglages.js › ambiances : [{ nom: "Batman", valeurs: { "couleurs.accent": "#F5C518", … } }]
     const mesAmbiances = () => (Array.isArray(valeurs.ambiances) ? valeurs.ambiances : []);
     // Les réglages qu'une ambiance retient : tous ceux des sections Couleurs
     const champsAmbiance = () => sections.filter(s => s.ambiances).flatMap(s => s.champs);
@@ -307,7 +335,7 @@ window.CONFIG = ${formater(config)};
         ${miennes ? `<div class="rg-ambiances">${miennes}</div>` : '<p class="rg-aide">Aucune pour l\'instant : règle les couleurs ci-dessus, donne un nom, puis 💾.</p>'}
         <div class="rg-nouvelle"><input type="text" id="rg-nom-ambiance" placeholder="Nom de l'ambiance (ex. Batman)" maxlength="40">
           <button type="button" id="rg-sauver-ambiance">💾 Sauvegarder ces couleurs</button></div>
-        <p class="rg-aide">Une ambiance retient les couleurs affichées ci-dessus et s'enregistre tout de suite dans config.js ; un clic dessus
+        <p class="rg-aide">Une ambiance retient les couleurs affichées ci-dessus et s'enregistre tout de suite dans mes-reglages.js ; un clic dessus
           les remet. Ensuite, <b>Enregistrer</b> pour que l'overlay les prenne. Les vidéos de transition et les images du kit de chaîne,
           elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
     }
@@ -340,56 +368,98 @@ window.CONFIG = ${formater(config)};
       return liste;
     }
 
-    // --- Le fichier config.js choisi une fois, gardé (IndexedDB, un par overlay) ---
+    // --- Le dossier de l'overlay, choisi une fois et gardé (IndexedDB, un par overlay) ---
     const BASE = `overlay-${enregistre.id || 'defaut'}-reglages`;
     const base = () => new Promise((ok, ko) => { const r = indexedDB.open(BASE, 1); r.onupgradeneeded = () => r.result.createObjectStore('fichiers'); r.onsuccess = () => ok(r.result); r.onerror = ko; });
     const garde = async (h) => { try { const db = await base(); const t = db.transaction('fichiers', h === undefined ? 'readonly' : 'readwrite').objectStore('fichiers');
-      return await new Promise(ok => { const r = h === undefined ? t.get('config') : h === null ? t.delete('config') : t.put(h, 'config'); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }); } catch (e) { return null; } };
+      return await new Promise(ok => { const r = h === undefined ? t.get('dossier') : h === null ? t.delete('dossier') : t.put(h, 'dossier'); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }); } catch (e) { return null; } };
+
+    // Le contenu de mes-reglages.js après cet enregistrement : l'enregistré + ces changements, moins ce qui vaut le défaut
+    function persoApres(liste) {
+      const aEcrire = copie(enregistre);
+      liste.forEach(c => ecrireCle(aEcrire, c.chemin, copie({ v: c.valeur }).v));
+      const perso = difference(aEcrire, defaut);
+      delete perso.id;
+      return { id: enregistre.id, ...perso };                          // l'id : refuser le fichier d'un autre overlay
+    }
 
     // seulement : liste de chemins à enregistrer (ex. ['ambiances']) ; sinon tout ce qui a changé
-    async function enregistrer(seulement = null, reussite = '✅ config.js enregistré. Dans OBS : clic droit sur les sources › Actualiser.') {
+    async function enregistrer(seulement = null, reussite = '✅ Enregistré dans mes-reglages.js. Dans OBS : clic droit sur les sources › Actualiser.') {
       if (!Array.isArray(seulement)) seulement = null;   // appel depuis un bouton : l'argument est l'événement
       const liste = relire().filter(c => !seulement || seulement.includes(c.chemin));
       if (!liste.length) return statut('Rien à enregistrer.', '');
-      if (window.showOpenFilePicker) {
+      const perso = persoApres(liste);
+      const texte = fichierPerso(perso, nom);
+      if (window.showDirectoryPicker) {
         try {
-          let h = await garde();
-          if (h && (await h.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await h.requestPermission({ mode: 'readwrite' })) !== 'granted') h = null;
-          if (!h) {
-            statut('Choisis le fichier config.js de ce dossier (à côté de reglages.html), puis « Ouvrir ».', 'rg-attention');
-            [h] = await showOpenFilePicker({ types: [{ description: 'Configuration de l\'overlay', accept: { 'text/javascript': ['.js'] } }] });
-            if ((await h.requestPermission({ mode: 'readwrite' })) !== 'granted') return statut('Sans autorisation, la page ne peut pas modifier config.js.', 'rg-attention');
+          let dossier = await garde();
+          if (dossier && (await dossier.queryPermission({ mode: 'readwrite' })) !== 'granted' && (await dossier.requestPermission({ mode: 'readwrite' })) !== 'granted') dossier = null;
+          if (!dossier) {
+            statut('Choisis le DOSSIER de l\'overlay (celui qui contient reglages.html et config.js), puis « Sélectionner le dossier ».', 'rg-attention');
+            dossier = await showDirectoryPicker({ mode: 'readwrite' });
           }
-          const actuel = await (await h.getFile()).text();
-          let lu;
-          try { lu = executer(actuel); } catch (e) { lu = null; }
+          // Le bon dossier ? Son config.js doit être celui de cet overlay
+          let lu = null;
+          try { lu = executer(await (await (await dossier.getFileHandle('config.js')).getFile()).text()); } catch (e) { lu = null; }
           if (!lu || (lu.id && enregistre.id && lu.id !== enregistre.id)) {
             await garde(null);
-            return statut(`⚠️ Ce fichier n'est pas le config.js de ${nom}${lu && lu.id ? ` (c'est celui de « ${lu.id} »)` : ''}. Réessaie en choisissant le bon.`, 'rg-attention');
+            return statut(`⚠️ Ce dossier n'est pas celui de ${nom}${lu && lu.id ? ` (c'est celui de « ${lu.id} »)` : ' (pas de config.js dedans)'}. Réessaie en choisissant le dossier qui contient reglages.html.`, 'rg-attention');
           }
-          const nouveau = appliquer(actuel, liste);
-          const verif = executer(nouveau);                 // on relit le résultat avant d'écrire
-          const faux = liste.filter(c => !pareil(lire(verif, c.chemin), c.valeur));
-          if (faux.length) throw new Error('vérification ratée pour ' + faux.map(c => c.chemin).join(', '));
-          const w = await h.createWritable(); await w.write(nouveau); await w.close();
-          await garde(h);
+          const verif = executerPerso(texte);                         // on relit le résultat avant d'écrire
+          if (JSON.stringify(verif) !== JSON.stringify(perso)) throw new Error('vérification ratée');
+          const f = await dossier.getFileHandle('mes-reglages.js', { create: true });
+          const w = await f.createWritable(); await w.write(texte); await w.close();
+          await garde(dossier);
           liste.forEach(c => ecrireCle(enregistre, c.chemin, copie({ v: c.valeur }).v));
           const reste = relire().length;
+          afficherPerso(perso);
           return statut(reussite + (reste ? ` (${reste} autre${reste > 1 ? 's' : ''} réglage${reste > 1 ? 's' : ''} pas encore enregistré${reste > 1 ? 's' : ''})` : ''), 'rg-ok');
         } catch (e) {
           if (e.name === 'AbortError') return statut('Enregistrement annulé.', 'rg-attention');
           console.error('[Réglages]', e);
-          if (!/showOpenFilePicker|SecurityError|NotAllowed/.test(e.name + e.message)) return statut('⚠️ Enregistrement impossible : ' + e.message, 'rg-attention');
+          if (!/showDirectoryPicker|SecurityError|NotAllowed/.test(e.name + e.message)) return statut('⚠️ Enregistrement impossible : ' + e.message, 'rg-attention');
         }
       }
-      // Navigateur sans accès aux fichiers (Firefox…) : on télécharge un config.js complet
+      // Navigateur sans accès aux fichiers (Firefox…) : on télécharge mes-reglages.js
       const a = document.createElement('a');
-      const aEcrire = copie(enregistre);                   // l'enregistré + ce qu'on enregistre maintenant (pas le reste)
-      liste.forEach(c => ecrireCle(aEcrire, c.chemin, copie({ v: c.valeur }).v));
-      a.href = URL.createObjectURL(new Blob([complet(aEcrire, nom)], { type: 'text/javascript' }));
-      a.download = 'config.js'; a.click();
-      statut('⬇️ Un nouveau config.js a été téléchargé : mets-le à la place de l\'ancien (ses commentaires ne sont pas gardés). Avec Edge ou Chrome, la page modifie directement le fichier.', 'rg-ok');
+      a.href = URL.createObjectURL(new Blob([texte], { type: 'text/javascript' }));
+      a.download = 'mes-reglages.js'; a.click();
+      statut('⬇️ mes-reglages.js a été téléchargé : mets-le dans le dossier de l\'overlay, à côté de config.js (remplace l\'ancien). Avec Edge ou Chrome, la page l\'enregistre directement.', 'rg-ok');
     }
+
+    // --- En haut : tes réglages perso (combien, et où) ---
+    function afficherPerso(perso) {
+      const el = document.getElementById('rg-perso');
+      if (!el) return;
+      const n = feuilles(perso).filter(c => c !== 'id').length;
+      el.innerHTML = n
+        ? `🗂️ <b>${n} réglage${n > 1 ? 's' : ''} perso</b> dans <code>mes-reglages.js</code> : ils restent quand l'overlay est mis à jour (garde ce fichier).`
+        : `🗂️ Aucun réglage perso pour l'instant : tout vient de <code>config.js</code> (les valeurs par défaut).`;
+    }
+    afficherPerso(difference(enregistre, defaut));
+
+    // --- Reprendre les réglages d'un ANCIEN config.js (avant mes-reglages.js, les réglages étaient dedans) ---
+    // Ce qui y diffère des valeurs par défaut actuelles est mis dans le formulaire : il reste à cliquer « Enregistrer ».
+    const choixAncien = document.getElementById('rg-ancien');
+    if (choixAncien) choixAncien.onchange = async () => {
+      const f = choixAncien.files[0];
+      choixAncien.value = '';
+      if (!f) return;
+      let ancien;
+      try { ancien = executer(await f.text()); } catch (e) { ancien = null; }
+      if (!ancien) return statut('⚠️ Ce fichier n\'est pas un config.js d\'overlay.', 'rg-attention');
+      if (ancien.id && enregistre.id && ancien.id !== enregistre.id) return statut(`⚠️ Ce config.js est celui de « ${ancien.id} », pas de ${nom}.`, 'rg-attention');
+      relire();                                                   // garde ce qui a déjà été tapé
+      const repris = difference(ancien, defaut);
+      delete repris.id;
+      const chemins = feuilles(repris);
+      chemins.forEach(c => ecrireCle(valeurs, c, copie({ v: lire(repris, c) }).v));
+      if (Array.isArray(repris.ambiances)) valeurs.ambiances = copie(repris.ambiances);
+      construire();
+      const n = relire().length;
+      statut(n ? `📥 ${n} réglage${n > 1 ? 's' : ''} repris de l'ancien config.js (marqués •). Vérifie, puis clique « Enregistrer ».`
+        : '📥 Rien à reprendre : cet ancien config.js a les mêmes valeurs que maintenant.', n ? 'rg-attention' : '');
+    };
 
     // --- En-tête, liens de test ---
     document.getElementById('rg-nom').textContent = nom;
@@ -443,7 +513,7 @@ window.CONFIG = ${formater(config)};
         const i = Number(supprimer.dataset.supprimerAmbiance), a = mesAmbiances()[i];
         if (!confirm(`Supprimer l'ambiance « ${a.nom} » ?`)) return;
         valeurs.ambiances = mesAmbiances().filter((_, j) => j !== i);
-        construire(); enregistrer(['ambiances'], `🗑️ Ambiance « ${a.nom} » supprimée de config.js.`);
+        construire(); enregistrer(['ambiances'], `🗑️ Ambiance « ${a.nom} » supprimée de mes-reglages.js.`);
         return;
       }
       if (e.target.id === 'rg-sauver-ambiance') {
@@ -458,7 +528,7 @@ window.CONFIG = ${formater(config)};
         if (deja >= 0 && !confirm(`L'ambiance « ${liste[deja].nom} » existe déjà : la remplacer par ces couleurs ?`)) return;
         if (deja >= 0) liste[deja] = nouvelle; else liste.push(nouvelle);
         valeurs.ambiances = liste;
-        construire(); enregistrer(['ambiances'], `✅ Ambiance « ${nomAmbiance} » enregistrée dans config.js : un clic dessus remet ses couleurs.`);
+        construire(); enregistrer(['ambiances'], `✅ Ambiance « ${nomAmbiance} » enregistrée dans mes-reglages.js : un clic dessus remet ses couleurs.`);
       }
     });
     document.addEventListener('input', relire);
@@ -471,6 +541,6 @@ window.CONFIG = ${formater(config)};
     relire();
   }
 
-  return { analyser, appliquer, formater, executer, demarrer };
+  return { analyser, appliquer, formater, executer, difference, fichierPerso, executerPerso, demarrer };
 })();
 if (typeof module !== 'undefined') module.exports = Reglages;   // pour les vérifications en Node

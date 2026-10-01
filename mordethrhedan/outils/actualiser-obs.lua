@@ -4,7 +4,7 @@
   Ce qu'il ajoute dans OBS :
     - un bouton « Actualiser toutes les sources Navigateur » (dans la fenêtre des scripts) ;
     - un raccourci clavier du même nom (Paramètres › Raccourcis clavier) ;
-    - l'actualisation AUTOMATIQUE des sources de l'overlay quand config.js change
+    - l'actualisation AUTOMATIQUE des sources de l'overlay quand config.js ou mes-reglages.js change
       (donc juste après « Enregistrer » dans reglages.html), si la case est cochée.
 
   Installation : OBS › Outils › Scripts › « + » › choisir ce fichier (outils/actualiser-obs.lua
@@ -19,8 +19,8 @@
 obs = obslua
 
 local dossier = ""          -- dossier de l'overlay (celui qui contient config.js)
-local auto = true           -- actualiser tout seul quand config.js change
-local dernier = nil         -- contenu de config.js au dernier coup d'œil
+local auto = true           -- actualiser tout seul quand config.js ou mes-reglages.js change
+local dernier = nil         -- contenu de config.js + mes-reglages.js au dernier coup d'œil
 local touche = obs.OBS_INVALID_HOTKEY_ID
 
 -- Chemins comparables : barres « / », minuscules, espaces tels qu'on les écrit dans une adresse
@@ -75,11 +75,12 @@ local function lire(chemin)
   return texte
 end
 
--- Toutes les 2 secondes : config.js a-t-il changé depuis le dernier coup d'œil ?
+-- Toutes les 2 secondes : config.js ou mes-reglages.js (les réglages du streamer) ont-ils changé ?
 local function surveiller()
   if not auto or dossier == "" then return end
   local texte = lire(dossier .. "/config.js")
   if texte == nil then return end
+  texte = texte .. "|" .. (lire(dossier .. "/mes-reglages.js") or "")
   if dernier ~= nil and texte ~= dernier then actualiser(true) end
   dernier = texte
 end
@@ -88,7 +89,7 @@ end
 function script_description()
   return [[<h3>Actualiser les sources Navigateur</h3>
 <p>Un bouton et un raccourci clavier pour actualiser <b>toutes</b> les sources Navigateur d'un coup,
-et l'actualisation automatique des sources de l'overlay quand <code>config.js</code> change
+et l'actualisation automatique des sources de l'overlay quand <code>config.js</code> ou <code>mes-reglages.js</code> change
 (après « Enregistrer » dans <code>reglages.html</code>).</p>]]
 end
 
@@ -98,7 +99,7 @@ function script_properties()
     actualiser(false)
     return false
   end)
-  obs.obs_properties_add_bool(p, "auto", "Actualiser tout seul les sources de l'overlay quand config.js change")
+  obs.obs_properties_add_bool(p, "auto", "Actualiser tout seul les sources de l'overlay quand les réglages changent")
   obs.obs_properties_add_path(p, "dossier", "Dossier de l'overlay", obs.OBS_PATH_DIRECTORY, "", nil)
   return p
 end

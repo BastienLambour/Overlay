@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Réglages</title>
 <!-- =====================================================================
-     RÉGLAGES de l'overlay : un formulaire qui modifie config.js.
+     RÉGLAGES de l'overlay : un formulaire qui écrit mes-reglages.js (tes réglages, appliqués par-dessus config.js).
      Ouvre ce fichier dans Edge ou Chrome (double-clic), change ce que tu veux,
-     clique « Enregistrer ». La première fois, choisis le config.js de ce dossier :
+     clique « Enregistrer ». La première fois, choisis le DOSSIER de l'overlay :
      ensuite la page s'en souvient.
      Libellés et rangement : js/reglages-champs.js (propre à chaque overlay).
      FICHIER COMMUN : identique dans tous les overlays (copie de _modele/).
@@ -32,6 +32,11 @@
   .rg-page h1 { font: 800 54px/1.1 var(--rg-titre); text-align: center; margin: 0; }
   .rg-page h1 small { display: block; font: 800 18px var(--rg-police); letter-spacing: .2em; text-transform: uppercase; color: var(--rg-accent); margin-top: 6px; }
   .rg-intro { text-align: center; color: var(--rg-doux); font-size: 18px; max-width: 64ch; margin: 12px auto 0; }
+  .rg-ancien { font-size: 14px; }
+  .rg-ancien label { display: inline-block; cursor: pointer; font-weight: 800; color: var(--rg-accent); border: 2px dashed var(--rg-accent); border-radius: 10px; padding: 6px 12px; }
+  .rg-ancien input { display: none; }
+  .rg-ancien small { display: block; margin-top: 4px; }
+  .rg-perso { font-size: 15px; background: var(--rg-carte); border-radius: 12px; padding: 8px 14px; max-width: 72ch; }
   .rg-page a { color: var(--rg-accent); }
   .rg-page code { color: var(--rg-accent); font-weight: 800; }
 
@@ -109,8 +114,12 @@
   <div id="rg-logo"></div>
   <h1><span id="rg-nom"></span><small>Réglages</small></h1>
   <p class="rg-intro">Tous les textes et réglages de l'overlay. Change ce que tu veux, puis clique <b>Enregistrer</b> en bas :
-    la page modifie le fichier <code>config.js</code>. Ensuite, dans OBS : clic droit sur les sources › <b>Actualiser</b>.<br>
+    la page écrit tes réglages dans <code>mes-reglages.js</code>. Ensuite, dans OBS : clic droit sur les sources › <b>Actualiser</b>.<br>
     Un point <span style="color:var(--rg-accent)">•</span> marque ce qui a changé et n'est pas encore enregistré.</p>
+  <p class="rg-intro rg-perso" id="rg-perso"></p>
+  <p class="rg-intro rg-ancien"><label>📥 Reprendre les réglages d'un ancien <code>config.js</code>
+    <input type="file" id="rg-ancien" accept=".js,text/javascript"></label>
+    <small>Une seule fois, après la première mise à jour : choisis une copie de ton ancien config.js (celui d'avant la mise à jour).</small></p>
   <div id="rg-formulaire"></div>
   <section class="rg-section">
     <h2><span class="rg-icone">🧪</span>Tester</h2>
@@ -120,12 +129,14 @@
 </main>
 
 <div class="rg-barre">
-  <button id="rg-enregistrer">💾 Enregistrer config.js</button>
+  <button id="rg-enregistrer">💾 Enregistrer mes réglages</button>
   <button id="rg-annuler" disabled>↺ Annuler les changements</button>
   <span id="rg-statut"></span>
 </div>
 
 <script src="config.js"></script>
+<script>window.CONFIG_DEFAUT = JSON.parse(JSON.stringify(window.CONFIG || {}));   // les valeurs par défaut, avant mes-reglages.js</script>
+<script src="mes-reglages.js"></script>
 <script src="js/couleurs.js"></script>
 <script src="js/options.js"></script>
 <script src="js/reglages-champs.js"></script>

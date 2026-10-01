@@ -51,9 +51,11 @@ G:\Projets\Overlay\
 ```
 <pseudo>/
 ├── CONCEPT.md / .pdf   ← résumé vivant de la demande (modèle : _modele/CONCEPT.md)
-├── config.js           ← textes et réglages (voir _modele/config.js pour les clés standard)
+├── config.js           ← VALEURS PAR DÉFAUT des textes et réglages (voir _modele/config.js pour les clés standard)
+├── mes-reglages.js     ← réglages PERSO du streamer, écrits par reglages.html (absent tant qu'il n'a rien changé ;
+│                         jamais créé, modifié ni livré par nous : .gitignore)
 ├── index.html          ← vitrine : liens (tuto, concept, moodboard, kit, réglages) + aperçu de chaque page
-├── reglages.html       ← formulaire qui modifie config.js (commun) ; libellés dans js/reglages-champs.js
+├── reglages.html       ← formulaire qui écrit mes-reglages.js (commun) ; libellés dans js/reglages-champs.js
 ├── TUTO.md / .pdf      ← tutoriel complet, une fiche OBS par page (modèle : _modele/TUTO.md)
 ├── chaine/             ← kit de chaîne Twitch : kit.html + elements.js, export/ (PNG)
 ├── css/  theme.css (variables) · composants.css · [transitions.css]
@@ -88,6 +90,12 @@ Conventions :
   par défaut `config.js › afficherZones`), `?cam=haut-gauche|haut-droite|bas-gauche|bas-droite|0` (0 = pas de webcam :
   pas de cadre, le chat récupère la place), `?chat=0`, `?bandeau=0`. Toutes réglables aussi dans `config.js › options`.
 - Fichiers en UTF-8, fins de ligne LF.
+- **Défauts et réglages perso — règle des mises à jour** : `config.js` = les valeurs par défaut, livrées avec
+  l'overlay ; on le modifie librement (nouvelle fonction = nouvelle clé avec sa valeur par défaut + son champ dans
+  `js/reglages-champs.js`). `mes-reglages.js` = SEULEMENT ce que le streamer a changé (écrit par `reglages.html`,
+  fusionné par-dessus `config.js` par `js/couleurs.js`) : on ne le crée, ne le modifie et ne le livre JAMAIS. Le
+  streamer qui reçoit un nouveau dossier remplace ses fichiers et garde ses réglages. **Toute page HTML** charge, dans
+  cet ordre : `config.js`, `mes-reglages.js`, `js/couleurs.js`, `js/options.js` (un `mes-reglages.js` absent ne gêne pas).
 
 ## Pages et documents standard (même plan dans chaque overlay)
 
@@ -100,15 +108,18 @@ Conventions :
   thème). Les régénérer après chaque modification d'un `.md`. Vérification visuelle :
   `APERCU=<dossier> node outils/generer-pdf.mjs` enregistre une capture PNG de chaque document.
 - **`reglages.html` — réglages sans code** (FICHIER COMMUN, avec `js/reglages.js`) : formulaire par écran, aux
-  couleurs du thème, aperçu des alertes, qui modifie `config.js` en ne remplaçant QUE les valeurs changées (commentaires
-  gardés, réglages inconnus jamais effacés ; refuse le config.js d'un autre overlay). Edge/Chrome : écriture directe
-  (`showOpenFilePicker`, fichier retenu dans IndexedDB) ; sinon téléchargement. Propre à l'overlay :
+  couleurs du thème, aperçu des alertes, qui écrit `mes-reglages.js` : seulement ce qui diffère de `config.js`
+  (`Reglages.difference`), avec l'`id` de l'overlay. Edge/Chrome : on choisit une fois le DOSSIER de l'overlay
+  (`showDirectoryPicker`, retenu dans IndexedDB ; refusé si son config.js est celui d'un autre overlay) ; sinon
+  téléchargement de `mes-reglages.js`. Encadré en haut : nombre de réglages perso. « 📥 Reprendre les réglages d'un
+  ancien config.js » : migration unique des réglages d'avant `mes-reglages.js` (différence avec les défauts actuels →
+  formulaire → Enregistrer). Propre à l'overlay :
   `js/reglages-champs.js` (libellés, aides, rangement, liens de test ; gabarit dans `_modele/js/`). Chaque overlay y
   fournit `apercuAlerte(type, { titre, nom, message })` (+ `styles` / `scripts` de ses vraies alertes) : l'aperçu du
   vocabulaire des alertes a le vrai rendu de l'overlay, pas une carte générique. `logo` (image en haut) si l'overlay en a un. Tout réglage de
   config.js non décrit apparaît dans « Autres réglages ».
   **Mes ambiances** (section Couleurs, `ambiances: true`) : le streamer nomme les couleurs affichées et clique
-  💾 → `config.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
+  💾 → `mes-reglages.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
   les autres changements en attente ; un clic remet toutes les valeurs de la section (couleur non citée = d'origine),
   × supprime. Une ambiance retient TOUS les champs des sections Couleurs (aussi un `choix` comme `couleur: "vert"`).
 - **`design/moodboard.html`** : barre de réglages en haut (sans `backdrop-filter` : il bloque le
@@ -139,7 +150,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `{ type, nom, montant, mois, nombre, destinataire }`, objectif persistant (localStorage
   `overlay-<id>-etat`), mode test. `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
   leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
-- `js/couleurs.js` : applique `config.js › couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
+- `js/couleurs.js` : fusionne d'abord `mes-reglages.js` (window.MES_REGLAGES) par-dessus `config.js` (objets clé par
+  clé, listes et valeurs remplacées ; ignoré si son `id` est celui d'un autre overlay), puis applique `couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
   `reglages.html` › Couleurs). Chargé juste après `config.js` sur CHAQUE page (sauf le moodboard). Les images (logo SVG en
   `<img>`, PNG) ne suivent pas ; vidéos de transition et kit : à refaire avec les outils.
 - `js/options.js` : `config.js › options.<page>` (nom du fichier sans .html) ajouté à l'adresse de la page via
@@ -156,7 +168,7 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `outils/generer-pdf.mjs` : `TUTO.md` / `CONCEPT.md` → PDF (Edge headless, sans dépendance).
 - `outils/polices-locales.mjs` : Google Fonts de `theme.css` → fichiers dans `assets/polices/` + @font-face locales.
 - `outils/actualiser-obs.lua` : script OBS (Outils › Scripts) : bouton + raccourci « Actualiser toutes les sources
-  Navigateur », et actualisation automatique des sources de l'overlay quand `config.js` change. Seule exception au « tout
+  Navigateur », et actualisation automatique des sources de l'overlay quand `config.js` ou `mes-reglages.js` change. Seule exception au « tout
   en Node » (c'est un script pour OBS lui-même).
 - `outils/capturer.mjs` : capture PNG d'une page, figée à des instants donnés
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;

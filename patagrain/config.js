@@ -1,178 +1,176 @@
 /* =====================================================================
-   PATAGRAIN — Configuration de l'overlay : c'est ici qu'on modifie les textes.
-   Le plus simple : ouvre reglages.html (un formulaire qui modifie ce fichier).
-   Ou modifie-le à la main : enregistre, puis actualise la source dans OBS
-   (clic droit > Actualiser).
+   PATAGRAIN — Configuration de l'overlay (écrite par reglages.html).
+   Le plus simple pour la modifier : ouvre reglages.html.
    ===================================================================== */
 window.CONFIG = {
   nomChaine: "Patagrain",
-
-  // Identifiant technique de l'overlay (nom du dossier) : sépare les compteurs d'un overlay à l'autre.
   id: "patagrain",
-
-  // Identifiant Twitch de la chaîne (celui de l'adresse twitch.tv/xxxx), en minuscules.
-  // Sert à lire le chat (aucun mot de passe nécessaire).
   chaineTwitch: "patagrain",
-
-  // Ce que tu fais aujourd'hui (écrans d'attente et bandeau)
-  titreDuJour: "Donjons & Dragons — La quête du grelot perdu",
-
-  // Étiquettes « taille + position » affichées dans les zones où placer la webcam / le contenu / le jeu.
-  // Désactivées par défaut. Mets true le temps de régler la webcam et le jeu dans OBS (ou ?zones=1 dans l'adresse).
+  titreDuJour: "Heave Ho 2 !",
   afficherZones: false,
-
-  // --- Options des scènes : comme les options d'adresse (?cam=…, ?chat=0…), mais pour de bon ---
-  // true = affiché · false = caché · cam (scène Jeu) : "bas-droite", "bas-gauche", "haut-droite", "haut-gauche" ou "aucune".
-  // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
   options: {
-    jeu: { cam: "bas-droite", chat: true, bandeau: true, bouffon: true },
-    contenu: { cam: true, chat: true, bandeau: true, bouffon: true },
-    "cam-seule": { chat: true, bandeau: true, bouffon: true },
-    pause: { chat: true, bouffon: true },
-    demarrage: { bouffon: true },
-    fin: { bouffon: true },
+    jeu: {
+      cam: "bas-droite",
+      chat: true,
+      bandeau: true,
+      bouffon: true,
+    },
+    contenu: {
+      cam: true,
+      chat: true,
+      bandeau: true,
+      bouffon: true,
+    },
+    "cam-seule": {
+      chat: true,
+      bandeau: true,
+      bouffon: true,
+    },
+    pause: {
+      chat: true,
+      bouffon: true,
+    },
+    demarrage: {
+      bouffon: true,
+    },
+    fin: {
+      bouffon: true,
+    },
   },
-
-  // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
-  // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
-  // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
   couleurs: {
-    primaire:         "",   // Couleur principale (le bleu)
-    "primaire-fonce": "",   // Couleur principale, en foncé
-    accent:           "",   // L'or (couronne, grelots, titres)
-    "accent-2":       "",   // Bleu glacier (fanions, badge « en direct »)
-    fond:             "",   // Fond (bleu nuit)
-    surface:          "",   // Cartes (chat, bandeau, alertes)
-    texte:            "",   // Texte (crème)
+    primaire: "",
+    "primaire-fonce": "",
+    accent: "",
+    "accent-2": "",
+    fond: "",
+    surface: "",
+    texte: "",
   },
-
-  // ---------------------------------------------------------------------
-  // Streamer.bot (gratuit) : fait le lien entre Twitch et l'overlay pour
-  // les follows, abonnements, bits, raids et dons. Voir TUTO.md.
-  // ---------------------------------------------------------------------
   streamerbot: {
     actif: true,
     hote: "127.0.0.1",
     port: 8080,
-    motDePasse: "",      // seulement si tu as activé l'authentification dans Streamer.bot
+    motDePasse: "",
   },
-
-  // --- Écran « Starting soon » ---
   demarrage: {
     titre: "Le spectacle va commencer…",
-    // Compte à rebours : durée en minutes, ou heure fixe "20:30" (prioritaire si remplie).
-    // Se règle aussi dans l'adresse de la source : demarrage.html?minutes=10
     minutes: 5,
-    heure: "",
+    heure: "21:30",
     etiquette: "Jet d'initiative",
     texteFin: "Les dés sont jetés !",
   },
-
-  // --- Écran « Pause » ---
   pause: {
     titre: "Repos court…",
     sousTitre: "le bouffon revient vite",
-    minutes: 0,          // durée affichée en compte à rebours (0 = pas de compte à rebours)
+    minutes: 0,
     texteFin: "J'arrive !",
   },
-
-  // --- Écran « Fin » ---
   fin: {
     titre: "Fin de la session",
     sousTitre: "Merci d'être venus, aventuriers !",
-    prochainStream: "",  // ex. "Jeudi 20h30 · Session 4" (vide = carte masquée)
+    prochainStream: "",
     messages: [
       "Merci pour votre présence, c'était une belle aventure",
       "Suis la chaîne pour être prévenu de la prochaine quête",
       "Pense à faire un raid chez un autre aventurier !",
     ],
   },
-
-  // Messages qui défilent en bas des écrans Starting soon et Pause ({titreDuJour} est remplacé)
   messages: [
     "Installe-toi, prends à boire, l'aventure arrive",
     "Suis la chaîne pour rejoindre la guilde des aventuriers",
     "Dis bonjour dans le chat, le bouffon lit tout",
     "Ce soir : {titreDuJour}",
   ],
-  dureeMessage: 7,       // secondes par message
-
-  // --- Chat intégré ---
+  dureeMessage: 7,
   chat: {
     titre: "La taverne",
     maxMessages: 14,
     ignorer: ["nightbot", "streamelements", "streamlabs", "moobot", "fossabot", "wizebot", "sery_bot"],
-    masquerCommandes: true,  // cache les messages qui commencent par « ! »
-    memoireMinutes: 10,      // en changeant de scène, le chat réaffiche les messages des N dernières minutes (0 = jamais)
+    masquerCommandes: true,
+    memoireMinutes: 10,
   },
-
-  // --- Objectif (bandeau et jauge) ---
   objectif: {
-    type: "follow",      // "follow" ou "sub"
+    type: "follow",
     titre: "Guilde des aventuriers",
-    cible: 50,
-    depart: 0,           // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
+    cible: 75,
+    depart: 60,
   },
-
-  // --- Bandeau d'infos (en bas des scènes Cam seule, Contenu et Jeu) : ce qu'il affiche ---
-  // Mets false pour cacher une case, ex. soutien: false si tu ne reçois ni dons ni bits.
   bandeau: {
-    ceSoir: true,        // « Ce soir » : ce que tu fais aujourd'hui
-    follow: true,        // « Aventurier » : dernier follow
-    abonne: true,        // « Chevalier » : dernier abonné (chaîne affiliée ou partenaire)
-    soutien: true,       // « Tribut » : dernier don ou bits
-    objectif: true,      // l'objectif et sa mini-jauge
+    ceSoir: true,
+    follow: true,
+    abonne: false,
+    soutien: false,
+    objectif: true,
   },
-
-  // --- Alertes ---
   alertes: {
-    duree: 7,            // secondes d'affichage de chaque alerte
+    duree: 7,
     son: true,
-    volume: 0.5,         // de 0 à 1
-    // Un son par alerte. Vide = le son de l'overlay (chaque alerte a le sien) · "aucun" = pas de son ·
-    // sinon ton propre fichier, rangé dans le dossier sons/ : ex. "sons/follow.mp3" (mp3, wav ou ogg).
-    // Le plus simple : reglages.html › Sons des alertes (avec un bouton ▶ pour écouter).
+    volume: 0.5,
     sons: {
-      follow: "", sub: "", resub: "", giftsub: "", giftbomb: "",
-      bits: "", raid: "", don: "", objectif: "",
+      follow: "",
+      sub: "",
+      resub: "",
+      giftsub: "",
+      giftbomb: "",
+      bits: "",
+      raid: "",
+      don: "",
+      objectif: "",
     },
-    anonyme: "un aventurier",   // nom affiché quand Twitch ne donne pas le destinataire d'un abonnement offert
-    // {nom} {montant} {mois} {nombre} {destinataire} sont remplacés automatiquement
+    anonyme: "un aventurier",
     textes: {
-      follow:   { titre: "Nouvel aventurier",    message: "rejoint la cour du roi !" },
-      sub:      { titre: "Adoubement !",         message: "devient chevalier de la cour" },
-      resub:    { titre: "Chevalier fidèle",     message: "sert la cour depuis {mois} mois" },
-      giftsub:  { titre: "Présent royal",        message: "adoube {destinataire}" },
-      giftbomb: { titre: "Largesse royale !",    message: "offre {nombre} adoubements à la cour" },
-      bits:     { titre: "Tribut au bouffon",    message: "lance {montant} pièces d'or" },
-      raid:     { titre: "Une horde débarque !", message: "arrive avec {montant} compagnons" },
-      don:      { titre: "Offrande royale",      message: "offre {montant} au royaume" },
-      objectif: { titre: "Objectif atteint !",   message: "la guilde passe au niveau supérieur" },
+      follow: {
+        titre: "Nouvel aventurier",
+        message: "rejoint la cour du roi !",
+      },
+      sub: {
+        titre: "Adoubement !",
+        message: "devient chevalier de la cour",
+      },
+      resub: {
+        titre: "Chevalier fidèle",
+        message: "sert la cour depuis {mois} mois",
+      },
+      giftsub: {
+        titre: "Présent royal",
+        message: "adoube {destinataire}",
+      },
+      giftbomb: {
+        titre: "Largesse royale !",
+        message: "offre {nombre} adoubements à la cour",
+      },
+      bits: {
+        titre: "Tribut au bouffon",
+        message: "lance {montant} pièces d'or",
+      },
+      raid: {
+        titre: "Une horde débarque !",
+        message: "arrive avec {montant} compagnons",
+      },
+      don: {
+        titre: "Offrande royale",
+        message: "offre {montant} au royaume",
+      },
+      objectif: {
+        titre: "Objectif atteint !",
+        message: "la guilde passe au niveau supérieur",
+      },
     },
   },
-
-  // --- Le bouffon (la mascotte) sur les écrans ---
-  // Pour le cacher sur une seule page : ajoute ?bouffon=0 à son adresse.
   bouffon: {
-    actif: true,         // false = plus de bouffon nulle part
-    alertes: true,       // il descend avec chaque alerte, accroché à sa corde
-    jeuToutesLes: 180,    // scène Jeu : il passe la tête sous son chapeau environ toutes les N secondes (0 = jamais tout seul)
-    jeuAuFollow: true,   // scène Jeu : … et à chaque nouveau follow
-    // Écran Fin : ce que dit sa bulle (les phrases s'alternent)
+    actif: true,
+    alertes: true,
+    jeuToutesLes: 180,
+    jeuAuFollow: true,
     bulles: ["Merci d'être venus !", "À bientôt, aventuriers !"],
   },
-
-  // --- Kit de chaîne Twitch (chaine/kit.html) : textes des visuels de la chaîne ---
   chaine: {
     slogan: "Jeux vidéo & jeu de rôle, à la cour du bouffon",
     horsLigne: "Le bouffon se repose…",
-    planning: [],   // jours et heures de stream, ex. ["Mercredi", "20h30"]
-    reseaux: [],    // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
-    // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
+    planning: [],
+    reseaux: [],
     panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
   },
-
-  // Mode test (?test=1) : pseudos utilisés pour les fausses alertes
   test: {
     noms: ["SirMachin", "DameTruc", "Bob_le_Nain", "Ysolde", "Merlin_Pinpin", "Gwendal", "LaDameDuLac", "Perceval"],
   },

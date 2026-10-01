@@ -59,12 +59,12 @@ html.transparent, html.transparent body, html.transparent #ecran { background: t
   border: 4px solid #fff; border-radius: 999px; box-shadow: var(--halo); overflow: hidden; }
 .bandeau-item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; padding: 0 28px; }
 .bandeau-item + .bandeau-item { border-left: 2px dashed color-mix(in srgb, var(--violet) 60%, transparent); }
-.bandeau-item .ic { width: 32px; height: 32px; flex: none; color: var(--accent); }
+.bandeau-item .ic { width: 32px; height: 32px; flex: none; color: var(--accent); transform-origin: 50% 50%; }
 .bandeau-item small { display: block; font: 600 13px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--doux); }
-.bandeau-item b { display: block; font: 400 25px/1.1 var(--f-titre); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bandeau-item b { display: block; transform-origin: 0 50%; font: 400 25px/1.1 var(--f-titre); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bandeau-item.flash b { animation: flash-b .8s var(--rebond); }
 .bandeau-item.flash .ic { animation: flash-ic .8s var(--rebond); }
-@keyframes flash-b { from { transform: scale(1.5) rotate(-4deg); color: var(--accent); } }
+@keyframes flash-b { 0% { transform: translateX(-24px) rotate(-3deg); opacity: 0; color: var(--accent); } 60% { color: var(--accent); } }
 @keyframes flash-ic { 40% { transform: scale(1.4) rotate(-12deg); color: #fff; } }
 .mini-jauge { height: 7px; border-radius: 9px; background: var(--surface); margin-top: 4px; overflow: hidden; }
 .mini-jauge i { display: block; height: 100%; background: var(--accent); border-radius: 9px; transition: width 1s var(--rebond); }

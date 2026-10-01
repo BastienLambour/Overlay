@@ -110,8 +110,9 @@ const Composants = (() => {
   // --- Pseudo dans un petit encadré posé sur le grand cadre (scène Jeu) ---
   function etiquettePseudo(parent, { centreX, enHaut }) {
     const el = creer(parent, 'etiquette-pseudo', `<span class="titre-neon">${C.nomChaine || ''}</span>`);
-    el.style.top = enHaut ? '1px' : 'auto';
-    el.style.bottom = enHaut ? 'auto' : '1px';
+    // Entièrement dans l'écran (contour et halo compris), entre le bord et la cam
+    el.style.top = enHaut ? '4px' : 'auto';
+    el.style.bottom = enHaut ? 'auto' : '4px';
     el.style.left = centreX + 'px';
     return el;
   }

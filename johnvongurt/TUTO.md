@@ -26,8 +26,9 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 ```
 johnvongurt/
-├── reglages.html       ← LA page pour changer les textes et réglages (elle modifie config.js)
-├── config.js            ← LE fichier à modifier (textes, pseudo, objectif…)
+├── reglages.html       ← LA page pour changer les textes et réglages (elle écrit mes-reglages.js)
+├── config.js            ← les valeurs par défaut (remplacé à chaque mise à jour de l'overlay)
+├── mes-reglages.js      ← TES réglages, écrits par reglages.html (apparaît au 1er enregistrement ; à garder)
 ├── index.html           ← aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
 ├── CONCEPT.md / .pdf    ← le résumé du projet (DA, choix, ce qu'il reste à faire)
@@ -52,17 +53,25 @@ Toutes les pages font **1920 × 1080**, avec un fond transparent là où il faut
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
 3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
-4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
-5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
-   La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
+4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
+5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
+   La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
 6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
 
 Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
-La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
+**Où vont tes réglages ?** `config.js` contient les **valeurs par défaut** de l'overlay ; **`mes-reglages.js`** contient **seulement ce que tu as changé**, appliqué par-dessus. En haut de la page, un encadré dit combien de réglages perso tu as. Remettre un réglage à sa valeur d'origine le retire de `mes-reglages.js`.
 
-> ℹ️ Avec **Firefox**, la page ne peut pas modifier un fichier : elle **télécharge** un nouveau `config.js` (sans les commentaires), à mettre à la place de l'ancien. Préfère Edge ou Chrome.
+> ℹ️ Avec **Firefox**, la page ne peut pas écrire dans le dossier : elle **télécharge** `mes-reglages.js`, à mettre dans le dossier de l'overlay (à la place de l'ancien). Préfère Edge ou Chrome.
 
-**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS.
+**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS. Attention : un changement fait à la main dans `config.js` sera perdu à la prochaine mise à jour ; dans `reglages.html`, il est gardé.
+
+#### Quand tu reçois une nouvelle version de l'overlay
+
+1. Copie les nouveaux fichiers par-dessus les anciens (remplacer).
+2. **Ton `mes-reglages.js` n'est pas dans la nouvelle version** : il reste en place, tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
+3. Dans OBS : actualise les sources.
+
+> 🔁 **La toute première fois seulement** (si tes réglages étaient encore dans l'ancien `config.js`) : **avant** de remplacer les fichiers, fais une copie de ton `config.js` (ex. sur le bureau). Après la mise à jour, ouvre `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis cette copie : tes réglages reviennent dans le formulaire (marqués •). Clique **Enregistrer**, c'est fini : ils sont maintenant dans `mes-reglages.js`.
 
 ### 2.2 Régler le canevas d'OBS (une seule fois)
 
@@ -122,7 +131,7 @@ Quand tu changes de scène, le chat **réaffiche les derniers messages** (ceux d
 OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay en fournit un, sous forme de petit script OBS.
 
 1. OBS › **Outils › Scripts** › onglet **Scripts** › **+** › choisis `outils/actualiser-obs.lua` (dans le dossier `johnvongurt`).
-2. À droite : le bouton **Actualiser toutes les sources Navigateur**, et la case **Actualiser tout seul les sources de l'overlay quand config.js change** (cochée) : après **Enregistrer** dans `reglages.html`, les sources se mettent à jour en 2 secondes.
+2. À droite : le bouton **Actualiser toutes les sources Navigateur**, et la case **Actualiser tout seul les sources de l'overlay quand les réglages changent** (cochée) : après **Enregistrer** dans `reglages.html`, les sources se mettent à jour en 2 secondes.
 3. **Fermer** : le script reste installé. Raccourci clavier possible : **Paramètres › Raccourcis clavier** › « Actualiser toutes les sources Navigateur ».
 
 > ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
@@ -477,7 +486,7 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 #### Créer ta propre ambiance (ex. Batman) et la garder
 
 1. Dans `reglages.html` › **Couleurs**, règle les couleurs comme tu veux (nuancier ou code).
-2. Sous **Mes ambiances**, tape un nom (ex. `Batman`) puis clique **💾 Sauvegarder ces couleurs** : l'ambiance est écrite tout de suite dans `config.js`, avec son nom et ses couleurs. Même nom qu'une ambiance existante = elle est remplacée (la page demande confirmation).
+2. Sous **Mes ambiances**, tape un nom (ex. `Batman`) puis clique **💾 Sauvegarder ces couleurs** : l'ambiance est écrite tout de suite dans `mes-reglages.js`, avec son nom et ses couleurs. Même nom qu'une ambiance existante = elle est remplacée (la page demande confirmation).
 3. Elle apparaît ensuite en bouton : **un clic** remet toutes ses couleurs, puis **Enregistrer** pour que l'overlay les prenne. **×** la supprime.
 
 Sauvegarder une ambiance ne change pas les couleurs de l'overlay : seul **Enregistrer** le fait.
@@ -502,7 +511,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
-| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand `config.js` change | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -514,6 +523,10 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 ---
 
 ## 10. Dépannage
+
+**Mes réglages ont disparu après une mise à jour de l'overlay**
+→ Ton `mes-reglages.js` a peut-être été remplacé ou supprimé : il ne doit **pas** faire partie des fichiers que tu copies. S'il te reste une copie, remets-la dans le dossier de l'overlay.
+→ Si tes réglages étaient encore dans l'ancien `config.js` (avant `mes-reglages.js`) : `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis une copie de cet ancien fichier, puis **Enregistrer** (section 2.1).
 
 **Rien ne s'affiche / page blanche**
 → Vérifie `1920` × `1080` sur la source, puis clic droit › **Actualiser**. Si tu viens de modifier `config.js`, cherche un guillemet ou une virgule manquant.

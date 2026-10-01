@@ -39,17 +39,25 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
 3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
-4. Clique **💾 Enregistrer config.js** (en bas, ou **Ctrl + S**).
-5. **La première fois**, une fenêtre s'ouvre : va dans le dossier de l'overlay, clique sur **`config.js`**, puis **Ouvrir**. Le navigateur demande s'il peut modifier le fichier : clique **Modifier le fichier** (ou **Autoriser**).
-   La page **remplace alors elle-même** `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
+4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
+5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
+   La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
 6. Dans OBS : **clic droit sur la source › Actualiser** pour voir le changement.
 
 Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas encore enregistré. La section **Alertes** montre un aperçu de chaque alerte avec tes textes, et la section **Tester** ouvre les pages en mode test.
-La page ne change **que** les réglages modifiés : les commentaires et tout le reste de `config.js` restent tels quels.
+**Où vont tes réglages ?** `config.js` contient les **valeurs par défaut** de l'overlay ; **`mes-reglages.js`** contient **seulement ce que tu as changé**, appliqué par-dessus. En haut de la page, un encadré dit combien de réglages perso tu as. Remettre un réglage à sa valeur d'origine le retire de `mes-reglages.js`.
 
-> ℹ️ Avec **Firefox**, la page ne peut pas modifier un fichier : elle **télécharge** un nouveau `config.js` (sans les commentaires), à mettre à la place de l'ancien. Préfère Edge ou Chrome.
+> ℹ️ Avec **Firefox**, la page ne peut pas écrire dans le dossier : elle **télécharge** `mes-reglages.js`, à mettre dans le dossier de l'overlay (à la place de l'ancien). Préfère Edge ou Chrome.
 
-**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS.
+**À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS. Attention : un changement fait à la main dans `config.js` sera perdu à la prochaine mise à jour ; dans `reglages.html`, il est gardé.
+
+#### Quand tu reçois une nouvelle version de l'overlay
+
+1. Copie les nouveaux fichiers par-dessus les anciens (remplacer).
+2. **Ton `mes-reglages.js` n'est pas dans la nouvelle version** : il reste en place, tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
+3. Dans OBS : actualise les sources.
+
+> 🔁 **La toute première fois seulement** (si tes réglages étaient encore dans l'ancien `config.js`) : **avant** de remplacer les fichiers, fais une copie de ton `config.js` (ex. sur le bureau). Après la mise à jour, ouvre `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis cette copie : tes réglages reviennent dans le formulaire (marqués •). Clique **Enregistrer**, c'est fini : ils sont maintenant dans `mes-reglages.js`.
 
 ### 2.2 Régler le canevas d'OBS (une seule fois)
 <résolution de base / sortie ; si 1440p : les fiches donnent les deux colonnes>
@@ -71,7 +79,7 @@ La page ne change **que** les réglages modifiés : les commentaires et tout le 
 <rien à ajouter ; sources séparées seulement pour une scène à soi, avec ?chat=0 / ?bandeau=0 sur la scène ; mémoire du chat 10 min>
 
 ### 2.8 Actualiser toutes les sources d'un coup (après un changement de réglages)
-<OBS › Outils › Scripts › + › outils/actualiser-obs.lua : bouton, case « tout seul quand config.js change », raccourci clavier ;
+<OBS › Outils › Scripts › + › outils/actualiser-obs.lua : bouton, case « tout seul quand les réglages changent » (config.js ou mes-reglages.js), raccourci clavier ;
  une page actualisée repart de zéro>
 
 ---
@@ -139,7 +147,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 <tableau « Je veux changer… / Où » : d'abord reglages.html › <section>>
 
 ### Changer d'ambiance (Halloween, Noël…) en un clic
-<reglages.html › Couleurs : ambiances en un clic, nuanciers, ↺ ; « Mes ambiances » : nommer + 💾 Sauvegarder ces couleurs (écrit config.js › ambiances), clic = remettre, × = supprimer ; puis refaire vidéos et kit avec les scripts>
+<reglages.html › Couleurs : ambiances en un clic, nuanciers, ↺ ; « Mes ambiances » : nommer + 💾 Sauvegarder ces couleurs (écrit mes-reglages.js › ambiances), clic = remettre, × = supprimer ; puis refaire vidéos et kit avec les scripts>
 
 ### Les scripts du dossier `outils/`
 <installer Node.js LTS (nodejs.org ou winget install OpenJS.NodeJS.LTS) + ffmpeg (winget install Gyan.FFmpeg) ; ouvrir le Terminal
@@ -149,4 +157,4 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 ---
 
 ## 10. Dépannage
-<problèmes fréquents : page blanche, polices, chat vide, alertes, son, alerte mal affichée (journal ?journal=1), les réglages ne changent rien (actualiser / script), cam décalée, compte à rebours, ancienne image encore affichée (Ctrl+F5 / OBS › Actualiser le cache de la page actuelle)>
+<problèmes fréquents : page blanche, polices, chat vide, alertes, son, alerte mal affichée (journal ?journal=1), les réglages ne changent rien (actualiser / script), cam décalée, compte à rebours, ancienne image encore affichée (Ctrl+F5 / OBS › Actualiser le cache de la page actuelle), réglages disparus après une mise à jour (garder mes-reglages.js ; 📥 reprendre un ancien config.js)>
