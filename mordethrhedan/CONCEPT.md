@@ -11,7 +11,7 @@
 | Identifiant Twitch | `mordethrhedan` — **à confirmer** |
 | Ce qui est streamé | Jeux, dont du **speedrun** (ex. Beyond Good & Evil, Moonlighter 2) |
 | Écran / canevas OBS | 1920×1080 (supposé) |
-| Alertes | **Streamlabs** (ses propres alertes : pas de bot). Clé Streamlabs seulement pour le « dernier follow » |
+| Alertes | **StreamElements** (jeton dans reglages.html) : alertes de l'overlay, objectif, ligne des derniers événements. Ses alertes Streamlabs peuvent rester s'il y tient |
 
 ## Direction artistique
 
@@ -53,12 +53,11 @@
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
 | TUTO.md | ✅ |
 | Refonte des scènes (3 dispositions, derniers événements, fond synchronisé) | ✅ vérifiée en navigateur |
-| Testé dans OBS / annonces Twitch et Streamlabs en vrai live | ⬜ |
+| Testé dans OBS / annonces Twitch et StreamElements en vrai live | ⬜ (StreamElements : faux serveur seulement) |
 
 ## À faire / questions ouvertes
 
 - [ ] Confirmer l'identifiant Twitch, brancher StreamElements (TUTO 6.2 : compte + jeton dans reglages.html).
-- [ ] Coller la clé Streamlabs (« Socket API Token ») dans `reglages.html` › Derniers événements, pour le dernier follow.
 - [ ] Refaire ses scènes OBS avec les nouvelles fiches (TUTO §3), dont le groupe « Cam » + raccourci.
 - [ ] Valider le kit de chaîne Twitch (`chaine/kit.html`) puis l'envoyer sur Twitch (TUTO §7).
 
@@ -95,3 +94,4 @@
 - **2026-10-02** — Demande : « une barre d'objectif pour les follows aussi ? avec les vrais nombres de Twitch, pas à la main ; plutôt un interrupteur : la barre affiche les followers OU les abonnés, chacun son compteur et son objectif » → **une seule barre**, `config.js › objectif` : `affiche` ("follow" ou "sub"), `automatique`, et `follow` / `sub` (titre, cible, départ chacun) ; les deux compteurs tournent toujours (bascule = barre tout de suite juste) ; `?objectif=sub|follow` sur une source. Les vrais totaux viennent de **Streamer.bot** : action « Overlay – Compteurs » (`outils/streamerbot-compteurs.cs`, à coller une fois, TUTO 6.6), lancée par l'overlay à la connexion et toutes les 5 minutes. Anciens réglages (`objectif.type/cible/depart`) repris tout seuls. Vérifié dans le navigateur (follow/sub, mode test, ancien mes-reglages.js) ; **pas testé** : le code C# dans un vrai Streamer.bot (pas de Streamer.bot ici).
 - **2026-10-02** — Demande : « la police Dyer (TTF fourni) PARTOUT : bannière, hors-ligne, transitions, cadres des follows/raids… et incluse pour ne pas attendre 10 s à l'actualisation » → Dyer pour tout ce qui passe à l'écran (`--f-ecran`, posé sur `#ecran` et le kit `.mn`), sans faux gras (`font-synthesis: none`, elle n'a qu'une graisse) ; **incluse dans `css/theme.css`** (data: woff2, 15 Ko, `font-display: block`) : pas de fichier à part ni de passage par une autre police. Le TTF n'avait **aucune lettre accentuée** : ajoutées (é è ê ë à â ä î ï ô ö ù û ü ç, majuscules et minuscules, + espaces insécables) en assemblant les lettres et accents de la police (`assets/polices/Dyer.woff2`). Réglages et vitrine restent en Nunito (lisibles). Vidéos de transition et PNG du kit refaits. Vérifié dans le navigateur (toutes les pages, police chargée) ; **pas vu dans OBS**.
 - **2026-10-02** — Demande : « au lieu de Streamer.bot, StreamElements ? » puis « oui, on remplace Streamer.bot ! » → **Streamer.bot retiré**, tout passe par **StreamElements**, par internet (rien à installer) : `js/evenements.js` (commun) se branche à `wss://astro.streamelements.com` avec le jeton du compte (« JWT Token », `reglages.html` › StreamElements, gardé dans mes-reglages.js), écoute `channel.activities` (follow, sub, réabonnement, cadeau, pluie de cadeaux annoncée une seule fois, bits, raid, dons) et `channel.session.update` (vrais totaux followers / abonnés pour l'objectif, lus aussi au branchement), se rebranche tout seul. Plus d'action C# ni de client Streamer.bot ; les anciens réglages streamerbot sont oubliés au prochain Enregistrer. TUTO §6 réécrit (6.2 brancher StreamElements, 6.3 journal, 6.5 dons par la page de dons StreamElements, 6.6 vrais nombres automatiques). Testé dans le navigateur avec un **faux serveur StreamElements** (chaque type d'événement, compteurs, objectif atteint, reconnexion) ; **pas testé** avec le vrai StreamElements ni dans OBS.
+- **2026-10-02** — Question : « pourquoi une clé Streamlabs ? » (elle servait au seul dernier follow de la ligne du bas) → **option A choisie** : tout sur StreamElements comme les autres. `js/derniers.js` prend follow, sub et raid de StreamElements (via `js/evenements.js`, chargé maintenant sur toutes les scènes et `sources/cam.html`), la série de visionnage reste lue dans le chat ; clé Streamlabs retirée (config, réglages ; l'ancienne est oubliée au prochain Enregistrer). Ses alertes Streamlabs peuvent rester s'il y tient. Testé avec un faux serveur StreamElements.

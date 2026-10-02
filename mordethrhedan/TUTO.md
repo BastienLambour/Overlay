@@ -181,7 +181,7 @@ Trois dispositions, toutes avec le **même fond** qui se voit là où tu n'as mi
 
 **Dans OBS :**
 1. **Scènes › +** : « Démarrage ».
-2. **+ › Scène** › « Global — Alertes » (si tu utilises les alertes de l'overlay ; avec Streamlabs, mets plutôt ta source d'alertes Streamlabs).
+2. **+ › Scène** › « Global — Alertes » (si tu utilises les alertes de l'overlay ; si tu gardes tes alertes Streamlabs, mets plutôt ta source d'alertes Streamlabs).
 3. Geste A avec `scenes/demarrage.html`, case **Actualiser le navigateur quand la scène devient active** cochée.
 4. **+ › Image** (ou ta webcam) › « Ta source ». Geste B : position `45`, `130` · taille `1380` × `776`.
 5. Geste A avec `sources/fond.html` › « Fond ».
@@ -377,7 +377,7 @@ Deux choses différentes :
 | **Le chat** | l'overlay lit ton chat Twitch directement | **rien** : ton identifiant Twitch dans les réglages suffit |
 | Les alertes et l'objectif (follows, abonnements, bits, raids, dons) | par **StreamElements**, un service gratuit (par internet) | **rien** : un compte StreamElements et son jeton, une fois (6.2) |
 
-> 🔔 **Tu utilises les alertes de Streamlabs ?** Alors tu n'as **pas besoin** de `sources/alertes.html` : garde ta source d'alertes Streamlabs en haut de chaque scène. Seule la clé de 6.1 bis est utile (pour le dernier follow).
+> 🔔 **Tu préfères garder tes alertes Streamlabs ?** C'est possible : garde ta source d'alertes Streamlabs en haut de chaque scène, à la place de `sources/alertes.html`. Le jeton StreamElements (6.2) reste nécessaire pour la ligne des derniers événements et la barre d'objectif : les deux services cohabitent sans souci.
 
 ### 6.1 Le chat
 
@@ -394,18 +394,13 @@ Il ne montre pas les messages envoyés **avant** l'ouverture d'OBS, ni les emote
 | Dernier sub | annonces du chat Twitch (abonnement, réabonnement, cadeau) | **rien** |
 | Dernier raid (pseudo · nombre de viewers) | annonces du chat Twitch | **rien** |
 | Série de visionnage (pseudo · nombre de streams d'affilée) | annonces du chat Twitch, quand un spectateur partage sa série | **rien** |
-| Dernier follow | **Streamlabs** (un follow ne passe pas dans le chat) | ta clé Streamlabs, une fois |
+| Dernier follow | **StreamElements** (un follow ne passe pas dans le chat) ; sub et raid arrivent aussi par là | ton jeton StreamElements, une fois (6.2) |
 
-**La clé Streamlabs** :
-1. Sur **streamlabs.com**, connecte-toi, puis **Paramètres** (roue dentée) › **API Settings** › onglet **API Tokens**.
-2. Copie **Your Socket API Token** (bouton *Copy*).
-3. `reglages.html` › **Derniers événements** › **Clé Streamlabs** : colle-la, **Enregistrer**.
-
-> 🔒 C'est une clé **privée** : ne l'affiche pas en live, et ne partage pas `config.js` une fois rempli.
+**Le dernier follow** : rien de plus à faire une fois StreamElements branché (6.2) : c'est le même jeton que pour les alertes et l'objectif.
 
 Les cases se souviennent de leur valeur d'un live à l'autre, et toutes les scènes affichent la même chose. Les titres des cases se changent dans `reglages.html` › **Derniers événements**. Pour enlever la ligne sur une scène : `?derniers=0`.
 
-> ⚠️ **Pas encore vérifié sur un vrai live** (les annonces Twitch et Streamlabs n'ont été testées qu'en simulation, `?test=1`).
+> ⚠️ **Pas encore vérifié sur un vrai live** (les annonces Twitch en simulation, `?test=1`, et StreamElements avec un faux serveur seulement).
 
 ### 6.2 Brancher StreamElements (une seule fois, 3 minutes)
 

@@ -158,7 +158,7 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   (follow, subscriber [gifted/sender, bulkGifted, isCommunityGift], communityGiftPurchase, cheer, raid, tip) et `channel.session.update`
   (`follower-total` / `subscriber-total` → `compteurs()`) ; totaux au branchement : `GET api.streamelements.com/kappa/v2/sessions/<channel>`
   (channel lu dans le jeton) ; première synchro sans alerte ; reconnexion 5 s → 1 min. Streamer.bot a été RETIRÉ (2026-10-02) ;
-  `reglages.js` oublie l'ancienne clé `streamerbot` (OBSOLETES). `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
+  `reglages.js` oublie les anciennes clés `streamerbot` et `streamlabs` (OBSOLETES) ; `demarrer()` ne se lance qu'une fois par page (mordethrhedan : `js/derniers.js` l'écoute pour la ligne du bas). `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
   leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
 - `js/couleurs.js` : fusionne d'abord `mes-reglages.js` (window.MES_REGLAGES) par-dessus `config.js` (objets clé par
   clé, listes et valeurs remplacées ; ignoré si son `id` est celui d'un autre overlay), puis applique `couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via

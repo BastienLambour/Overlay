@@ -47,8 +47,7 @@ window.ReglagesChamps = {
       { cle: 'pause.titre', type: 'texte', label: 'Pause : titre' },
       { cle: 'fin.titre', type: 'texte', label: 'Fin : titre' },
     ] },
-    { titre: 'Derniers événements (ligne du bas)', icone: '🏷️', aide: 'Sub, raid et série de visionnage arrivent tout seuls par le chat Twitch. Le dernier follow a besoin de ta clé Streamlabs.', champs: [
-      { cle: 'streamlabs.jeton', type: 'secret', label: 'Clé Streamlabs (pour le dernier follow)', aide: 'streamlabs.com › Paramètres › API Settings › API Tokens › « Your Socket API Token ». Clé privée : ne la montre pas en live.' },
+    { titre: 'Derniers événements (ligne du bas)', icone: '🏷️', aide: 'Sub, raid et série de visionnage arrivent par le chat Twitch ; le dernier follow (et aussi sub et raid) par StreamElements, avec le jeton de la section StreamElements.', champs: [
       { cle: 'derniers.follow', type: 'texte', label: 'Titre de la case « follow »' },
       { cle: 'derniers.sub', type: 'texte', label: 'Titre de la case « sub »' },
       { cle: 'derniers.raid', type: 'texte', label: 'Titre de la case « raid »' },

@@ -291,7 +291,9 @@ const Evenements = (() => {
     }, 1500);
   }
 
+  let lance = false;
   function demarrer() {
+    if (lance) return; lance = true;   // une seule fois par page (plusieurs éléments peuvent le demander)
     if (JOURNAL) addEventListener('DOMContentLoaded', () => journal(test ? 'Mode test : fausses alertes' : 'Page chargée'));
     if (JOURNAL && test) abonnes.push(e => e && journal(`test → ${e.type} · ${e.nom}`));
     if (test) simuler(); else connecter();

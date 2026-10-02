@@ -5,9 +5,9 @@
    • Chat Twitch (connexion anonyme, rien à régler) : abonnements,
      réabonnements, abonnements offerts, raids et séries de visionnage
      (« watch streak ») passent dans le chat sous forme d'annonces.
-   • Streamlabs (optionnel) : le follow, lui, ne passe PAS dans le chat.
-     Pour l'afficher, colle ta clé « Socket API Token » de Streamlabs dans
-     config.js › streamlabs.jeton (ou reglages.html).
+   • StreamElements (js/evenements.js, le même branchement que les alertes) :
+     le follow, lui, ne passe PAS dans le chat. Il vient de StreamElements,
+     avec le jeton collé dans reglages.html › StreamElements.
 
    Les valeurs sont gardées (localStorage « overlay-<id>-derniers ») et
    partagées entre toutes les scènes ouvertes dans OBS.
@@ -76,33 +76,20 @@ const Derniers = (() => {
     ws.onclose = () => setTimeout(ecouterChat, 3000);
   }
 
-  // ---------- Streamlabs (Socket API, protocole socket.io v2, sans bibliothèque) ----------
-  function ecouterStreamlabs() {
-    const jeton = ((C.streamlabs || {}).jeton || '').trim();
-    if (!jeton) return;
-    const ws = new WebSocket(`wss://sockets.streamlabs.com/socket.io/?token=${encodeURIComponent(jeton)}&EIO=3&transport=websocket`);
-    let battement;
-    ws.onmessage = ev => {
-      const d = String(ev.data);
-      if (d.startsWith('0')) {                       // ouverture : on répond au rythme demandé
-        let intervalle = 25000;
-        try { intervalle = JSON.parse(d.slice(1)).pingInterval || intervalle; } catch (e) {}
-        battement = setInterval(() => ws.readyState === 1 && ws.send('2'), intervalle);
-        return;
-      }
-      if (!d.startsWith('42')) return;
-      let nomEv, charge;
-      try { [nomEv, charge] = JSON.parse(d.slice(2)); } catch (e) { return; }
-      if (nomEv !== 'event' || !charge) return;
-      console.debug('[Overlay] Streamlabs', charge.type, charge);
-      if (charge.for && !/twitch/.test(charge.for)) return;
-      const m = [].concat(charge.message || [])[0] || {};
-      const nom = m.display_name || m.name || m.from || '';
-      if (charge.type === 'follow') maj('follow', nom);
-      if (charge.type === 'subscription' || charge.type === 'resub') maj('sub', nom);
-      if (charge.type === 'raid') maj('raid', `${nom} · ${m.raiders ?? m.viewers ?? '?'}`);
-    };
-    ws.onclose = () => { clearInterval(battement); setTimeout(ecouterStreamlabs, 5000); };
+  // ---------- StreamElements (via js/evenements.js) ----------
+  // Le follow ne passe pas dans le chat : il vient de StreamElements, comme les alertes (jeton dans reglages.html ›
+  // StreamElements). Sub et raid arrivent aussi par là (en plus des annonces du chat : une même valeur ne compte qu'une fois).
+  function ecouterStreamElements() {
+    if (typeof Evenements === 'undefined') return;
+    Evenements.ecouter(e => {
+      if (!e) return;
+      if (e.type === 'follow') maj('follow', e.nom);
+      if (e.type === 'sub' || e.type === 'resub') maj('sub', e.nom);
+      if (e.type === 'giftsub') maj('sub', e.destinataire || e.nom);
+      if (e.type === 'giftbomb') maj('sub', `${e.nom} ×${e.nombre || '?'}`);
+      if (e.type === 'raid') maj('raid', `${e.nom} · ${e.montant || '?'}`);
+    });
+    Evenements.demarrer();
   }
 
   // ---------- Mode test ----------
@@ -124,7 +111,7 @@ const Derniers = (() => {
     if (demarre) return; demarre = true;
     if (test) return simuler();
     ecouterChat();
-    ecouterStreamlabs();
+    ecouterStreamElements();
   }
 
   return {

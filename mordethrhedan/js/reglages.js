@@ -241,8 +241,8 @@ window.MES_REGLAGES = ${formater(perso)};
       if (ob.type) ob.affiche = ob.type;
       delete ob.type;
     }
-    // Réglages qui n'existent plus (ex. streamerbot : remplacé par StreamElements) : oubliés au prochain « Enregistrer »
-    const OBSOLETES = ['streamerbot'];
+    // Réglages qui n'existent plus (streamerbot, streamlabs : remplacés par StreamElements) : oubliés au prochain « Enregistrer »
+    const OBSOLETES = ['streamerbot', 'streamlabs'];
     OBSOLETES.forEach(k => delete enregistre[k]);
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';

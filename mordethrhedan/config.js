@@ -86,7 +86,7 @@ window.CONFIG = {
 
   // --- Ligne du bas : derniers événements ---
   // Sub, raid et série de visionnage arrivent tout seuls par le chat Twitch.
-  // Le follow a besoin de Streamlabs (voir « streamlabs » juste en dessous).
+  // Le follow (et aussi sub et raid) vient de StreamElements, comme les alertes (voir « streamelements »).
   derniers: {
     follow: "Dernier follow",
     sub:    "Dernier sub",
@@ -95,12 +95,6 @@ window.CONFIG = {
     vide:   "—",                // affiché tant qu'il n'y a encore personne
   },
 
-  // --- Streamlabs : pour afficher le dernier follow ---
-  // Streamlabs (site) › Paramètres › API Settings › API Tokens › « Your Socket API Token » : copie-le ici.
-  // C'est une clé privée : ne partage pas ce fichier une fois rempli.
-  streamlabs: {
-    jeton: "",
-  },
 
   // Chat intégré
   chat: {
