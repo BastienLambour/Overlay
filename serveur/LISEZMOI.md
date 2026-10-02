@@ -78,11 +78,11 @@ Depuis ton PC, dans le dossier du dépôt (PowerShell ou un terminal) :
 
 ```
 scp serveur/installer.sh root@217.154.115.223:
-ssh root@217.154.115.223 "bash installer.sh"
+ssh -t root@217.154.115.223 "bash installer.sh"
 ```
 
 Le script lit `git@gitlab.com:Bastien.Lambour/overlays.git`, branche `main` (pour un autre dépôt ou une autre branche :
-`ssh root@217.154.115.223 "DEPOT_URL=… BRANCHE=… bash installer.sh"`).
+`ssh -t root@217.154.115.223 "DEPOT_URL=… BRANCHE=… bash installer.sh"`).
 
 Il avance tout seul et s'arrête **une fois** : il affiche une **clé de déploiement** (une ligne qui commence par
 `ssh-ed25519`). C'est elle qui permet au serveur de **lire** le dépôt, et rien d'autre.
@@ -143,7 +143,7 @@ Ensuite, à chaque nouvelle version : bouton **Mettre à jour l'overlay** dans c
 
 ## 8. Changer d'adresse plus tard
 
-Relance l'installation avec le nouveau nom : `ssh root@217.154.115.223 "DOMAINE=nouveau.bastien-lambour.fr bash installer.sh"`
+Relance l'installation avec le nouveau nom : `ssh -t root@217.154.115.223 "DOMAINE=nouveau.bastien-lambour.fr bash installer.sh"`
 (un autre certificat : `CERTIFICAT=… CLE=…` ; sans certificat, le site reste en http). Change ensuite l'adresse du webhook
 dans GitLab, et `config.js › miseAJour.adresse` des overlays, puis pousse. Les overlays déjà installés suivent tout seuls :
 l'adresse vient du `version.json` de chaque mise à jour.

@@ -15,7 +15,7 @@
 #
 #  Utilisation (depuis ton PC, dans le dossier du dépôt) :
 #      scp serveur/installer.sh root@ADRESSE_DU_VPS:
-#      ssh root@ADRESSE_DU_VPS "bash installer.sh"
+#      ssh -t root@ADRESSE_DU_VPS "bash installer.sh"     (-t : pour pouvoir répondre au script)
 #  On peut le relancer sans risque (pour changer de dépôt, de branche…) : il garde le secret et la clé.
 #
 #  Réglages (variables à mettre devant la commande, toutes facultatives) :
@@ -101,6 +101,10 @@ if [[ "$DEPOT_URL" == git@* || "$DEPOT_URL" == ssh://* ]]; then
     printf '    GitHub : dépôt › Settings › Deploy keys › Add deploy key (NE PAS cocher « Allow write access »)\n'
     printf '    GitLab : projet › Settings › Repository › Deploy keys › Add new key (sans « Grant write permissions »)\n\n'
     printf '  \033[1m%s\033[0m\n\n' "$(cat "$CLE.pub")"
+    # Sans clavier (ssh lancé sans -t) : on s'arrête proprement ; relancer reprend ici, avec la même clé
+    if ! { true < /dev/tty; } 2>/dev/null; then
+      stop "Ajoute la clé ci-dessus dans GitLab, puis relance la même commande (avec ssh -t pour pouvoir répondre ici)."
+    fi
     read -r -p "  Appuie sur Entrée une fois la clé ajoutée (Ctrl+C pour arrêter)… " _ < /dev/tty
   done
 fi
