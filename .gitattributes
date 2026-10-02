@@ -1,0 +1,5 @@
+# Fins de ligne : les scripts gardent TOUJOURS celles de leur système, même sous Windows
+# (un .sh avec des fins de ligne Windows ne démarre pas sur le VPS ; un .cmd en a besoin).
+*.sh   text eol=lf
+*.mjs  text eol=lf
+*.cmd  text eol=crlf
