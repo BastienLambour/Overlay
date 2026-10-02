@@ -141,6 +141,17 @@ Ensuite, à chaque nouvelle version : bouton **Mettre à jour l'overlay** dans c
   l'intègres au dépôt et tu pousses : tout le monde a la modification.
 - Une image ou un son **à lui** (dans `sons/` par exemple) qui n'existe pas dans ta version n'est jamais supprimé.
 
+## Si le webhook GitLab dit « unable to get local issuer certificate »
+
+Le fichier du certificat ne contient que le certificat, sans son **intermédiaire**. Les navigateurs complètent souvent
+tout seuls, mais pas GitLab, curl ni PowerShell. `installer.sh` complète la chaîne tout seul (il télécharge
+l'intermédiaire à l'adresse écrite dans le certificat) et l'écrit À PART dans `/etc/ssl/private/overlays-chaine.pem` :
+le fichier d'origine, utilisé par tes autres sites, n'est pas touché. Relance simplement l'installation.
+Tes autres sites ont sans doute le même manque : tu peux leur donner ce même fichier (`ssl_certificate
+/etc/ssl/private/overlays-chaine.pem;`), le certificat est le même.
+
+GitLab met un webhook en pause (« Hook disabled ») après plusieurs échecs : un **Test** réussi le réactive.
+
 ## 8. Changer d'adresse plus tard
 
 Relance l'installation avec le nouveau nom : `ssh -t root@217.154.115.223 "DOMAINE=nouveau.bastien-lambour.fr bash installer.sh"`

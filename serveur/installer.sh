@@ -250,6 +250,32 @@ else
         try_files \$uri \$uri/ =404;
     }"
   if [ -n "$DOMAINE" ] && [ "$HTTPS" = 1 ]; then
+    # La chaîne du certificat : le certificat + son (ses) intermédiaire(s). Sans, les navigateurs se débrouillent
+    # souvent, mais pas GitLab, curl ni PowerShell (« unable to get local issuer certificate »). Si le fichier
+    # n'a que le certificat, on va chercher les intermédiaires à l'adresse écrite dedans (« CA Issuers »), et
+    # on écrit une copie complète À PART (le fichier d'origine, utilisé par les autres sites, n'est pas touché).
+    CERT_NGINX="$CERTIFICAT"
+    if ! openssl verify -untrusted "$CERTIFICAT" "$CERTIFICAT" >/dev/null 2>&1; then
+      TMP="$(mktemp -d)"; cp "$CERTIFICAT" "$TMP/chaine.pem"; DERNIER="$CERTIFICAT"
+      for _ in 1 2 3; do
+        URL="$(openssl x509 -in "$DERNIER" -noout -ext authorityInfoAccess 2>/dev/null | sed -n 's/.*CA Issuers - URI:\(http[^ ,]*\).*/\1/p' | head -1)"
+        [ -n "$URL" ] && curl -fsSL --max-time 20 "$URL" -o "$TMP/brut" || break
+        openssl x509 -inform DER -in "$TMP/brut" -out "$TMP/inter.pem" 2>/dev/null || openssl x509 -in "$TMP/brut" -out "$TMP/inter.pem" 2>/dev/null || break
+        { echo; cat "$TMP/inter.pem"; } >> "$TMP/chaine.pem"
+        cp "$TMP/inter.pem" "$TMP/dernier.pem"; DERNIER="$TMP/dernier.pem"
+        openssl verify -untrusted "$TMP/chaine.pem" "$TMP/chaine.pem" >/dev/null 2>&1 && break
+      done
+      if openssl verify -untrusted "$TMP/chaine.pem" "$TMP/chaine.pem" >/dev/null 2>&1; then
+        CERT_NGINX=/etc/ssl/private/overlays-chaine.pem
+        cp "$TMP/chaine.pem" "$CERT_NGINX"; chmod 644 "$CERT_NGINX"
+        ok "Chaîne du certificat complétée (intermédiaire ajouté) : $CERT_NGINX"
+      else
+        printf '  ⚠ La chaîne du certificat est incomplète et n'"'"'a pas pu être complétée : GitLab refusera le webhook.\n'
+        printf '    Télécharge le certificat INTERMÉDIAIRE chez ton fournisseur (IONOS : Domaines & SSL › certificat › Télécharger),\n'
+        printf '    mets-le à la suite du certificat dans un fichier, puis relance : CERTIFICAT=ce-fichier bash installer.sh\n'
+      fi
+      rm -rf "$TMP"
+    fi
     # Comme les autres sites du VPS : le port 80 renvoie vers https, le site est sur le port 443
     cat > "$FICHIER" <<EOF
 # Overlays : $DOMAINE (écrit par serveur/installer.sh — relance-le plutôt que de modifier ce fichier)
@@ -265,7 +291,7 @@ server {
 ${V6:+    listen [::]:443 ssl;}
     server_name $DOMAINE;
 
-    ssl_certificate $CERTIFICAT;
+    ssl_certificate $CERT_NGINX;
     ssl_certificate_key $CLE;
 
 $EMPLACEMENTS
