@@ -88,11 +88,12 @@ en_overlays() { runuser -u "$UTILISATEUR" -- env HOME="$MAISON" "$@"; }
 # ---------------------------------------------------------------------
 dire "3/7 Accès au dépôt : $DEPOT_URL"
 if [[ "$DEPOT_URL" == git@* || "$DEPOT_URL" == ssh://* ]]; then
-  CLE="$MAISON/.ssh/id_ed25519"
-  if [ ! -f "$CLE" ]; then
+  # (CLE_GIT, pas CLE : CLE est la clé du certificat HTTPS, utilisée plus bas par Nginx)
+  CLE_GIT="$MAISON/.ssh/id_ed25519"
+  if [ ! -f "$CLE_GIT" ]; then
     en_overlays mkdir -p "$MAISON/.ssh"
     chmod 700 "$MAISON/.ssh"
-    en_overlays ssh-keygen -q -t ed25519 -N '' -C "overlays@$(hostname)" -f "$CLE"
+    en_overlays ssh-keygen -q -t ed25519 -N '' -C "overlays@$(hostname)" -f "$CLE_GIT"
   fi
   HOTE="$(printf '%s' "$DEPOT_URL" | sed -E 's#^(ssh://)?([^@]+@)?([^:/]+).*#\3#')"
   en_overlays sh -c "ssh-keyscan -t ed25519,rsa '$HOTE' >> '$MAISON/.ssh/known_hosts' 2>/dev/null; sort -u -o '$MAISON/.ssh/known_hosts' '$MAISON/.ssh/known_hosts'"
@@ -100,7 +101,7 @@ if [[ "$DEPOT_URL" == git@* || "$DEPOT_URL" == ssh://* ]]; then
     printf '\n  Le serveur n'"'"'a pas encore le droit de lire le dépôt. Ajoute cette clé, en LECTURE SEULE :\n'
     printf '    GitHub : dépôt › Settings › Deploy keys › Add deploy key (NE PAS cocher « Allow write access »)\n'
     printf '    GitLab : projet › Settings › Repository › Deploy keys › Add new key (sans « Grant write permissions »)\n\n'
-    printf '  \033[1m%s\033[0m\n\n' "$(cat "$CLE.pub")"
+    printf '  \033[1m%s\033[0m\n\n' "$(cat "$CLE_GIT.pub")"
     # Sans clavier (ssh lancé sans -t) : on s'arrête proprement ; relancer reprend ici, avec la même clé
     if ! { true < /dev/tty; } 2>/dev/null; then
       stop "Ajoute la clé ci-dessus dans GitLab, puis relance la même commande (avec ssh -t pour pouvoir répondre ici)."
