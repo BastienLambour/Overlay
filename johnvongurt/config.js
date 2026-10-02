@@ -23,24 +23,24 @@ window.CONFIG = {
   // ou une position perso { x: 1200, y: 700, l: 420, h: 236 } (pixels 1920 × 1080). Les préréglages et leurs coordonnées : js/zones.js.
   // Une option écrite dans l'adresse d'une source passe avant. Le plus simple : reglages.html › Options des scènes.
   options: {
-    jeu: { cam: "bas-droite", chat: true, bandeau: true },
-    contenu: { cam: true, chat: true, bandeau: true },
-    "cam-seule": { chat: true, bandeau: true },
+    jeu: { cam: "bas-droite", chat: false, bandeau: true, coins: true },
+    contenu: { cam: true, chat: true, bandeau: false, cadre: true },
+    "cam-seule": { chat: true, bandeau: false },
   },
 
   // --- Couleurs : pour changer d'ambiance sans toucher au thème (ex. Halloween) ---
   // Un code couleur (ex. "#FF7A1A") remplace la couleur du thème ; vide = la couleur d'origine.
   // Le plus simple : reglages.html › Couleurs (avec des ambiances en un clic).
   couleurs: {
-    accent:           "",   // Accent (orange « attention »)
-    flamme:           "",   // Flamme de la fusée
-    fond:             "",   // Fond
-    "fond-2":         "",   // Fond des cadres
-    trait:            "",   // Traits et texte
-    doux:             "",   // Texte secondaire
-    coque:            "",   // Remplissage des décors (pas de tir, réservoirs…)
-    ok:               "",   // Validé (vert)
-    alerte:           "",   // Alerte (rouge : balises, REC)
+    accent: "", // Accent (orange « attention »)
+    flamme: "", // Flamme de la fusée
+    fond: "", // Fond
+    "fond-2": "", // Fond des cadres
+    trait: "", // Traits et texte
+    doux: "", // Texte secondaire
+    coque: "", // Remplissage des décors (pas de tir, réservoirs…)
+    ok: "", // Validé (vert)
+    alerte: "", // Alerte (rouge : balises, REC)
   },
 
   // ---------------------------------------------------------------------
@@ -51,7 +51,7 @@ window.CONFIG = {
     actif: true,
     hote: "127.0.0.1",
     port: 8080,
-    motDePasse: "",      // seulement si tu as activé l'authentification dans Streamer.bot
+    motDePasse: "i32RykJx5C73Rw", // seulement si tu as activé l'authentification dans Streamer.bot
   },
 
   // Écran de démarrage (fusée en ravitaillement sur le pas de tir)
@@ -63,8 +63,8 @@ window.CONFIG = {
     // « démarrage » > Interagir, bouge la souris, clique sur le bouton « ⚙ DURÉE » en haut à gauche.
     // Priorité : adresse ?minutes=10  >  bouton ⚙ DURÉE  >  cette valeur.
     // Le ravitaillement se termine à T-30 s, puis décompte final de 10 s et décollage.
-    minutes: 5,
-    heure: "",            // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
+    minutes: 0.5,
+    heure: "", // … ou heure fixe "20:30" : prioritaire sur les minutes (vide = compte à rebours en minutes)
     // Pop-up « Ravitaillement terminé » : affiché sous la fusée, pendant ce nombre de secondes.
     popupSecondes: 3,
     ravitaillementTermine: "Ravitaillement terminé",
@@ -106,66 +106,124 @@ window.CONFIG = {
   // Écran de fin (alunissage)
   fin: {
     titre: "Mission accomplie",
-    statut: "Retour au centre de contrôle",
-    message: "Merci d'avoir suivi la mission ! Rendez-vous au prochain lancement.",
+    statut: "Partage du rapport de mission",
+    message:
+      "Merci d'avoir suivi la mission ! Rendez-vous au prochain lancement.",
   },
 
   // Scènes avec cam / contenu / jeu
   scenes: {
     statutEnDirect: "Transmission en direct",
-    grade: "Commandant",            // affiché sous la cam : « John Von Gurt — Commandant »
+    grade: "", // affiché sous la cam : « John Von Gurt — Commandant »
   },
 
   // Chat intégré
   chat: {
     titre: "Canal de communication",
     maxMessages: 12,
-    ignorer: ["nightbot", "streamelements", "streamlabs", "moobot", "fossabot", "wizebot"],
-    masquerCommandes: true,         // cache les messages qui commencent par « ! »
-    memoireMinutes: 10,      // en changeant de scène, le chat réaffiche les messages des 10 dernières minutes (0 = jamais)
+    ignorer: [
+      "nightbot",
+      "streamelements",
+      "streamlabs",
+      "moobot",
+      "fossabot",
+      "wizebot",
+    ],
+    masquerCommandes: true, // cache les messages qui commencent par « ! »
+    memoireMinutes: 10, // en changeant de scène, le chat réaffiche les messages des 10 dernières minutes (0 = jamais)
   },
 
   // Objectif affiché dans le bandeau et la jauge Terre → Lune
   objectif: {
-    type: "follow",                 // "follow" ou "sub"
-    titre: "Objectif : 50 recrues",
+    type: "follow", // "follow" ou "sub"
+    titre: "Objectif ",
     cible: 50,
-    depart: 0,                      // valeur de départ : mets ici ton nombre actuel de followers/abonnés
+    depart: 5, // valeur de départ : mets ici ton nombre actuel de followers/abonnés
   },
 
   // Bandeau d'infos (en bas des scènes) : ce qu'il affiche. Mets false pour cacher une case,
   // ex. soutien: false si tu ne reçois ni dons ni bits.
   bandeau: {
-    follow: true,        // « Dernière recrue » : dernier follow
-    abonne: true,        // « Dernier abonné » : dernier abonné (chaîne affiliée ou partenaire)
-    soutien: true,       // « Dernier soutien » : dernier don ou bits
-    objectif: true,      // l'objectif et sa mini-jauge
+    follow: true, // « Dernière recrue » : dernier follow
+    abonne: true, // « Dernier abonné » : dernier abonné (chaîne affiliée ou partenaire)
+    soutien: true, // « Dernier soutien » : dernier don ou bits
+    objectif: true, // l'objectif et sa mini-jauge
+  },
+
+  // Sons des scènes « démarrage » (pas de tir, compte à rebours, décollage) et « fin » (atterrissage, musique).
+  // Fichiers : assets/audio/*.ogg (remplaçables, même nom). Dans OBS : coche « Contrôler l'audio via OBS » sur la source.
+  audio: {
+    actif: true,
+    volume: 0.4, // volume général, de 0 à 1 (aussi : ?volume=0.4 dans l'adresse de la scène)
+    // Ta voix du compte à rebours : tes propres fichiers assets/audio/voix/15.mp3 … 1.mp3 et 0.mp3 (décollage).
+    // Un fichier absent = silence. Aucune voix synthétique n'est utilisée.
+    voixVolume: 1, // volume de ta voix (de 0 à 1, multiplié par le volume général)
+    // Sons personnalisés AVANT les 15 dernières secondes : une ligne = « secondes restantes | fichier ».
+    // "60" joue assets/audio/voix/60.mp3 à T-60 s · "30 | sons/ouverture.mp3" joue ce fichier à T-30 s (le fichier est facultatif).
+    reperes: [],
+    // Volume de chaque son (1 = comme livré) : preparation, chauffe, decollage, propulseur, atterrissage, musique
+    volumes: {
+      preparation: 1,
+      chauffe: 1,
+      decollage: 1,
+      propulseur: 1,
+      atterrissage: 1,
+      musique: 1,
+    },
   },
 
   // Alertes
   alertes: {
-    duree: 7,                       // secondes d'affichage de chaque alerte
+    duree: 7, // secondes d'affichage de chaque alerte
     son: true,
-    volume: 0.5,                    // de 0 à 1
+    volume: 0.5, // de 0 à 1
     // Un son par alerte. Vide = le son de l'overlay (chaque alerte a le sien) · "aucun" = pas de son ·
     // sinon ton propre fichier, rangé dans le dossier sons/ : ex. "sons/follow.mp3" (mp3, wav ou ogg).
     // Le plus simple : reglages.html › Sons des alertes (avec un bouton ▶ pour écouter).
     sons: {
-      follow: "", sub: "", resub: "", giftsub: "", giftbomb: "",
-      bits: "", raid: "", don: "", objectif: "",
+      follow: "",
+      sub: "",
+      resub: "",
+      giftsub: "",
+      giftbomb: "",
+      bits: "",
+      raid: "",
+      don: "",
+      objectif: "",
     },
-    anonyme: "un membre de l’équipage",   // nom affiché quand Twitch ne donne pas le destinataire d'un abonnement offert
+    anonyme: "Un pilote anonyme", // nom affiché quand Twitch ne donne pas le destinataire d'un abonnement offert
     // {nom} {montant} {mois} {nombre} {destinataire} sont remplacés automatiquement
     textes: {
-      follow:   { titre: "Nouvelle recrue",      message: "rejoint l'équipage" },
-      sub:      { titre: "Astronaute certifié",  message: "signe pour la mission" },
-      resub:    { titre: "Astronaute vétéran",   message: "rempile pour {mois} mois de mission" },
-      giftsub:  { titre: "Billet offert",        message: "offre un abonnement à {destinataire}" },
-      giftbomb: { titre: "Pluie de billets !",   message: "offre {nombre} abonnements à l'équipage" },
-      bits:     { titre: "Carburant reçu",       message: "ajoute {montant} bits au réservoir" },
-      raid:     { titre: "Flotte en approche !", message: "arrive avec {montant} vaisseaux" },
-      don:      { titre: "Soutien de mission",   message: "finance la mission : {montant}" },
-      objectif: { titre: "Objectif atteint !",   message: "cap sur la prochaine étape" },
+      follow: { titre: "Nouvelle recrue", message: "rejoint l'équipage" },
+      sub: { titre: "Pilote certifié", message: "signe pour la mission" },
+      resub: {
+        titre: "Pilote vétéran",
+        message: "rempile pour {mois} mois de mission",
+      },
+      giftsub: {
+        titre: "Billet offert",
+        message: "offre un abonnement à {destinataire}",
+      },
+      giftbomb: {
+        titre: "Pluie de billets !",
+        message: "offre {nombre} abonnements à l'équipage",
+      },
+      bits: {
+        titre: "Carburant reçu",
+        message: "ajoute {montant} bits au réservoir",
+      },
+      raid: {
+        titre: "Flotte en approche !",
+        message: "arrive avec {montant} vaisseaux",
+      },
+      don: {
+        titre: "Soutien de mission",
+        message: "finance la mission : {montant}",
+      },
+      objectif: {
+        titre: "Objectif atteint !",
+        message: "cap sur la prochaine étape",
+      },
     },
   },
 
@@ -178,20 +236,29 @@ window.CONFIG = {
 
   // --- Kit de chaîne Twitch (chaine/kit.html) : textes des visuels de la chaîne ---
   chaine: {
-    slogan: "Exploration spatiale en direct",
+    slogan: "Voyage en direct",
     horsLigne: "Transmission interrompue",
-    planning: [                       // jours et heures de stream, ex. ["Mercredi", "20h30"]
+    planning: [
+      // jours et heures de stream, ex. ["Mercredi", "20h30"]
     ],
-    reseaux: [],                      // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
+    reseaux: [], // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
     panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes
   test: {
-    noms: ["Astro_Lou", "Capitaine_K", "StarPilot", "Nova_77", "Kepler", "Orbite", "Luna_B", "Cosmo"],
+    noms: [
+      "Astro_Lou",
+      "Capitaine_K",
+      "StarPilot",
+      "Nova_77",
+      "Kepler",
+      "Orbite",
+      "Luna_B",
+      "Cosmo",
+    ],
   },
-
   // --- Mises à jour : le serveur d'où l'overlay se met à jour (bouton « Mettre à jour l'overlay » du
   //     script OBS, ou mettre-a-jour.cmd). Tes réglages (mes-reglages.js) ne sont jamais remplacés.
   miseAJour: {

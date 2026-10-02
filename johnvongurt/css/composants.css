@@ -51,6 +51,9 @@ html.transparent, html.transparent body, html.transparent #ecran { background: t
 .zone-info b { color: var(--accent); font-size: 22px; letter-spacing: .1em; text-transform: uppercase; }
 .zone-info small { font: 500 13px var(--f-mono); color: #ffffffa0; margin-top: 4px; }
 
+/* Cadre fin autour de l'écran (scènes jeu et contenu) */
+.cadre-ecran { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
 /* ---------- Chat ---------- */
 .panneau-chat { position: absolute; }
 .panneau-chat .interieur { display: flex; flex-direction: column; padding: 18px 22px; }

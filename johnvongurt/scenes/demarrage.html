@@ -283,6 +283,7 @@
 <script src="../js/options.js"></script>
 <script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
+<script src="../js/ambiance.js"></script>
 <script>
   Commun.demarrer();
   const C = Commun.C.demarrage || {};
@@ -347,6 +348,7 @@
   const T = Commun.minuteries();
   const CLE_MIN = `overlay-${Commun.C.id || 'defaut'}-demarrage-minutes`;
   let duree, finCarburant, debut, phase, derniereActivite, termineAffiche;
+  let son = {}, dernierNombre = null;   // sons en cours (voir js/ambiance.js)
 
   // Durée : ?minutes= dans l'adresse  >  heure fixe (?heure=20:30, puis config.js › demarrage.heure)
   //         >  valeur réglée avec la roue ⚙  >  config.js › demarrage.minutes
@@ -429,6 +431,28 @@
     // Phases
     if (reste <= 0) { if (phase !== 'decollage') decollage(); return; }
 
+    Ambiance.suivreReperes(reste);   // sons personnalisés avant T-15 (config.js › audio › reperes)
+
+    // Sons : à T-15 s, le pas de tir s'efface derrière les moteurs qui chauffent, et le compte à rebours est dit
+    const DEPART_SON = parseFloat(C.sonDepart) || 15;
+    if (reste <= DEPART_SON) {
+      if (!son.chauffe) {
+        if (son.prep) son.prep.regler(0.1, 4000);
+        son.chauffe = Ambiance.jouer('chauffe', { boucle: true, volume: 0.25, fondu: 1.5, vitesse: 0.85 });
+      }
+      const k = 1 - Math.max(0, reste) / DEPART_SON;          // 0 → 1 jusqu'au décollage
+      son.chauffe.regler(0.25 + 0.65 * k, 250); son.chauffe.allure(0.85 + 0.25 * k);
+      const nb = Math.ceil(reste);
+      if (nb !== dernierNombre) {
+        dernierNombre = nb;
+        if (nb <= DEPART_SON && nb >= 1) Ambiance.voix(nb);
+      }
+      if (reste <= 3 && !son.decollage) {                      // allumage : le fichier monte pendant 3 s, le grand « boum » tombe pile à T-0
+        son.decollage = Ambiance.jouer('decollage', { volume: 0.95 });
+        son.chauffe.regler(0, 3000);
+      }
+    }
+
     // Ligne d'activité : suit la vérification en cours, puis la séquence finale
     const n = lignes.length, q = Math.min(1, p / 0.97), k = Math.min(n - 1, Math.floor(q * n));
     definirActivite(reste <= 3 ? TXT.allumage : (reste <= 10 || p >= 1) ? TXT.finale : q >= 1 ? TXT.termine : (ACT[k] || verifs[k] || ''));
@@ -461,6 +485,11 @@
     annonce('');
     annoncePanneau(C.decollage || 'Décollage !', false);
     definirActivite(TXT.decollage);
+    Ambiance.voix(0);
+    if (!son.decollage) son.decollage = Ambiance.jouer('decollage', { volume: 0.95 });
+    T.timeout(() => { son.propulseur = Ambiance.jouer('propulseur', { boucle: true, volume: 0.8, fondu: 6 }); }, 3000);   // prend le relais du grondement
+    T.timeout(() => { if (son.decollage) son.decollage.arreter(6000); }, 5000);
+    T.timeout(() => { if (son.propulseur) son.propulseur.regler(0.5, 40000); }, 25000);   // la fusée s'éloigne : le bruit s'adoucit peu à peu
     const vol = $('fusee-vol');
     const monde = [$('monde'), $('monde-fumees')];
     const LIMITE = 70;          // hauteur à laquelle la caméra se met à suivre la fusée
@@ -502,6 +531,7 @@
   // --- Départ / remise à zéro : appelé à chaque passage à l'antenne ---
   function lancer() {
     T.tout();
+    Ambiance.tout(0); Ambiance.reinitialiserReperes(); son = {}; dernierNombre = null;
     derniereActivite = null; termineAffiche = false;
     duree = Math.max(5, dureeMinutes() * 60);
     finCarburant = duree > 40 ? duree - 30 : duree * 0.4;   // instant où le plein est fait
@@ -520,11 +550,12 @@
       $('statut-bas').textContent = C.statut || '';
     });
     $('reg-min').value = String(dureeMinutes()).replace('.', ',');
+    if (duree > (parseFloat(C.sonDepart) || 15) + 2) son.prep = Ambiance.jouer('preparation', { boucle: true, volume: 0.55, fondu: 2.5 });   // bruits du pas de tir
     tic(); T.interval(tic, 100);
   }
 
   // Hors antenne : tout s'arrête, le compte à rebours ne défile plus en arrière-plan.
-  const cycle = Commun.cycle({ lancer, arreter: () => T.tout() });
+  const cycle = Commun.cycle({ lancer, arreter: () => { T.tout(); Ambiance.tout(400); } });
 
   // --- Réglage de la durée ---
   const reg = $('reglage');

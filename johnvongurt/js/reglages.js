@@ -41,7 +41,7 @@ const Reglages = (() => {
     }
     function cle() {
       if (texte[i] === '"' || texte[i] === "'") { const d = i; chaine(); return Function(`return ${texte.slice(d, i)}`)(); }
-      const m = /^[A-Za-z_$][\w$]*/.exec(texte.slice(i));
+      const m = /^([A-Za-z_$][\w$]*|\d+)/.exec(texte.slice(i));   // un nom, ou un nombre (ex. { 15: \"…\" })
       if (!m) erreur('nom de réglage attendu');
       i += m[0].length;
       return m[0];
@@ -100,7 +100,7 @@ const Reglages = (() => {
   // =====================================================================
   // 2. Écrire une valeur, à la façon de config.js
   // =====================================================================
-  const nomCle = k => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
+  const nomCle = k => (/^([A-Za-z_$][\w$]*|\d+)$/.test(k) ? k : JSON.stringify(k));
   // notes : commentaires qui étaient dans la liste d'origine (gardés en tête de la nouvelle liste)
   function formater(v, ind = '', multiligne = null, notes = []) {
     if (Array.isArray(v) && notes.length) {
@@ -289,9 +289,10 @@ window.MES_REGLAGES = ${formater(perso)};
     function champHTML(c) {
       const v = lire(valeurs, c.cle), id = idChamp(c.cle);
       const aide = c.aide ? `<small>${echapper(c.aide)}</small>` : '';
+      const lib = `<span class="rg-lib"><b>${echapper(c.label)}</b>${aide}</span>`;   // le nom (et son aide) à gauche, le champ à droite
       let saisie;
       switch (c.type) {
-        case 'case': return `<label class="rg-champ rg-case" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''}><span>${echapper(c.label)}</span>${aide}</label>`;
+        case 'case': return `<label class="rg-champ rg-case" data-cle="${c.cle}">${lib}<span class="rg-bascule"><input id="${id}" type="checkbox" ${v ? 'checked' : ''}><i></i></span></label>`;
         case 'nombre': saisie = `<input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 'any'}">`; break;
         case 'heure': saisie = `<input id="${id}" type="time" value="${echapper(v)}">`; break;
         // Une couleur : le nuancier, le code (ex. #FF7A1A, vide = couleur d'origine du thème) et ↺ pour revenir à l'origine
@@ -310,7 +311,7 @@ window.MES_REGLAGES = ${formater(perso)};
         default: saisie = `<input id="${id}" type="text" value="${echapper(v)}">`;
       }
       const large = ['liste', 'paires'].includes(c.type) || c.large ? ' rg-large' : '';
-      return `<label class="rg-champ${large}" data-cle="${c.cle}"><span>${echapper(c.label)}</span>${saisie}${aide}</label>`;
+      return `<label class="rg-champ${large}" data-cle="${c.cle}">${lib}${saisie}</label>`;
     }
 
     function alertesHTML() {
@@ -441,12 +442,20 @@ window.MES_REGLAGES = ${formater(perso)};
       });
     }
 
+    // Les champs d'une section : les réglages courants, puis (repliés) ceux marqués « avance: true »
+    function champsHTML(s) {
+      const liste = s.champs.filter(c => !c.scene), courants = liste.filter(c => !c.avance), avances = liste.filter(c => c.avance);
+      return `${courants.length ? `<div class="rg-champs">${courants.map(champHTML).join('')}</div>` : ''}
+        ${avances.length ? `<details class="rg-avance"><summary>Réglages avancés (facultatif)</summary><div class="rg-champs">${avances.map(champHTML).join('')}</div></details>` : ''}`;
+    }
     function construire() {
-      document.getElementById('rg-formulaire').innerHTML = sections.map(s => `<section class="rg-section">
+      const court = titre => titre.replace(/\s*\(.*\)\s*$/, '');   // « Sons (démarrage et fin) » → « Sons »
+      const sommaire = `<nav class="rg-sommaire" aria-label="Aller à une section">${sections.map((s, i) => `<a href="#rg-s${i}">${s.icone || '⚙️'} ${echapper(court(s.titre))}</a>`).join('')}</nav>`;
+      document.getElementById('rg-formulaire').innerHTML = sommaire + sections.map((s, i) => `<section class="rg-section" id="rg-s${i}">
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
         ${s.scenes ? scenesHTML(s) : ''}
-        <div class="rg-champs">${s.champs.filter(c => !c.scene).map(champHTML).join('')}</div>
+        ${champsHTML(s)}
         ${s.ambiances ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();

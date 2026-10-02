@@ -4,12 +4,14 @@
    Un réglage absent d'ici apparaît quand même, dans « Autres réglages ».
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
-           (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
+           (champ « avance: true » : rangé dans « Réglages avancés », replié) · (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
    ===================================================================== */
 window.ReglagesChamps = {
   // Pour l'aperçu des alertes aux couleurs de l'overlay (icônes et styles des vraies alertes)
   scripts: ['js/commun.js', 'js/son.js'],   // son.js : pour le bouton ▶ des sons
   styles: ['css/composants.css'],
+  // Colonnes en plus dans le tableau des options des scènes (clé de config.js › options → titre)
+  elements: { coins: '🖼️ Cadre écran', cadre: '🖼️ Cadre écran' },
 
   // Ambiances en un clic (section Couleurs) : chacune règle les 9 couleurs ; '' = la couleur d'origine du thème
   ambiances: [
@@ -33,6 +35,18 @@ window.ReglagesChamps = {
     ] },
     { titre: 'Options des scènes', icone: '🎬', scenes: true, aide: 'Ce qui s\'affiche dans chaque scène (allumé = affiché). C\'est comme les options de l\'adresse (?cam=…, ?chat=0…), mais réglé une fois pour toutes ; une option écrite dans l\'adresse d\'une source passe avant.', champs: [
       { cle: 'afficherZones', type: 'case', label: 'Afficher la taille et la position des zones (webcam, contenu, jeu)', aide: 'À cocher le temps de placer la webcam et le jeu dans OBS, puis à décocher.' },
+    ] },
+    { titre: 'Sons (démarrage et fin)', icone: '🔊', aide: 'Bruits de fusée et musique des scènes « démarrage » et « fin » (dans OBS, coche « Contrôler l\'audio via OBS » sur la source de la scène). Ta voix du compte à rebours : dépose tes fichiers 15.mp3 … 1.mp3 et 0.mp3 dans assets/audio/voix/ (un fichier absent = silence).', champs: [
+      { cle: 'audio.actif', type: 'case', label: 'Activer les sons', aide: 'Décoché : aucun son dans les scènes « démarrage » et « fin ».' },
+      { cle: 'audio.volume', type: 'nombre', label: 'Volume général', min: 0, max: 1, pas: 0.05, aide: 'De 0 (silence) à 1 (maximum).' },
+      { cle: 'audio.voixVolume', type: 'nombre', label: 'Volume de ta voix', min: 0, max: 1, pas: 0.05, aide: 'Pour tes annonces du compte à rebours. De 0 à 1, multiplié par le volume général.' },
+      { cle: 'audio.reperes', type: 'liste', avance: true, label: 'Annonces avant T-15 s', aide: 'Une ligne par son : « secondes restantes | fichier ». Ex. « 60 » joue assets/audio/voix/60.mp3 à T-60 s ; « 30 | sons/ouverture.mp3 » joue ce fichier à T-30 s. Un repère n\'est joué que si le compte à rebours est assez long.' },
+      { cle: 'audio.volumes.preparation', type: 'nombre', avance: true, label: 'Pas de tir (ambiance)', min: 0, pas: 0.05, aide: '1 = comme livré.' },
+      { cle: 'audio.volumes.chauffe', type: 'nombre', avance: true, label: 'Moteurs qui chauffent', min: 0, pas: 0.05 },
+      { cle: 'audio.volumes.decollage', type: 'nombre', avance: true, label: 'Décollage', min: 0, pas: 0.05 },
+      { cle: 'audio.volumes.propulseur', type: 'nombre', avance: true, label: 'Propulseur en vol', min: 0, pas: 0.05 },
+      { cle: 'audio.volumes.atterrissage', type: 'nombre', avance: true, label: 'Atterrissage', min: 0, pas: 0.05 },
+      { cle: 'audio.volumes.musique', type: 'nombre', avance: true, label: 'Musique de fin', min: 0, pas: 0.05 },
     ] },
     { titre: 'Couleurs', icone: '🎨', ambiances: true, aide: 'Choisis une ambiance en un clic, ou change une couleur à la main. ↺ = la couleur d\'origine.', champs: [
       { cle: 'couleurs.accent', type: 'couleur', label: 'Accent (orange « attention »)', defaut: '#FF9F1C' },
@@ -116,9 +130,6 @@ window.ReglagesChamps = {
       { cle: 'chaine.planning', type: 'paires', label: 'Planning', aide: 'Une ligne par jour, ex. « Mercredi | 20h30 ».' },
       { cle: 'chaine.reseaux', type: 'paires', label: 'Réseaux', aide: 'Une ligne par réseau, ex. « Discord | discord.gg/… ».' },
       { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne. Ensuite, refais les images : node outils/exporter-chaine.mjs' },
-    ] },
-    { titre: 'Mises à jour', icone: '🔄', aide: 'D\'où l\'overlay se met à jour : bouton « Mettre à jour l\'overlay » du script OBS (outils/actualiser-obs.lua), ou double-clic sur mettre-a-jour.cmd. Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l\'ancienne version est gardée dans sauvegardes.', champs: [
-      { cle: 'miseAJour.adresse', type: 'texte', label: 'Adresse du serveur des overlays', aide: 'Ex. https://overlays.bastien-lambour.fr (celle de la page de téléchargement). À ne changer que si on te le dit.' },
     ] },
     { titre: 'Mode test', icone: '🧪', champs: [
       { cle: 'test.noms', type: 'liste', label: 'Pseudos des fausses alertes (?test=1)', aide: 'Un pseudo par ligne.' },

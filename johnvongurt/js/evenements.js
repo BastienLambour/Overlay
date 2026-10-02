@@ -138,10 +138,18 @@ const Evenements = (() => {
       return etatJournal('⚠️ Client Streamer.bot non chargé : pas de connexion internet au démarrage de la page ?');
     }
     etatJournal(`… connexion à Streamer.bot sur ${sb.hote || '127.0.0.1'}:${sb.port || 8080}`);
+    // « Connecté » dit seulement que la porte est ouverte : on vérifie ensuite que Streamer.bot envoie bien les événements.
+    function verifierEcoute() {
+      const liste = Object.entries(client.subscriptions || {}).flatMap(([src, types]) => (types || []).map(t => `${src}.${t}`));
+      if (liste.length) journal(`📡 À l'écoute de ${liste.length} types d'événements`, liste.join(', '), '#8BD17C');
+      else journal('⚠️ Connecté, mais à l\'écoute de rien', 'Streamer.bot n\'a pas accepté l\'abonnement aux événements : relance Streamer.bot (serveur WebSocket démarré) puis actualise la source.');
+    }
     const client = new window.StreamerbotClient({
       host: sb.hote || '127.0.0.1', port: sb.port || 8080, endpoint: '/',
       password: sb.motDePasse || undefined,
-      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); },
+      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); setTimeout(verifierEcoute, 2500); },
+      onError: err => etatJournal('⚠️ Erreur Streamer.bot : ' + ((err && err.message) || err)),
+      onData: d => { if (d && d.status === 'error') journal('⚠️ Streamer.bot a répondu par une erreur', JSON.stringify(d), '#F5B82E'); },
       onDisconnect: () => { connecte = false; console.info('[Overlay] Déconnecté de Streamer.bot'); etatJournal('⚠️ Déconnecté de Streamer.bot (lancé ? serveur WebSocket démarré ?)'); },
     });
     ECOUTES.forEach(cle => {

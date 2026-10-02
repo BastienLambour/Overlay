@@ -1,0 +1,23 @@
+Voix du compte à rebours
+=========================
+Pose ici un fichier par nombre, au format .mp3 (ou .ogg / .wav) :
+
+    15.mp3   « T moins quinze secondes »
+    14.mp3 … 11.mp3
+    10.mp3   « dix »
+     9.mp3 … 1.mp3   « neuf » … « un »
+     0.mp3   « Décollage ! »
+
+- un fichier présent = ton audio est joué ;
+- un fichier absent = aucun son n'est joué (aucune voix synthétique n'est utilisée).
+
+Tu peux donc ajouter ou remplacer les fichiers un par un, sans devoir compléter
+toute la série d'un coup.
+
+Le volume de ta voix se règle dans reglages.html > Sons > Volume de ta voix.
+
+Sons AVANT les 15 dernières secondes
+------------------------------------
+Pour jouer un son plus tôt (ex. une annonce à T-60), pose 60.mp3 ici puis ajoute la ligne « 60 » dans
+reglages.html > Sons > Réglages avancés > « Annonces avant T-15 s ». Pour un fichier rangé ailleurs :
+« 30 | sons/ouverture.mp3 ». Un repère n'est joué que si le compte à rebours est assez long.

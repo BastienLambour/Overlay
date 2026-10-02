@@ -151,6 +151,7 @@
 <script src="../js/options.js"></script>
 <script src="../js/zones.js"></script>
 <script src="../js/commun.js"></script>
+<script src="../js/ambiance.js"></script>
 <script>
   Commun.demarrer();
   const C = Commun.C.fin || {};
@@ -190,6 +191,10 @@
       ecran.classList.remove('jambes-sorties', 'pose', 'drapeau-plante', 'fini');
       txt('statut-bas', 'Alunissage en cours'); txt('etat', 'Descente');
     });
+    // Sons : descente moteurs allumés, contact avec le sol (à 7 s, au moment où la fusée se pose), puis la musique en boucle
+    Ambiance.tout(300);
+    Ambiance.jouer('atterrissage', { volume: 0.95 });
+    T.timeout(() => Ambiance.jouer('musique', { boucle: true, volume: 0.55, fondu: 6 }), DUREE + 3500);
     const t0 = performance.now();
     clearInterval(minuterie);
     minuterie = T.interval(image, 16);
@@ -230,7 +235,7 @@
       T.timeout(sequence, 600);
       if (boucle > 0) T.interval(sequence, boucle * 1000);
     },
-    arreter: () => T.tout(),
+    arreter: () => { T.tout(); Ambiance.tout(400); },
   });
 </script>
 </body>

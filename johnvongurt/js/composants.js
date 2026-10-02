@@ -49,6 +49,17 @@ const Composants = (() => {
     return el;
   }
 
+  // --- Cadre fin autour de l'écran : bord carré, coins très légèrement arrondis ---
+  // Collé aux bords de l'écran : le jeu ne dépasse jamais du cadre. Les 4 petits coins arrondis sont remplis
+  // (couleur du fond) pour qu'aucun bout de jeu ne dépasse de l'arrondi.
+  function cadreEcran(parent) {
+    const R = 8, E = 3, W = 1920, H = 1080;
+    parent.insertAdjacentHTML('beforeend', `<svg class="cadre-ecran" viewBox="0 0 ${W} ${H}">
+      <path d="M0 0H${W}V${H}H0Z M${R} 0H${W - R}A${R} ${R} 0 0 1 ${W} ${R}V${H - R}A${R} ${R} 0 0 1 ${W - R} ${H}H${R}A${R} ${R} 0 0 1 0 ${H - R}V${R}A${R} ${R} 0 0 1 ${R} 0Z" fill="var(--fond)" fill-rule="evenodd"/>
+      <rect x="${E / 2}" y="${E / 2}" width="${W - E}" height="${H - E}" rx="${R - E / 2}" fill="none" stroke="var(--trait)" stroke-opacity=".7" stroke-width="${E}"/>
+    </svg>`);
+  }
+
   // --- Chronomètre REC : le MÊME dans toutes les scènes ---
   // Le départ est mémorisé (localStorage) : changer de scène ne le remet pas à zéro.
   // Il repart de 0 quand OBS lance le stream ou l'enregistrement, ou si plus aucune page
@@ -70,12 +81,13 @@ const Composants = (() => {
   }
 
   // --- En-tête compact + indicateur « en direct » ---
-  function entete(parent) {
-    creer(parent, 'entete-compacte', `<div class="badge">${Commun.icones.fusee}</div>
+  function entete(parent, { marge = 80 } = {}) {   // marge : écart au bord gauche/droit (à caler sur le bord extérieur des cadres de la scène)
+    const gauche = creer(parent, 'entete-compacte', `<div class="badge">${Commun.icones.fusee}</div>
       <div class="boite"><div class="interieur"><div class="nom">${C.nomChaine || ''}</div></div></div>
       <div><div class="label doux">Mission Control</div><span class="hachures" style="width:80px;height:12px;margin-top:8px"></span></div>`);
-    creer(parent, 'direct', `<span class="point"></span><span class="label">${(C.scenes || {}).statutEnDirect || 'En direct'}</span>
+    const droite = creer(parent, 'direct', `<span class="point"></span><span class="label">${(C.scenes || {}).statutEnDirect || 'En direct'}</span>
       <span class="label doux">Heure</span><span class="mono" data-horloge>--:--</span>`);
+    gauche.style.left = marge + 'px'; droite.style.right = marge + 'px';
   }
 
   // --- Cadre de caméra (ou de contenu) autour d'une zone transparente ---
@@ -93,14 +105,20 @@ const Composants = (() => {
   }
 
   // --- Chat (panneau, ou flottant sur le jeu) ---
-  function chat(parent, z, { flottant = false, disparition = 0 } = {}) {
+  function chat(parent, z, { flottant = false, disparition = 0, titreHaut = false } = {}) {
     if (params.get('chat') === '0') return document.createElement('div');   // ?chat=0 : pas de chat intégré (source séparée à la place)
     const titre = (C.chat || {}).titre || 'Canal de communication';
     const el = flottant
       ? creer(parent, 'chat-flottant', '<div class="chat-lignes"></div>', z)
       : creer(parent, 'panneau-chat boite', `<div class="interieur">
-          <div class="cam-tete"><span class="label">${titre}</span><span class="hachures"></span></div>
+          ${titreHaut ? '' : `<div class="cam-tete"><span class="label">${titre}</span><span class="hachures"></span></div>`}
           <div class="chat-lignes"></div></div>`, z);
+    // titreHaut : le titre passe AU-DESSUS du panneau, sur la même rangée que « Flux caméra » (bas de rangée = haut du cadre - 5 px).
+    // z.y doit alors être le bord extérieur du cadre de cam (zone de la cam - 7 px).
+    if (titreHaut && !flottant) {
+      const t = creer(parent, 'cam-tete', `<span class="label">${titre}</span><span class="hachures"></span>`);
+      Object.assign(t.style, { left: z.x + 'px', width: z.l + 'px', top: (z.y - 29) + 'px', height: '24px', right: 'auto', bottom: 'auto' });
+    }
     Chat.monter(el.querySelector('.chat-lignes'), { disparition });
     return el;
   }
@@ -158,5 +176,5 @@ const Composants = (() => {
     return z;
   }
 
-  return { zoneURL, fondDecoupe, zoneApercu, etiquetteZone, entete, cadre, chat, bandeau, objectif, creer };
+  return { zoneURL, fondDecoupe, zoneApercu, etiquetteZone, cadreEcran, entete, cadre, chat, bandeau, objectif, creer };
 })();

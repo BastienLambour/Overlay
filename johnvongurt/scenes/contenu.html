@@ -5,6 +5,14 @@
 <title>Scène — Contenu + cam + chat</title>
 <link rel="stylesheet" href="../css/theme.css">
 <link rel="stylesheet" href="../css/composants.css">
+<style>
+  /* Traits de coin des cadres (cam et contenu) : placés À L'EXTÉRIEUR de l'image, autour de la bordure,
+     pour ne plus couvrir le partage d'écran ni la webcam. */
+  .cam-cadre .cadre { inset: -16px; }
+  .cam-cadre .cadre .coin { width: 30px; height: 30px; border-color: rgba(230,234,238,.75); }
+  /* Les titres (« Flux principal », « Flux caméra ») montent un peu pour laisser la place aux traits */
+  .cam-tete { bottom: calc(100% + 24px); }
+</style>
 </head>
 <body>
 <!--
@@ -12,6 +20,7 @@
   Dans OBS, place tes sources SOUS cette source, dans les zones :
     Webcam  : x 60  · y 250 · 480 × 270 px
     Contenu : x 580 · y 190 · 1280 × 720 px
+  Cadre fin autour de l'écran : contenu.html?cadre=0 pour le retirer (ou cadre: false dans config.js › options › contenu)
   (ouvre contenu.html?apercu=1 pour voir les zones)
 -->
 <div id="ecran"></div>
@@ -33,12 +42,15 @@
   const CONTENU = { x: 580, y: 190, l: 1280, h: 720 };
 
   Composants.fondDecoupe(ecran, sansCam ? [CONTENU] : [CAM, CONTENU]);
-  Composants.entete(ecran);
+  const MARGE = sansCam ? 53 : CAM.x - 7;     // bord extérieur du cadre de la cam (zone de js/zones.js)
+  Composants.entete(ecran, { marge: MARGE });   // même marge que les cadres, le chat et le bandeau
   Composants.cadre(ecran, CONTENU, { titre: 'Flux principal', nom: false, rec: false });   // un seul chrono REC : sur la cam
   if (!sansCam) Composants.cadre(ecran, CAM, { nom: false });
-  // Sans cam, le chat prend toute la colonne de gauche
-  Composants.chat(ecran, sansCam ? { x: 53, y: 190, l: 494, h: 726 } : { x: 53, y: 566, l: 494, h: 350 });
+  // Le chat finit à la même hauteur que le cadre du contenu (bord extérieur : 917). Sans cam, il prend toute la colonne de gauche
+  Composants.chat(ecran, sansCam ? { x: 53, y: 183, l: 494, h: 734 } : { x: CAM.x - 7, y: CAM.y + CAM.h + 46, l: CAM.l + 14, h: 917 - (CAM.y + CAM.h + 46) });
   Composants.bandeau(ecran, { x: 53, y: 956, l: 1814, h: 76 });
+
+  if (Commun.params.get('cadre') !== '0') Composants.cadreEcran(ecran);   // ?cadre=0 : sans le cadre autour de l'écran
 
   Commun.demarrer();
   Evenements.demarrer();

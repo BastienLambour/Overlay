@@ -30,10 +30,14 @@
   const CAM = Options.cam('cam-seule', true);      // zone de la webcam : js/zones.js (toujours une cam ici)
 
   Composants.fondDecoupe(ecran, [CAM]);
-  Composants.entete(ecran);
-  Composants.cadre(ecran, CAM);
-  Composants.chat(ecran, { x: 1380, y: 166, l: 460, h: 753 });
-  Composants.bandeau(ecran, { x: 80, y: 956, l: 1760, h: 76 });
+  // Tout est calé sur le bord EXTÉRIEUR du cadre de la cam (zone ± 7 px) : marges de 73 px à gauche et à droite,
+  // et le chat a la même hauteur que le cadre de la cam, avec son titre sur la rangée de « Flux caméra ».
+  // (calculé depuis la zone de js/zones.js : si tu la changes, tout suit)
+  const MARGE = CAM.x - 7, DROITE = 1920 - MARGE, CHAT_X = CAM.x + CAM.l + 40;
+  Composants.entete(ecran, { marge: MARGE });
+  Composants.cadre(ecran, CAM, { nom: false });   // pas de nom sous la cam : il est déjà dans l'en-tête
+  Composants.chat(ecran, { x: CHAT_X, y: CAM.y - 7, l: DROITE - CHAT_X, h: CAM.h + 14 }, { titreHaut: true });
+  Composants.bandeau(ecran, { x: MARGE, y: 956, l: DROITE - MARGE, h: 76 });
 
   Commun.demarrer();
   Evenements.demarrer();

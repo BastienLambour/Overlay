@@ -45,23 +45,46 @@
   .rg-section h3 { font: 800 24px var(--rg-titre); margin: 26px 0 6px; }
   .rg-icone { font-size: 30px; }
   .rg-aide { color: var(--rg-doux); font-size: 15px; margin: 4px 0 14px; }
-  .rg-champs { display: grid; gap: 16px 24px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
   .rg-champ { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .rg-large { grid-column: 1 / -1; }
-  .rg-champ > span { font-weight: 800; font-size: 15px; }
   .rg-champ small { color: var(--rg-doux); font-size: 14px; line-height: 1.4; }
+
+  /* Un réglage = une ligne : son nom et son aide à gauche, le champ à droite. Tous les champs sont alignés sur la même colonne. */
+  .rg-champs { display: flex; flex-direction: column; }
+  .rg-champs > .rg-champ { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 32px; row-gap: 8px; align-items: center;
+    padding: 14px 8px; border-top: 1px solid color-mix(in srgb, var(--rg-texte) 12%, transparent); }
+  .rg-champs > .rg-champ:first-child { border-top: 0; }
+  .rg-champs > .rg-champ:hover { background: color-mix(in srgb, var(--rg-texte) 4%, transparent); }
+  .rg-lib { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .rg-lib b { font-weight: 800; font-size: 16px; line-height: 1.3; }
+  .rg-champs > .rg-champ > :not(.rg-lib) { grid-column: 2; min-width: 0; }
+  .rg-page .rg-champs > .rg-champ > input[type=number], .rg-page .rg-champs > .rg-champ > input[type=time] { max-width: 180px; }
+  .rg-champs > .rg-champ > .rg-couleur { max-width: 400px; }
+  .rg-champs > .rg-large { grid-template-columns: 1fr; }                      /* listes et longs textes : le nom au-dessus, le champ en pleine largeur */
+  .rg-champs > .rg-large > :not(.rg-lib) { grid-column: 1; }
+  .rg-case { cursor: pointer; }
+  .rg-case > .rg-bascule { justify-self: start; }
+  .rg-modifie .rg-lib b::after { content: " •"; color: var(--rg-accent); }
+
+  /* Réglages avancés : repliés par défaut */
+  .rg-avance { margin-top: 12px; border-top: 1px solid color-mix(in srgb, var(--rg-texte) 12%, transparent); }
+  .rg-avance > summary { cursor: pointer; font-weight: 800; color: var(--rg-accent); padding: 14px 8px; list-style: none; user-select: none; }
+  .rg-avance > summary::-webkit-details-marker { display: none; }
+  .rg-avance > summary::before { content: "▸ "; }
+  .rg-avance[open] > summary::before { content: "▾ "; }
+  .rg-avance:has(.rg-modifie) > summary::after { content: " •"; }
+
+  /* Sommaire : un clic pour aller à une section */
+  .rg-sommaire { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 26px; }
+  .rg-sommaire a { text-decoration: none; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 999px; color: var(--rg-texte);
+    background: var(--rg-carte); border: 2px solid transparent; }
+  .rg-sommaire a:hover { border-color: var(--rg-accent); }
+  .rg-section { scroll-margin-top: 16px; }
   .rg-page input[type=text], .rg-page input[type=number], .rg-page input[type=password], .rg-page input[type=time], .rg-page select, .rg-page textarea {
     font: 600 17px var(--rg-police); color: var(--rg-texte); background: var(--rg-fond); width: 100%;
     border: 2px solid color-mix(in srgb, var(--rg-texte) 25%, transparent); border-radius: 10px; padding: 10px 12px; }
   .rg-page input:focus, .rg-page select:focus, .rg-page textarea:focus { outline: none; border-color: var(--rg-accent); }
   .rg-page textarea { resize: vertical; min-height: 96px; line-height: 1.45; }
   .rg-page input[type=time] { color-scheme: dark; }
-  .rg-case { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 12px; cursor: pointer; }
-  .rg-case input { width: 24px; height: 24px; accent-color: var(--rg-accent); flex: none; margin: 0; }
-  .rg-case > span { font-weight: 700; flex: 1; }
-  .rg-case small { flex-basis: 100%; }
-  .rg-modifie > span::after { content: " •"; color: var(--rg-accent); }
-  .rg-modifie > span.rg-couleur::after { content: none; }
 
   /* Options des scènes : le tableau (interrupteurs) et le bloc de la webcam (plan, préréglages, position perso) */
   .rg-defile { overflow-x: auto; }
@@ -149,7 +172,11 @@
   .rg-barre button:disabled { opacity: .45; cursor: default; }
   #rg-statut { color: var(--rg-doux); font-weight: 700; max-width: 60ch; }
   #rg-statut.rg-ok { color: #8BD17C; } #rg-statut.rg-attention { color: var(--rg-accent); }
-  @media (max-width: 700px) { .rg-ligne-alerte { grid-template-columns: 1fr; } .rg-page h1 { font-size: 40px; } }
+  @media (max-width: 700px) { .rg-ligne-alerte { grid-template-columns: 1fr; } .rg-page h1 { font-size: 40px; }
+    .rg-champs > .rg-champ { grid-template-columns: 1fr; }
+    .rg-champs > .rg-champ > :not(.rg-lib) { grid-column: 1; }
+    .rg-champs > .rg-case { grid-template-columns: minmax(0, 1fr) auto; }
+    .rg-champs > .rg-case > .rg-bascule { grid-column: 2; grid-row: 1; } }
 </style>
 </head>
 <body>

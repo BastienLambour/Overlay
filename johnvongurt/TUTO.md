@@ -13,6 +13,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 2. Avant de commencer (config, réglages OBS, les 3 gestes de base)
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam
+   (puis « 4bis » : les sons des scènes Démarrage et Fin)
 5. Les transitions : Sas · Passage
 6. Brancher le chat et les alertes (Streamer.bot, journal, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
@@ -28,7 +29,6 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 johnvongurt/
 ├── reglages.html       ← LA page pour changer les textes et réglages (elle écrit mes-reglages.js)
 ├── config.js            ← les valeurs par défaut (remplacé à chaque mise à jour de l'overlay)
-├── mettre-a-jour.cmd    ← met l'overlay à jour (double-clic), en gardant tes réglages : voir 2.1
 ├── mes-reglages.js      ← TES réglages, écrits par reglages.html (apparaît au 1er enregistrement ; à garder)
 ├── index.html           ← aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
@@ -68,16 +68,9 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 
 #### Quand tu reçois une nouvelle version de l'overlay
 
-**En un clic** (Windows) : OBS › **Outils › Scripts** › `actualiser-obs.lua` (voir 2.8) › bouton **Mettre à jour l'overlay**. Ou, OBS fermé, double-clique sur **`mettre-a-jour.cmd`** dans le dossier de l'overlay.
-
-- L'overlay télécharge sa dernière version sur le serveur des overlays, et l'installe à la place de l'ancienne.
-- **Ton `mes-reglages.js` n'est jamais remplacé** : tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
-- L'ancienne version est d'abord copiée dans `sauvegardes\<date>` (les 3 dernières sont gardées) : si tu avais modifié un fichier à la main, il est là.
-- Avec le bouton d'OBS, les sources s'actualisent et les webcams se replacent toutes seules. Sous la case, OBS affiche la version installée et le résultat.
-
-La page de téléchargement (le zip complet, le tuto, « Ce qui a changé ») : l'adresse de `reglages.html` › **Mises à jour**.
-
-**À la main** (sans le bouton) : copie les fichiers du nouveau zip par-dessus les anciens (remplacer). `mes-reglages.js` n'est pas dans le zip : il reste en place. Puis, dans OBS, actualise les sources.
+1. Copie les nouveaux fichiers par-dessus les anciens (remplacer).
+2. **Ton `mes-reglages.js` n'est pas dans la nouvelle version** : il reste en place, tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
+3. Dans OBS : actualise les sources.
 
 > 🔁 **La toute première fois seulement** (si tes réglages étaient encore dans l'ancien `config.js`) : **avant** de remplacer les fichiers, fais une copie de ton `config.js` (ex. sur le bureau). Après la mise à jour, ouvre `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis cette copie : tes réglages reviennent dans le formulaire (marqués •). Clique **Enregistrer**, c'est fini : ils sont maintenant dans `mes-reglages.js`.
 
@@ -144,10 +137,6 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 
 > ⚠️ Une page actualisée repart de zéro (un compte à rebours recommence).
 
-#### Mettre à jour l'overlay (le même script)
-
-Le bouton **Mettre à jour l'overlay (tes réglages sont gardés)** installe la dernière version (voir 2.1, « Quand tu reçois une nouvelle version »). Sous le bouton : la version installée, et le résultat de la dernière mise à jour.
-
 #### Placer les webcams tout seul (le même script)
 
 Dans la même fenêtre **Outils › Scripts**, le script a aussi :
@@ -173,6 +162,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 1. **Scènes › +** : « Démarrage ».
 2. **+ › Scène** › « Global — Alertes ».
 3. Geste A avec `scenes/demarrage.html`.
+4. Pour les sons : clic droit sur la source › **Propriétés** › coche **Contrôler l'audio via OBS** (le volume se règle ensuite dans le mélangeur audio).
 
 **Changer la durée sans rien ouvrir** : dans OBS, clic droit sur la source › **Interagir**, bouge la souris : un bouton **⚙ DURÉE** apparaît en haut à gauche (invisible à l'antenne). Choisis la durée, elle est gardée pour les fois suivantes.
 **Options** : `?minutes=10` (passe avant le bouton ⚙ DURÉE ; 5 min par défaut, réglable dans `reglages.html` › Démarrage, avec tous les textes) · `?heure=20:30` (heure fixe : le compteur arrive à zéro à 20 h 30 ; aussi dans `reglages.html` › **… ou heure fixe**, prioritaire sur les minutes)
@@ -196,6 +186,7 @@ Le chrono « En pause depuis » repart de zéro à chaque passage à l'antenne.
 **Dans OBS :**
 1. **Scènes › +** : « Fin ».
 2. Geste A avec `scenes/fin.html` (l'alunissage rejoue à chaque passage à l'antenne).
+3. Pour les sons : coche **Contrôler l'audio via OBS** dans les propriétés de la source.
 
 ### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
 
@@ -235,6 +226,7 @@ Le voyant REC n'est que sur la cam : le cadre du contenu n'en a pas.
 
 ### 3.6 🎮 Jeu — `scenes/jeu.html`
 
+> Un cadre fin (carré, coins à peine arrondis) fait le tour de l'écran, collé aux bords : le jeu ne dépasse jamais. `?coins=0` le retire (réglable dans `reglages.html` › Options des scènes). Même cadre dans la scène Contenu : `?cadre=0` pour le retirer.
 **À quoi ça sert** : le jeu en plein écran, une petite cam dans un coin, le chat en transparence.
 
 **Dans OBS :**
@@ -305,6 +297,35 @@ Le chrono REC est **le même dans toutes les scènes** : changer de scène ne le
 **Options** : `?nom=1` (plaque « Nom — Grade ») · `?titre=Flux%20caméra` (`?titre=` pour masquer) · `?apercu=1`
 
 ---
+
+## 4bis. Les sons (scènes Démarrage et Fin)
+
+Tout est déjà branché, rien à installer. Les sons sont des fichiers dans `assets/audio/` :
+
+| Fichier | Quand |
+|---|---|
+| `preparation.ogg` | Démarrage : ambiance du pas de tir (ventilation, purges de vapeur, radio lointaine), en boucle |
+| `chauffe.ogg` | À **T-15 s** : les moteurs chauffent (le grondement monte en volume et en hauteur jusqu'au décollage), en boucle |
+| `decollage.ogg` | À **T-3 s** : allumage, puis le grand « boum » pile au décollage |
+| `propulseur.ogg` | Après le décollage : boucle du propulseur tant que la fusée vole (s'adoucit peu à peu) |
+| `atterrissage.ogg` | Fin : descente moteurs allumés, contact avec le sol au moment où la fusée se pose |
+| `musique.ogg` | Fin : musique d'ambiance en boucle, après l'atterrissage |
+
+**La voix du compte à rebours** (T-15 s : « T moins quinze secondes », puis « dix, neuf… un », puis « Décollage ») :
+- ce sont **tes propres enregistrements** : `assets/audio/voix/15.mp3`, `10.mp3` … `1.mp3` et `0.mp3`, utilisés individuellement ;
+- si un fichier manque, **rien n'est joué pour ce nombre** : il n'y a aucune voix synthétique.
+
+**Tes propres sons AVANT les 15 dernières secondes** (annonce à T-60, musique à T-30…) : dans `reglages.html` › Sons › Réglages avancés › **Annonces avant T-15 s** (ou `config.js` › `audio` › `reperes`), écris **une ligne par son** : `secondes restantes | fichier`.
+- `60` → joue `assets/audio/voix/60.mp3` (ou `.ogg` / `.wav`) quand il reste 60 secondes ;
+- `30 | sons/ouverture.mp3` → joue ce fichier quand il reste 30 secondes (chemin depuis le dossier de l'overlay, ou un chemin complet `C:\\…\\son.mp3`) ;
+- un repère n'est joué **que si le compte à rebours est assez long** pour l'atteindre (un compte à rebours de 45 s ignore « 60 »), et **une seule fois** par lancement ;
+- ils suivent le volume général et le volume de la voix. Pour tester sans attendre : `demarrage.html?minutes=1.5`.
+
+**Réglages** : `reglages.html` › Sons (ou `config.js` › `audio`) : on/off, volume général, volume de ta voix ; en « Réglages avancés » : annonces avant T-15 s et volume de chaque son. Dans l'adresse d'une scène : `?audio=0` coupe tout, `?volume=0.4` règle le volume.
+
+**Changer un son** : remplace le fichier en gardant **le même nom** (`.ogg`). Les sons fournis sont fabriqués par ordinateur (`outils/generer-sons.py`, pour les refaire ou les retoucher) : pour un rendu plus réaliste, remplace-les par de vrais enregistrements dont tu as les droits.
+
+**Tester** : ouvre `scenes/demarrage.html?minutes=0.5` dans ton navigateur et clique une fois sur la page (le navigateur n'autorise le son qu'après un clic ; pas OBS). Le décollage arrive en 30 s : on entend le pas de tir, la montée à T-15 s, la voix, le décollage puis le propulseur.
 
 ## 5. Les transitions
 
@@ -538,7 +559,6 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
 | `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
-| `mettre-a-jour.cmd` | met l'overlay à jour depuis le serveur (double-clic), en gardant tes réglages ; c'est aussi ce que fait le bouton d'OBS | quand une nouvelle version est annoncée |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -550,9 +570,6 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 ---
 
 ## 10. Dépannage
-
-**« Mettre à jour l'overlay » ne marche pas**
-→ Le message est sous le bouton (OBS › Outils › Scripts) et dans **Journal des scripts**. « Serveur injoignable » : vérifie ta connexion, ou l'adresse dans `reglages.html` › **Mises à jour**. « Certains fichiers n'ont pas pu être remplacés » : OBS les utilise (souvent les vidéos de transition) → ferme OBS, double-clique sur `mettre-a-jour.cmd`. Si le dossier de l'overlay a des accents dans son chemin et que le bouton ne fait rien : utilise `mettre-a-jour.cmd`. Rien n'est perdu : l'ancienne version est dans `sauvegardes`.
 
 **Mes réglages ont disparu après une mise à jour de l'overlay**
 → Ton `mes-reglages.js` a peut-être été remplacé ou supprimé : il ne doit **pas** faire partie des fichiers que tu copies. S'il te reste une copie, remets-la dans le dossier de l'overlay.
