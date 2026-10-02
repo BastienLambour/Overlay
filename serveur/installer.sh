@@ -18,15 +18,15 @@
 #  On peut le relancer sans risque (pour changer de dépôt, de branche…) : il garde le secret et la clé.
 #
 #  Réglages (variables à mettre devant la commande, toutes facultatives) :
-#      DEPOT_URL  le dépôt à lire        (défaut : git@github.com:BastienLambour/Overlay.git)
+#      DEPOT_URL  le dépôt à lire        (défaut : git@gitlab.com:Bastien.Lambour/overlays.git)
 #      BRANCHE    la branche publiée     (défaut : main)
 #      ADRESSE    l'adresse publique     (défaut : http://<IP du VPS>) — aussi écrite dans les version.json
 #      DOMAINE    un nom de domaine      (facultatif : avec Caddy, HTTPS automatique)
-#  Exemple : ssh root@VPS "BRANCHE=main DEPOT_URL=git@gitlab.com:moi/overlay.git bash installer.sh"
+#  Exemple : ssh root@VPS "BRANCHE=main DEPOT_URL=git@github.com:BastienLambour/Overlay.git bash installer.sh"
 # =====================================================================
 set -euo pipefail
 
-DEPOT_URL="${DEPOT_URL:-git@github.com:BastienLambour/Overlay.git}"
+DEPOT_URL="${DEPOT_URL:-git@gitlab.com:Bastien.Lambour/overlays.git}"
 BRANCHE="${BRANCHE:-main}"
 DOMAINE="${DOMAINE:-}"
 UTILISATEUR=overlays

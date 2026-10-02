@@ -210,7 +210,7 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   et la page `index.html`. Zip écrit à la main (zlib, noms UTF-8), sans dépendance.
 - `webhook.mjs` (127.0.0.1:9321, derrière Nginx/Caddy `/webhook`) : GitHub (X-Hub-Signature-256 HMAC) et GitLab (X-Gitlab-Token),
   branche `BRANCHE` seulement → `mettre-a-jour.mjs` (fetch + reset --hard + construire si nouveau commit). Minuteur horaire en secours.
-- `installer.sh` (Debian/Ubuntu, root, relançable) : Node 18+, Git, utilisateur `overlays`, clé de déploiement LECTURE SEULE,
+- `installer.sh` (Debian/Ubuntu, root, relançable ; lit par défaut `git@gitlab.com:Bastien.Lambour/overlays.git`, branche `main`) : Node 18+, Git, utilisateur `overlays`, clé de déploiement LECTURE SEULE,
   `/opt/overlays/depot`, `/etc/overlays.env` (SECRET, BRANCHE, SORTIE=/var/www/overlays, ADRESSE), services systemd
   `overlays-webhook` + `overlays-maj.timer`, Nginx (ou Caddy s'il est là). Testé en conteneur (systemd simulé, vrai Nginx).
 - On ne se connecte JAMAIS au VPS à la place de l'utilisateur (pas de mot de passe saisi par nous) : il lance installer.sh lui-même.
