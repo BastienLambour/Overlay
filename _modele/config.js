@@ -139,4 +139,10 @@ window.CONFIG = {
   test: {
     noms: ["Pseudo_1", "Pseudo_2", "Pseudo_3", "Pseudo_4", "Pseudo_5", "Pseudo_6"],
   },
+
+  // --- Mises à jour : le serveur d'où l'overlay se met à jour (bouton « Mettre à jour l'overlay » du
+  //     script OBS, ou mettre-a-jour.cmd). Tes réglages (mes-reglages.js) ne sont jamais remplacés.
+  miseAJour: {
+    adresse: "http://217.154.115.223",
+  },
 };

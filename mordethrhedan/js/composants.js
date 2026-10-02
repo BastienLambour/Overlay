@@ -110,9 +110,10 @@ const Composants = (() => {
   // --- Pseudo dans un petit encadré posé sur le grand cadre (scène Jeu) ---
   function etiquettePseudo(parent, { centreX, enHaut }) {
     const el = creer(parent, 'etiquette-pseudo', `<span class="titre-neon">${C.nomChaine || ''}</span>`);
-    // Entièrement dans l'écran (contour et halo compris), entre le bord et la cam
-    el.style.top = enHaut ? '4px' : 'auto';
-    el.style.bottom = enHaut ? 'auto' : '4px';
+    // Entièrement À L'INTÉRIEUR du grand cadre de la scène Jeu (bordure finie à 11 px du bord),
+    // entre lui et la cam : jamais recouvert, quel que soit l'ordre des sources dans OBS.
+    el.style.top = enHaut ? '18px' : 'auto';
+    el.style.bottom = enHaut ? 'auto' : '18px';
     el.style.left = centreX + 'px';
     return el;
   }

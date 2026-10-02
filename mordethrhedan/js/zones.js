@@ -8,6 +8,8 @@
    - une zone à préréglages (scène Jeu) : la webcam se choisit dans reglages.html
      (un préréglage, « aucune », ou une position perso { x, y, l, h }) ; « defaut »
      est le préréglage quand rien n'est choisi.
+     Scène Jeu : 72 px du haut / du bas (et pas moins) pour laisser la place à
+     l'encadré du pseudo, posé entre le grand cadre et la cam.
    Écris-le comme du JSON (clés entre guillemets) : le script OBS le lit aussi.
    ===================================================================== */
 window.ZONES = {
@@ -18,10 +20,10 @@ window.ZONES = {
     "jeu": {
       "defaut": "haut-gauche",
       "prereglages": {
-        "haut-gauche": { "x": 56,   "y": 56,  "l": 320, "h": 300 },
-        "haut-droite": { "x": 1544, "y": 56,  "l": 320, "h": 300 },
-        "bas-gauche":  { "x": 56,   "y": 724, "l": 320, "h": 300 },
-        "bas-droite":  { "x": 1544, "y": 724, "l": 320, "h": 300 }
+        "haut-gauche": { "x": 56,   "y": 72,  "l": 320, "h": 300 },
+        "haut-droite": { "x": 1544, "y": 72,  "l": 320, "h": 300 },
+        "bas-gauche":  { "x": 56,   "y": 708, "l": 320, "h": 300 },
+        "bas-droite":  { "x": 1544, "y": 708, "l": 320, "h": 300 }
       }
     }
   }

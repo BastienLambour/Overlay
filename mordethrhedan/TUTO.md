@@ -246,10 +246,10 @@ Trois dispositions, toutes avec le **même fond** qui se voit là où tu n'as mi
 
 | Coin | Position de la webcam (x, y) |
 |---|---|
-| `haut-gauche` *(défaut)* | `56`, `56` |
-| `haut-droite` | `1544`, `56` |
-| `bas-gauche` | `56`, `724` |
-| `bas-droite` | `1544`, `724` |
+| `haut-gauche` *(défaut)* | `56`, `72` |
+| `haut-droite` | `1544`, `72` |
+| `bas-gauche` | `56`, `708` |
+| `bas-droite` | `1544`, `708` |
 
 > ⚠️ Si tu écris le coin dans l'adresse (`?cam=bas-droite`) au lieu des réglages, mets **le même** sur `scenes/jeu.html` et sur `sources/cam.html`.
 
@@ -330,7 +330,7 @@ Pour l'avoir toujours : `reglages.html` › **Options des scènes** › « Speed
 ### 4.7 🎥 Cadre de la cam — `sources/cam.html`
 
 **À quoi ça sert** : le cadre néon de la webcam de la scène Jeu **et ton pseudo** (dans son petit encadré sur le grand cadre), en source séparée, pour les mettre dans un **groupe** avec la webcam et les masquer d'un raccourci (fiche 3.6). Ses coins sont bouchés : la webcam, rectangulaire, ne dépasse pas du cadre arrondi.
-**Options** : `?cam=bas-droite` (même coin que la scène Jeu ; par défaut celui des réglages) · `?x=56&y=56&l=320&h=300` (taille libre) · `?pseudo=0` (sans le pseudo) · `?apercu=1`
+**Options** : `?cam=bas-droite` (même coin que la scène Jeu ; par défaut celui des réglages) · `?x=56&y=72&l=320&h=300` (taille libre) · `?pseudo=0` (sans le pseudo) · `?apercu=1`
 
 ---
 
