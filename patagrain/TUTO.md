@@ -172,6 +172,17 @@ Tu peux aussi lui donner un **raccourci clavier** : **Paramètres › Raccourcis
 
 Le bouton **Mettre à jour l'overlay (tes réglages sont gardés)** installe la dernière version (voir 2.1, « Quand tu reçois une nouvelle version »). Sous le bouton : la version installée, et le résultat de la dernière mise à jour.
 
+#### Refaire les vidéos de transition et les images du kit (le même script)
+
+Les **vidéos de transition** et les **images du kit Twitch** sont des fichiers déjà fabriqués : après un changement de **couleurs**, du **nom** ou des **textes du kit** dans `reglages.html`, elles gardent l'ancien rendu (la page des réglages te le rappelle quand tu enregistres). Deux boutons les refont avec tes réglages :
+
+- **Refaire les vidéos de transition (avec tes couleurs)** : refait `transitions/videos/*.webm`, puis OBS recharge tout seul tes transitions Stinger de l'overlay. Compte 1 à 2 minutes par vidéo ; pendant ce temps, ces transitions sont coupées (un changement de scène se fait sans animation).
+- **Refaire les images du kit Twitch** : refait `chaine/export/*.png` (profil, bannière, hors-ligne, panneaux, emotes, badges) ; le dossier s'ouvre à la fin, il reste à les envoyer sur Twitch (section 7).
+
+OBS reste utilisable pendant ce temps. Le résultat s'affiche sous les boutons (rouvre la fenêtre des scripts pour le voir) et dans **Journal des scripts**.
+
+> **La première fois**, il faut **Node.js** (et **ffmpeg** pour les vidéos). S'ils manquent, le message le dit : **reclique sur le bouton**, ils s'installent tout seuls (2 à 5 minutes, avec l'installeur de Windows), puis ça continue.
+
 #### Placer les webcams tout seul (le même script)
 
 Dans la même fenêtre **Outils › Scripts**, le script a aussi :
@@ -360,7 +371,7 @@ Les trois transitions mettent en scène **le bouffon**. Les vidéos sont **déj�
 
 **Sans vidéo** : ajoute la page (ex. `transitions/epee.html`) **tout en haut** de la scène d'arrivée, case *Actualiser…* cochée, et mets la transition d'OBS sur **Coupure**.
 
-**Refaire les vidéos** (après un changement de couleurs ou du bouffon), dans PowerShell :
+**Refaire les vidéos** (après un changement de couleurs ou du bouffon) : le plus simple, OBS › **Outils › Scripts** › **Refaire les vidéos de transition** (2.8). Ou dans PowerShell :
 
 ```
 cd G:\Projets\Overlay\patagrain
@@ -524,7 +535,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 3. **Image** : choisis le PNG du panneau. **Description** : écris le texte (qui tu es, le planning, les règles du chat…).
 4. **Envoyer**, puis recommence pour les autres panneaux.
 
-**Changer les textes** (slogan, planning, titres des panneaux) : `reglages.html` › **Kit de chaîne Twitch**, puis refais les images dans PowerShell :
+**Changer les textes** (slogan, planning, titres des panneaux) : `reglages.html` › **Kit de chaîne Twitch**, puis refais les images : OBS › **Outils › Scripts** › **Refaire les images du kit Twitch** (2.8). Ou dans PowerShell :
 
 ```
 cd G:\Projets\Overlay\patagrain
@@ -566,7 +577,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les bots masqués, la mémoire du chat | `reglages.html` › Le chat |
 | Les cases du bandeau (dons, abonnés…) | `reglages.html` › Bandeau d'infos |
 | Le bouffon (le cacher, son rythme en scène Jeu, sa bulle de fin) | `reglages.html` › Le bouffon |
-| Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis `node outils/exporter-chaine.mjs`) |
+| Les visuels de la chaîne | `reglages.html` › Kit de chaîne Twitch (puis OBS › Scripts › **Refaire les images du kit Twitch**) |
 | Le coin ou la position exacte de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) ; les couleurs d'origine sont au début de `css/theme.css` (palette « Royal bleu & or ») |
 | Les polices | fichiers dans `assets/polices/` (déjà fournis : Grenze Gotisch et Nunito), déclarés au début de `css/theme.css` |
@@ -589,7 +600,7 @@ Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{des
 
 Sauvegarder une ambiance ne change pas les couleurs de l'overlay : seul **Enregistrer** le fait.
 
-Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les avec les scripts ci-dessous : `node outils/generer-transitions.mjs` puis `node outils/exporter-chaine.mjs` (et quand tu reviens aux couleurs d'origine, pareil).
+Les **vidéos de transition** et les **images du kit de chaîne** sont déjà fabriquées : pour qu'elles prennent les nouvelles couleurs, refais-les : OBS › **Outils › Scripts** › **Refaire les vidéos de transition** puis **Refaire les images du kit Twitch** (2.8) ; `reglages.html` te le rappelle quand tu enregistres. Et quand tu reviens aux couleurs d'origine, pareil. (Sans OBS : les scripts ci-dessous.)
 
 
 ### Les scripts du dossier `outils/`

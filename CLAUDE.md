@@ -204,6 +204,13 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   Le bouton « Mettre à jour l'overlay » d'`actualiser-obs.lua` le lance en arrière-plan (`start /min`, sans bloquer OBS),
   suit le fichier résultat avec un minuteur, puis actualise les sources et replace les webcams. Testé avec PowerShell 7 sous Linux
   (robocopy simulé), pas sous Windows.
+- `outils/refaire.ps1` (UTF-8 AVEC BOM) : `-Quoi transitions|kit` → `node outils/generer-transitions.mjs` / `exporter-chaine.mjs` (cwd = overlay,
+  sortie de node dans `%TEMP%\\overlay-refaire-<quoi>.log` via `cmd /c`), `-Sortie` (etat=fini|manque|erreur), `-Installer` (winget
+  OpenJS.NodeJS.LTS / Gyan.FFmpeg puis PATH relu ; sans lui : etat=manque, rien installé). Boutons « Refaire les vidéos de transition » /
+  « Refaire les images du kit Twitch » d'`actualiser-obs.lua` : lancé en arrière-plan, 2e clic après « manque » = -Installer ; les
+  transitions Stinger dont le fichier est dans `<overlay>/transitions/videos/` sont décrochées (path vide) pendant la fabrication puis
+  raccrochées (Windows verrouille un fichier ouvert ; ça force aussi le rechargement). `reglages.js` (`rappelRefaire`) le rappelle après
+  un enregistrement qui touche couleurs / couleur / nomChaine / chaine.*. Testé : pwsh sous Linux (faux cmd/winget/explorer) + faux OBS.
 
 ## Distribution : le serveur (`serveur/`)
 

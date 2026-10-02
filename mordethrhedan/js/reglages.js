@@ -501,6 +501,18 @@ window.MES_REGLAGES = ${formater(perso)};
     }
 
     // seulement : liste de chemins à enregistrer (ex. ['ambiances']) ; sinon tout ce qui a changé
+    // Couleurs, nom ou textes du kit changés : les vidéos de transition et les images du kit sont des fichiers déjà
+    // fabriqués, ils gardent l'ancien rendu tant qu'on ne les refait pas (boutons du script OBS outils/actualiser-obs.lua)
+    function rappelRefaire(liste) {
+      const c = liste.map(x => x.chemin);
+      const couleurs = c.some(k => k.startsWith('couleurs.') || k === 'couleur' || k === 'nomChaine');
+      const kit = couleurs || c.some(k => k.startsWith('chaine.'));
+      if (!kit) return '';
+      const quoi = couleurs ? 'tes vidéos de transition et ton kit Twitch gardent l\'ancien rendu' : 'les images de ton kit Twitch gardent les anciens textes';
+      const boutons = couleurs ? '« Refaire les vidéos de transition » et « Refaire les images du kit Twitch »' : '« Refaire les images du kit Twitch »';
+      return ` 🎬 Mais ${quoi} : dans OBS › Outils › Scripts, clique ${boutons}.`;
+    }
+
     async function enregistrer(seulement = null, reussite = '✅ Enregistré dans mes-reglages.js. Dans OBS : clic droit sur les sources › Actualiser.') {
       if (!Array.isArray(seulement)) seulement = null;   // appel depuis un bouton : l'argument est l'événement
       const liste = relire().filter(c => !seulement || seulement.includes(c.chemin));
@@ -530,7 +542,7 @@ window.MES_REGLAGES = ${formater(perso)};
           liste.forEach(c => ecrireCle(enregistre, c.chemin, copie({ v: c.valeur }).v));
           const reste = relire().length;
           afficherPerso(perso);
-          return statut(reussite + (reste ? ` (${reste} autre${reste > 1 ? 's' : ''} réglage${reste > 1 ? 's' : ''} pas encore enregistré${reste > 1 ? 's' : ''})` : ''), 'rg-ok');
+          return statut(reussite + rappelRefaire(liste) + (reste ? ` (${reste} autre${reste > 1 ? 's' : ''} réglage${reste > 1 ? 's' : ''} pas encore enregistré${reste > 1 ? 's' : ''})` : ''), 'rg-ok');
         } catch (e) {
           if (e.name === 'AbortError') return statut('Enregistrement annulé.', 'rg-attention');
           console.error('[Réglages]', e);
@@ -541,7 +553,7 @@ window.MES_REGLAGES = ${formater(perso)};
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([texte], { type: 'text/javascript' }));
       a.download = 'mes-reglages.js'; a.click();
-      statut('⬇️ mes-reglages.js a été téléchargé : mets-le dans le dossier de l\'overlay, à côté de config.js (remplace l\'ancien). Avec Edge ou Chrome, la page l\'enregistre directement.', 'rg-ok');
+      statut('⬇️ mes-reglages.js a été téléchargé : mets-le dans le dossier de l\'overlay, à côté de config.js (remplace l\'ancien). Avec Edge ou Chrome, la page l\'enregistre directement.' + rappelRefaire(liste), 'rg-ok');
     }
 
     // --- En haut : tes réglages perso (combien, et où) ---

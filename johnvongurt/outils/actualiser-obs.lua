@@ -8,6 +8,9 @@
       (donc juste après « Enregistrer » dans reglages.html), si la case est cochée ;
     - un bouton « Mettre à jour l'overlay » (Windows) : télécharge la dernière version sur le serveur des
       overlays (outils/mettre-a-jour.ps1, sans bloquer OBS), garde tes réglages, puis actualise tout ;
+    - deux boutons « Refaire les vidéos de transition » et « Refaire les images du kit Twitch » (Windows) :
+      avec tes couleurs et tes textes (outils/refaire.ps1, sans bloquer OBS ; installe Node.js et ffmpeg
+      s'ils manquent) ; les transitions Stinger de l'overlay sont rechargées toutes seules ;
     - un bouton « Placer les webcams » : dans chaque scène qui affiche une page de l'overlay
       (scenes/jeu.html, contenu.html…), la webcam est mise pile dans sa zone (js/zones.js +
       Options des scènes de reglages.html) ; ajoutée là où elle manque ; cachée si la scène est
@@ -450,6 +453,102 @@ local function mettre_a_jour()
   obs.timer_add(suivre_maj, 1000)
 end
 
+-- =====================================================================
+-- Refaire les vidéos de transition / les images du kit Twitch (Windows) : lance outils/refaire.ps1
+-- SANS bloquer OBS, avec tes couleurs et tes textes ; il installe Node.js et ffmpeg s'ils manquent
+-- (au 2e clic, après avoir prévenu). Pendant les vidéos, les transitions Stinger de l'overlay sont
+-- décrochées de leur fichier (Windows refuse de remplacer un fichier ouvert), puis raccrochées :
+-- OBS recharge ainsi la nouvelle vidéo.
+-- =====================================================================
+local taches = {
+  transitions = { nom = "Vidéos de transition", fichier = nil, debut = 0, message = "", manque = false, decroches = {} },
+  kit = { nom = "Images du kit Twitch", fichier = nil, debut = 0, message = "", manque = false, decroches = {} },
+}
+
+-- Les transitions Stinger dont la vidéo est dans <overlay>/transitions/videos/
+local function stingers(action)
+  local d = comparable(dossier .. "/transitions/videos/")
+  local liste = obs.obs_frontend_get_transitions()
+  if liste == nil then return end
+  for _, t in ipairs(liste) do
+    if (obs.obs_source_get_unversioned_id(t) or obs.obs_source_get_id(t)) == "obs_stinger_transition" then
+      local reglages = obs.obs_source_get_settings(t)
+      action(t, obs.obs_source_get_name(t), reglages, comparable(obs.obs_data_get_string(reglages, "path")):find(d, 1, true) ~= nil)
+      obs.obs_data_release(reglages)
+    end
+  end
+  obs.source_list_release(liste)
+end
+
+local function decrocher_stingers()
+  local decroches = {}
+  stingers(function(t, nom, reglages, de_l_overlay)
+    if not de_l_overlay then return end
+    decroches[nom] = obs.obs_data_get_string(reglages, "path")
+    obs.obs_data_set_string(reglages, "path", "")
+    obs.obs_source_update(t, reglages)
+  end)
+  return decroches
+end
+
+local function raccrocher_stingers(decroches)
+  local n = 0
+  stingers(function(t, nom, reglages)
+    if decroches[nom] == nil then return end
+    obs.obs_data_set_string(reglages, "path", decroches[nom])
+    obs.obs_source_update(t, reglages)
+    n = n + 1
+  end)
+  if n > 0 then obs.script_log(obs.LOG_INFO, n .. " transition(s) Stinger rechargée(s)") end
+end
+
+local function suivre_tache(quoi)
+  local t = taches[quoi]
+  local texte = t.fichier and lire(t.fichier) or nil
+  if texte == nil or not texte:find("message=", 1, true) then
+    if os.time() - t.debut <= 2400 then return end   -- 40 minutes au plus (installation comprise)
+    texte = "etat=erreur\nmessage=Pas de réponse au bout de 40 minutes : regarde le journal %TEMP%\\overlay-refaire-" .. quoi .. ".log\n"
+  else
+    os.remove(t.fichier)
+  end
+  obs.timer_remove(t.suivre)
+  t.fichier = nil
+  local etat = texte:match("etat=([^\r\n]*)") or ""
+  t.message = texte:match("message=([^\r\n]*)") or ""
+  t.manque = (etat == "manque")
+  if quoi == "transitions" then raccrocher_stingers(t.decroches); t.decroches = {} end
+  obs.script_log(etat == "erreur" and obs.LOG_WARNING or obs.LOG_INFO, t.message)
+end
+taches.transitions.suivre = function() suivre_tache("transitions") end
+taches.kit.suivre = function() suivre_tache("kit") end
+
+local function refaire(quoi)
+  local t = taches[quoi]
+  if package.config:sub(1, 1) ~= "\\" then
+    t.message = "Le bouton marche sous Windows : ailleurs, lance node outils/" .. (quoi == "kit" and "exporter-chaine" or "generer-transitions") .. ".mjs"
+    obs.script_log(obs.LOG_WARNING, t.message)
+    return
+  end
+  if t.fichier ~= nil then return end   -- déjà en cours
+  local ps1 = dossier .. "/outils/refaire.ps1"
+  if lire(ps1) == nil then
+    t.message = "outils/refaire.ps1 introuvable dans " .. dossier .. " (mets l'overlay à jour)"
+    obs.script_log(obs.LOG_WARNING, t.message)
+    return
+  end
+  local installer = t.manque
+  t.manque = false
+  t.fichier = (os.getenv("TEMP") or dossier) .. "\\refaire-" .. quoi .. "-" .. os.time() .. ".txt"
+  t.debut = os.time()
+  if quoi == "transitions" then t.decroches = decrocher_stingers() end
+  t.message = t.nom .. " : en cours" .. (installer and " (installation de Node.js / ffmpeg d'abord, 2 à 5 minutes)" or "")
+    .. (quoi == "transitions" and "… 1 à 2 minutes par vidéo ; en attendant, les transitions de l'overlay sont coupées." or "… 1 à 2 minutes.")
+  obs.script_log(obs.LOG_INFO, t.message)
+  os.execute('start "" /min powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' .. ps1:gsub("/", "\\")
+    .. '" -Quoi ' .. quoi .. (installer and " -Installer" or "") .. ' -Sortie "' .. t.fichier .. '"')
+  obs.timer_add(t.suivre, 1000)
+end
+
 -- Toutes les 2 secondes : config.js ou mes-reglages.js (les réglages du streamer) ont-ils changé ?
 local function surveiller()
   if (not auto and not auto_cams) or dossier == "" then return end
@@ -471,7 +570,9 @@ et l'actualisation automatique des sources de l'overlay quand <code>config.js</c
 (après « Enregistrer » dans <code>reglages.html</code>).</p>
 <p><b>Placer les webcams</b> : dans chaque scène qui affiche une page de l'overlay, la webcam est mise pile dans sa zone
 (et ajoutée là où elle manque). Ta source webcam doit avoir « cam » dans son nom (ex. <b>Webcam</b>).</p>
-<p><b>Mettre à jour l'overlay</b> : la dernière version, depuis le serveur des overlays. Tes réglages sont gardés.</p>]]
+<p><b>Mettre à jour l'overlay</b> : la dernière version, depuis le serveur des overlays. Tes réglages sont gardés.</p>
+<p><b>Refaire les vidéos / les images</b> : après un changement de couleurs ou de textes, les transitions et le kit Twitch
+sont refaits avec tes réglages (quelques minutes, OBS reste utilisable).</p>]]
 end
 
 function script_properties()
@@ -495,6 +596,22 @@ function script_properties()
     local texte = (v and ("Version installée : " .. v) or "Version installée : inconnue (pas de version.json)")
     if maj.message ~= "" then texte = texte .. "\n" .. maj.message end
     obs.obs_properties_add_text(p, "etat_maj", texte, obs.OBS_TEXT_INFO)
+  end
+  obs.obs_properties_add_button(p, "refaire_transitions", "Refaire les vidéos de transition (avec tes couleurs)", function()
+    refaire("transitions")
+    return true
+  end)
+  obs.obs_properties_add_button(p, "refaire_kit", "Refaire les images du kit Twitch (bannière, hors-ligne, panneaux, emotes, badges)", function()
+    refaire("kit")
+    return true
+  end)
+  if obs.OBS_TEXT_INFO ~= nil then
+    local lignes = {}
+    for _, quoi in ipairs({ "transitions", "kit" }) do
+      local t = taches[quoi]
+      if t.message ~= "" then table.insert(lignes, t.message) end
+    end
+    if #lignes > 0 then obs.obs_properties_add_text(p, "etat_refaire", table.concat(lignes, "\n"), obs.OBS_TEXT_INFO) end
   end
   obs.obs_properties_add_path(p, "dossier", "Dossier de l'overlay", obs.OBS_PATH_DIRECTORY, "", nil)
   return p
@@ -531,4 +648,8 @@ end
 
 function script_unload()
   obs.timer_remove(surveiller)
+  for _, t in pairs(taches) do
+    obs.timer_remove(t.suivre)
+    if next(t.decroches) ~= nil then raccrocher_stingers(t.decroches); t.decroches = {} end
+  end
 end
