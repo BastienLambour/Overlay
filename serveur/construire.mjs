@@ -113,13 +113,40 @@ function fichiersDe(dossier, base = dossier) {
   });
 }
 
+// ---------- L'identité d'un overlay, pour sa carte sur la page : couleurs, police des titres, images ----------
+// Tout est lu dans l'overlay lui-même (css/theme.css, assets/polices/, chaine/export/) : rien à recopier ici.
+function identiteDe(o, dossierSortie) {
+  const theme = existsSync(join(o.dossier, 'css', 'theme.css')) ? readFileSync(join(o.dossier, 'css', 'theme.css'), 'utf8') : '';
+  const variable = (...noms) => { for (const n of noms) { const m = theme.match(new RegExp(`--${n}\\s*:\\s*([^;]+);`)); if (m) return m[1].trim(); } return ''; };
+  const hex = v => (/^#[0-9a-f]{6}$/i.test(v) ? v : '');
+  const id = { accent: hex(variable('accent')) || '#F5B82E', fond: hex(variable('fond')) || '#151A24', texte: hex(variable('texte', 'trait', 'blanc')) || '#F4F1EA' };
+  // La police des titres : la première famille de --f-titre qui a son fichier dans assets/polices/
+  const familles = variable('f-titre').split(',').map(f => f.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+  for (const famille of familles) {
+    const bloc = [...theme.matchAll(/@font-face\s*\{([^}]*)\}/g)].map(m => m[1])
+      .filter(b => new RegExp(`font-family:\\s*['"]?${famille.replace(/[.*+?^${}()|[\]\\]/g, '\\// ---------- Construction ----------')}['"]?\\s*;`).test(b));
+    const url = bloc.map(b => (b.match(/url\(['"]?([^'")]+)['"]?\)/) || [])[1]).filter(Boolean).sort((a, b) => /-ext/.test(a) - /-ext/.test(b))[0];
+    const fichier = url && join(o.dossier, 'css', url);
+    if (fichier && existsSync(fichier)) { copyFileSync(fichier, join(dossierSortie, 'titre.woff2')); id.police = famille; break; }
+  }
+  // La bannière et la photo de profil Twitch (le kit de chaîne exporté)
+  for (const [cle, nomFichier] of [['banniere', 'banniere.png'], ['profil', 'profil.png']]) {
+    const f = join(o.dossier, 'chaine', 'export', nomFichier);
+    if (existsSync(f)) { copyFileSync(f, join(dossierSortie, nomFichier)); id[cle] = nomFichier; }
+  }
+  // Texte du bouton lisible sur la couleur d'accent (clair ou foncé)
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(id.accent.slice(i, i + 2), 16) / 255).map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  id.surAccent = 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.35 ? '#111111' : '#FFFFFF';
+  return id;
+}
+
 // ---------- Construction ----------
 mkdirSync(SORTIE, { recursive: true });
 const cartes = [];
 for (const o of overlays) {
   const id = o.config.id, nom = o.config.nomChaine || id;
   const { version, date } = versionDe(o);
-  const infos = { id, nom, version, date, adresse: ADRESSE, telechargement: `${ADRESSE}/${id}/${id}.zip`, changements: changementsDe(o) };
+  const infos = { id, nom, version, date, adresse: ADRESSE, telechargement: `${ADRESSE}/${id}/${id}.zip`, changements: changementsDe(o, 15) };
   const dossierSortie = join(SORTIE, id);
   mkdirSync(dossierSortie, { recursive: true });
   const entrees = fichiersDe(o.dossier).map(f => ({
@@ -132,64 +159,162 @@ for (const o of overlays) {
   writeFileSync(join(dossierSortie, 'version.json'), JSON.stringify(infos, null, 2) + '\n');
   if (existsSync(join(o.dossier, 'TUTO.pdf'))) copyFileSync(join(o.dossier, 'TUTO.pdf'), join(dossierSortie, 'TUTO.pdf'));
   const taille = (statSync(join(dossierSortie, `${id}.zip`)).size / 1048576).toFixed(1);
-  cartes.push({ ...infos, taille, tuto: existsSync(join(dossierSortie, 'TUTO.pdf')) });
+  cartes.push({ ...infos, taille, tuto: existsSync(join(dossierSortie, 'TUTO.pdf')), ...identiteDe(o, dossierSortie) });
   console.log(`  ${id} : ${entrees.length} fichiers, ${taille} Mo, version ${version}`);
 }
 
 // ---------- La page de téléchargement ----------
 const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const dateFr = iso => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+const dateFr = iso => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', timeZone: 'Europe/Paris' });
+const heureFr = iso => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+const tailleFr = mo => String(mo).replace('.', ',') + ' Mo';
+// Les lignes du journal sont écrites pour nous : pour la famille, on garde le début, sans le jargon
+const resume = t => {
+  let s = t.replace(/\s*→.*$/, '').replace(/^(Demandes?|Retours?|Bug signalé|Choix)\s*:\s*/i, '');
+  if (s.length < 30) s = t;
+  return s.length > 180 ? s.slice(0, 177).replace(/\s+\S*$/, '') + '…' : s;
+};
+// Les lignes qui parlent du serveur ou des outils (VPS, GitLab, Nginx…) ne concernent pas la famille
+const TECHNIQUE = /\b(VPS|serveur|webhook|GitLab|GitHub|Nginx|DNS|certificat|installer\.sh|construire\.mjs|LISEZMOI|CLAUDE\.md|ffmpeg)\b/i;
+for (const c of cartes) c.nouveautes = c.changements.filter(x => !TECHNIQUE.test(x.texte)).slice(0, 5);
+const polices = cartes.filter(c => c.police).map(c =>
+  `@font-face { font-family: 'Titre ${e(c.id)}'; src: url('${e(c.id)}/titre.woff2') format('woff2'); font-display: swap; }`).join('\n  ');
+
+const carte = c => `
+    <article class="carte" style="--a:${c.accent};--sur-a:${c.surAccent};--f:${c.fond};--t:${c.texte}">
+      <div class="banniere">${c.banniere ? `<img src="${e(c.id)}/${c.banniere}" alt="">` : ''}</div>
+      <div class="corps">
+        <div class="tete">
+          ${c.profil ? `<img class="profil" src="${e(c.id)}/${c.profil}" alt="">` : `<span class="profil vide">${e(c.nom.slice(0, 1))}</span>`}
+          <div>
+            <h2 style="${c.police ? `font-family:'Titre ${e(c.id)}',var(--police)` : ''}">${e(c.nom)}</h2>
+            <p class="version"><span class="pastille" data-date="${e(c.date)}"></span>Mis à jour le ${e(dateFr(c.date))} à ${e(heureFr(c.date))}</p>
+          </div>
+        </div>
+        <div class="boutons">
+          <a class="telecharger" href="${e(c.id)}/${e(c.id)}.zip" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+            Télécharger <span>${e(tailleFr(c.taille))}</span></a>
+          ${c.tuto ? `<a class="tuto" href="${e(c.id)}/TUTO.pdf">Le tuto (PDF)</a>` : ''}
+        </div>
+        ${c.nouveautes.length ? `<details>
+          <summary>Ce qui a changé</summary>
+          <ol>${c.nouveautes.map(x => `<li><time>${e(new Date(x.date + 'T12:00:00Z').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }))}</time><span>${e(resume(x.texte))}</span></li>`).join('')}</ol>
+        </details>` : ''}
+      </div>
+    </article>`;
+
 const page = `<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Overlays Twitch — Téléchargements</title>
+<title>Les overlays de la famille</title>
+<meta name="description" content="Les overlays Twitch de la famille : télécharger, installer, mettre à jour.">
 <style>
-  :root { --fond: #101319; --carte: #1A1F29; --texte: #EEF1F5; --doux: #9AA4B2; --accent: #F5B82E; --trait: #2A3140; }
+  ${polices}
+  :root {
+    --police: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --fond: #F4F2EE; --carte: #FFFFFF; --texte: #1B1D22; --doux: #5D6370; --trait: #E3E0D9; --etape: #FFFFFF;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --fond: #0F1115; --carte: #171A20; --texte: #EEF0F4; --doux: #9AA2B1; --trait: #262A33; --etape: #171A20; color-scheme: dark; }
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.55 system-ui, 'Segoe UI', sans-serif; }
-  main { max-width: 1100px; margin: 0 auto; padding: 40px 16px 80px; }
-  h1 { font-size: 40px; margin: 0 0 6px; }
-  .intro { color: var(--doux); max-width: 70ch; margin: 0 0 30px; }
-  .cartes { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
-  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
-  .carte h2 { margin: 0; font-size: 26px; }
-  .version { color: var(--doux); font-size: 14px; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 16px/1.55 var(--police); -webkit-font-smoothing: antialiased; }
+  main { max-width: 1180px; margin: 0 auto; padding: 56px 16px 80px; }
+
+  header { max-width: 760px; margin-bottom: 40px; }
+  header h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 12px; }
+  header p { color: var(--doux); font-size: 18px; margin: 0; }
+
+  .etapes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 44px; padding: 0; list-style: none; counter-reset: etape; }
+  .etapes li { background: var(--etape); border: 1px solid var(--trait); border-radius: 14px; padding: 16px 18px 16px 58px; position: relative; counter-increment: etape; }
+  .etapes li::before { content: counter(etape); position: absolute; left: 16px; top: 16px; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--texte); color: var(--fond); font-weight: 700; display: grid; place-items: center; font-size: 15px; }
+  .etapes b { display: block; }
+  .etapes span { color: var(--doux); font-size: 14px; }
+  .etapes .plus { display: inline; color: var(--texte); }
+  .etapes code { white-space: nowrap; }
+  @media (max-width: 1000px) { .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .cartes { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); align-items: start; }
+  .carte { background: var(--f); color: var(--t); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 12px 32px -16px rgba(0,0,0,.35); }
+  .banniere { aspect-ratio: 1200 / 480; background: color-mix(in srgb, var(--a) 25%, var(--f)); }
+  .banniere img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .corps { padding: 18px 22px 22px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
+  .tete { display: flex; gap: 14px; align-items: center; }
+  .profil { width: 60px; height: 60px; border-radius: 50%; flex: none; object-fit: cover; background: var(--f);
+    border: 3px solid var(--f); box-shadow: 0 0 0 2px var(--a); }
+  .profil.vide { display: grid; place-items: center; font-size: 28px; font-weight: 800; color: var(--a); }
+  .tete > div { min-width: 0; }
+  .carte h2 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 400; }
+  .version { margin: 4px 0 0; font-size: 14px; flex-wrap: wrap; color: color-mix(in srgb, var(--t) 70%, transparent); display: flex; align-items: center; gap: 8px; }
+  .pastille:empty { display: none; }
+  .pastille { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--a); color: var(--sur-a); }
+
   .boutons { display: flex; flex-wrap: wrap; gap: 10px; }
-  .boutons a { text-decoration: none; font-weight: 700; border-radius: 10px; padding: 10px 16px; border: 2px solid var(--accent); color: var(--texte); }
-  .boutons a.principal { background: var(--accent); color: #111; }
-  details { color: var(--doux); font-size: 14px; }
-  summary { cursor: pointer; color: var(--texte); font-weight: 700; }
-  details li { margin: 6px 0; }
-  details b { color: var(--texte); }
-  .aide { margin-top: 40px; background: var(--carte); border: 1px solid var(--trait); border-radius: 16px; padding: 22px; }
-  .aide h2 { margin-top: 0; }
-  .aide li { margin: 6px 0; }
-  code { background: #0B0E13; padding: 1px 6px; border-radius: 4px; }
+  .boutons a { text-decoration: none; font-weight: 700; border-radius: 12px; padding: 12px 18px; display: inline-flex; align-items: center; gap: 8px; }
+  .telecharger { background: var(--a); color: var(--sur-a); flex: 1; justify-content: center; }
+  .telecharger span { font-weight: 500; opacity: .75; }
+  .telecharger svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .tuto { color: var(--t); border: 2px solid color-mix(in srgb, var(--t) 30%, transparent); }
+  .boutons a:hover { filter: brightness(1.08); }
+  .boutons a:focus-visible, summary:focus-visible { outline: 3px solid var(--a); outline-offset: 2px; }
+
+  details { border-top: 1px solid color-mix(in srgb, var(--t) 15%, transparent); padding-top: 14px; }
+  summary { cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; display: flex; justify-content: space-between; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 20px; line-height: 1; color: var(--a); }
+  details[open] summary::after { content: "–"; }
+  details ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+  details li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; font-size: 14px; color: color-mix(in srgb, var(--t) 80%, transparent); }
+  details li span { overflow-wrap: anywhere; }
+  details time { font-weight: 700; color: var(--a); white-space: nowrap; }
+
+  .aide { margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; color: var(--doux); font-size: 15px; }
+  .aide h3 { color: var(--texte); font-size: 16px; margin: 0 0 6px; }
+  .aide p { margin: 0; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .92em; background: color-mix(in srgb, var(--texte) 8%, transparent); padding: 1px 5px; border-radius: 5px; }
+
+  @media (max-width: 760px) {
+    main { padding-top: 32px; }
+    .etapes { grid-template-columns: 1fr; }
+    .cartes { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 <main>
-  <h1>Overlays Twitch</h1>
-  <p class="intro">Les overlays de la famille, toujours dans leur dernière version. Tes réglages (fichier <code>mes-reglages.js</code>) ne sont jamais dans ces fichiers : une mise à jour ne les efface pas.</p>
-  <div class="cartes">
-${cartes.map(c => `    <section class="carte">
-      <h2>${e(c.nom)}</h2>
-      <div class="version">Version du ${e(dateFr(c.date))} · ${e(c.taille)} Mo</div>
-      <div class="boutons"><a class="principal" href="${e(c.id)}/${e(c.id)}.zip" download>⬇️ Télécharger</a>${c.tuto ? `<a href="${e(c.id)}/TUTO.pdf">📘 Tuto</a>` : ''}</div>
-      ${c.changements.length ? `<details><summary>Ce qui a changé</summary><ul>${c.changements.map(x => `<li><b>${e(x.date)}</b> — ${e(x.texte)}</li>`).join('')}</ul></details>` : ''}
-    </section>`).join('\n')}
+  <header>
+    <h1>Les overlays de la famille</h1>
+    <p>Chaque chaîne a le sien, toujours dans sa dernière version. Tes réglages ne sont jamais dans ces fichiers : une mise à jour ne les efface pas.</p>
+  </header>
+
+  <ol class="etapes">
+    <li><b>Télécharge ton overlay</b><span>Le bouton de ta chaîne, ci-dessous.</span></li>
+    <li><b>Décompresse-le</b><span>Où tu veux, par exemple dans Documents, puis suis le tuto pour les scènes.</span></li>
+    <li><b>Ajoute le script dans OBS</b><span>Outils › Scripts › <b class="plus">+</b> › choisis <code>outils/actualiser-obs.lua</code>, dans le dossier de ton overlay. Une seule fois.</span></li>
+    <li><b>Ensuite, mets à jour d'un clic</b><span>Dans cette même fenêtre : « Mettre à jour l'overlay ». Tes réglages sont gardés.</span></li>
+  </ol>
+
+  <div class="cartes">${cartes.map(carte).join('')}
   </div>
+
   <section class="aide">
-    <h2>Installer ou mettre à jour</h2>
-    <ul>
-      <li><b>Première fois</b> : télécharge le zip de ton overlay, décompresse-le où tu veux (ex. <code>Documents\\Overlay</code>), puis suis le tuto.</li>
-      <li><b>Mettre à jour</b> : dans OBS › Outils › Scripts › script de l'overlay › <b>« Mettre à jour l'overlay »</b>. Ou double-clique sur <code>mettre-a-jour.cmd</code> dans le dossier de l'overlay.</li>
-      <li>Avant chaque mise à jour, l'ancienne version est gardée dans le dossier <code>sauvegardes</code> de l'overlay.</li>
-    </ul>
+    <div><h3>Déjà installé ?</h3><p>Pas besoin de revenir ici : le bouton <b>Mettre à jour l'overlay</b> du script OBS installe la nouvelle version tout seul. Sans OBS ouvert : double-clic sur <code>mettre-a-jour.cmd</code> dans ton dossier.</p></div>
+    <div><h3>Tes réglages restent</h3><p>Textes, couleurs, sons, position de la cam : tout est dans <code>mes-reglages.js</code>, que les mises à jour ne touchent jamais.</p></div>
+    <div><h3>Un fichier modifié à la main ?</h3><p>Avant chaque mise à jour, l'ancienne version est rangée dans le dossier <code>sauvegardes</code> de ton overlay.</p></div>
   </section>
 </main>
+<script>
+  // « Nouveau » sur les versions de moins de 3 jours
+  document.querySelectorAll('.pastille').forEach(p => {
+    if (Date.now() - new Date(p.dataset.date) < 3 * 864e5) p.textContent = 'Nouveau';
+  });
+</script>
 </body>
 </html>
 `;

@@ -207,7 +207,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `construire.mjs` : pour chaque overlay (dossier avec config.js + `id`), `<id>/<id>.zip` (sans mes-reglages.js, sauvegardes/),
   `<id>/version.json` (`{ id, nom, version, date, adresse, telechargement, changements }` — version = date + empreinte du dernier
   commit QUI TOUCHE ce dossier : un overlay inchangé garde sa version ; changements = fin du journal de CONCEPT.md), `TUTO.pdf`,
-  et la page `index.html`. Zip écrit à la main (zlib, noms UTF-8), sans dépendance.
+  et la page `index.html` : une carte par overlay À SON IDENTITÉ (bannière + profil de `chaine/export/`, `--accent`/`--fond`/`--texte`
+  et police `--f-titre` lus dans `css/theme.css`), 4 étapes (télécharger, décompresser, ajouter le script OBS, mettre à jour),
+  « Ce qui a changé » sans les lignes techniques (serveur, VPS, GitLab…). Zip écrit à la main (zlib, noms UTF-8), sans dépendance.
 - `webhook.mjs` (127.0.0.1:9321, derrière Nginx/Caddy `/webhook`) : GitHub (X-Hub-Signature-256 HMAC) et GitLab (X-Gitlab-Token),
   branche `BRANCHE` seulement → `mettre-a-jour.mjs` (fetch + reset --hard + construire si nouveau commit). Minuteur horaire en secours.
 - `installer.sh` (Debian/Ubuntu, root, relançable ; lit par défaut `git@gitlab.com:Bastien.Lambour/overlays.git`, branche `main`) : Node 18+, Git, utilisateur `overlays`, clé de déploiement LECTURE SEULE,
