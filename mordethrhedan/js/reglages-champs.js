@@ -115,7 +115,7 @@ window.ReglagesChamps = {
     const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     if (typeof Commun !== 'undefined' && !this.couleurAppliquee) { Commun.appliquerCouleur(Commun.C.couleur); this.couleurAppliquee = true; }
     const grand = ['raid', 'giftbomb', 'objectif'].includes(type);
-    return `<div style="position:relative;zoom:.42;padding:26px 40px 30px;text-align:center;color:var(--texte)">
+    return `<div style="position:relative;zoom:.42;padding:26px 40px 30px;text-align:center;color:var(--texte);--f-texte:var(--f-ecran);font-family:var(--f-texte);font-synthesis:none">
       <div class="cadre verre" style="position:absolute;inset:0${grand ? ';box-shadow:0 0 0 2px var(--accent-fonce),0 0 40px var(--accent-halo),inset 0 0 0 2px var(--accent-fonce),inset 0 0 30px var(--accent-halo)' : ''}"></div>
       <div class="titre-neon" style="position:relative;font-size:64px">${e(titre)}</div>
       <div style="position:relative;font:900 56px/1.1 var(--f-texte);margin-top:12px;overflow-wrap:anywhere">${e(nom)}</div>

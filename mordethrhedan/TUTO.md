@@ -10,7 +10,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 ## Sommaire
 
 1. Ce qu'il y a dans le dossier
-2. Avant de commencer (config, police Dyer, réglages OBS, les 3 gestes de base)
+2. Avant de commencer (config, la police Dyer, réglages OBS, les 3 gestes de base)
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu · Speedrun
 4. Les sources à la carte : Alertes · Chat · Objectif · Cadre néon · Compte à rebours · Fond · Cadre de la cam
 5. Les transitions : Balayage · Volets
@@ -38,7 +38,7 @@ mordethrhedan/
 ├── sons/                ← tes propres sons d'alerte, si tu veux (facultatif, voir 6.8)
 ├── transitions/         ← les transitions (+ videos/ : prêtes pour OBS)
 ├── chaine/              ← kit de chaîne Twitch (kit.html + export/ : les PNG)
-├── assets/polices/      ← les polices (locales, sans internet) · dépose ici la police Dyer
+├── assets/polices/      ← les polices (locales, sans internet), dont Dyer
 ├── outils/              ← les scripts (vidéos, images du kit, PDF) et actualiser-obs.lua pour OBS : voir 9
 ├── design/moodboard.html
 └── css/  js/            ← le moteur (pas besoin d'y toucher)
@@ -82,9 +82,9 @@ La page de téléchargement (le zip complet, le tuto, « Ce qui a changé ») : 
 
 > 🔁 **La toute première fois seulement** (si tes réglages étaient encore dans l'ancien `config.js`) : **avant** de remplacer les fichiers, fais une copie de ton `config.js` (ex. sur le bureau). Après la mise à jour, ouvre `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis cette copie : tes réglages reviennent dans le formulaire (marqués •). Clique **Enregistrer**, c'est fini : ils sont maintenant dans `mes-reglages.js`.
 
-### 2.2 Installer la police Dyer
+### 2.2 La police Dyer : rien à installer
 
-Dépose le fichier de la police de *Beyond Good & Evil* dans `assets/polices/`, nommé **`Dyer.ttf`** (ou `Dyer.otf` / `Dyer.woff2`). Tous les titres l'utiliseront. En attendant, « Righteous » la remplace.
+La police de *Beyond Good & Evil* est **déjà incluse** dans l'overlay (dans `css/theme.css` lui-même) : tout ce qui passe à l'écran l'utilise (titres, textes, chat, alertes, objectif, transitions, kit de chaîne), dès l'actualisation d'une scène, sans attendre. Les lettres accentuées (é, è, à, ç…), qui manquaient au fichier d'origine, ont été ajoutées. Inutile de l'installer dans Windows. Les pages d'outils (`reglages.html`, `index.html`) restent dans une police simple, plus lisible.
 
 ### 2.3 Régler le canevas d'OBS (une seule fois)
 
@@ -538,14 +538,13 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 3. **Image** : choisis le PNG du panneau. **Description** : écris le texte (qui tu es, le planning, les règles du chat…).
 4. **Envoyer**, puis recommence pour les autres panneaux.
 
-**Refaire les images** (autre couleur, police Dyer installée, textes changés dans `reglages.html` › **Kit de chaîne Twitch**), dans PowerShell :
+**Refaire les images** (autre couleur, textes changés dans `reglages.html` › **Kit de chaîne Twitch**), dans PowerShell :
 
 ```
 cd G:\Projets\Overlay\mordethrhedan
 node outils/exporter-chaine.mjs
 ```
 
-> Une fois `Dyer.ttf` déposé, relance cette commande : les titres des visuels passeront en Dyer.
 > Les noms des menus Twitch changent parfois un peu : cherche « Marque » ou « Récompenses des spectateurs » dans le tableau de bord.
 
 ---
@@ -646,8 +645,8 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 **Page blanche / rien ne s'affiche**
 → Vérifie `1920` × `1080` sur la source, puis clic droit › **Actualiser**. Si tu viens de modifier `config.js`, vérifie les guillemets et les virgules.
 
-**Les titres ne sont pas dans la police Dyer**
-→ Vérifie le nom du fichier dans `assets/polices/` (`Dyer.ttf`), puis actualise.
+**Les textes ne sont pas dans la police Dyer**
+→ Clic droit sur la source › **Propriétés** › **Actualiser le cache de la page actuelle** (OBS garde parfois l'ancien `css/theme.css`).
 
 **Le chat n'affiche rien**
 → Vérifie l'identifiant Twitch dans `reglages.html` › **La chaîne** (l'identifiant exact, en minuscules). Le chat n'affiche que les messages envoyés **après** l'ouverture de la page, et il a besoin d'internet.

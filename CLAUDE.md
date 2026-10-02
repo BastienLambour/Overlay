@@ -265,7 +265,7 @@ Le chat garde en mémoire ses derniers messages entre les scènes (localStorage 
     `#ecran .bouffon-svg { position:static; width:100%; height:100% }` (ou équivalent).
 - Polices : **toujours locales** dans `assets/polices/` (OBS hors ligne, PDF, kit). On choisit sur Google Fonts dans le
   moodboard, puis `node outils/polices-locales.mjs` télécharge les .woff2 (latin + latin étendu) et remplace l'@import
-  de `theme.css` par des @font-face locales. Police non libre (ex. Dyer) : fichier déposé à la main + police de secours.
+  de `theme.css` par des @font-face locales. Police non libre fournie par le streamer (ex. Dyer chez mordethrhedan) : woff2 dans `assets/polices/` ET incluse en `data:` dans `theme.css` (`font-display: block` : aucune attente à l'actualisation) ; vérifier ses accents (le TTF de Dyer n'en avait aucun : lettres accentuées composées lettre + accent). Police à une seule graisse : `font-synthesis: none`.
 
 ## Démarrer un nouvel overlay (checklist)
 

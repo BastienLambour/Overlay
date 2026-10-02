@@ -19,7 +19,7 @@
 - **Fond** : facettes sombres façon cristal avec des éclats lumineux, **recréé et généré** (à partir d'un thème Chrome trouvé en ligne), qui respirent très doucement (désactivable).
 - **Couleur** : **une seule couleur d'accent, qui pilote tout** (cadres + éclats du fond). Vert par défaut, changeable selon le jeu (`couleur` dans `config.js` ou `?couleur=rouge`).
 - **Cadres** : trait régulier, coins arrondis, liseré sombre, **halo discret** (léger / moyen / fort), version transparente et version « verre » fumée.
-- **Police** : **Dyer** (celle de Beyond Good & Evil) pour les titres — fichier à déposer dans `assets/polices/` ; Righteous en attendant. Texte en Nunito.
+- **Police** : **Dyer** (celle de Beyond Good & Evil) **partout à l'écran** (titres, textes, chat, alertes, transitions, kit), incluse dans `css/theme.css` (aucun fichier à charger) ; accents ajoutés. Nunito seulement pour les pages d'outils (réglages, vitrine).
 - **Vocabulaire des alertes** : sobre et direct (« Nouveau follow », « Nouvel abonné », « Raid ! »…). Carillon doux ; les gros événements font pulser le halo.
 - **Chat** : en cartes, comme son ancien chat, avec pastilles de badges (streamer, modo, VIP, abonné).
 
@@ -57,7 +57,6 @@
 
 ## À faire / questions ouvertes
 
-- [ ] Déposer `Dyer.ttf` dans `assets/polices/`.
 - [ ] Confirmer l'identifiant Twitch, coller l'action Streamer.bot « Overlay – Compteurs » (TUTO 6.6) pour la barre d'objectif.
 - [ ] Coller la clé Streamlabs (« Socket API Token ») dans `reglages.html` › Derniers événements, pour le dernier follow.
 - [ ] Refaire ses scènes OBS avec les nouvelles fiches (TUTO §3), dont le groupe « Cam » + raccourci.
@@ -94,3 +93,4 @@
 - **2026-10-02** — Choix : le dépôt publié par le serveur sera sur GitLab (https://gitlab.com/Bastien.Lambour/overlays, branche main), webhook GitLab. `serveur/installer.sh` et `serveur/LISEZMOI.md` réglés dessus par défaut.
 - **2026-10-02** — Le VPS héberge déjà d'autres sites (Nginx, certificat bastien-lambour.fr) → le serveur des overlays sera sur **https://overlays.bastien-lambour.fr** (même certificat, 80 → 443), dans `/var/www/overlays` (`depot/` privé, `site/` servi) ; `installer.sh` n'ajoute qu'un fichier Nginx et ne touche à aucun autre site. `miseAJour.adresse` = cette adresse. À faire : l'enregistrement DNS `overlays` → 217.154.115.223.
 - **2026-10-02** — Demande : « une barre d'objectif pour les follows aussi ? avec les vrais nombres de Twitch, pas à la main ; plutôt un interrupteur : la barre affiche les followers OU les abonnés, chacun son compteur et son objectif » → **une seule barre**, `config.js › objectif` : `affiche` ("follow" ou "sub"), `automatique`, et `follow` / `sub` (titre, cible, départ chacun) ; les deux compteurs tournent toujours (bascule = barre tout de suite juste) ; `?objectif=sub|follow` sur une source. Les vrais totaux viennent de **Streamer.bot** : action « Overlay – Compteurs » (`outils/streamerbot-compteurs.cs`, à coller une fois, TUTO 6.6), lancée par l'overlay à la connexion et toutes les 5 minutes. Anciens réglages (`objectif.type/cible/depart`) repris tout seuls. Vérifié dans le navigateur (follow/sub, mode test, ancien mes-reglages.js) ; **pas testé** : le code C# dans un vrai Streamer.bot (pas de Streamer.bot ici).
+- **2026-10-02** — Demande : « la police Dyer (TTF fourni) PARTOUT : bannière, hors-ligne, transitions, cadres des follows/raids… et incluse pour ne pas attendre 10 s à l'actualisation » → Dyer pour tout ce qui passe à l'écran (`--f-ecran`, posé sur `#ecran` et le kit `.mn`), sans faux gras (`font-synthesis: none`, elle n'a qu'une graisse) ; **incluse dans `css/theme.css`** (data: woff2, 15 Ko, `font-display: block`) : pas de fichier à part ni de passage par une autre police. Le TTF n'avait **aucune lettre accentuée** : ajoutées (é è ê ë à â ä î ï ô ö ù û ü ç, majuscules et minuscules, + espaces insécables) en assemblant les lettres et accents de la police (`assets/polices/Dyer.woff2`). Réglages et vitrine restent en Nunito (lisibles). Vidéos de transition et PNG du kit refaits. Vérifié dans le navigateur (toutes les pages, police chargée) ; **pas vu dans OBS**.

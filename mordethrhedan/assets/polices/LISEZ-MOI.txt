@@ -1,7 +1,6 @@
-Dépose ici le fichier de la police de Beyond Good & Evil, nommé :
+Polices de l'overlay, en local (pas besoin d'internet).
 
-    Dyer.ttf   (ou Dyer.otf, ou Dyer.woff2)
-
-Tous les titres de l'overlay l'utiliseront automatiquement.
-Actualise ensuite les sources dans OBS (clic droit > Actualiser).
-Tant que le fichier n'est pas là, la police « Righteous » la remplace.
+Dyer.woff2 : la police de Beyond Good & Evil (Dyer.ttf d'origine + les lettres accentuées, qu'il n'avait pas).
+  Elle est AUSSI incluse directement dans css/theme.css : c'est cette copie-là qui est utilisée (rien à charger).
+  Rien à installer dans Windows. Police non libre : pour l'usage de la chaîne seulement.
+nunito-*.woff2, righteous-*.woff2 : polices libres (Google Fonts), pour les pages d'outils et en secours.
