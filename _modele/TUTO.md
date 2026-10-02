@@ -17,7 +17,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu (+ …)
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam (+ …)
 5. Les transitions : <noms>
-6. Brancher le chat et les alertes (Streamer.bot, journal, objectif, sons des alertes)
+6. Brancher le chat et les alertes (StreamElements, journal, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser (couleurs et ambiances, les scripts)
@@ -38,7 +38,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
-3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de Streamer.bot (section 6.6).
+3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de StreamElements (section 6.6).
 4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
    La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
@@ -111,7 +111,7 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 ## 4. Les sources à la carte
 
 ### 4.1 🔔 Alertes — `sources/alertes.html`
-**À quoi ça sert** · **Dans OBS** · **Options** · **Nécessite** Streamer.bot
+**À quoi ça sert** · **Dans OBS** · **Options** · **Nécessite** StreamElements
 
 <une fiche par source>
 
@@ -123,16 +123,16 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 ---
 
 ## 6. Brancher le chat et les alertes
-<tableau « Quoi / Comment ça arrive / À installer » (chat : rien ; alertes : Streamer.bot), puis :
+<tableau « Quoi / Comment ça arrive / À installer » (chat : rien ; alertes : StreamElements, par internet), puis :
  6.1 Le chat (identifiant Twitch ; emotes, bots, commandes, modération, mémoire ; limites)
- 6.2 Installer Streamer.bot (Platforms › Twitch › Accounts › Broadcaster ; WebSocket Server 127.0.0.1:8080, Auto Start, Start Server ;
-     reconnexion automatique, peu importe l'ordre de lancement)
- 6.3 Vérifier avec le journal : ?journal=1 sur la source d'alertes (OBS n'a pas de F12) ; « ✅ Connecté » ; retirer ensuite
+ 6.2 Brancher StreamElements (compte via Twitch ; dashboard/account/channels › Show secrets › JWT Token ; le coller dans
+     reglages.html › StreamElements ; c'est un SECRET, gardé dans mes-reglages.js ; reconnexion automatique)
+ 6.3 Vérifier avec le journal : ?journal=1 sur la source d'alertes (OBS n'a pas de F12) ; « ✅ Connecté à StreamElements » + « 📊 Compteurs » ; messages d'erreur (pas de jeton, refusé, internet) ; retirer ensuite
  6.4 Événement par événement (tableau du vocabulaire ; conditions affilié)
  6.8 Les sons des alertes (tableau : un son par alerte ; reglages.html › Sons des alertes, ▶ ; fichier perso dans sons/ ; « aucun »)
- 6.5 Les dons (Integrations de Streamer.bot ; décocher la case du bandeau si pas de dons)
- 6.6 L'objectif (une barre : followers OU abonnés ; A choisir ; B action Streamer.bot « Overlay – Compteurs » = outils/streamerbot-compteurs.cs
-     + Timed Action 5 min ; vérifier « 📊 Compteurs de la chaîne » dans ?journal=1 ; sans Streamer.bot : nombre de départ)
+ 6.5 Les dons (page de dons StreamElements streamelements.com/<pseudo>/tip ; Revenue › Tipping settings ; décocher la case du bandeau si pas de dons)
+ 6.6 L'objectif (une barre : followers OU abonnés ; A choisir ; B vrais nombres automatiques avec StreamElements ;
+     vérifier « 📊 Compteurs de la chaîne » dans ?journal=1 ; sans StreamElements : nombre de départ)
  6.7 Tester les vraies alertes (?test=1, un ami qui suit la chaîne)>
 
 ---

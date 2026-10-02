@@ -56,13 +56,13 @@ window.ReglagesChamps = {
     ] },
     { titre: 'Objectif', icone: '🎯', champs: [
       { cle: 'objectif.affiche', type: 'choix', label: 'Ce que la barre affiche', options: [['follow', 'Les followers'], ['sub', 'Les abonnés']], aide: 'Change quand tu veux : les deux compteurs tournent toujours, la barre est tout de suite juste.' },
-      { cle: 'objectif.automatique', type: 'case', label: 'Les vrais nombres de la chaîne, depuis Streamer.bot', aide: 'Avec l\'action « Overlay – Compteurs » dans Streamer.bot (tuto, section 6). Décoché : compté à la main, depuis « nombre de départ ».' },
+      { cle: 'objectif.automatique', type: 'case', label: 'Les vrais nombres de la chaîne, depuis StreamElements', aide: 'Lus au branchement, puis à chaque nouveau follow ou abonnement. Décoché : compté à la main, depuis « nombre de départ ».' },
       { cle: 'objectif.follow.titre', type: 'texte', label: 'Followers : nom de l\'objectif' },
       { cle: 'objectif.follow.cible', type: 'nombre', label: 'Followers : objectif à atteindre', min: 1 },
-      { cle: 'objectif.follow.depart', type: 'nombre', label: 'Followers : nombre de départ', min: 0, aide: 'Seulement sans Streamer.bot (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
+      { cle: 'objectif.follow.depart', type: 'nombre', label: 'Followers : nombre de départ', min: 0, aide: 'Seulement sans StreamElements (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
       { cle: 'objectif.sub.titre', type: 'texte', label: 'Abonnés : nom de l\'objectif' },
       { cle: 'objectif.sub.cible', type: 'nombre', label: 'Abonnés : objectif à atteindre', min: 1 },
-      { cle: 'objectif.sub.depart', type: 'nombre', label: 'Abonnés : nombre de départ', min: 0, aide: 'Seulement sans Streamer.bot (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
+      { cle: 'objectif.sub.depart', type: 'nombre', label: 'Abonnés : nombre de départ', min: 0, aide: 'Seulement sans StreamElements (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
     ] },
     { titre: 'Bandeau d\'infos', icone: '📰', aide: 'La barre en bas des scènes : décoche ce que tu ne veux pas voir.', champs: [
       { cle: 'bandeau.follow', type: 'case', label: 'Dernier follow' },
@@ -77,11 +77,9 @@ window.ReglagesChamps = {
       { cle: 'alertes.anonyme', type: 'texte', label: 'Nom quand Twitch ne donne pas le destinataire d\'un cadeau' },
     ] },
     { titre: 'Sons des alertes', icone: '🔊', sons: true, aide: 'Chaque alerte a son propre son, pour la reconnaître à l\'oreille en jouant. ▶ pour écouter. Laisse vide pour garder le son de l\'overlay, écris « aucun » pour ne rien jouer, ou mets ton propre fichier (mp3, wav, ogg) dans le dossier sons/ et écris son nom : sons/follow.mp3.', champs: [] },
-    { titre: 'Streamer.bot (alertes, bandeau, objectif)', icone: '🔌', champs: [
-      { cle: 'streamerbot.actif', type: 'case', label: 'Se connecter à Streamer.bot' },
-      { cle: 'streamerbot.hote', type: 'texte', label: 'Adresse', aide: 'Laisse 127.0.0.1 si Streamer.bot tourne sur le même PC.' },
-      { cle: 'streamerbot.port', type: 'nombre', label: 'Port', min: 1 },
-      { cle: 'streamerbot.motDePasse', type: 'secret', label: 'Mot de passe', aide: 'Seulement si tu as activé l\'authentification dans Streamer.bot.' },
+    { titre: 'StreamElements (alertes, bandeau, objectif)', icone: '🔌', aide: 'Le lien entre ta chaîne Twitch et l\'overlay, par internet : rien à installer. Le jeton est un SECRET : il reste dans mes-reglages.js, sur ton PC (jamais dans les mises à jour). Ne le montre pas en live.', champs: [
+      { cle: 'streamelements.actif', type: 'case', label: 'Se connecter à StreamElements' },
+      { cle: 'streamelements.jeton', type: 'secret', label: 'Ton jeton StreamElements (JWT Token)', aide: 'streamelements.com › ton avatar en haut à droite › ta chaîne › « Afficher les secrets » › copie le JWT Token, colle-le ici (tuto, section 6).' },
     ] },
     { titre: 'Kit de chaîne Twitch', icone: '📺', champs: [
       { cle: 'chaine.slogan', type: 'texte', label: 'Slogan (bannière de profil)' },

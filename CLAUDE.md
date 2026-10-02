@@ -40,7 +40,7 @@ G:\Projets\Overlay\
 6. **Léger pour OBS** : animations `transform`/`opacity`, 1920×1080, fond transparent,
    HTML/CSS/JS pur, aucun build, aucun serveur requis (fichiers locaux).
 7. **Vérifier avant d'annoncer** : chaque page chargée dans le navigateur sans erreur,
-   en mode normal et `?test=1`. Dire clairement ce qui n'a PAS été testé (OBS, vrai Streamer.bot).
+   en mode normal et `?test=1`. Dire clairement ce qui n'a PAS été testé (OBS, vrai StreamElements).
 8. **Livrer utilisable** : `index.html` (vitrine), `TUTO.pdf` pas à pas, vidéos de transition prêtes,
    kit de chaîne Twitch exporté en PNG.
 9. **`CONCEPT.md` tenu à jour au fil de l'eau** : à chaque échange qui apporte une demande, un choix
@@ -78,8 +78,8 @@ Conventions :
   Le TUTO donne les coordonnées exactes (et en 2560×1440 si l'écran du streamer l'est).
 - **Objet JS global** : `Commun` (dans `commun.js`) ; un objet par fichier, du nom du fichier
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
-- **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamerbot`, `demarrage` (dont `minutes` et `heure`),
-  `pause`, `fin`, `chat`, `objectif` (UNE barre : `affiche` "follow"|"sub", `automatique` [vrais totaux via Streamer.bot], `follow` et `sub` = `{ titre, cible, depart }` chacun ; `?objectif=sub|follow` sur une page), `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
+- **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamelements` (`actif`, `jeton` : vide dans config.js, le streamer le colle dans reglages.html → mes-reglages.js), `demarrage` (dont `minutes` et `heure`),
+  `pause`, `fin`, `chat`, `objectif` (UNE barre : `affiche` "follow"|"sub", `automatique` [vrais totaux via StreamElements], `follow` et `sub` = `{ titre, cible, depart }` chacun ; `?objectif=sub|follow` sur une page), `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `miseAJour.adresse` (le serveur des mises à jour), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
@@ -135,7 +135,7 @@ Conventions :
 - **`TUTO.md`** (modèle `_modele/TUTO.md`) : 1 Contenu du dossier · 2 Avant de commencer
   (reglages.html, canevas OBS, gestes A/B/C : source Navigateur, Ctrl+E, options d'URL ; chat intégré ; script
   actualiser-obs.lua) · 3 **Fiches scènes, une par page** · 4 **Fiches sources, une par page** · 5 Fiches
-  transitions · 6 Chat et alertes (Streamer.bot pas à pas, journal `?journal=1`, événements, dons, objectif) · 7 Chaîne
+  transitions · 6 Chat et alertes (StreamElements pas à pas : compte, jeton, journal `?journal=1`, événements, dons, objectif) · 7 Chaîne
   Twitch · 8 Tester · 9 Personnaliser (reglages.html d'abord, ambiances de couleurs, « Les scripts » : installer Node.js
   + ffmpeg, tableau des scripts) · 10 Dépannage.
   Chaque fiche = à quoi ça sert, **étapes OBS numérotées de A à Z** (créer la scène, chaque source
@@ -151,11 +151,14 @@ Conventions :
 
 Copiés **à l'identique** dans chaque overlay ; on ne les personnalise pas sur place.
 Si on les améliore, on modifie `_modele/` puis on recopie partout.
-- `js/evenements.js` : Streamer.bot (WebSocket local) → événements normalisés
+- `js/evenements.js` : StreamElements (par internet, aucun logiciel) → événements normalisés
   `{ type, nom, montant, mois, nombre, destinataire }`, objectifs persistants (localStorage
   `overlay-<id>-etat` : `compteFollow`, `compteSub` ; `Evenements.objectif` = celui affiché, `.cle` = sa clé d'état), mode test.
-  Vrais totaux : à la connexion, `client.doAction({ name: 'Overlay – Compteurs' })` ; l'action répond par `General.Custom`
-  `{ overlay: 'compteurs', followers, abonnes }` (première synchro sans alerte). `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
+  WebSocket `wss://astro.streamelements.com`, `{ type: 'subscribe', data: { topic, token, token_type: 'jwt' } }` sur `channel.activities`
+  (follow, subscriber [gifted/sender, bulkGifted, isCommunityGift], communityGiftPurchase, cheer, raid, tip) et `channel.session.update`
+  (`follower-total` / `subscriber-total` → `compteurs()`) ; totaux au branchement : `GET api.streamelements.com/kappa/v2/sessions/<channel>`
+  (channel lu dans le jeton) ; première synchro sans alerte ; reconnexion 5 s → 1 min. Streamer.bot a été RETIRÉ (2026-10-02) ;
+  `reglages.js` oublie l'ancienne clé `streamerbot` (OBSOLETES). `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
   leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
 - `js/couleurs.js` : fusionne d'abord `mes-reglages.js` (window.MES_REGLAGES) par-dessus `config.js` (objets clé par
   clé, listes et valeurs remplacées ; ignoré si son `id` est celui d'un autre overlay), puis applique `couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
@@ -171,10 +174,6 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `window.ZONES = { cam: { "cam-seule": {x,y,l,h}, contenu: {…}, jeu: { defaut, prereglages: { "bas-droite": {…} } } } }`, écrit
   comme du JSON. SEULE source des positions de la webcam : les scènes, reglages.html (tableau + plan) et le script OBS le lisent ;
   ne jamais recopier ces chiffres dans une scène.
-- `outils/streamerbot-compteurs.cs` : le code C# de l'action Streamer.bot « Overlay – Compteurs » (Helix followers + subscriptions
-  `total`, avec le compte Twitch de Streamer.bot, `CPH.WebsocketBroadcastJson`), collé une fois par le streamer (TUTO 6.6). Pas compilé ici.
-- `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
-  les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,
   encode en `.webm` transparent avec ffmpeg (60 i/s), affiche le point de transition Stinger.
   `node outils/generer-transitions.mjs [noms…] [cle=valeur…]`.
@@ -235,9 +234,10 @@ Le chat garde en mémoire ses derniers messages entre les scènes (localStorage 
 
 ## Savoir technique acquis
 
-- **Alertes** : via **Streamer.bot** (gratuit, local). Les noms de champs des événements ne
-  sont pas documentés : `evenements.js` essaie plusieurs clés et logue chaque événement en
-  console et dans le journal `?journal=1` (OBS n'a pas de F12 dans « Interagir »). Pas encore validé sur un vrai live.
+- **Alertes** : via **StreamElements** (gratuit, par internet, jeton JWT du compte = SECRET, jamais dans config.js ni dans les zips).
+  `evenements.js` logue chaque activité en console et dans le journal `?journal=1` (OBS n'a pas de F12 dans « Interagir »).
+  Testé avec un faux serveur (Playwright `routeWebSocket` + `route` de l'API) ; pas encore validé sur un vrai live.
+  docs.streamelements.com est bloqué depuis le conteneur : l'exemple officiel est sur GitHub (donjor/StreamElements-Websocket-Example).
 - **Transitions** : une page HTML ne peut pas être une transition OBS → vidéo **Stinger**.
   Chaque page de transition gère `?mode=entree` (défaut) et `?mode=complet&capture=1`, et peut
   déclarer son point de coupe (`data-coupe` / `pointTransition()`).

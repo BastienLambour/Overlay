@@ -14,7 +14,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Démarrage · Pause · Fin · Cam seule · Contenu · Jeu
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam
 5. Les transitions : Splash · Gouttes · Pop art
-6. Brancher le chat et les alertes (Streamer.bot, journal, objectif, sons des alertes)
+6. Brancher le chat et les alertes (StreamElements, journal, objectif, sons des alertes)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser
@@ -54,7 +54,7 @@ Toutes les pages font **1920 × 1080**, avec un fond transparent là où il faut
 
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
-3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de Streamer.bot (section 6.6).
+3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de StreamElements (section 6.6).
 4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
    La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
@@ -197,7 +197,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 1. **Scènes › +** : « Fin ».
 2. Geste A avec `scenes/fin.html`, case **Actualiser le navigateur quand la scène devient active** cochée.
 
-**Nécessite** Streamer.bot pour afficher les derniers noms (section 6) ; sinon un tiret s'affiche.
+**Nécessite** StreamElements pour afficher les derniers noms (section 6) ; sinon un tiret s'affiche.
 
 ### 3.4 🎙 Cam seule — `scenes/cam-seule.html`
 
@@ -276,7 +276,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 2. Coche **Contrôler l'audio via OBS** et règle le volume dans le mélangeur audio.
 
 **Options** : `?position=haut` (défaut), `centre` ou `bas` · `?test=1`
-**Nécessite** Streamer.bot (section 6).
+**Nécessite** StreamElements (section 6).
 
 ### 4.2 💬 Chat — `sources/chat.html`
 
@@ -289,7 +289,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 **À quoi ça sert** : ton avatar, le dernier témoin, le dernier soutien moral, les fonds pour excuses et l'objectif.
 **Dans OBS :** geste A, puis geste C pour le placer.
 **Options** : `?x=80&y=970&l=1760&h=84` · `?compact=1` (dernier témoin + objectif) · `?test=1`
-**Nécessite** Streamer.bot (section 6).
+**Nécessite** StreamElements (section 6).
 **Choisir les cases** : `reglages.html` › **Bandeau d'infos** (par exemple, décoche le dernier soutien si tu ne reçois ni dons ni bits, et le dernier abonné si ta chaîne n'est pas encore affiliée).
 
 ### 4.4 ⭐ Objectif — `sources/objectif.html`
@@ -297,7 +297,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 **À quoi ça sert** : la jauge où **ta tête avance** à chaque follow (ou abonnement : `reglages.html` › Objectif, ou `?objectif=sub`).
 **Dans OBS :** geste A, puis geste C pour le placer.
 **Options** : `?x=560&y=60&l=800&h=150` · `?test=1`
-**Nécessite** Streamer.bot (section 6).
+**Nécessite** StreamElements (section 6).
 
 ### 4.5 🎥 Cadre cam — `sources/cam.html`
 
@@ -347,7 +347,7 @@ Deux choses différentes :
 | Quoi | Comment ça arrive | À installer |
 |---|---|---|
 | **Le chat** | l'overlay lit ton chat Twitch directement | **rien** : ton identifiant Twitch dans les réglages suffit |
-| Les alertes, le bandeau, l'objectif et les derniers noms de l'écran de fin (follows, abonnements, bits, raids, dons) | par **Streamer.bot**, un logiciel gratuit qui tourne sur ton PC | Streamer.bot, une fois (6.2) |
+| Les alertes, le bandeau, l'objectif et les derniers noms de l'écran de fin (follows, abonnements, bits, raids, dons) | par **StreamElements**, un service gratuit (par internet) | **rien** : un compte StreamElements et son jeton, une fois (6.2) |
 
 ### 6.1 Le chat
 
@@ -357,34 +357,40 @@ Deux choses différentes :
 Les **emotes Twitch** s'affichent en image ; les **bots** (liste dans `reglages.html` › **Le chat**) et les **commandes** qui commencent par `!` sont cachés ; un message **supprimé par un modo**, ou ceux d'un spectateur **banni**, disparaissent aussi de l'overlay ; en changeant de scène, les messages des 10 dernières minutes sont réaffichés.
 Il ne montre pas les messages envoyés **avant** l'ouverture d'OBS, ni les emotes des extensions 7TV, BTTV ou FFZ.
 
-### 6.2 Installer Streamer.bot (une seule fois)
+### 6.2 Brancher StreamElements (une seule fois, 3 minutes)
 
-1. Va sur le site officiel **streamer.bot**, télécharge la dernière version (un fichier `.zip`).
-2. Décompresse-le dans un dossier à toi (ex. `C:\Streamer.bot\`), puis lance **`Streamer.bot.exe`**.
-3. **Connecter ta chaîne** : onglet **Platforms › Twitch › Accounts**. Dans la partie **Broadcaster** (ton compte de streamer), clique **Connect**, connecte-toi à Twitch dans la fenêtre qui s'ouvre, puis **Autoriser**. *(La partie « Bot » est facultative.)*
-4. **Ouvrir la porte à l'overlay** : onglet **Servers/Clients › WebSocket Server** : **Address** `127.0.0.1` · **Port** `8080` · **Endpoint** `/` · coche **Auto Start** · clique **Start Server**.
-5. Dans OBS, **clic droit sur la source d'alertes › Actualiser**.
+StreamElements est un service **gratuit**, par internet : **rien à installer** sur le PC, rien à lancer avant le live.
 
-✅ **À chaque live**, Streamer.bot doit être **lancé**. Avant ou après OBS, peu importe : l'overlay s'y reconnecte tout seul dès qu'il est là.
+1. Va sur **streamelements.com** › **Login** › **Twitch**, connecte-toi avec **ton compte de streamer** et autorise. (Déjà un compte StreamElements ? Connecte-toi simplement.)
+2. Ouvre la page de ton compte : **https://streamelements.com/dashboard/account/channels** (ou : ton avatar en haut à droite › **Account** › onglet **Channels**).
+3. Clique **Show secrets** (« Afficher les secrets »), puis le bouton **copier** à côté de **JWT Token** : une très longue suite de lettres et de chiffres.
+4. Ouvre `reglages.html` › **StreamElements** › colle-le dans **Ton jeton StreamElements**, puis **💾 Enregistrer**.
+5. Dans OBS : **clic droit sur la source d'alertes › Actualiser** (et sur les scènes, pour le bandeau et l'objectif).
 
-> Si tu as changé le port ou mis un mot de passe dans Streamer.bot, reporte-les dans `reglages.html` › **Streamer.bot**.
+> 🔒 **Ce jeton est un secret** (c'est la clé de ton compte StreamElements) : ne le montre pas en live, ne l'envoie à personne. Il reste dans `mes-reglages.js`, sur ton PC : les mises à jour de l'overlay ne l'emportent jamais. S'il a fuité : même page › **Show secrets** › bouton pour en refaire un, puis recolle le nouveau.
+
+✅ **À chaque live** : rien à faire. L'overlay se branche tout seul à l'ouverture d'OBS, et se rebranche tout seul si internet coupe un moment.
 
 ### 6.3 Vérifier que l'overlay est bien branché
 
 OBS n'a pas de console (F12) : l'overlay a donc son propre **journal**, affiché directement dans la source.
 
-1. Dans OBS, double-clic sur la source d'alertes (dans la scène « Global — Alertes »).
+1. Dans OBS, double-clic sur la source d'alertes.
 2. Décoche **Fichier local** et colle dans **URL** l'adresse de la page suivie de `?journal=1` (geste C) :
    `file:///G:/Projets/Overlay/ambries/sources/alertes.html?journal=1`
-3. **OK** : un panneau sombre apparaît en haut à gauche. Tu dois y lire **✅ Connecté à Streamer.bot**.
-   - « ⚠️ Déconnecté de Streamer.bot » : Streamer.bot n'est pas lancé, ou son serveur WebSocket n'est pas démarré (6.2).
-   - « ⚠️ Streamer.bot désactivé » : coche « Se connecter à Streamer.bot » dans `reglages.html`.
-4. Chaque événement reçu s'y ajoute (ex. `Twitch.Follow → follow · Pseudo`), avec **les données brutes** reçues en dessous.
+3. **OK** : un panneau sombre apparaît en haut à gauche de l'écran. Tu dois y lire **✅ Connecté à StreamElements**, puis **📊 Compteurs de la chaîne** avec ton nombre de followers et d'abonnés.
+   - « ⚠️ Pas de jeton StreamElements » : colle ton jeton dans `reglages.html` (6.2).
+   - « ❌ StreamElements refuse le jeton » : il est mal copié (il manque un bout ?) ou il a été refait : recopie-le (6.2).
+   - « … connexion à StreamElements » qui reste seul : pas d'internet sur le PC, ou un pare-feu bloque `astro.streamelements.com`.
+   - « ⚠️ StreamElements désactivé » : coche « Se connecter à StreamElements » dans `reglages.html`.
+4. Chaque événement reçu s'y ajoute (ex. `follow → follow · Pseudo`), avec **les données brutes** reçues de StreamElements en dessous.
 5. Une fois vérifié, **retire `?journal=1`** de l'adresse (sinon le panneau reste à l'écran pendant le live).
+
+Le journal marche sur toutes les pages (`?journal=1`), et aussi avec `?test=1` pour voir passer les fausses alertes.
 
 ### 6.4 Événement par événement
 
-Une fois Streamer.bot branché, **rien à régler par événement** : l'overlay les écoute tous. Les textes se changent dans `reglages.html` › **Alertes** (avec un aperçu).
+Une fois StreamElements branché, **rien à régler par événement** : l'overlay les écoute tous. Les textes se changent dans `reglages.html` › **Alertes** (avec un aperçu).
 
 | Événement Twitch | Alerte |
 |---|---|
@@ -402,8 +408,9 @@ Abonnements, abonnements offerts et bits demandent une chaîne **affiliée** ou 
 
 ### 6.5 Les dons (facultatif)
 
-Twitch ne gère pas les dons en argent : ils passent par un service (StreamElements, Streamlabs, Ko-fi, Tipeee). Dans Streamer.bot, onglet **Integrations**, choisis ton service et suis ses indications (en général, coller une **clé** copiée depuis le tableau de bord du service, puis **Connect**).
-Si tu ne reçois ni dons ni bits, décoche la case correspondante du bandeau : `reglages.html` › **Bandeau d'infos**.
+Twitch ne gère pas les dons en argent. Avec StreamElements, ils sont **déjà branchés** : ta page de dons est **`streamelements.com/<ton pseudo>/tip`** (à mettre dans un panneau de ta chaîne, « Soutenir »). Pour recevoir l'argent : streamelements.com › **Revenue** › **Tipping settings**, puis relie ton compte PayPal (ou un autre moyen proposé).
+
+Chaque don arrive tout seul dans l'overlay, avec son montant. *(Les dons faits par un autre service, Ko-fi, Streamlabs ou Tipeee, n'arrivent pas : passe par la page de dons StreamElements.)*
 
 ### 6.6 L'objectif (followers OU abonnés, avec les vrais nombres)
 
@@ -417,28 +424,20 @@ Si tu ne reçois ni dons ni bits, décoche la case correspondante du bandeau : `
 
 Une seule source peut aussi afficher l'autre compteur sans toucher aux réglages : ajoute `?objectif=sub` (ou `?objectif=follow`) à son adresse.
 
-**B. Les vrais nombres de la chaîne, avec Streamer.bot (une fois, 5 minutes)**
+**B. Les vrais nombres de la chaîne (automatique avec StreamElements)**
 
-Sans ça, l'overlay compte les follows et abonnements reçus **pendant qu'OBS est ouvert** seulement. Avec, il demande à Twitch le **vrai total** (rien n'est modifié sur Twitch : il ne fait que lire).
+Rien à faire de plus : dès que StreamElements est branché (6.2), l'overlay lit le **vrai total** de followers et d'abonnés de ta chaîne, à l'ouverture de chaque page puis à chaque changement. Rien n'est modifié sur Twitch : il ne fait que lire.
 
-1. Dans le dossier de l'overlay, ouvre **`outils/streamerbot-compteurs.cs`** avec le Bloc-notes, **Ctrl + A**, **Ctrl + C**.
-2. Streamer.bot › onglet **Actions** › clic droit dans la liste de gauche › **Add**.
-3. **Name** : écris exactement **`Overlay – Compteurs`** (avec le tiret long « – » ; le plus sûr : copie-le d'ici) › **OK**.
-4. Sélectionne cette action, puis dans le cadre **Sub-Actions** (à droite) : clic droit › **Core › C# › Execute C# Code**.
-5. Dans la fenêtre qui s'ouvre : efface ce qui est écrit, **Ctrl + V**, puis **Compile** en bas. Il doit écrire **« Compiled successfully »**. Clique **Save and Compile** (ou **OK**).
-6. Mise à jour régulière : onglet **Settings › Timed Actions** › clic droit › **Add** › nom `Compteurs`, **Interval** `300` (secondes), coche **Enabled** et **Repeat** › **OK**. Retourne dans **Actions** › ton action **Overlay – Compteurs** › cadre **Triggers** › clic droit › **Core › Timed Actions** › choisis **Compteurs**.
-7. Vérifie dans `reglages.html` › **Objectif** que **Les vrais nombres de la chaîne, depuis Streamer.bot** est coché (c'est le cas par défaut).
+**Vérification** : ajoute `?journal=1` à la source d'objectif (6.3). Une ligne **« 📊 Compteurs de la chaîne »** doit apparaître avec tes nombres, juste après « ✅ Connecté à StreamElements ».
 
-**Vérification** : ajoute `?journal=1` à la source d'objectif (6.3). Une ligne **« 📊 Compteurs de la chaîne »** doit apparaître avec tes nombres, juste après « ✅ Connecté ». L'overlay lance aussi l'action tout seul à chaque fois qu'une page se branche à Streamer.bot. Si tu lis **« Action … introuvable »** : le nom de l'action n'est pas exactement `Overlay – Compteurs`.
+> Les abonnés : seulement si la chaîne est **affiliée** ou **partenaire** (sinon il n'y en a pas). La case **Les vrais nombres de la chaîne, depuis StreamElements** (`reglages.html` › **Objectif**) doit rester cochée (c'est le cas par défaut).
 
-> Les abonnés : seulement si la chaîne est **affiliée** ou **partenaire** (sinon Twitch répond 0). Entre deux mises à jour, chaque follow ou abonnement reçu fait avancer la barre tout de suite.
-
-**Sans Streamer.bot** : décoche la case de l'étape B7 et mets ton vrai nombre dans **Followers : nombre de départ** (ou **Abonnés : nombre de départ**) ; le changer remet ce compteur à cette valeur.
+**Sans StreamElements** : décoche cette case et mets ton vrai nombre dans **Followers : nombre de départ** (ou **Abonnés : nombre de départ**) ; le changer remet ce compteur à cette valeur. L'overlay compte alors seulement ce qui arrive pendant qu'OBS est ouvert.
 
 ### 6.7 Tester les vraies alertes
 
 - **Sans Twitch** : `?test=1` sur une page (fausses alertes toutes les 9 secondes, sans toucher au vrai compteur), ou `reglages.html` › **Tester**.
-- **Pour de vrai** : demande à un ami (ou à un deuxième compte) de suivre la chaîne, OBS et Streamer.bot ouverts.
+- **Pour de vrai** : demande à un ami (ou à un deuxième compte) de suivre la chaîne, OBS ouvert.
 
 > ⚠️ **Pas encore vérifié sur un vrai live** : si une alerte montre « Quelqu'un » ou « ? », fais une capture d'écran du journal (6.3) pour faire corriger l'overlay.
 ---
@@ -508,7 +507,7 @@ node outils/exporter-chaine.mjs
 |---|---|
 | `?test=1` | faux messages de chat et fausses alertes qui défilent |
 | `?apercu=1` | affiche les zones de la cam et du jeu |
-| `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
+| `?journal=1` | affiche le journal : connexion à StreamElements et derniers événements reçus (6.3) |
 | `?objectif=sub` / `?objectif=follow` | la barre d'objectif affiche les abonnés / les followers, quel que soit le réglage (6.6) |
 | `?chat=0` · `?bandeau=0` | retire le chat ou le bandeau intégré à la scène |
 | `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
@@ -609,7 +608,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → Vérifie l'identifiant Twitch dans `reglages.html` › **La chaîne** (l'identifiant exact, en minuscules). Le chat n'affiche que les messages envoyés **après** l'ouverture de la page, et il a besoin d'internet.
 
 **Les alertes ne s'affichent pas**
-→ Streamer.bot est-il lancé, serveur WebSocket **démarré** (port `8080`), compte Broadcaster connecté ? Regarde le journal (6.3, `?journal=1`) : il dit ce qui coince.
+→ Le jeton StreamElements est-il collé dans `reglages.html` (6.2) ? Regarde le journal (6.3, `?journal=1`) : il dit ce qui coince (pas de jeton, jeton refusé, pas d'internet). Puis actualise la source d'alertes.
 
 **Les réglages ne changent rien dans OBS**
 → Après **Enregistrer** dans `reglages.html`, il faut actualiser les sources : clic droit › **Actualiser**, ou le script `actualiser-obs.lua` (section 2) qui le fait tout seul.
@@ -618,7 +617,7 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 → Coche **Contrôler l'audio via OBS** sur la source d'alertes et vérifie son volume dans le mélangeur.
 
 **Une alerte s'affiche mal (pseudo manquant, « ? »…)**
-→ OBS n'a pas de console (F12) : ajoute `?journal=1` à l'adresse de la source d'alertes (décoche *Fichier local*, colle l'adresse de la page suivie de `?journal=1`). Un panneau affiche la connexion à Streamer.bot (« ✅ Connecté ») et chaque événement reçu avec ses données brutes : fais-en une capture d'écran pour faire corriger l'overlay, puis retire `?journal=1`.
+→ OBS n'a pas de console (F12) : ajoute `?journal=1` à l'adresse de la source d'alertes (décoche *Fichier local*, colle l'adresse de la page suivie de `?journal=1`). Un panneau affiche la connexion à StreamElements (« ✅ Connecté ») et chaque événement reçu avec ses données brutes : fais-en une capture d'écran pour faire corriger l'overlay, puis retire `?journal=1`.
 
 **La cam ne tombe pas pile dans le cadre**
 → Le plus simple : OBS › **Outils › Scripts** › `actualiser-obs.lua` › **Placer les webcams sur toutes les scènes** (le nom de ta webcam doit contenir « cam »). Sinon :

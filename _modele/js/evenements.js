@@ -1,6 +1,6 @@
 /* =====================================================================
    ÉVÉNEMENTS — follows, abonnements, bits, raids, dons.
-   Reçus depuis Streamer.bot (WebSocket local), ou simulés avec ?test=1.
+   Reçus depuis StreamElements (par internet, avec le jeton du compte), ou simulés avec ?test=1.
 
    Chaque événement est normalisé en :
    { type, nom, montant, mois, nombre, destinataire }
@@ -16,8 +16,8 @@
                    sub:    { titre, cible, depart },
                    automatique: true }                        // false = compté à la main seulement
    Les DEUX compteurs (etat.compteFollow, etat.compteSub) tournent toujours : ils avancent à chaque follow /
-   abonnement reçu, et prennent les VRAIS nombres de la chaîne quand Streamer.bot les envoie (action
-   « Overlay – Compteurs », outils/streamerbot-compteurs.cs : { overlay: "compteurs", followers, abonnes }).
+   abonnement reçu, et prennent les VRAIS nombres de la chaîne donnés par StreamElements (au branchement, puis à
+   chaque changement : follower-total, subscriber-total).
    Evenements.objectif = celui affiché (une source peut forcer l'autre : ?objectif=sub ou ?objectif=follow) ;
    son compteur : etat[Evenements.objectif.cle]. Ancien format (objectif: { type, titre, cible, depart }) accepté.
    ===================================================================== */
@@ -72,8 +72,8 @@ const Evenements = (() => {
     return atteints;
   }
 
-  // ---------- Les vrais nombres de la chaîne, envoyés par Streamer.bot ----------
-  // { overlay: "compteurs", followers: 1234, abonnes: 12 } → le compteur de chaque objectif prend le vrai nombre.
+  // ---------- Les vrais nombres de la chaîne, donnés par StreamElements ----------
+  // { followers: 1234, abonnes: 12 } (l'un ou l'autre peut manquer) → le compteur de chaque objectif prend le vrai nombre.
   // La toute première fois, pas d'alerte « objectif atteint » (le nombre était peut-être déjà au-delà).
   function compteurs(d) {
     const nombres = { follow: Number(d.followers), sub: Number(d.abonnes) };
@@ -100,7 +100,7 @@ const Evenements = (() => {
     atteints.forEach(alerteObjectif);
   }
 
-  // ---------- Lecture tolérante des données Streamer.bot ----------
+  // ---------- Lecture tolérante des données reçues ----------
   // Cherche la première clé présente, jusqu'à 3 niveaux de profondeur.
   function cherche(o, cles, prof = 0) {
     if (!o || typeof o !== 'object' || prof > 3) return undefined;
@@ -110,46 +110,59 @@ const Evenements = (() => {
     }
     return undefined;
   }
-  const NOMS = ['displayName', 'display_name', 'user_name', 'userName', 'from_broadcaster_user_name', 'fromBroadcasterUserName', 'username', 'name', 'login', 'user_login'];
+
+  // ---------- Lecture des activités StreamElements ----------
+  // Une activité : { type: "follow" | "subscriber" | "communityGiftPurchase" | "cheer" | "raid" | "tip" …,
+  //                  data: { username, displayName, amount, tier, gifted, sender, bulkGifted, isCommunityGift, currency, message } }
+  // amount = mois d'abonnement, bits, spectateurs du raid, montant du don, ou nombre de cadeaux selon le type.
+  const NOMS = ['displayName', 'display_name', 'username', 'name', 'login'];
   const nomDe = d => cherche(d, NOMS) || 'Quelqu’un';
   const ANONYME = (C.alertes && C.alertes.anonyme) || 'quelqu’un';
 
+  // Une « pluie » d'abonnements offerts arrive en deux temps : l'achat (communityGiftPurchase, ou subscriber
+  // bulkGifted), puis chacun des cadeaux (isCommunityGift) : on n'affiche que la pluie, une seule fois.
   let dernierGiftBomb = { nom: '', t: 0 };
+  const pluieRecente = nom => dernierGiftBomb.nom === nom && Date.now() - dernierGiftBomb.t < 15000;
 
-  function depuisStreamerbot(cle, msg) {
-    const d = (msg && msg.data) || msg || {};
+  function depuisStreamElements(a) {
+    const d = (a && a.data) || {};
     const nom = nomDe(d);
-    switch (cle) {
-      case 'Twitch.Follow': return { type: 'follow', nom };
-      case 'Twitch.Sub': return { type: 'sub', nom };
-      case 'Twitch.ReSub': return { type: 'resub', nom, mois: cherche(d, ['cumulativeMonths', 'cumulative_months', 'cumulative', 'months', 'monthsSubscribed', 'duration_months']) || '?' };
-      case 'Twitch.GiftSub': {
-        // Pendant une « pluie » de cadeaux, Twitch envoie aussi chaque cadeau : on les ignore.
-        if (dernierGiftBomb.nom === nom && Date.now() - dernierGiftBomb.t < 10000) return null;
-        const r = d.recipient || d.recipientUser || {};
-        return { type: 'giftsub', nom, destinataire: cherche(r, NOMS) || cherche(d, ['recipientDisplayName', 'recipientUserName', 'recipient_user_name', 'recipientName']) || ANONYME };
-      }
-      case 'Twitch.GiftBomb':
+    const montant = d.amount;
+    switch (a && a.type) {
+      case 'follow': case 'follower': return { type: 'follow', nom };
+      case 'communityGiftPurchase': {
+        if (pluieRecente(nom)) return null;
         dernierGiftBomb = { nom, t: Date.now() };
-        return { type: 'giftbomb', nom, nombre: cherche(d, ['gifts', 'total', 'count', 'amount']) || '?' };
-      case 'Twitch.Cheer': return { type: 'bits', nom, montant: cherche(d, ['bits', 'amount']) || '?' };
-      case 'Twitch.Raid': return { type: 'raid', nom, montant: cherche(d, ['viewers', 'viewerCount', 'viewer_count']) || '?' };
-      default: { // dons (StreamElements, Streamlabs, Ko-fi, Tipeee…)
-        const montant = cherche(d, ['formattedAmount', 'formatted_amount', 'amount']);
-        const devise = { EUR: '€', USD: '$', GBP: '£', CAD: '$ CA', CHF: 'CHF' }[cherche(d, ['currency'])] || cherche(d, ['currency']) || '€';
+        return { type: 'giftbomb', nom, nombre: montant || '?' };
+      }
+      case 'subscriber': {
+        const offreur = d.sender ? String(d.sender) : '';
+        if (d.isCommunityGift) return null;                       // un des cadeaux d'une pluie, déjà annoncée
+        if (d.bulkGifted) {
+          const de = offreur || nom;
+          if (pluieRecente(de)) return null;
+          dernierGiftBomb = { nom: de, t: Date.now() };
+          return { type: 'giftbomb', nom: de, nombre: montant || '?' };
+        }
+        if (d.gifted || offreur) return { type: 'giftsub', nom: offreur || ANONYME, destinataire: nom };
+        const mois = parseInt(montant, 10);
+        return mois > 1 ? { type: 'resub', nom, mois } : { type: 'sub', nom };
+      }
+      case 'cheer': return { type: 'bits', nom, montant: montant || '?' };
+      case 'raid': return { type: 'raid', nom, montant: montant || '?' };
+      case 'tip': {
+        const devise = { EUR: '€', USD: '$', GBP: '£', CAD: '$ CA', CHF: 'CHF' }[d.currency] || d.currency || '€';
         const valeur = Number(montant);
-        const texte = typeof montant === 'string' && isNaN(valeur) ? montant   // déjà formaté, ex. « 5,00 € »
-          : valeur.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + devise;
+        const texte = Number.isFinite(valeur)
+          ? valeur.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + devise : String(montant || '?');
         return { type: 'don', nom, montant: texte };
       }
+      default: return null;   // hôte, points de chaîne, autres plateformes… : pas d'alerte
     }
   }
 
-  const ECOUTES = ['Twitch.Follow', 'Twitch.Sub', 'Twitch.ReSub', 'Twitch.GiftSub', 'Twitch.GiftBomb', 'Twitch.Cheer', 'Twitch.Raid',
-    'StreamElements.Tip', 'Streamlabs.Donation', 'Kofi.Donation', 'TipeeeStream.Donation'];
-
   // ---------- Journal à l'écran : ?journal=1 ----------
-  // Un panneau, visible dans OBS, qui montre l'état de la connexion à Streamer.bot et les derniers
+  // Un panneau, visible dans OBS, qui montre l'état de la connexion à StreamElements et les derniers
   // événements reçus avec leurs données brutes (pour vérifier ou faire corriger une alerte).
   const JOURNAL = params.has('journal');
   let panneau;
@@ -172,53 +185,89 @@ const Evenements = (() => {
   }
   const etatJournal = t => { journal(t, '', t.startsWith('✅') ? '#8BD17C' : '#F5B82E'); };
 
-  // ---------- Connexion ----------
-  let connecte = false;
-  function connecter() {
-    const sb = C.streamerbot || {};
-    if (sb.actif === false) return etatJournal('⚠️ Streamer.bot désactivé dans les réglages (streamerbot.actif)');
-    if (!window.StreamerbotClient) {
-      console.warn('[Overlay] Client Streamer.bot non chargé (connexion internet ?)');
-      return etatJournal('⚠️ Client Streamer.bot non chargé : pas de connexion internet au démarrage de la page ?');
-    }
-    etatJournal(`… connexion à Streamer.bot sur ${sb.hote || '127.0.0.1'}:${sb.port || 8080}`);
-    const client = new window.StreamerbotClient({
-      host: sb.hote || '127.0.0.1', port: sb.port || 8080, endpoint: '/',
-      password: sb.motDePasse || undefined,
-      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); demanderCompteurs(client); },
-      onDisconnect: () => { connecte = false; console.info('[Overlay] Déconnecté de Streamer.bot'); etatJournal('⚠️ Déconnecté de Streamer.bot (lancé ? serveur WebSocket démarré ?)'); },
-    });
+  // ---------- Connexion à StreamElements ----------
+  // Par internet, avec le « JWT Token » du compte StreamElements (réglages › StreamElements, gardé dans mes-reglages.js).
+  //   wss://astro.streamelements.com : on s'abonne à channel.activities (follows, abonnements, bits, raids, dons)
+  //   et à channel.session.update (follower-total, subscriber-total : les vrais nombres, pour l'objectif) ;
+  //   au branchement, les nombres actuels : https://api.streamelements.com/kappa/v2/sessions/<chaîne>.
+  // Reconnexion toute seule (5 s, puis de plus en plus espacé jusqu'à 1 minute) si internet coupe.
+  const SE = C.streamelements || {};
+  const JETON = String(SE.jeton || '').trim();
+  let connecte = false, attente = 5000, ws = null;
+
+  // Le jeton contient l'identifiant de la chaîne StreamElements (champ « channel »)
+  function chaineDuJeton() {
     try {
-      client.on('General.Custom', msg => {
-        let d = (msg && msg.data !== undefined) ? msg.data : msg;
-        if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return; } }
-        if (d && d.data && d.data.overlay) d = d.data;
-        if (!d || d.overlay !== 'compteurs') return;
-        journal(`📊 Compteurs de la chaîne : ${d.followers ?? '?'} followers · ${d.abonnes ?? '?'} abonnés`, 'données reçues : ' + JSON.stringify(d), '#8BD17C');
-        compteurs(d);
-      });
-    } catch (err) { console.warn('[Overlay] General.Custom non géré'); }
-    ECOUTES.forEach(cle => {
-      try {
-        client.on(cle, msg => {
-          console.debug('[Overlay] ' + cle, msg);   // utile pour vérifier le format reçu
-          const e = depuisStreamerbot(cle, msg);
-          journal(`${cle} → ${e ? `${e.type} · ${e.nom}${e.montant ? ' · ' + e.montant : ''}${e.mois ? ' · ' + e.mois + ' mois' : ''}${e.nombre ? ' · ' + e.nombre : ''}${e.destinataire ? ' → ' + e.destinataire : ''}` : 'ignoré'}`,
-            'données reçues : ' + JSON.stringify((msg && msg.data) || msg));
-          if (e) emettre(e);
-        });
-      } catch (err) { console.warn('[Overlay] Événement non géré par Streamer.bot : ' + cle); }
-    });
+      const b = JETON.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(b + '==='.slice((b.length + 3) % 4))).channel || '';
+    } catch (e) { return ''; }
   }
 
-  // Au branchement : on demande à Streamer.bot les vrais nombres (son action « Overlay – Compteurs »)
-  const ACTION_COMPTEURS = (C.streamerbot || {}).actionCompteurs || 'Overlay – Compteurs';
-  function demanderCompteurs(client) {
-    if (CO.automatique === false) return;
-    Promise.resolve().then(() => client.doAction({ name: ACTION_COMPTEURS })).then(r => {
-      if (r && r.status && r.status !== 'ok') journal(`ℹ️ Action « ${ACTION_COMPTEURS} » introuvable dans Streamer.bot : les objectifs comptent à la main (voir le tuto)`, JSON.stringify(r), '#F5B82E');
-    }).catch(err => journal(`ℹ️ Action « ${ACTION_COMPTEURS} » : pas de réponse`, String(err && err.message || err), '#F5B82E'));
+  function nombresDeSession(s) {
+    const n = cle => { const v = s && s[cle]; return v && typeof v === 'object' ? v.count : v; };
+    return { followers: n('follower-total'), abonnes: n('subscriber-total') };
   }
+
+  function lireCompteurs() {
+    if (CO.automatique === false) return;
+    const appel = chemin => fetch('https://api.streamelements.com/kappa/v2/' + chemin, { headers: { Authorization: 'Bearer ' + JETON, Accept: 'application/json' } })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+    const chaine = chaineDuJeton();
+    (chaine ? Promise.resolve(chaine) : appel('channels/me').then(c => c._id))
+      .then(id => appel('sessions/' + id))
+      .then(r => {
+        const d = nombresDeSession((r && r.data) || r);
+        journal(`📊 Compteurs de la chaîne : ${d.followers ?? '?'} followers · ${d.abonnes ?? '?'} abonnés`, '', '#8BD17C');
+        compteurs(d);
+      })
+      .catch(err => journal('ℹ️ Nombres de la chaîne non lus (' + (err && err.message || err) + ') : l\'objectif avancera à chaque follow / abonnement', '', '#F5B82E'));
+  }
+
+  function connecter() {
+    if (SE.actif === false) return etatJournal('⚠️ StreamElements désactivé dans les réglages (streamelements.actif)');
+    if (!JETON) return etatJournal('⚠️ Pas de jeton StreamElements : reglages.html › StreamElements (voir le tuto, section 6)');
+    etatJournal('… connexion à StreamElements');
+    try { ws = new WebSocket('wss://astro.streamelements.com'); } catch (e) { return plusTard(); }
+    ws.onopen = () => {
+      ['channel.activities', 'channel.session.update'].forEach((topic, i) => ws.send(JSON.stringify({
+        type: 'subscribe', nonce: `${topic}-${Date.now()}-${i}`, data: { topic, token: JETON, token_type: 'jwt' } })));
+    };
+    ws.onmessage = ev => {
+      let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      if (m.type === 'response') {
+        if (m.error) {
+          etatJournal(`❌ StreamElements refuse le jeton (${m.error}${m.data && m.data.message ? ' : ' + m.data.message : ''}) : recopie-le dans reglages.html`);
+          return;
+        }
+        {
+          attente = 5000;
+          if (!connecte) { connecte = true; console.info('[Overlay] Connecté à StreamElements'); etatJournal('✅ Connecté à StreamElements'); lireCompteurs(); }
+        }
+        return;
+      }
+      if (m.type !== 'message') return;
+      if (m.topic === 'channel.activities') {
+        const a = m.data || {};
+        console.debug('[Overlay] activité', a);   // utile pour vérifier le format reçu
+        const e = depuisStreamElements(a);
+        journal(`${a.type || '?'} → ${e ? `${e.type} · ${e.nom}${e.montant ? ' · ' + e.montant : ''}${e.mois ? ' · ' + e.mois + ' mois' : ''}${e.nombre ? ' · ' + e.nombre : ''}${e.destinataire ? ' → ' + e.destinataire : ''}` : 'ignoré'}`,
+          'données reçues : ' + JSON.stringify(a.data || a));
+        if (e) emettre(e);
+      } else if (m.topic === 'channel.session.update') {
+        const d = m.data || {}, cle = d.key || d.name;
+        if (cle !== 'follower-total' && cle !== 'subscriber-total') return;
+        const n = d.data && typeof d.data === 'object' ? d.data.count : d.data;
+        journal(`📊 ${cle === 'follower-total' ? 'Followers' : 'Abonnés'} de la chaîne : ${n}`, '', '#8BD17C');
+        compteurs(cle === 'follower-total' ? { followers: n } : { abonnes: n });
+      }
+    };
+    ws.onclose = () => {
+      if (connecte) etatJournal('⚠️ Déconnecté de StreamElements (internet ?) : nouvelle tentative…');
+      connecte = false; plusTard();
+    };
+    ws.onerror = () => {};   // suivi de onclose
+  }
+  function plusTard() { setTimeout(connecter, attente); attente = Math.min(60000, attente * 2); }
 
   // ---------- Mode test : ?test=1 ----------
   const NOMS_TEST = (C.test && C.test.noms) || ['Pseudo_1', 'Pseudo_2', 'Pseudo_3', 'Pseudo_4', 'Pseudo_5', 'Pseudo_6'];
@@ -234,7 +283,7 @@ const Evenements = (() => {
   }
   function simuler() {
     const types = ['follow', 'follow', 'sub', 'resub', 'giftsub', 'giftbomb', 'bits', 'raid', 'don'];
-    setTimeout(() => { etat.synchro = 1; compteurs({ overlay: 'compteurs', followers: Math.max(0, objectifs.follow.cible - 2), abonnes: Math.max(0, objectifs.sub.cible - 3) }); }, 800);
+    setTimeout(() => { etat.synchro = 1; compteurs({ followers: Math.max(0, objectifs.follow.cible - 2), abonnes: Math.max(0, objectifs.sub.cible - 3) }); }, 800);
     let i = 0;
     setTimeout(function suivant() {
       emettre(exemple(types[i++ % types.length]));

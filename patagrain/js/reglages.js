@@ -241,6 +241,9 @@ window.MES_REGLAGES = ${formater(perso)};
       if (ob.type) ob.affiche = ob.type;
       delete ob.type;
     }
+    // Réglages qui n'existent plus (ex. streamerbot : remplacé par StreamElements) : oubliés au prochain « Enregistrer »
+    const OBSOLETES = ['streamerbot'];
+    OBSOLETES.forEach(k => delete enregistre[k]);
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';
     document.title = `${nom} — Réglages`;
@@ -566,6 +569,7 @@ window.MES_REGLAGES = ${formater(perso)};
       relire();                                                   // garde ce qui a déjà été tapé
       const repris = difference(ancien, defaut);
       delete repris.id;
+      OBSOLETES.forEach(k => delete repris[k]);
       const chemins = feuilles(repris);
       chemins.forEach(c => ecrireCle(valeurs, c, copie({ v: lire(repris, c) }).v));
       if (Array.isArray(repris.ambiances)) valeurs.ambiances = copie(repris.ambiances);

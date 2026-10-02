@@ -12,7 +12,7 @@
 | Identifiant Twitch | `johnvongurt` — **à confirmer** |
 | Ce qui est streamé | — (à préciser) |
 | Écran / canevas OBS | 1920×1080 (supposé) |
-| Alertes | Streamer.bot, à installer |
+| Alertes | StreamElements (par internet) : compte + jeton à coller dans reglages.html |
 
 ## Direction artistique
 
@@ -51,13 +51,13 @@
 | Transitions (vidéos Stinger : sas 1100 ms, passage 1000 ms) | ✅ |
 | Kit chaîne Twitch (`chaine/`, 40 PNG dans `chaine/export/`) | ✅ (à valider) |
 | TUTO.md | ✅ |
-| Testé dans OBS / avec Streamer.bot | ⬜ |
+| Testé dans OBS / avec le vrai StreamElements | ⬜ (testé avec un faux serveur StreamElements) |
 
 ## À faire / questions ouvertes
 
 - [ ] Confirmer le nom de chaîne et l'identifiant Twitch.
 - [ ] Choix définitifs du frère : thème, accent, police (défauts : sombre, orange, Barlow).
-- [ ] Coller l'action Streamer.bot « Overlay – Compteurs » (TUTO 6.6) pour la barre d'objectif.
+- [ ] Brancher StreamElements (TUTO 6.2 : compte + jeton dans reglages.html).
 - [ ] Option : collection de scènes OBS prête à importer.
 - [ ] Option : fin en amerrissage.
 - [ ] Valider le kit de chaîne Twitch (`chaine/kit.html`) puis l'envoyer sur Twitch (TUTO §7).
@@ -87,3 +87,4 @@
 - **2026-10-01** — Demandes : « la cam de l'overlay bouge mais pas la source caméra dans OBS », « un script qui place toutes les cams sur toutes les scènes », « Options des scènes trop fouillis », « la cam de Jeu à un X/Y précis, en gardant les préréglages, et voir leurs coordonnées ». → `js/zones.js` (les zones de la webcam, seule source des chiffres) + `Options.cam()` (commun) ; scène Jeu : préréglage, position perso `{ x, y, l, h }` (`?cam=x,y,l,h`) ou pas de webcam. `reglages.html` › Options des scènes refait : un tableau scènes × éléments avec interrupteurs, et un bloc « La webcam de la scène Jeu » (préréglages avec coordonnées, position perso, plan où l'on fait glisser la cam, zones fixes des autres scènes). Script OBS `actualiser-obs.lua` : bouton « Placer les webcams sur toutes les scènes (et les ajouter là où elles manquent) » + replacement automatique quand les réglages changent. Testé hors OBS (faux OBS, 1440p, groupes, carte d'acquisition non touchée) ; **pas testé dans le vrai OBS**.
 - **2026-10-02** — Demandes : « l'interface de réglages a des soucis d'alignement » et « plus du tout de voix IA par défaut » → `reglages.html` : un réglage par ligne (nom + aide à gauche, champ à droite, interrupteur pour les cases à cocher), sommaire cliquable en haut, bloc « Réglages avancés » replié. Section Sons réduite à : activer, volume général, volume de ta voix (+ avancé : annonces avant T-15 s, volume de chaque son). Voix de synthèse et bips de secours supprimés (`js/ambiance.js`, `config.js` : plus de `voix`, `voixVitesse`, `voixTextes`) : seuls les fichiers `assets/audio/voix/*.mp3` sont joués. Plus d'« Autres réglages » avec des clés techniques. Vérifié dans le navigateur (bureau et mobile) ; pas écouté dans OBS.
 - **2026-10-02** — Demande : « une barre d'objectif pour les follows aussi ? avec les vrais nombres de Twitch, pas à la main ; plutôt un interrupteur : la barre affiche les followers OU les abonnés, chacun son compteur et son objectif » → **une seule barre**, `config.js › objectif` : `affiche` ("follow" ou "sub"), `automatique`, et `follow` / `sub` (titre, cible, départ chacun) ; les deux compteurs tournent toujours (bascule = barre tout de suite juste) ; `?objectif=sub|follow` sur une source. Les vrais totaux viennent de **Streamer.bot** : action « Overlay – Compteurs » (`outils/streamerbot-compteurs.cs`, à coller une fois, TUTO 6.6), lancée par l'overlay à la connexion et toutes les 5 minutes. Anciens réglages (`objectif.type/cible/depart`) repris tout seuls. Vérifié dans le navigateur (follow/sub, mode test, ancien mes-reglages.js) ; **pas testé** : le code C# dans un vrai Streamer.bot (pas de Streamer.bot ici).
+- **2026-10-02** — Demande : « au lieu de Streamer.bot, StreamElements ? » puis « oui, on remplace Streamer.bot ! » → **Streamer.bot retiré**, tout passe par **StreamElements**, par internet (rien à installer) : `js/evenements.js` (commun) se branche à `wss://astro.streamelements.com` avec le jeton du compte (« JWT Token », `reglages.html` › StreamElements, gardé dans mes-reglages.js), écoute `channel.activities` (follow, sub, réabonnement, cadeau, pluie de cadeaux annoncée une seule fois, bits, raid, dons) et `channel.session.update` (vrais totaux followers / abonnés pour l'objectif, lus aussi au branchement), se rebranche tout seul. Plus d'action C# ni de client Streamer.bot ; les anciens réglages streamerbot sont oubliés au prochain Enregistrer. TUTO §6 réécrit (6.2 brancher StreamElements, 6.3 journal, 6.5 dons par la page de dons StreamElements, 6.6 vrais nombres automatiques). Testé dans le navigateur avec un **faux serveur StreamElements** (chaque type d'événement, compteurs, objectif atteint, reconnexion) ; **pas testé** avec le vrai StreamElements ni dans OBS.

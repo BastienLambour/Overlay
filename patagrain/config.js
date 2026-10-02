@@ -46,11 +46,14 @@ window.CONFIG = {
     surface: "",
     texte: "",
   },
-  streamerbot: {
+  // ---------------------------------------------------------------------
+  // StreamElements (gratuit, par internet) : fait le lien entre Twitch et l'overlay pour les follows,
+  // abonnements, bits, raids, dons, et les vrais nombres de followers / abonnés de l'objectif. TUTO, section 6.
+  // Le jeton se colle dans reglages.html › StreamElements : il reste dans mes-reglages.js (jamais livré ni partagé).
+  // ---------------------------------------------------------------------
+  streamelements: {
     actif: true,
-    hote: "127.0.0.1",
-    port: 8080,
-    motDePasse: "",
+    jeton: "",           // le « JWT Token » du compte StreamElements (secret !) — ne l'écris pas ici, mais dans reglages.html
   },
   demarrage: {
     titre: "Le spectacle va commencer…",
@@ -91,12 +94,12 @@ window.CONFIG = {
   },
   // --- Objectif (bandeau et jauge, l'épée avance) ---
   // La barre affiche au choix les followers OU les abonnés : chacun son titre, sa cible et son compteur.
-  // Avec Streamer.bot et son action « Overlay – Compteurs » (tuto, section 6), les VRAIS nombres de la chaîne
+  // Avec StreamElements (tuto, section 6), les VRAIS nombres de la chaîne
   // arrivent tout seuls ; « depart » ne sert alors qu'au tout premier affichage (ou si automatique: false).
   // Le plus simple : reglages.html › Objectif.
   objectif: {
     affiche: "follow",   // ce que la barre affiche : "follow" (followers) ou "sub" (abonnés)
-    automatique: true,   // les vrais nombres depuis Streamer.bot (false = compté à la main, depuis « depart »)
+    automatique: true,   // les vrais nombres depuis StreamElements (false = compté à la main, depuis « depart »)
     follow: { titre: "Guilde des aventuriers", cible: 75, depart: 60 },
     sub:    { titre: "La Table ronde", cible: 10, depart: 0 },
   },

@@ -11,7 +11,7 @@
 | Identifiant Twitch | `<identifiant>` (confirmé / à confirmer) |
 | Ce qui est streamé | <jeux, discussion, JDR…> |
 | Écran / canevas OBS | <1920×1080 ou 2560×1440> |
-| Alertes | Streamer.bot (installé / à installer) |
+| Alertes | StreamElements (compte + jeton) |
 
 ## Direction artistique
 
@@ -46,7 +46,7 @@
 | Transitions (vidéos Stinger) | ⬜ |
 | Kit chaîne Twitch | ⬜ |
 | TUTO.md | ⬜ |
-| Testé dans OBS / avec Streamer.bot | ⬜ |
+| Testé dans OBS / avec StreamElements | ⬜ |
 
 ## À faire / questions ouvertes
 
