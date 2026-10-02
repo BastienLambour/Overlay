@@ -155,7 +155,7 @@ const Composants = (() => {
       <div class="obj-tete"><span class="obj-titre">${o.titre || 'Objectif'}</span><span class="obj-compte">0 / ${o.cible}</span></div>
       <div class="obj-piste"><div class="obj-plein"></div></div>`, z);
     Evenements.ecouter((e, etat) => {
-      const n = etat.compte ?? 0;
+      const n = etat[o.cle] ?? 0;
       el.querySelector('.obj-compte').textContent = `${n} / ${o.cible}`;
       el.querySelector('.obj-plein').style.width = Math.min(100, n / o.cible * 100) + '%';
     });

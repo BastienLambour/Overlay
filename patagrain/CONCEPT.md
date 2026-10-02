@@ -69,7 +69,7 @@
 ## À faire / questions ouvertes
 
 - [ ] Confirmer l'identifiant Twitch exact (`reglages.html` › La chaîne).
-- [ ] Remplir « Ton nombre ACTUEL » de followers (`reglages.html` › Objectif).
+- [ ] Coller l'action Streamer.bot « Overlay – Compteurs » (TUTO 6.6) pour la barre d'objectif.
 - [ ] Regarder les écrans avec le bouffon en continu (rythme, taille) et dire ce qui va ou pas.
 - [ ] Installer Streamer.bot et vérifier les premiers vrais événements (console F12).
 - [ ] Valider le kit de chaîne Twitch (`chaine/kit.html`) puis l'envoyer sur Twitch (TUTO §7).
@@ -112,3 +112,4 @@
 - **2026-10-02** — Choix : le dépôt publié par le serveur sera sur GitLab (https://gitlab.com/Bastien.Lambour/overlays, branche main), webhook GitLab. `serveur/installer.sh` et `serveur/LISEZMOI.md` réglés dessus par défaut.
 - **2026-10-02** — Le VPS héberge déjà d'autres sites (Nginx, certificat bastien-lambour.fr) → le serveur des overlays sera sur **https://overlays.bastien-lambour.fr** (même certificat, 80 → 443), dans `/var/www/overlays` (`depot/` privé, `site/` servi) ; `installer.sh` n'ajoute qu'un fichier Nginx et ne touche à aucun autre site. `miseAJour.adresse` = cette adresse. À faire : l'enregistrement DNS `overlays` → 217.154.115.223.
 - **2026-10-02** — Demande (et test du bouton « Mettre à jour ») : sur Pause, le d20 du rêve tombait toujours sur 1 → tirage **au hasard** (1 à 20) : il dort tant que ça ne fait pas 1 ; sur un 1, réveil en sursaut, chamallow, croque, puis il se rendort (≈ un réveil toutes les 2-3 min ; `?test=1` : le 2e lancer fait 1). Vérifié dans le navigateur (tirages variés, réveil sur 1).
+- **2026-10-02** — Demande : « une barre d'objectif pour les follows aussi ? avec les vrais nombres de Twitch, pas à la main ; plutôt un interrupteur : la barre affiche les followers OU les abonnés, chacun son compteur et son objectif » → **une seule barre**, `config.js › objectif` : `affiche` ("follow" ou "sub"), `automatique`, et `follow` / `sub` (titre, cible, départ chacun) ; les deux compteurs tournent toujours (bascule = barre tout de suite juste) ; `?objectif=sub|follow` sur une source. Les vrais totaux viennent de **Streamer.bot** : action « Overlay – Compteurs » (`outils/streamerbot-compteurs.cs`, à coller une fois, TUTO 6.6), lancée par l'overlay à la connexion et toutes les 5 minutes. Anciens réglages (`objectif.type/cible/depart`) repris tout seuls. Vérifié dans le navigateur (follow/sub, mode test, ancien mes-reglages.js) ; **pas testé** : le code C# dans un vrai Streamer.bot (pas de Streamer.bot ici).

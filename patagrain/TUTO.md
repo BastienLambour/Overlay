@@ -56,7 +56,7 @@ Toutes les pages sont dessinées en **1920 × 1080** et **s'adaptent toutes seul
 
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`) et **ce que tu fais aujourd'hui**.
-3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
+3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de Streamer.bot (section 6.6).
 4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
    La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
@@ -325,7 +325,7 @@ Ces pages se posent **en plus**, dans n'importe quelle scène, pour composer tes
 
 ### 4.4 ⚔️ Objectif — `sources/objectif.html`
 
-**À quoi ça sert** : la jauge « Guilde des aventuriers » où l'épée avance à chaque follow (ou abonnement, selon les réglages).
+**À quoi ça sert** : la jauge « Guilde des aventuriers » où l'épée avance à chaque follow (ou abonnement : `reglages.html` › Objectif, ou `?objectif=sub`).
 **Dans OBS :** geste A avec `sources/objectif.html`.
 **Options** : `?x=560&y=40&l=800&h=150` · `?test=1`
 
@@ -449,12 +449,35 @@ Twitch ne gère pas les dons en argent : ils passent par un service (StreamEleme
 2. Suis les indications de l'onglet : en général, coller une **clé** (un « token ») copiée depuis le tableau de bord du service, puis **Connect**.
 3. Fais un don de test depuis le site du service s'il le propose, et regarde l'alerte.
 
-### 6.6 L'objectif (la jauge et le bandeau)
+### 6.6 L'objectif (followers OU abonnés, avec les vrais nombres)
 
-1. `reglages.html` › **Objectif** : choisis ce qu'on compte (**les follows** ou **les abonnements**), le nom, la cible (ex. `50`) et **ton nombre ACTUEL**.
-2. Enregistre, puis actualise les sources.
+**Une seule barre**, qui affiche au choix **les followers** ou **les abonnés**. Chacun a son nom, son objectif et son compteur : on bascule quand on veut, la barre est tout de suite juste.
 
-Le compteur avance à chaque follow (ou abonnement) reçu **pendant que OBS est ouvert**, et s'en souvient d'un live à l'autre. Les follows arrivés **pendant qu'OBS était fermé** ne sont pas comptés : de temps en temps, remets ton vrai nombre dans **Ton nombre ACTUEL** (le changer remet le compteur à cette valeur).
+**A. Choisir ce que la barre affiche**
+
+1. `reglages.html` › **Objectif** › **Ce que la barre affiche** : **Les followers** ou **Les abonnés**.
+2. Pour chacun : le **nom de l'objectif** et l'**objectif à atteindre** (ex. `50`).
+3. **💾 Enregistrer**, puis actualise les sources dans OBS.
+
+Une seule source peut aussi afficher l'autre compteur sans toucher aux réglages : ajoute `?objectif=sub` (ou `?objectif=follow`) à son adresse.
+
+**B. Les vrais nombres de la chaîne, avec Streamer.bot (une fois, 5 minutes)**
+
+Sans ça, l'overlay compte les follows et abonnements reçus **pendant qu'OBS est ouvert** seulement. Avec, il demande à Twitch le **vrai total** (rien n'est modifié sur Twitch : il ne fait que lire).
+
+1. Dans le dossier de l'overlay, ouvre **`outils/streamerbot-compteurs.cs`** avec le Bloc-notes, **Ctrl + A**, **Ctrl + C**.
+2. Streamer.bot › onglet **Actions** › clic droit dans la liste de gauche › **Add**.
+3. **Name** : écris exactement **`Overlay – Compteurs`** (avec le tiret long « – » ; le plus sûr : copie-le d'ici) › **OK**.
+4. Sélectionne cette action, puis dans le cadre **Sub-Actions** (à droite) : clic droit › **Core › C# › Execute C# Code**.
+5. Dans la fenêtre qui s'ouvre : efface ce qui est écrit, **Ctrl + V**, puis **Compile** en bas. Il doit écrire **« Compiled successfully »**. Clique **Save and Compile** (ou **OK**).
+6. Mise à jour régulière : onglet **Settings › Timed Actions** › clic droit › **Add** › nom `Compteurs`, **Interval** `300` (secondes), coche **Enabled** et **Repeat** › **OK**. Retourne dans **Actions** › ton action **Overlay – Compteurs** › cadre **Triggers** › clic droit › **Core › Timed Actions** › choisis **Compteurs**.
+7. Vérifie dans `reglages.html` › **Objectif** que **Les vrais nombres de la chaîne, depuis Streamer.bot** est coché (c'est le cas par défaut).
+
+**Vérification** : ajoute `?journal=1` à la source d'objectif (6.3). Une ligne **« 📊 Compteurs de la chaîne »** doit apparaître avec tes nombres, juste après « ✅ Connecté ». L'overlay lance aussi l'action tout seul à chaque fois qu'une page se branche à Streamer.bot. Si tu lis **« Action … introuvable »** : le nom de l'action n'est pas exactement `Overlay – Compteurs`.
+
+> Les abonnés : seulement si la chaîne est **affiliée** ou **partenaire** (sinon Twitch répond 0). Entre deux mises à jour, chaque follow ou abonnement reçu fait avancer la barre tout de suite.
+
+**Sans Streamer.bot** : décoche la case de l'étape B7 et mets ton vrai nombre dans **Followers : nombre de départ** (ou **Abonnés : nombre de départ**) ; le changer remet ce compteur à cette valeur.
 
 ### 6.7 Tester les vraies alertes
 
@@ -534,6 +557,7 @@ node outils/exporter-chaine.mjs
 | `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
 | `?cam=1200,700,420,236` | *(Jeu)* webcam à une position perso : x, y, largeur, hauteur (pixels 1920 × 1080) |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
+| `?objectif=sub` / `?objectif=follow` | la barre d'objectif affiche les abonnés / les followers, quel que soit le réglage (6.6) |
 
 Le mode test **ne modifie pas** le vrai compteur de l'objectif. Le plus simple : ouvre `index.html` (tout y tourne en mode test), ou `reglages.html` › **Tester**.
 
@@ -557,7 +581,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) ; les couleurs d'origine sont au début de `css/theme.css` (palette « Royal bleu & or ») |
 | Les polices | fichiers dans `assets/polices/` (déjà fournis : Grenze Gotisch et Nunito), déclarés au début de `css/theme.css` |
 | Le dessin du bouffon ou de son chapeau | `outils/generer-bouffon.mjs` : `node outils/generer-bouffon.mjs` refait le bouffon, le chapeau et le logo, puis refaire les vidéos et le kit |
-| Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
+| Changer l'objectif affiché, ou le compter à la main | `reglages.html` › Objectif (6.6) |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
 

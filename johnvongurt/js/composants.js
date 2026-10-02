@@ -138,7 +138,7 @@ const Composants = (() => {
 
     const valeurs = { recrue: '', abonne: '', soutien: '', objectif: '' };
     Evenements.ecouter((e, etat) => {
-      const nouv = { recrue: etat.follow || '—', abonne: etat.abonne || '—', soutien: etat.soutien || '—', objectif: `${etat.compte ?? 0} / ${o.cible}` };
+      const nouv = { recrue: etat.follow || '—', abonne: etat.abonne || '—', soutien: etat.soutien || '—', objectif: `${etat[o.cle] ?? 0} / ${o.cible}` };
       Object.entries(nouv).forEach(([cle, v]) => {
         const item = el.querySelector(`[data-cle="${cle}"]`);
         if (!item || valeurs[cle] === v) return;
@@ -147,7 +147,7 @@ const Composants = (() => {
         valeurs[cle] = v;
       });
       const j = el.querySelector('.mini-jauge i');
-      if (j) j.style.width = Math.min(100, (etat.compte ?? 0) / o.cible * 100) + '%';
+      if (j) j.style.width = Math.min(100, (etat[o.cle] ?? 0) / o.cible * 100) + '%';
     });
     return el;
   }
@@ -161,8 +161,8 @@ const Composants = (() => {
         <div class="piste"><div class="piste-pleine"></div><div class="piste-fusee"><svg viewBox="-170 -170 340 340"><g transform="rotate(90) scale(.9)">${Commun.fusee({ id: 'f-obj', flamme: true })}</g></svg></div></div>
         <div class="astre lune"></div></div>`, z);
     Evenements.ecouter((e, etat) => {
-      const p = Math.min(100, (etat.compte ?? 0) / o.cible * 100);
-      el.querySelector('.compte').textContent = `${etat.compte ?? 0} / ${o.cible}`;
+      const p = Math.min(100, (etat[o.cle] ?? 0) / o.cible * 100);
+      el.querySelector('.compte').textContent = `${etat[o.cle] ?? 0} / ${o.cible}`;
       el.querySelector('.piste-pleine').style.width = p + '%';
       el.querySelector('.piste-fusee').style.left = p + '%';
     });

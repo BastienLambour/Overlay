@@ -41,7 +41,7 @@ const Reglages = (() => {
     }
     function cle() {
       if (texte[i] === '"' || texte[i] === "'") { const d = i; chaine(); return Function(`return ${texte.slice(d, i)}`)(); }
-      const m = /^([A-Za-z_$][\w$]*|\d+)/.exec(texte.slice(i));   // un nom, ou un nombre (ex. { 15: \"…\" })
+      const m = /^[A-Za-z_$][\w$]*/.exec(texte.slice(i));
       if (!m) erreur('nom de réglage attendu');
       i += m[0].length;
       return m[0];
@@ -100,7 +100,7 @@ const Reglages = (() => {
   // =====================================================================
   // 2. Écrire une valeur, à la façon de config.js
   // =====================================================================
-  const nomCle = k => (/^([A-Za-z_$][\w$]*|\d+)$/.test(k) ? k : JSON.stringify(k));
+  const nomCle = k => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
   // notes : commentaires qui étaient dans la liste d'origine (gardés en tête de la nouvelle liste)
   function formater(v, ind = '', multiligne = null, notes = []) {
     if (Array.isArray(v) && notes.length) {
@@ -231,6 +231,16 @@ window.MES_REGLAGES = ${formater(perso)};
     const RC = window.ReglagesChamps || { sections: [] };
     const defaut = copie(window.CONFIG_DEFAUT || window.CONFIG);   // config.js seul (les valeurs par défaut)
     const enregistre = copie(window.CONFIG);          // config.js + mes-reglages.js (déjà fusionnés par js/couleurs.js)
+    // Ancien format de l'objectif ({ type, titre, cible, depart }, dans un vieux mes-reglages.js) → nouveau
+    // ({ affiche, follow: {…}, sub: {…} }) : le prochain « Enregistrer » écrit le nouveau format.
+    const ob = enregistre.objectif;
+    if (ob && ['type', 'titre', 'cible', 'depart'].some(k => ob[k] !== undefined)) {
+      const type = ob.type || ob.affiche || 'follow';
+      ob[type] = { ...(ob[type] || {}) };
+      ['titre', 'cible', 'depart'].forEach(k => { if (ob[k] !== undefined) ob[type][k] = ob[k]; delete ob[k]; });
+      if (ob.type) ob.affiche = ob.type;
+      delete ob.type;
+    }
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';
     document.title = `${nom} — Réglages`;
@@ -289,10 +299,9 @@ window.MES_REGLAGES = ${formater(perso)};
     function champHTML(c) {
       const v = lire(valeurs, c.cle), id = idChamp(c.cle);
       const aide = c.aide ? `<small>${echapper(c.aide)}</small>` : '';
-      const lib = `<span class="rg-lib"><b>${echapper(c.label)}</b>${aide}</span>`;   // le nom (et son aide) à gauche, le champ à droite
       let saisie;
       switch (c.type) {
-        case 'case': return `<label class="rg-champ rg-case" data-cle="${c.cle}">${lib}<span class="rg-bascule"><input id="${id}" type="checkbox" ${v ? 'checked' : ''}><i></i></span></label>`;
+        case 'case': return `<label class="rg-champ rg-case" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''}><span>${echapper(c.label)}</span>${aide}</label>`;
         case 'nombre': saisie = `<input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 'any'}">`; break;
         case 'heure': saisie = `<input id="${id}" type="time" value="${echapper(v)}">`; break;
         // Une couleur : le nuancier, le code (ex. #FF7A1A, vide = couleur d'origine du thème) et ↺ pour revenir à l'origine
@@ -311,7 +320,7 @@ window.MES_REGLAGES = ${formater(perso)};
         default: saisie = `<input id="${id}" type="text" value="${echapper(v)}">`;
       }
       const large = ['liste', 'paires'].includes(c.type) || c.large ? ' rg-large' : '';
-      return `<label class="rg-champ${large}" data-cle="${c.cle}">${lib}${saisie}</label>`;
+      return `<label class="rg-champ${large}" data-cle="${c.cle}"><span>${echapper(c.label)}</span>${saisie}${aide}</label>`;
     }
 
     function alertesHTML() {
@@ -336,7 +345,7 @@ window.MES_REGLAGES = ${formater(perso)};
       boite.innerHTML = alertes.map(cle => {
         const t = lire(valeurs, `alertes.textes.${cle}`) || {};
         const ex = { ...EXEMPLE, montant: { don: '5,00 €', raid: 42 }[cle] ?? 500 };
-        if (cle === 'objectif') ex.nom = `${lire(valeurs, 'objectif.cible') ?? 50} / ${lire(valeurs, 'objectif.cible') ?? 50}`;
+        if (cle === 'objectif') { const n = lire(valeurs, `objectif.${lire(valeurs, 'objectif.affiche') || 'follow'}.cible`) ?? lire(valeurs, 'objectif.cible') ?? 50; ex.nom = `${n} / ${n}`; }
         if (RC.apercuAlerte) return RC.apercuAlerte(cle, { titre: t.titre, nom: ex.nom, message: remplir(t.message, ex) });
         return `<div class="rg-apercu"><small>${echapper(noms[cle] || cle)}</small><b>${echapper(t.titre)}</b><strong>${echapper(ex.nom)}</strong><span>${echapper(remplir(t.message, ex))}</span></div>`;
       }).join('');
@@ -442,20 +451,12 @@ window.MES_REGLAGES = ${formater(perso)};
       });
     }
 
-    // Les champs d'une section : les réglages courants, puis (repliés) ceux marqués « avance: true »
-    function champsHTML(s) {
-      const liste = s.champs.filter(c => !c.scene), courants = liste.filter(c => !c.avance), avances = liste.filter(c => c.avance);
-      return `${courants.length ? `<div class="rg-champs">${courants.map(champHTML).join('')}</div>` : ''}
-        ${avances.length ? `<details class="rg-avance"><summary>Réglages avancés (facultatif)</summary><div class="rg-champs">${avances.map(champHTML).join('')}</div></details>` : ''}`;
-    }
     function construire() {
-      const court = titre => titre.replace(/\s*\(.*\)\s*$/, '');   // « Sons (démarrage et fin) » → « Sons »
-      const sommaire = `<nav class="rg-sommaire" aria-label="Aller à une section">${sections.map((s, i) => `<a href="#rg-s${i}">${s.icone || '⚙️'} ${echapper(court(s.titre))}</a>`).join('')}</nav>`;
-      document.getElementById('rg-formulaire').innerHTML = sommaire + sections.map((s, i) => `<section class="rg-section" id="rg-s${i}">
+      document.getElementById('rg-formulaire').innerHTML = sections.map(s => `<section class="rg-section">
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
         ${s.scenes ? scenesHTML(s) : ''}
-        ${champsHTML(s)}
+        <div class="rg-champs">${s.champs.filter(c => !c.scene).map(champHTML).join('')}</div>
         ${s.ambiances ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();

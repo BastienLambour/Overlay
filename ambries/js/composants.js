@@ -101,7 +101,7 @@ const Composants = (() => {
 
     const valeurs = {};
     Evenements.ecouter((e, etat) => {
-      const nouv = { follow: etat.follow || '—', abonne: etat.abonne || '—', soutien: etat.soutien || '—', objectif: `${etat.compte ?? 0} / ${o.cible}` };
+      const nouv = { follow: etat.follow || '—', abonne: etat.abonne || '—', soutien: etat.soutien || '—', objectif: `${etat[o.cle] ?? 0} / ${o.cible}` };
       Object.entries(nouv).forEach(([cle, v]) => {
         const item = el.querySelector(`[data-cle="${cle}"]`);
         if (!item || valeurs[cle] === v) return;
@@ -110,7 +110,7 @@ const Composants = (() => {
         valeurs[cle] = v;
       });
       const j = el.querySelector('.mini-jauge i');
-      if (j) j.style.width = Math.min(100, (etat.compte ?? 0) / o.cible * 100) + '%';
+      if (j) j.style.width = Math.min(100, (etat[o.cle] ?? 0) / o.cible * 100) + '%';
     });
     return el;
   }
@@ -122,8 +122,8 @@ const Composants = (() => {
       <div class="objectif-tete"><b>${o.titre || 'Objectif'}</b><span class="compte">0 / ${o.cible}</span></div>
       <div class="barre"><div class="barre-pleine"></div><div class="barre-tete">${Commun.avatar(88)}</div></div>`, z);
     Evenements.ecouter((e, etat) => {
-      const p = Math.min(100, (etat.compte ?? 0) / o.cible * 100);
-      el.querySelector('.compte').textContent = `${etat.compte ?? 0} / ${o.cible}`;
+      const p = Math.min(100, (etat[o.cle] ?? 0) / o.cible * 100);
+      el.querySelector('.compte').textContent = `${etat[o.cle] ?? 0} / ${o.cible}`;
       el.querySelector('.barre-pleine').style.width = `calc(${p}% - 8px)`;
       el.querySelector('.barre-tete').style.left = p + '%';
     });

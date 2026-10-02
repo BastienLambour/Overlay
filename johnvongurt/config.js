@@ -133,12 +133,16 @@ window.CONFIG = {
     memoireMinutes: 10, // en changeant de scène, le chat réaffiche les messages des 10 dernières minutes (0 = jamais)
   },
 
-  // Objectif affiché dans le bandeau et la jauge Terre → Lune
+  // --- Objectif (bandeau et jauge Terre → Lune) ---
+  // La barre affiche au choix les followers OU les abonnés : chacun son titre, sa cible et son compteur.
+  // Avec Streamer.bot et son action « Overlay – Compteurs » (tuto, section 6), les VRAIS nombres de la chaîne
+  // arrivent tout seuls ; « depart » ne sert alors qu'au tout premier affichage (ou si automatique: false).
+  // Le plus simple : reglages.html › Objectif.
   objectif: {
-    type: "follow", // "follow" ou "sub"
-    titre: "Objectif ",
-    cible: 50,
-    depart: 5, // valeur de départ : mets ici ton nombre actuel de followers/abonnés
+    affiche: "follow",   // ce que la barre affiche : "follow" (followers) ou "sub" (abonnés)
+    automatique: true,   // les vrais nombres depuis Streamer.bot (false = compté à la main, depuis « depart »)
+    follow: { titre: "Objectif ", cible: 50, depart: 5 },
+    sub:    { titre: "Pilotes certifiés", cible: 10, depart: 0 },
   },
 
   // Bandeau d'infos (en bas des scènes) : ce qu'il affiche. Mets false pour cacher une case,

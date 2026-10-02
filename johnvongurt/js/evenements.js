@@ -8,7 +8,18 @@
 
    FICHIER COMMUN : identique dans tous les overlays (copie de _modele/js/).
    Ne pas le personnaliser ici : ce qui change d'un overlay à l'autre se règle
-   dans config.js (id, alertes.anonyme, test.noms).
+   dans config.js (id, alertes.anonyme, test.noms, objectif).
+
+   L'OBJECTIF : une barre, qui affiche au choix les followers ou les abonnés :
+       objectif: { affiche: "follow",                         // ou "sub"
+                   follow: { titre, cible, depart },          // chacun son titre, sa cible, son compteur
+                   sub:    { titre, cible, depart },
+                   automatique: true }                        // false = compté à la main seulement
+   Les DEUX compteurs (etat.compteFollow, etat.compteSub) tournent toujours : ils avancent à chaque follow /
+   abonnement reçu, et prennent les VRAIS nombres de la chaîne quand Streamer.bot les envoie (action
+   « Overlay – Compteurs », outils/streamerbot-compteurs.cs : { overlay: "compteurs", followers, abonnes }).
+   Evenements.objectif = celui affiché (une source peut forcer l'autre : ?objectif=sub ou ?objectif=follow) ;
+   son compteur : etat[Evenements.objectif.cle]. Ancien format (objectif: { type, titre, cible, depart }) accepté.
    ===================================================================== */
 const Evenements = (() => {
   const C = window.CONFIG || {};
@@ -16,16 +27,27 @@ const Evenements = (() => {
   const abonnes = [];
   const CLE = `overlay-${C.id || 'defaut'}-etat`;   // un compteur séparé par overlay
 
-  // ---------- État persistant (derniers événements + objectif) ----------
-  const obj = C.objectif || { type: 'follow', cible: 50, depart: 0 };
+  // ---------- État persistant (derniers événements + objectifs) ----------
+  const CO = C.objectif || {};
+  const DEFAUTS = { follow: { titre: 'Objectif followers', cible: 50, depart: 0 }, sub: { titre: 'Objectif abonnés', cible: 10, depart: 0 } };
+  const objectifs = Object.fromEntries(['follow', 'sub'].map(type => {
+    const o = { ...DEFAUTS[type], ...(CO[type] && typeof CO[type] === 'object' ? CO[type] : {}) };
+    // ancien format : objectif: { type: "follow", titre, cible, depart } → réglages de ce type-là
+    if ((CO.type || 'follow') === type) ['titre', 'cible', 'depart'].forEach(k => { if (CO[k] !== undefined) o[k] = CO[k]; });
+    const Nom = type === 'follow' ? 'Follow' : 'Sub';
+    return [type, { ...o, type, cle: 'compte' + Nom, cleDepart: 'depart' + Nom, automatique: CO.automatique !== false }];
+  }));
+  const affiche = ['follow', 'sub'].includes(params.get('objectif')) ? params.get('objectif') : (CO.affiche || CO.type || 'follow');
+  const obj = objectifs[affiche] || objectifs.follow;          // celui que la barre affiche
+  const liste = Object.values(objectifs);
   // En mode test, rien n'est enregistré : les faux événements ne touchent pas au vrai compteur.
   const test = params.has('test');
   let etat = {};
   try { if (!test) etat = JSON.parse(localStorage.getItem(CLE)) || {}; } catch (e) { etat = {}; }
-  // Si la valeur de départ a été changée dans config.js, on repart d'elle.
-  if (etat.depart !== obj.depart || params.has('reinitialiser')) {
-    etat = { depart: obj.depart, compte: obj.depart };
-  }
+  // Si la valeur de départ d'un objectif a été changée dans les réglages, son compteur repart d'elle.
+  liste.forEach(o => {
+    if (etat[o.cleDepart] !== o.depart || params.has('reinitialiser')) { etat[o.cleDepart] = o.depart; etat[o.cle] = o.depart; }
+  });
   function sauver() { if (test) return; try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) {} }
   sauver();
 
@@ -35,25 +57,47 @@ const Evenements = (() => {
     if (e.type === 'don') etat.soutien = `${e.nom} · ${e.montant}`;
     if (e.type === 'bits') etat.soutien = `${e.nom} · ${e.montant} bits`;
 
-    // Combien ça ajoute à l'objectif : 1 par follow (ou par abonnement) ; une pluie d'abonnements offerts
+    // Combien ça ajoute à chaque objectif : 1 par follow (ou par abonnement) ; une pluie d'abonnements offerts
     // compte pour tous ses cadeaux (les cadeaux de la pluie, eux, ne sont pas émis un par un : voir GiftSub)
-    const ajout = obj.type === 'follow' ? (e.type === 'follow' ? 1 : 0)
-      : obj.type === 'sub' ? (['sub', 'resub', 'giftsub'].includes(e.type) ? 1 : e.type === 'giftbomb' ? (parseInt(e.nombre, 10) || 1) : 0) : 0;
-    let atteint = false;
-    if (ajout) {
-      const avant = etat.compte;
-      etat.compte = (etat.compte || 0) + ajout;
-      atteint = avant < obj.cible && etat.compte >= obj.cible;
-    }
+    const atteints = [];
+    liste.forEach(o => {
+      const ajout = o.type === 'follow' ? (e.type === 'follow' ? 1 : 0)
+        : o.type === 'sub' ? (['sub', 'resub', 'giftsub'].includes(e.type) ? 1 : e.type === 'giftbomb' ? (parseInt(e.nombre, 10) || 1) : 0) : 0;
+      if (!ajout) return;
+      const avant = etat[o.cle] || 0;
+      etat[o.cle] = avant + ajout;
+      if (o === obj && avant < o.cible && etat[o.cle] >= o.cible) atteints.push(o);   // l'alerte : pour la barre affichée
+    });
     sauver();
-    return atteint;
+    return atteints;
   }
+
+  // ---------- Les vrais nombres de la chaîne, envoyés par Streamer.bot ----------
+  // { overlay: "compteurs", followers: 1234, abonnes: 12 } → le compteur de chaque objectif prend le vrai nombre.
+  // La toute première fois, pas d'alerte « objectif atteint » (le nombre était peut-être déjà au-delà).
+  function compteurs(d) {
+    const nombres = { follow: Number(d.followers), sub: Number(d.abonnes) };
+    const atteints = [], premiere = !etat.synchro;
+    liste.forEach(o => {
+      if (o.automatique === false) return;
+      const n = nombres[o.type];
+      if (d[o.type === 'follow' ? 'followers' : 'abonnes'] == null || !Number.isFinite(n) || n < 0) return;
+      const avant = etat[o.cle] || 0;
+      etat[o.cle] = n;
+      if (!premiere && o === obj && avant < o.cible && n >= o.cible) atteints.push(o);
+    });
+    etat.synchro = Date.now();
+    sauver();
+    abonnes.forEach(fn => { try { fn(null, etat); } catch (err) { console.error(err); } });   // null : pas un événement, juste l'état
+    atteints.forEach(alerteObjectif);
+  }
+  const alerteObjectif = o => emettre({ type: 'objectif', nom: `${etat[o.cle]} / ${o.cible}`, objectif: o.type, titre: o.titre });
 
   // ---------- Diffusion ----------
   function emettre(e) {
-    const atteint = e.type === 'objectif' ? false : majEtat(e);
+    const atteints = e.type === 'objectif' ? [] : majEtat(e);
     abonnes.forEach(fn => { try { fn(e, etat); } catch (err) { console.error(err); } });
-    if (atteint) emettre({ type: 'objectif', nom: `${etat.compte} / ${obj.cible}` });
+    atteints.forEach(alerteObjectif);
   }
 
   // ---------- Lecture tolérante des données Streamer.bot ----------
@@ -138,20 +182,22 @@ const Evenements = (() => {
       return etatJournal('⚠️ Client Streamer.bot non chargé : pas de connexion internet au démarrage de la page ?');
     }
     etatJournal(`… connexion à Streamer.bot sur ${sb.hote || '127.0.0.1'}:${sb.port || 8080}`);
-    // « Connecté » dit seulement que la porte est ouverte : on vérifie ensuite que Streamer.bot envoie bien les événements.
-    function verifierEcoute() {
-      const liste = Object.entries(client.subscriptions || {}).flatMap(([src, types]) => (types || []).map(t => `${src}.${t}`));
-      if (liste.length) journal(`📡 À l'écoute de ${liste.length} types d'événements`, liste.join(', '), '#8BD17C');
-      else journal('⚠️ Connecté, mais à l\'écoute de rien', 'Streamer.bot n\'a pas accepté l\'abonnement aux événements : relance Streamer.bot (serveur WebSocket démarré) puis actualise la source.');
-    }
     const client = new window.StreamerbotClient({
       host: sb.hote || '127.0.0.1', port: sb.port || 8080, endpoint: '/',
       password: sb.motDePasse || undefined,
-      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); setTimeout(verifierEcoute, 2500); },
-      onError: err => etatJournal('⚠️ Erreur Streamer.bot : ' + ((err && err.message) || err)),
-      onData: d => { if (d && d.status === 'error') journal('⚠️ Streamer.bot a répondu par une erreur', JSON.stringify(d), '#F5B82E'); },
+      onConnect: () => { connecte = true; console.info('[Overlay] Connecté à Streamer.bot'); etatJournal('✅ Connecté à Streamer.bot'); demanderCompteurs(client); },
       onDisconnect: () => { connecte = false; console.info('[Overlay] Déconnecté de Streamer.bot'); etatJournal('⚠️ Déconnecté de Streamer.bot (lancé ? serveur WebSocket démarré ?)'); },
     });
+    try {
+      client.on('General.Custom', msg => {
+        let d = (msg && msg.data !== undefined) ? msg.data : msg;
+        if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return; } }
+        if (d && d.data && d.data.overlay) d = d.data;
+        if (!d || d.overlay !== 'compteurs') return;
+        journal(`📊 Compteurs de la chaîne : ${d.followers ?? '?'} followers · ${d.abonnes ?? '?'} abonnés`, 'données reçues : ' + JSON.stringify(d), '#8BD17C');
+        compteurs(d);
+      });
+    } catch (err) { console.warn('[Overlay] General.Custom non géré'); }
     ECOUTES.forEach(cle => {
       try {
         client.on(cle, msg => {
@@ -165,6 +211,15 @@ const Evenements = (() => {
     });
   }
 
+  // Au branchement : on demande à Streamer.bot les vrais nombres (son action « Overlay – Compteurs »)
+  const ACTION_COMPTEURS = (C.streamerbot || {}).actionCompteurs || 'Overlay – Compteurs';
+  function demanderCompteurs(client) {
+    if (CO.automatique === false) return;
+    Promise.resolve().then(() => client.doAction({ name: ACTION_COMPTEURS })).then(r => {
+      if (r && r.status && r.status !== 'ok') journal(`ℹ️ Action « ${ACTION_COMPTEURS} » introuvable dans Streamer.bot : les objectifs comptent à la main (voir le tuto)`, JSON.stringify(r), '#F5B82E');
+    }).catch(err => journal(`ℹ️ Action « ${ACTION_COMPTEURS} » : pas de réponse`, String(err && err.message || err), '#F5B82E'));
+  }
+
   // ---------- Mode test : ?test=1 ----------
   const NOMS_TEST = (C.test && C.test.noms) || ['Pseudo_1', 'Pseudo_2', 'Pseudo_3', 'Pseudo_4', 'Pseudo_5', 'Pseudo_6'];
   const hasard = t => t[Math.floor(Math.random() * t.length)];
@@ -174,11 +229,12 @@ const Evenements = (() => {
       follow: { type, nom }, sub: { type, nom }, resub: { type, nom, mois: 3 + Math.floor(Math.random() * 20) },
       giftsub: { type, nom, destinataire: hasard(NOMS_TEST) }, giftbomb: { type, nom, nombre: 5 },
       bits: { type, nom, montant: 500 }, raid: { type, nom, montant: 42 }, don: { type, nom, montant: '5,00 €' },
-      objectif: { type, nom: `${obj.cible} / ${obj.cible}` },
+      objectif: { type, nom: `${obj.cible} / ${obj.cible}`, objectif: obj.type, titre: obj.titre },
     }[type];
   }
   function simuler() {
     const types = ['follow', 'follow', 'sub', 'resub', 'giftsub', 'giftbomb', 'bits', 'raid', 'don'];
+    setTimeout(() => { etat.synchro = 1; compteurs({ overlay: 'compteurs', followers: Math.max(0, objectifs.follow.cible - 2), abonnes: Math.max(0, objectifs.sub.cible - 3) }); }, 800);
     let i = 0;
     setTimeout(function suivant() {
       emettre(exemple(types[i++ % types.length]));
@@ -195,8 +251,9 @@ const Evenements = (() => {
   return {
     ecouter(fn) { abonnes.push(fn); fn(null, etat); },   // appel immédiat avec l'état actuel
     etat: () => etat,
-    objectif: obj,
-    exemple, emettre,
+    objectif: obj,                       // celui que la barre affiche : { type, titre, cible, depart, cle } → etat[obj.cle]
+    objectifs,                           // les deux : { follow: {…}, sub: {…} }
+    exemple, emettre, compteurs,
     demarrer,
     estConnecte: () => connecte,
   };

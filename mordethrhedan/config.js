@@ -111,12 +111,16 @@ window.CONFIG = {
     memoireMinutes: 10,      // en changeant de scène, le chat réaffiche les messages des 10 dernières minutes (0 = jamais)
   },
 
-  // Objectif (source objectif.html)
+  // --- Objectif (source objectif.html) ---
+  // La barre affiche au choix les followers OU les abonnés : chacun son titre, sa cible et son compteur.
+  // Avec Streamer.bot et son action « Overlay – Compteurs » (tuto, section 6), les VRAIS nombres de la chaîne
+  // arrivent tout seuls ; « depart » ne sert alors qu'au tout premier affichage (ou si automatique: false).
+  // Le plus simple : reglages.html › Objectif.
   objectif: {
-    type: "follow",             // "follow" ou "sub"
-    titre: "Objectif followers",
-    cible: 100,
-    depart: 0,                  // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
+    affiche: "follow",   // ce que la barre affiche : "follow" (followers) ou "sub" (abonnés)
+    automatique: true,   // les vrais nombres depuis Streamer.bot (false = compté à la main, depuis « depart »)
+    follow: { titre: "Objectif followers", cible: 100, depart: 0 },
+    sub:    { titre: "Objectif abonnés", cible: 10, depart: 0 },
   },
 
   // Alertes

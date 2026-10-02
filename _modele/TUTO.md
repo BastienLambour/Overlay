@@ -38,7 +38,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
-3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
+3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de Streamer.bot (section 6.6).
 4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
    La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
@@ -131,7 +131,8 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
  6.4 Événement par événement (tableau du vocabulaire ; conditions affilié)
  6.8 Les sons des alertes (tableau : un son par alerte ; reglages.html › Sons des alertes, ▶ ; fichier perso dans sons/ ; « aucun »)
  6.5 Les dons (Integrations de Streamer.bot ; décocher la case du bandeau si pas de dons)
- 6.6 L'objectif (Ton nombre ACTUEL ; compté seulement quand OBS est ouvert)
+ 6.6 L'objectif (une barre : followers OU abonnés ; A choisir ; B action Streamer.bot « Overlay – Compteurs » = outils/streamerbot-compteurs.cs
+     + Timed Action 5 min ; vérifier « 📊 Compteurs de la chaîne » dans ?journal=1 ; sans Streamer.bot : nombre de départ)
  6.7 Tester les vraies alertes (?test=1, un ami qui suit la chaîne)>
 
 ---

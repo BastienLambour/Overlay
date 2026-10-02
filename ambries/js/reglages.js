@@ -231,6 +231,16 @@ window.MES_REGLAGES = ${formater(perso)};
     const RC = window.ReglagesChamps || { sections: [] };
     const defaut = copie(window.CONFIG_DEFAUT || window.CONFIG);   // config.js seul (les valeurs par défaut)
     const enregistre = copie(window.CONFIG);          // config.js + mes-reglages.js (déjà fusionnés par js/couleurs.js)
+    // Ancien format de l'objectif ({ type, titre, cible, depart }, dans un vieux mes-reglages.js) → nouveau
+    // ({ affiche, follow: {…}, sub: {…} }) : le prochain « Enregistrer » écrit le nouveau format.
+    const ob = enregistre.objectif;
+    if (ob && ['type', 'titre', 'cible', 'depart'].some(k => ob[k] !== undefined)) {
+      const type = ob.type || ob.affiche || 'follow';
+      ob[type] = { ...(ob[type] || {}) };
+      ['titre', 'cible', 'depart'].forEach(k => { if (ob[k] !== undefined) ob[type][k] = ob[k]; delete ob[k]; });
+      if (ob.type) ob.affiche = ob.type;
+      delete ob.type;
+    }
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';
     document.title = `${nom} — Réglages`;
@@ -335,7 +345,7 @@ window.MES_REGLAGES = ${formater(perso)};
       boite.innerHTML = alertes.map(cle => {
         const t = lire(valeurs, `alertes.textes.${cle}`) || {};
         const ex = { ...EXEMPLE, montant: { don: '5,00 €', raid: 42 }[cle] ?? 500 };
-        if (cle === 'objectif') ex.nom = `${lire(valeurs, 'objectif.cible') ?? 50} / ${lire(valeurs, 'objectif.cible') ?? 50}`;
+        if (cle === 'objectif') { const n = lire(valeurs, `objectif.${lire(valeurs, 'objectif.affiche') || 'follow'}.cible`) ?? lire(valeurs, 'objectif.cible') ?? 50; ex.nom = `${n} / ${n}`; }
         if (RC.apercuAlerte) return RC.apercuAlerte(cle, { titre: t.titre, nom: ex.nom, message: remplir(t.message, ex) });
         return `<div class="rg-apercu"><small>${echapper(noms[cle] || cle)}</small><b>${echapper(t.titre)}</b><strong>${echapper(ex.nom)}</strong><span>${echapper(remplir(t.message, ex))}</span></div>`;
       }).join('');

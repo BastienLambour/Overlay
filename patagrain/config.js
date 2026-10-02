@@ -89,11 +89,16 @@ window.CONFIG = {
     masquerCommandes: true,
     memoireMinutes: 10,
   },
+  // --- Objectif (bandeau et jauge, l'épée avance) ---
+  // La barre affiche au choix les followers OU les abonnés : chacun son titre, sa cible et son compteur.
+  // Avec Streamer.bot et son action « Overlay – Compteurs » (tuto, section 6), les VRAIS nombres de la chaîne
+  // arrivent tout seuls ; « depart » ne sert alors qu'au tout premier affichage (ou si automatique: false).
+  // Le plus simple : reglages.html › Objectif.
   objectif: {
-    type: "follow",
-    titre: "Guilde des aventuriers",
-    cible: 75,
-    depart: 60,
+    affiche: "follow",   // ce que la barre affiche : "follow" (followers) ou "sub" (abonnés)
+    automatique: true,   // les vrais nombres depuis Streamer.bot (false = compté à la main, depuis « depart »)
+    follow: { titre: "Guilde des aventuriers", cible: 75, depart: 60 },
+    sub:    { titre: "La Table ronde", cible: 10, depart: 0 },
   },
   bandeau: {
     ceSoir: true,

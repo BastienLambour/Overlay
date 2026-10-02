@@ -95,10 +95,14 @@ window.ReglagesChamps = {
       { cle: 'chat.ignorer', type: 'liste', label: 'Comptes cachés (les bots)', aide: 'Un pseudo par ligne.' },
     ] },
     { titre: 'Objectif (jauge Terre → Lune)', icone: '🎯', champs: [
-      { cle: 'objectif.type', type: 'choix', label: 'Ce qu\'on compte', options: [['follow', 'Les follows'], ['sub', 'Les abonnements']] },
-      { cle: 'objectif.titre', type: 'texte', label: 'Nom de l\'objectif' },
-      { cle: 'objectif.cible', type: 'nombre', label: 'Objectif à atteindre', min: 1 },
-      { cle: 'objectif.depart', type: 'nombre', label: 'Ton nombre ACTUEL', min: 0, aide: 'Ton nombre actuel de followers (ou d\'abonnés). Le changer remet le compteur à cette valeur.' },
+      { cle: 'objectif.affiche', type: 'choix', label: 'Ce que la barre affiche', options: [['follow', 'Les followers'], ['sub', 'Les abonnés']], aide: 'Change quand tu veux : les deux compteurs tournent toujours, la barre est tout de suite juste.' },
+      { cle: 'objectif.automatique', type: 'case', label: 'Les vrais nombres de la chaîne, depuis Streamer.bot', aide: 'Avec l\'action « Overlay – Compteurs » dans Streamer.bot (tuto, section 6). Décoché : compté à la main, depuis « nombre de départ ».' },
+      { cle: 'objectif.follow.titre', type: 'texte', label: 'Followers : nom de l\'objectif' },
+      { cle: 'objectif.follow.cible', type: 'nombre', label: 'Followers : objectif à atteindre', min: 1 },
+      { cle: 'objectif.follow.depart', type: 'nombre', label: 'Followers : nombre de départ', min: 0, aide: 'Seulement sans Streamer.bot (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
+      { cle: 'objectif.sub.titre', type: 'texte', label: 'Abonnés : nom de l\'objectif' },
+      { cle: 'objectif.sub.cible', type: 'nombre', label: 'Abonnés : objectif à atteindre', min: 1 },
+      { cle: 'objectif.sub.depart', type: 'nombre', label: 'Abonnés : nombre de départ', min: 0, aide: 'Seulement sans Streamer.bot (ou avant sa première réponse). Le changer remet ce compteur à cette valeur.' },
     ] },
     { titre: 'Bandeau d\'infos', icone: '📰', aide: 'La barre en bas des scènes : décoche ce que tu ne veux pas voir.', champs: [
       { cle: 'bandeau.follow', type: 'case', label: '« Dernière recrue » : dernier follow' },
@@ -130,6 +134,9 @@ window.ReglagesChamps = {
       { cle: 'chaine.planning', type: 'paires', label: 'Planning', aide: 'Une ligne par jour, ex. « Mercredi | 20h30 ».' },
       { cle: 'chaine.reseaux', type: 'paires', label: 'Réseaux', aide: 'Une ligne par réseau, ex. « Discord | discord.gg/… ».' },
       { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne. Ensuite, refais les images : node outils/exporter-chaine.mjs' },
+    ] },
+    { titre: 'Mises à jour', icone: '🔄', aide: 'D\'où l\'overlay se met à jour : bouton « Mettre à jour l\'overlay » du script OBS (outils/actualiser-obs.lua), ou double-clic sur mettre-a-jour.cmd. Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l\'ancienne version est gardée dans sauvegardes.', champs: [
+      { cle: 'miseAJour.adresse', type: 'texte', label: 'Adresse du serveur des overlays', aide: 'Ex. https://overlays.bastien-lambour.fr (celle de la page de téléchargement). À ne changer que si on te le dit.' },
     ] },
     { titre: 'Mode test', icone: '🧪', champs: [
       { cle: 'test.noms', type: 'liste', label: 'Pseudos des fausses alertes (?test=1)', aide: 'Un pseudo par ligne.' },

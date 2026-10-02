@@ -99,11 +99,15 @@ window.CONFIG = {
   },
 
   // --- Objectif (bandeau et jauge où ta tête avance) ---
+  // La barre affiche au choix les followers OU les abonnés : chacun son titre, sa cible et son compteur.
+  // Avec Streamer.bot et son action « Overlay – Compteurs » (tuto, section 6), les VRAIS nombres de la chaîne
+  // arrivent tout seuls ; « depart » ne sert alors qu'au tout premier affichage (ou si automatique: false).
+  // Le plus simple : reglages.html › Objectif.
   objectif: {
-    type: "follow",      // "follow" ou "sub"
-    titre: "Objectif : 50 témoins",
-    cible: 50,
-    depart: 0,           // mets ici ton nombre ACTUEL de followers (ou d'abonnés)
+    affiche: "follow",   // ce que la barre affiche : "follow" (followers) ou "sub" (abonnés)
+    automatique: true,   // les vrais nombres depuis Streamer.bot (false = compté à la main, depuis « depart »)
+    follow: { titre: "Objectif : 50 témoins", cible: 50, depart: 0 },
+    sub:    { titre: "Soutiens moraux officiels", cible: 10, depart: 0 },
   },
 
   // Bandeau d'infos (en bas des scènes) : ce qu'il affiche. Mets false pour cacher une case,

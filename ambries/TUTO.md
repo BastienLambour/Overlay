@@ -54,7 +54,7 @@ Toutes les pages font **1920 × 1080**, avec un fond transparent là où il faut
 
 1. Dans le dossier de l'overlay, double-clique sur **`reglages.html`** : la page s'ouvre dans ton navigateur (**Edge** ou **Chrome**).
 2. Vérifie au minimum, dans **La chaîne** : le **nom affiché** et ton **identifiant Twitch** (celui de l'adresse `twitch.tv/…`).
-3. Dans **Objectif** : mets ton nombre **actuel** de followers dans **Ton nombre ACTUEL**.
+3. Dans **Objectif** : choisis ce que la barre affiche (**followers** ou **abonnés**) et ton objectif. Les vrais nombres de la chaîne viennent de Streamer.bot (section 6.6).
 4. Clique **💾 Enregistrer mes réglages** (en bas, ou **Ctrl + S**).
 5. **La première fois**, une fenêtre s'ouvre : choisis le **dossier de l'overlay** (celui qui contient `reglages.html`), puis **Sélectionner le dossier**. Le navigateur demande s'il peut modifier les fichiers : clique **Modifier les fichiers** (ou **Autoriser**).
    La page écrit alors tes réglages dans le fichier **`mes-reglages.js`**, à côté de `config.js` : rien à copier à la main. Les fois suivantes, elle s'en souvient et enregistre directement (au plus, le navigateur redemande l'autorisation).
@@ -294,7 +294,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 
 ### 4.4 ⭐ Objectif — `sources/objectif.html`
 
-**À quoi ça sert** : la jauge où **ta tête avance** à chaque follow (ou abonnement, selon `config.js › objectif.type`).
+**À quoi ça sert** : la jauge où **ta tête avance** à chaque follow (ou abonnement : `reglages.html` › Objectif, ou `?objectif=sub`).
 **Dans OBS :** geste A, puis geste C pour le placer.
 **Options** : `?x=560&y=60&l=800&h=150` · `?test=1`
 **Nécessite** Streamer.bot (section 6).
@@ -405,9 +405,35 @@ Abonnements, abonnements offerts et bits demandent une chaîne **affiliée** ou 
 Twitch ne gère pas les dons en argent : ils passent par un service (StreamElements, Streamlabs, Ko-fi, Tipeee). Dans Streamer.bot, onglet **Integrations**, choisis ton service et suis ses indications (en général, coller une **clé** copiée depuis le tableau de bord du service, puis **Connect**).
 Si tu ne reçois ni dons ni bits, décoche la case correspondante du bandeau : `reglages.html` › **Bandeau d'infos**.
 
-### 6.6 L'objectif
+### 6.6 L'objectif (followers OU abonnés, avec les vrais nombres)
 
-`reglages.html` › **Objectif** : ce qu'on compte (**les follows** ou **les abonnements**), le nom, la cible et **ton nombre ACTUEL**. Le compteur avance à chaque follow (ou abonnement, une pluie d'abonnements comptant pour tous ses cadeaux) reçu **pendant que OBS est ouvert**, et s'en souvient d'un live à l'autre. De temps en temps, remets ton vrai nombre dans « Ton nombre ACTUEL ».
+**Une seule barre**, qui affiche au choix **les followers** ou **les abonnés**. Chacun a son nom, son objectif et son compteur : on bascule quand on veut, la barre est tout de suite juste.
+
+**A. Choisir ce que la barre affiche**
+
+1. `reglages.html` › **Objectif** › **Ce que la barre affiche** : **Les followers** ou **Les abonnés**.
+2. Pour chacun : le **nom de l'objectif** et l'**objectif à atteindre** (ex. `50`).
+3. **💾 Enregistrer**, puis actualise les sources dans OBS.
+
+Une seule source peut aussi afficher l'autre compteur sans toucher aux réglages : ajoute `?objectif=sub` (ou `?objectif=follow`) à son adresse.
+
+**B. Les vrais nombres de la chaîne, avec Streamer.bot (une fois, 5 minutes)**
+
+Sans ça, l'overlay compte les follows et abonnements reçus **pendant qu'OBS est ouvert** seulement. Avec, il demande à Twitch le **vrai total** (rien n'est modifié sur Twitch : il ne fait que lire).
+
+1. Dans le dossier de l'overlay, ouvre **`outils/streamerbot-compteurs.cs`** avec le Bloc-notes, **Ctrl + A**, **Ctrl + C**.
+2. Streamer.bot › onglet **Actions** › clic droit dans la liste de gauche › **Add**.
+3. **Name** : écris exactement **`Overlay – Compteurs`** (avec le tiret long « – » ; le plus sûr : copie-le d'ici) › **OK**.
+4. Sélectionne cette action, puis dans le cadre **Sub-Actions** (à droite) : clic droit › **Core › C# › Execute C# Code**.
+5. Dans la fenêtre qui s'ouvre : efface ce qui est écrit, **Ctrl + V**, puis **Compile** en bas. Il doit écrire **« Compiled successfully »**. Clique **Save and Compile** (ou **OK**).
+6. Mise à jour régulière : onglet **Settings › Timed Actions** › clic droit › **Add** › nom `Compteurs`, **Interval** `300` (secondes), coche **Enabled** et **Repeat** › **OK**. Retourne dans **Actions** › ton action **Overlay – Compteurs** › cadre **Triggers** › clic droit › **Core › Timed Actions** › choisis **Compteurs**.
+7. Vérifie dans `reglages.html` › **Objectif** que **Les vrais nombres de la chaîne, depuis Streamer.bot** est coché (c'est le cas par défaut).
+
+**Vérification** : ajoute `?journal=1` à la source d'objectif (6.3). Une ligne **« 📊 Compteurs de la chaîne »** doit apparaître avec tes nombres, juste après « ✅ Connecté ». L'overlay lance aussi l'action tout seul à chaque fois qu'une page se branche à Streamer.bot. Si tu lis **« Action … introuvable »** : le nom de l'action n'est pas exactement `Overlay – Compteurs`.
+
+> Les abonnés : seulement si la chaîne est **affiliée** ou **partenaire** (sinon Twitch répond 0). Entre deux mises à jour, chaque follow ou abonnement reçu fait avancer la barre tout de suite.
+
+**Sans Streamer.bot** : décoche la case de l'étape B7 et mets ton vrai nombre dans **Followers : nombre de départ** (ou **Abonnés : nombre de départ**) ; le changer remet ce compteur à cette valeur.
 
 ### 6.7 Tester les vraies alertes
 
@@ -483,6 +509,7 @@ node outils/exporter-chaine.mjs
 | `?test=1` | faux messages de chat et fausses alertes qui défilent |
 | `?apercu=1` | affiche les zones de la cam et du jeu |
 | `?journal=1` | affiche le journal : connexion à Streamer.bot et derniers événements reçus (6.3) |
+| `?objectif=sub` / `?objectif=follow` | la barre d'objectif affiche les abonnés / les followers, quel que soit le réglage (6.6) |
 | `?chat=0` · `?bandeau=0` | retire le chat ou le bandeau intégré à la scène |
 | `?cam=0` | *(Jeu, Contenu)* pas de webcam : le cadre disparaît et le chat s'agrandit |
 | `?cam=1200,700,420,236` | *(Jeu)* webcam à une position perso : x, y, largeur, hauteur (pixels 1920 × 1080) |
@@ -512,7 +539,7 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 | Le coin ou la position exacte de la webcam, pas de webcam, le chat ou le bandeau d'une scène | `reglages.html` › Options des scènes |
 | Les couleurs, une ambiance (Halloween, Noël…) | `reglages.html` › Couleurs (voir ci-dessous) |
 | Les couleurs d'origine, les polices | début de `css/theme.css` |
-| Remettre l'objectif à zéro | `reglages.html` › Objectif › Ton nombre ACTUEL |
+| Changer l'objectif affiché, ou le compter à la main | `reglages.html` › Objectif (6.6) |
 
 Dans les textes des alertes, `{nom}`, `{montant}`, `{mois}`, `{nombre}` et `{destinataire}` sont remplacés automatiquement.
 

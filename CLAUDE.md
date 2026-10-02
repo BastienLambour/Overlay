@@ -79,7 +79,7 @@ Conventions :
 - **Objet JS global** : `Commun` (dans `commun.js`) ; un objet par fichier, du nom du fichier
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamerbot`, `demarrage` (dont `minutes` et `heure`),
-  `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
+  `pause`, `fin`, `chat`, `objectif` (UNE barre : `affiche` "follow"|"sub", `automatique` [vrais totaux via Streamer.bot], `follow` et `sub` = `{ titre, cible, depart }` chacun ; `?objectif=sub|follow` sur une page), `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `miseAJour.adresse` (le serveur des mises à jour), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
@@ -152,8 +152,10 @@ Conventions :
 Copiés **à l'identique** dans chaque overlay ; on ne les personnalise pas sur place.
 Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `js/evenements.js` : Streamer.bot (WebSocket local) → événements normalisés
-  `{ type, nom, montant, mois, nombre, destinataire }`, objectif persistant (localStorage
-  `overlay-<id>-etat`), mode test. `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
+  `{ type, nom, montant, mois, nombre, destinataire }`, objectifs persistants (localStorage
+  `overlay-<id>-etat` : `compteFollow`, `compteSub` ; `Evenements.objectif` = celui affiché, `.cle` = sa clé d'état), mode test.
+  Vrais totaux : à la connexion, `client.doAction({ name: 'Overlay – Compteurs' })` ; l'action répond par `General.Custom`
+  `{ overlay: 'compteurs', followers, abonnes }` (première synchro sans alerte). `?journal=1` : panneau à l'écran (état de la connexion + derniers événements avec
   leurs données brutes) — OBS n'a pas de F12, c'est LE moyen de diagnostiquer une alerte.
 - `js/couleurs.js` : fusionne d'abord `mes-reglages.js` (window.MES_REGLAGES) par-dessus `config.js` (objets clé par
   clé, listes et valeurs remplacées ; ignoré si son `id` est celui d'un autre overlay), puis applique `couleurs` aux variables CSS du thème (ambiances Halloween, Noël… via
@@ -169,6 +171,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   `window.ZONES = { cam: { "cam-seule": {x,y,l,h}, contenu: {…}, jeu: { defaut, prereglages: { "bas-droite": {…} } } } }`, écrit
   comme du JSON. SEULE source des positions de la webcam : les scènes, reglages.html (tableau + plan) et le script OBS le lisent ;
   ne jamais recopier ces chiffres dans une scène.
+- `outils/streamerbot-compteurs.cs` : le code C# de l'action Streamer.bot « Overlay – Compteurs » (Helix followers + subscriptions
+  `total`, avec le compte Twitch de Streamer.bot, `CPH.WebsocketBroadcastJson`), collé une fois par le streamer (TUTO 6.6). Pas compilé ici.
 - `js/streamerbot-client.js` : le client officiel Streamer.bot (@streamerbot/client, MIT), en copie locale (plus de CDN :
   les alertes marchent sans internet ; il se reconnecte tout seul si Streamer.bot démarre après OBS).
 - `outils/generer-transitions.mjs` : capture les pages de `transitions/` avec Edge headless,
