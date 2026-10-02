@@ -202,7 +202,7 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 
 ### 3.2 🔥 Pause — `scenes/pause.html`
 
-**À quoi ça sert** : le « Repos court » : le bouffon rêve au coin du feu (un d20 roule dans sa bulle ; quand il tombe sur 1, il se réveille en sursaut, grille un chamallow, le croque et se rendort), et le chat « La taverne » à droite.
+**À quoi ça sert** : le « Repos court » : le bouffon rêve au coin du feu (un d20 roule dans sa bulle et tombe **au hasard** : il dort tant que le dé ne fait pas 1 ; sur un 1, il se réveille en sursaut, grille un chamallow, le croque et se rendort — environ toutes les 2 à 3 minutes. En test, `?test=1` : le 2e lancer fait 1), et le chat « La taverne » à droite.
 
 **Dans OBS :**
 1. **Scènes › +** : « Pause ».

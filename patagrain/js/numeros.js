@@ -5,7 +5,7 @@
      Numeros.cirque(el)             Starting soon : jongle, poirier, salut (en boucle)
        el.lancerD20(cible, fini)    … à la fin du compte à rebours : il lance un d20 qui retombe
                                     sur 20 à côté de « cible », puis fini() est appelé
-     Numeros.feu(el, scene)         Pause : il rêve d'un d20 ; sur un 1 il se réveille,
+     Numeros.feu(el, scene)         Pause : il rêve d'un d20 lancé au hasard ; sur un 1 il se réveille,
                                     grille un chamallow, le croque, et se rendort.
                                     « scene » contient les Z (.bfx-z) et la bulle de rêve (.bfx-reve)
      Numeros.taverne(el, chat)      Cam seule / Contenu : dépasse de la carte du chat,
@@ -102,20 +102,42 @@ const Numeros = (() => {
     // le bras droit passe DEVANT la tête : quand il croque, le chamallow est devant sa bouche (pas derrière ses cheveux)
     el.querySelector('.bf-tout').appendChild(el.querySelector('.bf-epaule-d'));
     const reve = scene.querySelector('.bfx-reve'), chiffre = scene.querySelector('.bfx-chiffre');
-    let roule;
-    const rever = () => {
+    // Il rêve d'un d20 qui roule… et le dé tombe AU HASARD (1 à 20) : sur un 1, il se réveille en sursaut,
+    // grille un chamallow et le croque, puis se rendort ; sur un autre chiffre, il dort toujours et relance.
+    // (?test=1 : le 2e lancer fait 1, pour voir le réveil tout de suite)
+    const ETATS = ['dodo', 'expr-dort', 'reveil', 'expr-choc', 'chamallow', 'croque', 'expr-rire'];
+    const poser = classes => { el.classList.remove(...ETATS); void el.offsetWidth; el.classList.add(...classes.split(' ')); };
+    const test = new URLSearchParams(location.search).has('test');
+    let roule, lancers = 0;
+    const apres = (ms, suite) => setTimeout(suite, ms);
+    function lancer() {                               // un lancer de dé dans son rêve
       scene.classList.add('dort'); reve?.classList.remove('pose');
       clearInterval(roule);
       roule = setInterval(() => { if (chiffre) chiffre.textContent = 2 + Math.floor(Math.random() * 19); }, 140);
-      setTimeout(() => { clearInterval(roule); if (chiffre) chiffre.textContent = '1'; reve?.classList.add('pose'); }, 5600);
-    };
-    const reveiller = () => scene.classList.remove('dort');
-    enchainer(el, [
-      ['dodo expr-dort', 6600, rever],          // il rêve : le d20 roule… et tombe sur 1
-      ['reveil expr-choc', 1300, reveiller],    // sursaut !
-      ['chamallow', 4400],                      // il grille un chamallow au-dessus du feu
-      ['croque expr-rire', 2600],               // et le croque (devant sa bouche)
-    ]);
+      apres(4600, () => {
+        clearInterval(roule);
+        lancers++;
+        const tirage = test && lancers === 2 ? 1 : 1 + Math.floor(Math.random() * 20);
+        if (chiffre) chiffre.textContent = tirage;
+        reve?.classList.add('pose');
+        el.dataset.tirage = tirage;                 // (pour les vérifications)
+        if (tirage === 1) apres(1200, reveil);      // le temps de voir le 1… et sursaut !
+        else apres(2200, lancer);                   // il voit son chiffre, et se rendort de plus belle
+      });
+    }
+    function reveil() {
+      scene.classList.remove('dort');
+      poser('reveil expr-choc');                    // sursaut !
+      apres(1300, () => {
+        poser('chamallow');                         // il grille un chamallow au-dessus du feu
+        apres(4400, () => {
+          poser('croque expr-rire');                // et le croque (devant sa bouche)
+          apres(2600, () => { poser('dodo expr-dort'); lancer(); });   // puis se rendort
+        });
+      });
+    }
+    poser('dodo expr-dort');
+    lancer();
     return el;
   }
 
