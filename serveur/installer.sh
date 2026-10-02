@@ -23,6 +23,7 @@
 #      BRANCHE    la branche publiée     (défaut : main)
 #      ADRESSE    l'adresse publique     (défaut : http://<IP du VPS>) — aussi écrite dans les version.json
 #      DOMAINE    l'adresse du site      (défaut : overlays.bastien-lambour.fr ; DOMAINE= vide = sur l'IP, en http)
+#      INTERMEDIAIRE    le certificat intermédiaire, s'il faut le donner à la main (sinon téléchargé tout seul)
 #      CERTIFICAT, CLE  le certificat HTTPS déjà sur le VPS (défaut : /etc/ssl/private/bastien-lambour.fr.cer et
 #                 bastien-lambour.fr-private.key, ceux des autres sites) ; absent = le site reste en http
 #  Exemple : ssh root@VPS "BRANCHE=main DEPOT_URL=git@github.com:BastienLambour/Overlay.git bash installer.sh"
@@ -257,9 +258,17 @@ else
     CERT_NGINX="$CERTIFICAT"
     if ! openssl verify -untrusted "$CERTIFICAT" "$CERTIFICAT" >/dev/null 2>&1; then
       TMP="$(mktemp -d)"; cp "$CERTIFICAT" "$TMP/chaine.pem"; DERNIER="$CERTIFICAT"
+      if [ -n "${INTERMEDIAIRE:-}" ]; then   # l'intermédiaire fourni à la main (fichier .crt, .cer ou .pem)
+        [ -f "$INTERMEDIAIRE" ] || stop "Fichier intermédiaire introuvable : $INTERMEDIAIRE"
+        openssl x509 -inform DER -in "$INTERMEDIAIRE" -out "$TMP/inter.pem" 2>/dev/null || openssl x509 -in "$INTERMEDIAIRE" -out "$TMP/inter.pem" 2>/dev/null \
+          || stop "$INTERMEDIAIRE n'est pas un certificat lisible."
+        { echo; cat "$TMP/inter.pem"; } >> "$TMP/chaine.pem"
+        cp "$TMP/inter.pem" "$TMP/dernier.pem"; DERNIER="$TMP/dernier.pem"   # s'il manque encore un étage : on part de lui
+      fi
       for _ in 1 2 3; do
+        openssl verify -untrusted "$TMP/chaine.pem" "$TMP/chaine.pem" >/dev/null 2>&1 && break
         URL="$(openssl x509 -in "$DERNIER" -noout -ext authorityInfoAccess 2>/dev/null | sed -n 's/.*CA Issuers - URI:\(http[^ ,]*\).*/\1/p' | head -1)"
-        [ -n "$URL" ] && curl -fsSL --max-time 20 "$URL" -o "$TMP/brut" || break
+        [ -n "$URL" ] && curl -fsSL --max-time 20 --retry 4 --retry-delay 3 --retry-all-errors "$URL" -o "$TMP/brut" || break
         openssl x509 -inform DER -in "$TMP/brut" -out "$TMP/inter.pem" 2>/dev/null || openssl x509 -in "$TMP/brut" -out "$TMP/inter.pem" 2>/dev/null || break
         { echo; cat "$TMP/inter.pem"; } >> "$TMP/chaine.pem"
         cp "$TMP/inter.pem" "$TMP/dernier.pem"; DERNIER="$TMP/dernier.pem"
@@ -271,8 +280,8 @@ else
         ok "Chaîne du certificat complétée (intermédiaire ajouté) : $CERT_NGINX"
       else
         printf '  ⚠ La chaîne du certificat est incomplète et n'"'"'a pas pu être complétée : GitLab refusera le webhook.\n'
-        printf '    Télécharge le certificat INTERMÉDIAIRE chez ton fournisseur (IONOS : Domaines & SSL › certificat › Télécharger),\n'
-        printf '    mets-le à la suite du certificat dans un fichier, puis relance : CERTIFICAT=ce-fichier bash installer.sh\n'
+        [ -n "${URL:-}" ] && printf '    Il se télécharge ici (depuis ton PC) : %s\n' "$URL"
+        printf '    Envoie-le sur le VPS (scp fichier root@VPS:), puis relance : INTERMEDIAIRE=/root/fichier bash installer.sh\n'
       fi
       rm -rf "$TMP"
     fi
