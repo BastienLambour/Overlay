@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+# =====================================================================
+#  INSTALLER LE SERVEUR DES OVERLAYS — à lancer UNE SEULE FOIS sur le VPS (Debian ou Ubuntu), en root.
+#
+#  Ce qu'il met en place :
+#    - Node.js (18 ou plus) et Git, s'ils manquent ;
+#    - un utilisateur système « overlays » (les services ne tournent PAS en root) ;
+#    - une clé SSH « de déploiement » en LECTURE SEULE pour lire le dépôt (GitHub ou GitLab) ;
+#    - une copie du dépôt dans /opt/overlays/depot, et le site dans /var/www/overlays
+#      (un zip + version.json + TUTO.pdf par overlay, et la page de téléchargement) ;
+#    - le récepteur du webhook (service overlays-webhook) : un push → le site est refait aussitôt ;
+#    - un filet de sécurité : une vérification par heure (minuteur overlays-maj.timer) ;
+#    - le serveur web (Nginx, ou Caddy s'il est déjà là) : le site sur le port 80, /webhook transmis au récepteur.
+#
+#  Utilisation (depuis ton PC, dans le dossier du dépôt) :
+#      scp serveur/installer.sh root@ADRESSE_DU_VPS:
+#      ssh root@ADRESSE_DU_VPS "bash installer.sh"
+#  On peut le relancer sans risque (pour changer de dépôt, de branche…) : il garde le secret et la clé.
+#
+#  Réglages (variables à mettre devant la commande, toutes facultatives) :
+#      DEPOT_URL  le dépôt à lire        (défaut : git@github.com:BastienLambour/Overlay.git)
+#      BRANCHE    la branche publiée     (défaut : main)
+#      ADRESSE    l'adresse publique     (défaut : http://<IP du VPS>) — aussi écrite dans les version.json
+#      DOMAINE    un nom de domaine      (facultatif : avec Caddy, HTTPS automatique)
+#  Exemple : ssh root@VPS "BRANCHE=main DEPOT_URL=git@gitlab.com:moi/overlay.git bash installer.sh"
+# =====================================================================
+set -euo pipefail
+
+DEPOT_URL="${DEPOT_URL:-git@github.com:BastienLambour/Overlay.git}"
+BRANCHE="${BRANCHE:-main}"
+DOMAINE="${DOMAINE:-}"
+UTILISATEUR=overlays
+MAISON=/opt/overlays
+DEPOT="$MAISON/depot"
+SORTIE=/var/www/overlays
+PORT=9321
+ENV=/etc/overlays.env
+
+dire()  { printf '\n\033[1;33m▶ %s\033[0m\n' "$*"; }
+ok()    { printf '  \033[32m✔\033[0m %s\n' "$*"; }
+stop()  { printf '\n\033[1;31m✖ %s\033[0m\n' "$*" >&2; exit 1; }
+[ "$(id -u)" = 0 ] || stop "À lancer en root (ou avec sudo)."
+command -v apt-get >/dev/null || stop "Ce script est prévu pour Debian ou Ubuntu (apt-get introuvable)."
+
+IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+if [ -n "$DOMAINE" ]; then ADRESSE="${ADRESSE:-https://$DOMAINE}"; else ADRESSE="${ADRESSE:-http://${IP:-127.0.0.1}}"; fi
+ADRESSE="${ADRESSE%/}"
+
+# ---------------------------------------------------------------------
+dire "1/7 Logiciels : Git, Node.js"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get install -y -qq git curl ca-certificates openssh-client openssl >/dev/null
+version_node() { node -e 'console.log(process.versions.node.split(".")[0])' 2>/dev/null || echo 0; }
+if [ "$(version_node)" -lt 18 ]; then
+  curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null
+  apt-get install -y -qq nodejs >/dev/null
+fi
+NODE="$(command -v node)"
+ok "Git $(git --version | awk '{print $3}'), Node.js $(node --version)"
+
+# ---------------------------------------------------------------------
+dire "2/7 Utilisateur « $UTILISATEUR » et dossiers"
+id "$UTILISATEUR" >/dev/null 2>&1 || useradd --system --home-dir "$MAISON" --create-home --shell /usr/sbin/nologin "$UTILISATEUR"
+mkdir -p "$MAISON" "$SORTIE"
+chown -R "$UTILISATEUR:$UTILISATEUR" "$MAISON" "$SORTIE"
+ok "$MAISON (le dépôt) et $SORTIE (le site)"
+en_overlays() { runuser -u "$UTILISATEUR" -- env HOME="$MAISON" "$@"; }
+
+# ---------------------------------------------------------------------
+dire "3/7 Accès au dépôt : $DEPOT_URL"
+if [[ "$DEPOT_URL" == git@* || "$DEPOT_URL" == ssh://* ]]; then
+  CLE="$MAISON/.ssh/id_ed25519"
+  if [ ! -f "$CLE" ]; then
+    en_overlays mkdir -p "$MAISON/.ssh"
+    en_overlays ssh-keygen -q -t ed25519 -N '' -C "overlays@$(hostname)" -f "$CLE"
+  fi
+  HOTE="$(printf '%s' "$DEPOT_URL" | sed -E 's#^(ssh://)?([^@]+@)?([^:/]+).*#\3#')"
+  en_overlays sh -c "ssh-keyscan -t ed25519,rsa '$HOTE' >> '$MAISON/.ssh/known_hosts' 2>/dev/null; sort -u -o '$MAISON/.ssh/known_hosts' '$MAISON/.ssh/known_hosts'"
+  until en_overlays git ls-remote --heads "$DEPOT_URL" "$BRANCHE" >/dev/null 2>&1; do
+    printf '\n  Le serveur n'"'"'a pas encore le droit de lire le dépôt. Ajoute cette clé, en LECTURE SEULE :\n'
+    printf '    GitHub : dépôt › Settings › Deploy keys › Add deploy key (NE PAS cocher « Allow write access »)\n'
+    printf '    GitLab : projet › Settings › Repository › Deploy keys › Add new key (sans « Grant write permissions »)\n\n'
+    printf '  \033[1m%s\033[0m\n\n' "$(cat "$CLE.pub")"
+    read -r -p "  Appuie sur Entrée une fois la clé ajoutée (Ctrl+C pour arrêter)… " _ < /dev/tty
+  done
+fi
+en_overlays git ls-remote --heads "$DEPOT_URL" "$BRANCHE" | grep -q . || stop "La branche « $BRANCHE » n'existe pas dans $DEPOT_URL."
+ok "Le dépôt est lisible, branche $BRANCHE"
+
+# ---------------------------------------------------------------------
+dire "4/7 Copie du dépôt dans $DEPOT"
+if [ -d "$DEPOT/.git" ]; then
+  en_overlays git -C "$DEPOT" remote set-url origin "$DEPOT_URL"
+else
+  en_overlays git clone --quiet --branch "$BRANCHE" "$DEPOT_URL" "$DEPOT"
+fi
+en_overlays git -C "$DEPOT" fetch --quiet origin "$BRANCHE"
+en_overlays git -C "$DEPOT" checkout --quiet -B "$BRANCHE" "origin/$BRANCHE"
+ok "À jour : $(en_overlays git -C "$DEPOT" log -1 --format='%h %s')"
+
+# ---------------------------------------------------------------------
+dire "5/7 Réglages du serveur ($ENV) et premier site"
+if [ -f "$ENV" ] && grep -q '^SECRET=' "$ENV"; then SECRET="$(grep '^SECRET=' "$ENV" | cut -d= -f2-)"; else SECRET="$(openssl rand -hex 24)"; fi
+cat > "$ENV" <<EOF
+# Réglages du serveur des overlays (lus par les services overlays-webhook et overlays-maj).
+# Après une modification : systemctl restart overlays-webhook && systemctl start overlays-maj
+SECRET=$SECRET
+BRANCHE=$BRANCHE
+SORTIE=$SORTIE
+ADRESSE=$ADRESSE
+PORT=$PORT
+EOF
+chown "root:$UTILISATEUR" "$ENV"; chmod 640 "$ENV"
+en_overlays env SORTIE="$SORTIE" ADRESSE="$ADRESSE" "$NODE" "$DEPOT/serveur/construire.mjs"
+
+# ---------------------------------------------------------------------
+dire "6/7 Services : webhook + vérification toutes les heures"
+cat > /etc/systemd/system/overlays-webhook.service <<EOF
+[Unit]
+Description=Overlays : webhook GitHub/GitLab (un push = site mis à jour)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=$UTILISATEUR
+Environment=HOME=$MAISON
+EnvironmentFile=$ENV
+WorkingDirectory=$DEPOT
+ExecStart=$NODE $DEPOT/serveur/webhook.mjs
+Restart=always
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=$MAISON $SORTIE
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+cat > /etc/systemd/system/overlays-maj.service <<EOF
+[Unit]
+Description=Overlays : récupère le dépôt et refait le site s'il a changé
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=$UTILISATEUR
+Environment=HOME=$MAISON
+EnvironmentFile=$ENV
+WorkingDirectory=$DEPOT
+ExecStart=$NODE $DEPOT/serveur/mettre-a-jour.mjs
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=$MAISON $SORTIE
+PrivateTmp=yes
+EOF
+cat > /etc/systemd/system/overlays-maj.timer <<EOF
+[Unit]
+Description=Overlays : filet de sécurité, une vérification par heure (si un webhook s'est perdu)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+systemctl daemon-reload
+systemctl enable --now overlays-webhook.service overlays-maj.timer >/dev/null 2>&1
+systemctl restart overlays-webhook.service
+sleep 1
+systemctl is-active --quiet overlays-webhook.service && ok "overlays-webhook actif (127.0.0.1:$PORT)" || stop "Le webhook ne démarre pas : journalctl -u overlays-webhook -n 50"
+ok "overlays-maj.timer actif (toutes les heures)"
+
+# ---------------------------------------------------------------------
+dire "7/7 Serveur web"
+if command -v caddy >/dev/null && ! command -v nginx >/dev/null; then
+  # Caddy déjà installé : un fichier à part, importé par le Caddyfile
+  SITE="${DOMAINE:-:80}"
+  cat > /etc/caddy/overlays.caddy <<EOF
+# Overlays : la page et les zips, et /webhook transmis au récepteur (serveur/installer.sh)
+$SITE {
+	handle /webhook {
+		reverse_proxy 127.0.0.1:$PORT
+	}
+	handle {
+		root * $SORTIE
+		header /*.json Cache-Control "no-cache"
+		header /*.zip Cache-Control "no-cache"
+		file_server
+	}
+}
+EOF
+  grep -q 'import overlays.caddy' /etc/caddy/Caddyfile 2>/dev/null || printf '\nimport overlays.caddy\n' >> /etc/caddy/Caddyfile
+  caddy validate --config /etc/caddy/Caddyfile >/dev/null 2>&1 || stop "La configuration Caddy est refusée : caddy validate --config /etc/caddy/Caddyfile"
+  systemctl reload caddy
+  ok "Caddy : /etc/caddy/overlays.caddy"
+else
+  command -v nginx >/dev/null || apt-get install -y -qq nginx >/dev/null
+  # Pas d'autre site sur le VPS ? Celui-ci devient le site par défaut (on retire la page « Welcome to nginx »)
+  DEFAUT=""
+  if [ -L /etc/nginx/sites-enabled/default ] && grep -q 'Welcome to nginx\|/var/www/html' /etc/nginx/sites-available/default 2>/dev/null; then
+    rm -f /etc/nginx/sites-enabled/default
+  fi
+  if ! grep -rls 'default_server' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | grep -vq '/overlays$'; then DEFAUT=" default_server"; fi
+  IPV6=""; [ -f /proc/net/if_inet6 ] && IPV6="    listen [::]:80$DEFAUT;"   # seulement si la machine a l'IPv6
+  cat > /etc/nginx/sites-available/overlays <<EOF
+# Overlays : la page et les zips, et /webhook transmis au récepteur (serveur/installer.sh)
+server {
+    listen 80$DEFAUT;
+$IPV6
+    server_name ${DOMAINE:-_};
+    root $SORTIE;
+    index index.html;
+
+    location = /webhook {
+        proxy_pass http://127.0.0.1:$PORT;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+        client_max_body_size 5m;
+    }
+    # version.json et les zips : toujours la dernière version (pas de cache)
+    location ~ \.(json|zip)\$ {
+        add_header Cache-Control "no-cache";
+    }
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
+  ln -sfn /etc/nginx/sites-available/overlays /etc/nginx/sites-enabled/overlays
+  if ! nginx -t >/dev/null 2>&1; then
+    rm -f /etc/nginx/sites-enabled/overlays
+    stop "La configuration Nginx est refusée (nginx -t). Le site n'a pas été activé."
+  fi
+  systemctl enable --now nginx >/dev/null 2>&1
+  systemctl reload nginx
+  ok "Nginx : /etc/nginx/sites-available/overlays"
+fi
+if command -v ufw >/dev/null && ufw status | grep -q 'Status: active'; then ufw allow 80/tcp >/dev/null; ufw allow 443/tcp >/dev/null; ok "Pare-feu : ports 80 et 443 ouverts"; fi
+
+# ---------------------------------------------------------------------
+cat <<EOF
+
+================================================================================
+  ✅ C'est installé.
+
+  La page de téléchargement : $ADRESSE/
+  L'adresse du webhook      : $ADRESSE/webhook
+  Le secret du webhook      : $SECRET
+  (le secret est aussi dans $ENV ; ne le mets pas dans le dépôt)
+
+  Dernière étape, le webhook (une fois) :
+    GitHub : dépôt › Settings › Webhooks › Add webhook
+             Payload URL = $ADRESSE/webhook · Content type = application/json
+             Secret = le secret ci-dessus · « Just the push event » · Add webhook
+    GitLab : projet › Settings › Webhooks › Add new webhook
+             URL = $ADRESSE/webhook · Secret token = le secret ci-dessus · « Push events »
+             (branche : $BRANCHE) · décoche « Enable SSL verification » tant que le site est en http
+
+  Les journaux : journalctl -u overlays-webhook -f    (les push reçus)
+                 journalctl -u overlays-maj -n 30     (les reconstructions)
+  Vérifier tout de suite (refait le site s'il y a du nouveau) : systemctl start overlays-maj
+  Tout refaire, même sans nouveauté :
+    runuser -u overlays -- bash -c 'set -a; . $ENV; node $DEPOT/serveur/mettre-a-jour.mjs --forcer'
+================================================================================
+EOF

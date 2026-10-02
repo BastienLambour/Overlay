@@ -52,6 +52,7 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 **À la main (sans la page)** : ouvre `config.js` avec le **Bloc-notes** (clic droit › *Ouvrir avec* › *Bloc-notes*). Garde les guillemets `"…"` autour des textes et la virgule `,` en fin de ligne, enregistre, puis **Actualiser** dans OBS. Attention : un changement fait à la main dans `config.js` sera perdu à la prochaine mise à jour ; dans `reglages.html`, il est gardé.
 
 #### Quand tu reçois une nouvelle version de l'overlay
+<en un clic : bouton « Mettre à jour l'overlay » du script OBS ou mettre-a-jour.cmd ; mes-reglages.js jamais remplacé ; sauvegardes\<date> (3 dernières) ; page de téléchargement ; à la main : copier par-dessus>
 
 1. Copie les nouveaux fichiers par-dessus les anciens (remplacer).
 2. **Ton `mes-reglages.js` n'est pas dans la nouvelle version** : il reste en place, tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.

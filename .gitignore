@@ -1,3 +1,7 @@
 # Réglages perso du streamer (écrits par reglages.html) : propres à chaque PC,
 # jamais livrés avec une mise à jour de l'overlay (sinon ils écraseraient ceux du streamer).
 mes-reglages.js
+
+# Copies installées chez un streamer (jamais dans le dépôt)
+sauvegardes/
+version.json

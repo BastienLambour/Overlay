@@ -28,6 +28,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 patagrain/
 ├── reglages.html        ← LA page pour changer les textes et réglages (elle écrit mes-reglages.js)
 ├── config.js            ← les valeurs par défaut (remplacé à chaque mise à jour de l'overlay)
+├── mettre-a-jour.cmd    ← met l'overlay à jour (double-clic), en gardant tes réglages : voir 2.1
 ├── mes-reglages.js      ← TES réglages, écrits par reglages.html (apparaît au 1er enregistrement ; à garder)
 ├── index.html           ← la vitrine : aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
@@ -70,9 +71,16 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 
 #### Quand tu reçois une nouvelle version de l'overlay
 
-1. Copie les nouveaux fichiers par-dessus les anciens (remplacer).
-2. **Ton `mes-reglages.js` n'est pas dans la nouvelle version** : il reste en place, tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
-3. Dans OBS : actualise les sources.
+**En un clic** (Windows) : OBS › **Outils › Scripts** › `actualiser-obs.lua` (voir 2.8) › bouton **Mettre à jour l'overlay**. Ou, OBS fermé, double-clique sur **`mettre-a-jour.cmd`** dans le dossier de l'overlay.
+
+- L'overlay télécharge sa dernière version sur le serveur des overlays, et l'installe à la place de l'ancienne.
+- **Ton `mes-reglages.js` n'est jamais remplacé** : tes réglages sont gardés. Les nouvelles fonctions arrivent avec leurs valeurs par défaut.
+- L'ancienne version est d'abord copiée dans `sauvegardes\<date>` (les 3 dernières sont gardées) : si tu avais modifié un fichier à la main, il est là.
+- Avec le bouton d'OBS, les sources s'actualisent et les webcams se replacent toutes seules. Sous la case, OBS affiche la version installée et le résultat.
+
+La page de téléchargement (le zip complet, le tuto, « Ce qui a changé ») : l'adresse de `reglages.html` › **Mises à jour**.
+
+**À la main** (sans le bouton) : copie les fichiers du nouveau zip par-dessus les anciens (remplacer). `mes-reglages.js` n'est pas dans le zip : il reste en place. Puis, dans OBS, actualise les sources.
 
 > 🔁 **La toute première fois seulement** (si tes réglages étaient encore dans l'ancien `config.js`) : **avant** de remplacer les fichiers, fais une copie de ton `config.js` (ex. sur le bureau). Après la mise à jour, ouvre `reglages.html` › **📥 Reprendre les réglages d'un ancien config.js** › choisis cette copie : tes réglages reviennent dans le formulaire (marqués •). Clique **Enregistrer**, c'est fini : ils sont maintenant dans `mes-reglages.js`.
 
@@ -159,6 +167,10 @@ OBS n'a pas de bouton pour actualiser toutes les sources Navigateur : l'overlay 
 Tu peux aussi lui donner un **raccourci clavier** : **Paramètres › Raccourcis clavier** › « Actualiser toutes les sources Navigateur ».
 
 > ⚠️ Une page actualisée repart de zéro : évite d'enregistrer des réglages pendant le compte à rebours de Starting soon.
+
+#### Mettre à jour l'overlay (le même script)
+
+Le bouton **Mettre à jour l'overlay (tes réglages sont gardés)** installe la dernière version (voir 2.1, « Quand tu reçois une nouvelle version »). Sous le bouton : la version installée, et le résultat de la dernière mise à jour.
 
 #### Placer les webcams tout seul (le même script)
 
@@ -584,6 +596,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
 | `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `mettre-a-jour.cmd` | met l'overlay à jour depuis le serveur (double-clic), en gardant tes réglages ; c'est aussi ce que fait le bouton d'OBS | quand une nouvelle version est annoncée |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs ou du bouffon | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
@@ -596,6 +609,9 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 ---
 
 ## 10. Dépannage
+
+**« Mettre à jour l'overlay » ne marche pas**
+→ Le message est sous le bouton (OBS › Outils › Scripts) et dans **Journal des scripts**. « Serveur injoignable » : vérifie ta connexion, ou l'adresse dans `reglages.html` › **Mises à jour**. « Certains fichiers n'ont pas pu être remplacés » : OBS les utilise (souvent les vidéos de transition) → ferme OBS, double-clique sur `mettre-a-jour.cmd`. Si le dossier de l'overlay a des accents dans son chemin et que le bouton ne fait rien : utilise `mettre-a-jour.cmd`. Rien n'est perdu : l'ancienne version est dans `sauvegardes`.
 
 **Mes réglages ont disparu après une mise à jour de l'overlay**
 → Ton `mes-reglages.js` a peut-être été remplacé ou supprimé : il ne doit **pas** faire partie des fichiers que tu copies. S'il te reste une copie, remets-la dans le dossier de l'overlay.

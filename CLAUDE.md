@@ -12,6 +12,7 @@ G:\Projets\Overlay\
 ├── CLAUDE.md            ← ce document
 ├── .claude/launch.json  ← un serveur d'aperçu par overlay (un port chacun)
 ├── outils/serveur-apercu.mjs ← serveur d'aperçu SANS CACHE utilisé par launch.json
+├── serveur/             ← DISTRIBUTION : VPS qui publie un zip par overlay + bouton « Mettre à jour » (serveur/LISEZMOI.md)
 ├── _modele/             ← fichiers COMMUNS, à copier tels quels dans chaque overlay
 ├── patagrain/           ← médiéval bouffon + JDR (port 5500)
 ├── johnvongurt/         ← espace / mission control, le frère (port 5501)
@@ -79,7 +80,7 @@ Conventions :
   (`Chat`, `Composants`, `Evenements`, `Son`, `Scenes`).
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamerbot`, `demarrage` (dont `minutes` et `heure`),
   `pause`, `fin`, `chat`, `objectif`, `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
-  [+ `ceSoir`], false = cachée), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
+  [+ `ceSoir`], false = cachée), `miseAJour.adresse` (le serveur des mises à jour), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
   `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
   voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
@@ -193,6 +194,26 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
 - `reglages.html` + `js/reglages.js` : la page de réglages (identiques partout) ; `js/reglages-champs.js` : gabarit
   des libellés, à adapter dans chaque overlay (un réglage ajouté à config.js → l'ajouter là aussi, dans la bonne section).
 - `CONCEPT.md`, `TUTO.md` : gabarits des documents.
+- `mettre-a-jour.cmd` (racine de l'overlay) + `outils/mettre-a-jour.ps1` (UTF-8 AVEC BOM, PowerShell 5.1) : télécharge
+  `<adresse>/<id>/version.json`, compare à `version.json` local, sauvegarde l'overlay dans `sauvegardes\<date>` (3 gardées),
+  installe le zip par robocopy SANS jamais toucher `mes-reglages.js` (ni supprimer les fichiers du streamer) ; refuse de tourner dans
+  un dépôt Git (dev). `-Mode verifier`, `-Sortie <fichier>` (résultat etat=/version=/message= pour le script OBS), `-SansPause`.
+  Le bouton « Mettre à jour l'overlay » d'`actualiser-obs.lua` le lance en arrière-plan (`start /min`, sans bloquer OBS),
+  suit le fichier résultat avec un minuteur, puis actualise les sources et replace les webcams. Testé avec PowerShell 7 sous Linux
+  (robocopy simulé), pas sous Windows.
+
+## Distribution : le serveur (`serveur/`)
+
+- `construire.mjs` : pour chaque overlay (dossier avec config.js + `id`), `<id>/<id>.zip` (sans mes-reglages.js, sauvegardes/),
+  `<id>/version.json` (`{ id, nom, version, date, adresse, telechargement, changements }` — version = date + empreinte du dernier
+  commit QUI TOUCHE ce dossier : un overlay inchangé garde sa version ; changements = fin du journal de CONCEPT.md), `TUTO.pdf`,
+  et la page `index.html`. Zip écrit à la main (zlib, noms UTF-8), sans dépendance.
+- `webhook.mjs` (127.0.0.1:9321, derrière Nginx/Caddy `/webhook`) : GitHub (X-Hub-Signature-256 HMAC) et GitLab (X-Gitlab-Token),
+  branche `BRANCHE` seulement → `mettre-a-jour.mjs` (fetch + reset --hard + construire si nouveau commit). Minuteur horaire en secours.
+- `installer.sh` (Debian/Ubuntu, root, relançable) : Node 18+, Git, utilisateur `overlays`, clé de déploiement LECTURE SEULE,
+  `/opt/overlays/depot`, `/etc/overlays.env` (SECRET, BRANCHE, SORTIE=/var/www/overlays, ADRESSE), services systemd
+  `overlays-webhook` + `overlays-maj.timer`, Nginx (ou Caddy s'il est là). Testé en conteneur (systemd simulé, vrai Nginx).
+- On ne se connecte JAMAIS au VPS à la place de l'utilisateur (pas de mot de passe saisi par nous) : il lance installer.sh lui-même.
 
 Pour `chat.js`, `son.js`, `transition.js`, `commun.js` : partir de la version d'un overlay
 existant (le moteur est le même, seul le rendu change). Le chat lit l'IRC Twitch anonyme

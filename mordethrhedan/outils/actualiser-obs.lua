@@ -6,6 +6,8 @@
     - un raccourci clavier du même nom (Paramètres › Raccourcis clavier) ;
     - l'actualisation AUTOMATIQUE des sources de l'overlay quand config.js ou mes-reglages.js change
       (donc juste après « Enregistrer » dans reglages.html), si la case est cochée ;
+    - un bouton « Mettre à jour l'overlay » (Windows) : télécharge la dernière version sur le serveur des
+      overlays (outils/mettre-a-jour.ps1, sans bloquer OBS), garde tes réglages, puis actualise tout ;
     - un bouton « Placer les webcams » : dans chaque scène qui affiche une page de l'overlay
       (scenes/jeu.html, contenu.html…), la webcam est mise pile dans sa zone (js/zones.js +
       Options des scènes de reglages.html) ; ajoutée là où elle manque ; cachée si la scène est
@@ -385,6 +387,69 @@ local function placer(ajouter)
   return places
 end
 
+-- =====================================================================
+-- Mettre à jour l'overlay (Windows) : lance outils/mettre-a-jour.ps1 SANS bloquer OBS,
+-- puis lit son résultat ; une fois installée : sources actualisées et webcams replacées.
+-- Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l'ancienne version va dans sauvegardes\.
+-- =====================================================================
+local maj = { fichier = nil, debut = 0, message = "" }
+
+local function version_installee()
+  local t = lire(dossier .. "/version.json")
+  if t == nil then return nil end
+  local v = t:match('"version"%s*:%s*"([^"]+)"')
+  if v == nil then return nil end
+  local a, m, j, h, mn = v:match("^(%d+)%-(%d+)%-(%d+)_(%d%d)(%d%d)")   -- 2026-10-02_1322-07d5bd0
+  if a then return string.format("du %s/%s/%s à %s:%s", j, m, a, h, mn) end
+  return v
+end
+
+local function suivre_maj()
+  local texte = maj.fichier and lire(maj.fichier) or nil
+  if texte == nil or not texte:find("message=", 1, true) then
+    if os.time() - maj.debut > 900 then
+      obs.timer_remove(suivre_maj)
+      maj.fichier = nil
+      maj.message = "La mise à jour ne répond pas : double-clique sur mettre-a-jour.cmd (dans le dossier de l'overlay)."
+      obs.script_log(obs.LOG_WARNING, maj.message)
+    end
+    return
+  end
+  obs.timer_remove(suivre_maj)
+  os.remove(maj.fichier)
+  maj.fichier = nil
+  local etat = texte:match("etat=([^\r\n]*)") or ""
+  maj.message = texte:match("message=([^\r\n]*)") or ""
+  obs.script_log(etat == "erreur" and obs.LOG_WARNING or obs.LOG_INFO, "Mise à jour : " .. maj.message)
+  if etat == "installee" then
+    actualiser(true)
+    placer(false)
+  end
+end
+
+local function mettre_a_jour()
+  if package.config:sub(1, 1) ~= "\\" then
+    maj.message = "Le bouton marche sous Windows : ailleurs, télécharge la nouvelle version sur la page des overlays."
+    obs.script_log(obs.LOG_WARNING, maj.message)
+    return
+  end
+  if maj.fichier ~= nil then return end   -- déjà en cours
+  local ps1 = dossier .. "/outils/mettre-a-jour.ps1"
+  if lire(ps1) == nil then
+    maj.message = "outils/mettre-a-jour.ps1 introuvable dans " .. dossier
+    obs.script_log(obs.LOG_WARNING, maj.message)
+    return
+  end
+  maj.fichier = (os.getenv("TEMP") or dossier) .. "\\maj-overlay-" .. os.time() .. ".txt"
+  maj.debut = os.time()
+  maj.message = "Mise à jour en cours… (le résultat s'affiche ici et dans le journal des scripts)"
+  local chemin = ps1:gsub("/", "\\")
+  obs.script_log(obs.LOG_INFO, "Mise à jour : recherche d'une nouvelle version…")
+  os.execute('start "" /min powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' .. chemin
+    .. '" -Mode installer -SansPause -Sortie "' .. maj.fichier .. '"')
+  obs.timer_add(suivre_maj, 1000)
+end
+
 -- Toutes les 2 secondes : config.js ou mes-reglages.js (les réglages du streamer) ont-ils changé ?
 local function surveiller()
   if (not auto and not auto_cams) or dossier == "" then return end
@@ -405,7 +470,8 @@ function script_description()
 et l'actualisation automatique des sources de l'overlay quand <code>config.js</code> ou <code>mes-reglages.js</code> change
 (après « Enregistrer » dans <code>reglages.html</code>).</p>
 <p><b>Placer les webcams</b> : dans chaque scène qui affiche une page de l'overlay, la webcam est mise pile dans sa zone
-(et ajoutée là où elle manque). Ta source webcam doit avoir « cam » dans son nom (ex. <b>Webcam</b>).</p>]]
+(et ajoutée là où elle manque). Ta source webcam doit avoir « cam » dans son nom (ex. <b>Webcam</b>).</p>
+<p><b>Mettre à jour l'overlay</b> : la dernière version, depuis le serveur des overlays. Tes réglages sont gardés.</p>]]
 end
 
 function script_properties()
@@ -420,6 +486,16 @@ function script_properties()
     return false
   end)
   obs.obs_properties_add_bool(p, "auto_cams", "Replacer tout seul les webcams quand les réglages changent")
+  obs.obs_properties_add_button(p, "maj", "Mettre à jour l'overlay (tes réglages sont gardés)", function()
+    mettre_a_jour()
+    return true   -- réaffiche l'état ci-dessous
+  end)
+  if obs.OBS_TEXT_INFO ~= nil then
+    local v = version_installee()
+    local texte = (v and ("Version installée : " .. v) or "Version installée : inconnue (pas de version.json)")
+    if maj.message ~= "" then texte = texte .. "\n" .. maj.message end
+    obs.obs_properties_add_text(p, "etat_maj", texte, obs.OBS_TEXT_INFO)
+  end
   obs.obs_properties_add_path(p, "dossier", "Dossier de l'overlay", obs.OBS_PATH_DIRECTORY, "", nil)
   return p
 end
