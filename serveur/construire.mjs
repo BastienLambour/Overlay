@@ -12,7 +12,7 @@
    Utilisation (dans le dépôt) :
        node serveur/construire.mjs                   → sortie : /var/www/overlays/site
        SORTIE=C:\temp\site node serveur/construire.mjs
-   Variables : SORTIE (dossier publié), ADRESSE (adresse publique du site, ex. http://217.154.115.223).
+   Variables : SORTIE (dossier publié), ADRESSE (adresse publique du site, ex. https://overlays.bastien-lambour.fr).
    Node 18+, sans dépendance (le zip est écrit ici même, avec zlib).
    ===================================================================== */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, copyFileSync, renameSync } from 'node:fs';
@@ -24,7 +24,7 @@ import vm from 'node:vm';
 
 const DEPOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SORTIE = resolve(process.env.SORTIE || '/var/www/overlays/site');
-const ADRESSE = (process.env.ADRESSE || 'http://217.154.115.223').replace(/\/+$/, '');
+const ADRESSE = (process.env.ADRESSE || 'https://overlays.bastien-lambour.fr').replace(/\/+$/, '');
 // Jamais livrés : les réglages perso du streamer, ses sauvegardes, les fichiers techniques
 const EXCLUS_FICHIERS = new Set(['mes-reglages.js', '.DS_Store', 'Thumbs.db', 'desktop.ini']);
 const EXCLUS_DOSSIERS = new Set(['sauvegardes', '.git', 'node_modules']);

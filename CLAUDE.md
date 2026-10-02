@@ -212,7 +212,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   branche `BRANCHE` seulement → `mettre-a-jour.mjs` (fetch + reset --hard + construire si nouveau commit). Minuteur horaire en secours.
 - `installer.sh` (Debian/Ubuntu, root, relançable ; lit par défaut `git@gitlab.com:Bastien.Lambour/overlays.git`, branche `main`) : Node 18+, Git, utilisateur `overlays`, clé de déploiement LECTURE SEULE,
   tout dans `/var/www/overlays` : `depot/` (privé, 750) et `site/` (SEUL dossier servi ; la racine en 711), `/etc/overlays.env`
-  (SECRET, BRANCHE, SORTIE=/var/www/overlays/site, ADRESSE), services systemd
+  (SECRET, BRANCHE, SORTIE=/var/www/overlays/site, ADRESSE), site https://overlays.bastien-lambour.fr (DOMAINE) avec le certificat
+  existant `/etc/ssl/private/bastien-lambour.fr.cer` (vérifié : il doit couvrir le nom) ; UN fichier Nginx, aucun autre site touché
+  (le VPS héberge d'autres sites !), retiré si `nginx -t` refuse ; services systemd
   `overlays-webhook` + `overlays-maj.timer`, Nginx (ou Caddy s'il est là). Testé en conteneur (systemd simulé, vrai Nginx).
 - On ne se connecte JAMAIS au VPS à la place de l'utilisateur (pas de mot de passe saisi par nous) : il lance installer.sh lui-même.
 

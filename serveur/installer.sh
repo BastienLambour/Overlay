@@ -10,7 +10,8 @@
 #      et site/ (ce que montre le serveur web : un zip + version.json + TUTO.pdf par overlay, la page) ;
 #    - le récepteur du webhook (service overlays-webhook) : un push → le site est refait aussitôt ;
 #    - un filet de sécurité : une vérification par heure (minuteur overlays-maj.timer) ;
-#    - le serveur web (Nginx, ou Caddy s'il est déjà là) : le site sur le port 80, /webhook transmis au récepteur.
+#    - le serveur web : UN fichier Nginx (aucun autre site touché) — https://overlays.bastien-lambour.fr avec le
+#      certificat des autres sites (80 → 443), /webhook transmis au récepteur ; Caddy s'il est là à la place de Nginx.
 #
 #  Utilisation (depuis ton PC, dans le dossier du dépôt) :
 #      scp serveur/installer.sh root@ADRESSE_DU_VPS:
@@ -21,14 +22,18 @@
 #      DEPOT_URL  le dépôt à lire        (défaut : git@gitlab.com:Bastien.Lambour/overlays.git)
 #      BRANCHE    la branche publiée     (défaut : main)
 #      ADRESSE    l'adresse publique     (défaut : http://<IP du VPS>) — aussi écrite dans les version.json
-#      DOMAINE    un nom de domaine      (facultatif : avec Caddy, HTTPS automatique)
+#      DOMAINE    l'adresse du site      (défaut : overlays.bastien-lambour.fr ; DOMAINE= vide = sur l'IP, en http)
+#      CERTIFICAT, CLE  le certificat HTTPS déjà sur le VPS (défaut : /etc/ssl/private/bastien-lambour.fr.cer et
+#                 bastien-lambour.fr-private.key, ceux des autres sites) ; absent = le site reste en http
 #  Exemple : ssh root@VPS "BRANCHE=main DEPOT_URL=git@github.com:BastienLambour/Overlay.git bash installer.sh"
 # =====================================================================
 set -euo pipefail
 
 DEPOT_URL="${DEPOT_URL:-git@gitlab.com:Bastien.Lambour/overlays.git}"
 BRANCHE="${BRANCHE:-main}"
-DOMAINE="${DOMAINE:-}"
+DOMAINE="${DOMAINE-overlays.bastien-lambour.fr}"
+CERTIFICAT="${CERTIFICAT:-/etc/ssl/private/bastien-lambour.fr.cer}"
+CLE="${CLE:-/etc/ssl/private/bastien-lambour.fr-private.key}"
 UTILISATEUR=overlays
 RACINE="${RACINE:-/var/www/overlays}"   # tout est là (réglable : RACINE=… bash installer.sh)
 MAISON="$RACINE"
@@ -44,7 +49,16 @@ stop()  { printf '\n\033[1;31m✖ %s\033[0m\n' "$*" >&2; exit 1; }
 command -v apt-get >/dev/null || stop "Ce script est prévu pour Debian ou Ubuntu (apt-get introuvable)."
 
 IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
-if [ -n "$DOMAINE" ]; then ADRESSE="${ADRESSE:-https://$DOMAINE}"; else ADRESSE="${ADRESSE:-http://${IP:-127.0.0.1}}"; fi
+# HTTPS si le certificat est là ET couvre ce domaine (ex. un certificat « *.bastien-lambour.fr »)
+HTTPS=0
+if [ -n "$DOMAINE" ] && [ -f "$CERTIFICAT" ] && [ -f "$CLE" ]; then
+  NOMS="$(openssl x509 -in "$CERTIFICAT" -noout -ext subjectAltName 2>/dev/null | tr ',' '\n' | sed -n 's/.*DNS:\(.*\)/\1/p')"
+  if printf '%s\n' "$NOMS" | grep -qxF -e "$DOMAINE" -e "*.${DOMAINE#*.}"; then HTTPS=1
+  else stop "Le certificat $CERTIFICAT ne couvre pas $DOMAINE (il couvre : $(echo "$NOMS" | xargs)). Choisis un autre nom (DOMAINE=…), ou donne un autre certificat (CERTIFICAT=… CLE=…)."; fi
+fi
+if [ -n "$DOMAINE" ]; then
+  if [ "$HTTPS" = 1 ]; then ADRESSE="${ADRESSE:-https://$DOMAINE}"; else ADRESSE="${ADRESSE:-http://$DOMAINE}"; fi
+else ADRESSE="${ADRESSE:-http://${IP:-127.0.0.1}}"; fi
 ADRESSE="${ADRESSE%/}"
 
 # ---------------------------------------------------------------------
@@ -206,44 +220,81 @@ EOF
   ok "Caddy : /etc/caddy/overlays.caddy"
 else
   command -v nginx >/dev/null || apt-get install -y -qq nginx >/dev/null
-  # Pas d'autre site sur le VPS ? Celui-ci devient le site par défaut (on retire la page « Welcome to nginx »)
-  DEFAUT=""
-  if [ -L /etc/nginx/sites-enabled/default ] && grep -q 'Welcome to nginx\|/var/www/html' /etc/nginx/sites-available/default 2>/dev/null; then
-    rm -f /etc/nginx/sites-enabled/default
+  # Où Nginx range ses sites : sites-available + sites-enabled (Debian/Ubuntu), sinon conf.d
+  if [ -d /etc/nginx/sites-enabled ] && grep -rqs 'sites-enabled' /etc/nginx/nginx.conf; then
+    FICHIER=/etc/nginx/sites-available/overlays; LIEN=/etc/nginx/sites-enabled/overlays
+  else
+    FICHIER=/etc/nginx/conf.d/overlays.conf; LIEN=""
   fi
-  if ! grep -rls 'default_server' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | grep -vq '/overlays$'; then DEFAUT=" default_server"; fi
-  IPV6=""; [ -f /proc/net/if_inet6 ] && IPV6="    listen [::]:80$DEFAUT;"   # seulement si la machine a l'IPv6
-  cat > /etc/nginx/sites-available/overlays <<EOF
-# Overlays : la page et les zips, et /webhook transmis au récepteur (serveur/installer.sh)
-server {
-    listen 80$DEFAUT;
-$IPV6
-    server_name ${DOMAINE:-_};
-    root $SORTIE;
+  V6=""; [ -f /proc/net/if_inet6 ] && V6=1   # écouter aussi en IPv6 seulement si la machine l'a
+  # Ce que font les deux versions (http ou https) : le site, /webhook transmis au récepteur, pas de cache sur les versions
+  EMPLACEMENTS="    root $SORTIE;
     index index.html;
 
     location = /webhook {
         proxy_pass http://127.0.0.1:$PORT;
-        proxy_set_header X-Forwarded-For \$remote_addr;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         client_max_body_size 5m;
     }
     # version.json et les zips : toujours la dernière version (pas de cache)
     location ~ \.(json|zip)\$ {
-        add_header Cache-Control "no-cache";
+        add_header Cache-Control \"no-cache\";
     }
     location / {
         try_files \$uri \$uri/ =404;
-    }
+    }"
+  if [ -n "$DOMAINE" ] && [ "$HTTPS" = 1 ]; then
+    # Comme les autres sites du VPS : le port 80 renvoie vers https, le site est sur le port 443
+    cat > "$FICHIER" <<EOF
+# Overlays : $DOMAINE (écrit par serveur/installer.sh — relance-le plutôt que de modifier ce fichier)
+server {
+    listen 80;
+${V6:+    listen [::]:80;}
+    server_name $DOMAINE;
+    return 301 https://\$host\$request_uri;
+}
+
+server {
+    listen 443 ssl;
+${V6:+    listen [::]:443 ssl;}
+    server_name $DOMAINE;
+
+    ssl_certificate $CERTIFICAT;
+    ssl_certificate_key $CLE;
+
+$EMPLACEMENTS
 }
 EOF
-  ln -sfn /etc/nginx/sites-available/overlays /etc/nginx/sites-enabled/overlays
+  else
+    # Sans certificat : en http seulement (sur l'IP du VPS si aucun domaine n'est donné)
+    DEFAUT=""
+    if [ -z "$DOMAINE" ]; then
+      # Seulement si le VPS n'a AUCUN autre site : on retire la page « Welcome to nginx » d'origine
+      AUTRES=0; for s in /etc/nginx/sites-enabled/*; do [ -e "$s" ] && [ "${s##*/}" != overlays ] && AUTRES=$((AUTRES + 1)); done
+      if [ -L /etc/nginx/sites-enabled/default ] && [ "$AUTRES" = 1 ]; then rm -f /etc/nginx/sites-enabled/default; fi
+      if ! grep -rls 'default_server' /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | grep -vq 'overlays'; then DEFAUT=" default_server"; fi
+    fi
+    cat > "$FICHIER" <<EOF
+# Overlays (écrit par serveur/installer.sh — relance-le plutôt que de modifier ce fichier)
+server {
+    listen 80$DEFAUT;
+${V6:+    listen [::]:80$DEFAUT;}
+    server_name ${DOMAINE:-_};
+
+$EMPLACEMENTS
+}
+EOF
+  fi
+  [ -n "$LIEN" ] && ln -sfn "$FICHIER" "$LIEN"
   if ! nginx -t >/dev/null 2>&1; then
-    rm -f /etc/nginx/sites-enabled/overlays
-    stop "La configuration Nginx est refusée (nginx -t). Le site n'a pas été activé."
+    nginx -t 2>&1 | tail -5
+    rm -f "$FICHIER" ${LIEN:+"$LIEN"}
+    stop "Nginx refuse la configuration (ci-dessus). Le fichier des overlays a été retiré : tes autres sites ne sont pas touchés."
   fi
   systemctl enable --now nginx >/dev/null 2>&1
   systemctl reload nginx
-  ok "Nginx : /etc/nginx/sites-available/overlays"
+  ok "Nginx : $FICHIER (tes autres sites ne sont pas modifiés)"
 fi
 if command -v ufw >/dev/null && ufw status | grep -q 'Status: active'; then ufw allow 80/tcp >/dev/null; ufw allow 443/tcp >/dev/null; ok "Pare-feu : ports 80 et 443 ouverts"; fi
 
@@ -264,7 +315,7 @@ cat <<EOF
              Secret = le secret ci-dessus · « Just the push event » · Add webhook
     GitLab : projet › Settings › Webhooks › Add new webhook
              URL = $ADRESSE/webhook · Secret token = le secret ci-dessus · « Push events »
-             (branche : $BRANCHE) · décoche « Enable SSL verification » tant que le site est en http
+             (branche : $BRANCHE) · (si le site est en http seulement : décoche « Enable SSL verification »)
 
   Les journaux : journalctl -u overlays-webhook -f    (les push reçus)
                  journalctl -u overlays-maj -n 30     (les reconstructions)

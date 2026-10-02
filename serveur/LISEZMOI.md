@@ -57,7 +57,22 @@ Tout le travail récent devient ainsi le `main` de GitLab. Ensuite : tu travaill
 `git push gitlab main`. (Pour en faire le dépôt par défaut : `git remote rename origin github` puis
 `git remote rename gitlab origin`.)
 
-## 2. Installer le serveur (une fois, environ 5 minutes)
+## 2. Le sous-domaine (une fois)
+
+Le site sera sur **https://overlays.bastien-lambour.fr**, avec le même certificat que tes autres sites
+(`/etc/ssl/private/bastien-lambour.fr.cer`). Chez ton hébergeur de nom de domaine, ajoute un enregistrement DNS :
+
+| Type | Nom | Valeur |
+|---|---|---|
+| A | `overlays` | `217.154.115.223` |
+
+(Si tu as déjà un enregistrement « `*` » vers le VPS, il n'y a rien à faire.) Vérifie depuis ton PC : `ping overlays.bastien-lambour.fr`
+doit répondre 217.154.115.223.
+
+Le script vérifie que le certificat couvre bien ce nom (un certificat « `*.bastien-lambour.fr` ») ; sinon il s'arrête
+sans rien toucher à Nginx. Autre nom : `DOMAINE=autre.bastien-lambour.fr bash installer.sh`.
+
+## 3. Installer le serveur (une fois, environ 5 minutes)
 
 Depuis ton PC, dans le dossier du dépôt (PowerShell ou un terminal) :
 
@@ -77,19 +92,24 @@ Il avance tout seul et s'arrête **une fois** : il affiche une **clé de déploi
 
 Reviens au terminal, appuie sur **Entrée** : le script continue. À la fin, il affiche **l'adresse du webhook** et **le secret**.
 
-## 3. Brancher le webhook GitLab (une fois)
+**Nginx : rien à écrire toi-même.** Le script ajoute UN fichier, `/etc/nginx/sites-available/overlays` (+ son lien dans
+`sites-enabled`), sur le même modèle que tes autres sites : le port 80 renvoie vers https, le site sur le 443 avec ton
+certificat, `/webhook` transmis au récepteur. **Il ne touche à aucun autre site.** Si `nginx -t` refuse, il retire son
+fichier et s'arrête : tes sites continuent comme avant.
+
+## 4. Brancher le webhook GitLab (une fois)
 
 Le projet › **Settings › Webhooks › Add new webhook** :
 
-1. **URL** : `http://217.154.115.223/webhook`
+1. **URL** : `https://overlays.bastien-lambour.fr/webhook`
 2. **Secret token** : le secret affiché par l'installation (il est aussi dans `/etc/overlays.env` sur le VPS)
 3. **Trigger** : coche **Push events**, branche `main`
-4. Décoche **Enable SSL verification** (le site est en `http` tant qu'il n'a pas de nom de domaine)
+4. Laisse **Enable SSL verification** cochée (le site est en HTTPS)
 5. **Add webhook**, puis **Test › Push events** : la réponse doit être « Mise à jour lancée ».
 
-## 4. Vérifier
+## 5. Vérifier
 
-- La page : <http://217.154.115.223/> (un bouton par overlay).
+- La page : <https://overlays.bastien-lambour.fr/> (un bouton par overlay).
 - Pousse une petite modification : quelques secondes après, la date de version de l'overlay change sur la page.
 - Les journaux, sur le VPS :
   - `journalctl -u overlays-webhook -f` : les push reçus, en direct ;
@@ -97,11 +117,11 @@ Le projet › **Settings › Webhooks › Add new webhook** :
 - Refaire le site à la main : `systemctl start overlays-maj` (seulement s'il y a du nouveau) ; tout refaire quoi qu'il
   arrive : `runuser -u overlays -- bash -c 'set -a; . /etc/overlays.env; node /var/www/overlays/depot/serveur/mettre-a-jour.mjs --forcer'`.
 
-## 5. Une seule fois chez chaque membre de la famille
+## 6. Une seule fois chez chaque membre de la famille
 
 Leurs copies actuelles n'ont pas encore le système de mise à jour : une dernière fois « à la main ».
 
-1. Télécharger le zip de son overlay sur <http://217.154.115.223/>, le décompresser **par-dessus** son dossier actuel
+1. Télécharger le zip de son overlay sur <https://overlays.bastien-lambour.fr/>, le décompresser **par-dessus** son dossier actuel
    (son `mes-reglages.js` n'est pas dans le zip : il reste).
 2. OBS › **Outils › Scripts** › **+** › `outils/actualiser-obs.lua` (déjà installé : le sélectionner › **Recharger**).
 
@@ -110,9 +130,9 @@ Ensuite, à chaque nouvelle version : bouton **Mettre à jour l'overlay** dans c
 
 > Revenir un jour sur GitHub : relance l'installation avec `DEPOT_URL=git@github.com:BastienLambour/Overlay.git`
 > (la même clé de déploiement, à ajouter dans GitHub › Settings › Deploy keys), et un webhook GitHub : Settings ›
-> Webhooks › Payload URL `http://217.154.115.223/webhook`, Content type `application/json`, même secret, « Just the push event ».
+> Webhooks › Payload URL `https://overlays.bastien-lambour.fr/webhook`, Content type `application/json`, même secret, « Just the push event ».
 
-## 6. Et quand un membre de la famille fait une modification ?
+## 7. Et quand un membre de la famille fait une modification ?
 
 - **Ses réglages** (textes, couleurs, sons, options des scènes… tout ce qui passe par `reglages.html`) sont dans son
   `mes-reglages.js` : une mise à jour ne les touche jamais. **Il n'a pas besoin de Git.**
@@ -121,19 +141,18 @@ Ensuite, à chaque nouvelle version : bouton **Mettre à jour l'overlay** dans c
   l'intègres au dépôt et tu pousses : tout le monde a la modification.
 - Une image ou un son **à lui** (dans `sons/` par exemple) qui n'existe pas dans ta version n'est jamais supprimé.
 
-## 7. Plus tard : un nom de domaine et HTTPS
+## 8. Changer d'adresse plus tard
 
-Avec un nom de domaine qui pointe vers le VPS : `DOMAINE=overlays.mondomaine.fr bash installer.sh`.
-
-- Si **Caddy** est installé (à la place de Nginx), il obtient le certificat HTTPS tout seul.
-- Avec **Nginx** : `apt install certbot python3-certbot-nginx` puis `certbot --nginx -d overlays.mondomaine.fr`.
-
-Change ensuite l'adresse dans `config.js › miseAJour.adresse` des overlays (et dans les webhooks), puis pousse.
-Les overlays déjà installés suivent tout seuls : l'adresse vient du `version.json` de chaque mise à jour.
+Relance l'installation avec le nouveau nom : `ssh root@217.154.115.223 "DOMAINE=nouveau.bastien-lambour.fr bash installer.sh"`
+(un autre certificat : `CERTIFICAT=… CLE=…` ; sans certificat, le site reste en http). Change ensuite l'adresse du webhook
+dans GitLab, et `config.js › miseAJour.adresse` des overlays, puis pousse. Les overlays déjà installés suivent tout seuls :
+l'adresse vient du `version.json` de chaque mise à jour.
 
 ## Ce qui a été testé
 
-- Dans un conteneur Linux : l'installation complète (avec un vrai Nginx, sans systemd, qui était simulé) ; le site
-  servi ; le webhook GitHub et GitLab (secret faux refusé, mauvaise branche ignorée, « ping ») ; un nouveau commit
+- Dans un conteneur Linux : l'installation complète (avec un vrai Nginx, sans systemd, qui était simulé), au milieu de
+  copies de tes sites (candidate-match, mariage) et d'un certificat de test « *.bastien-lambour.fr » : leurs fichiers
+  restent identiques à l'octet près, le site est servi en HTTPS, le port 80 redirige, un certificat qui ne couvre pas le
+  nom est refusé ; le webhook GitHub et GitLab (secret faux refusé, mauvaise branche ignorée, « ping ») ; un nouveau commit
   poussé → seul l'overlay modifié change de version ; zips identiques à l'octet près une fois décompressés.
 - **Pas testé** : sur ton vrai VPS, avec le vrai GitLab (clé de déploiement, webhook), avec systemd.
