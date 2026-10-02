@@ -10,7 +10,7 @@
    quelle version il a, et à quelle adresse demander la suivante.
 
    Utilisation (dans le dépôt) :
-       node serveur/construire.mjs                   → sortie : /var/www/overlays
+       node serveur/construire.mjs                   → sortie : /var/www/overlays/site
        SORTIE=C:\temp\site node serveur/construire.mjs
    Variables : SORTIE (dossier publié), ADRESSE (adresse publique du site, ex. http://217.154.115.223).
    Node 18+, sans dépendance (le zip est écrit ici même, avec zlib).
@@ -23,7 +23,7 @@ import { deflateRawSync } from 'node:zlib';
 import vm from 'node:vm';
 
 const DEPOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SORTIE = resolve(process.env.SORTIE || '/var/www/overlays');
+const SORTIE = resolve(process.env.SORTIE || '/var/www/overlays/site');
 const ADRESSE = (process.env.ADRESSE || 'http://217.154.115.223').replace(/\/+$/, '');
 // Jamais livrés : les réglages perso du streamer, ses sauvegardes, les fichiers techniques
 const EXCLUS_FICHIERS = new Set(['mes-reglages.js', '.DS_Store', 'Thumbs.db', 'desktop.ini']);

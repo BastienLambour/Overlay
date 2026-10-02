@@ -24,6 +24,19 @@ Un overlay qui n'a pas changé garde sa version : son streamer n'a rien à tél�
 | `mettre-a-jour.mjs` | récupère le dépôt, et relance `construire.mjs` seulement s'il a changé |
 | `webhook.mjs` | reçoit les « push » de GitHub ou GitLab (vérifie le secret, ne garde que la bonne branche) |
 
+## Où sont les choses sur le VPS
+
+```
+/var/www/overlays/
+├── depot/   la copie du dépôt GitLab, d'où tourne le webhook (privée : jamais visible sur internet)
+├── site/    ce que montre le serveur web : la page, et pour chaque overlay son zip, version.json, TUTO.pdf
+└── .ssh/    la clé de déploiement (privée)
+/etc/overlays.env   le secret du webhook et les réglages (branche, adresse…)
+```
+
+Seul `site/` est servi : sinon, n'importe qui pourrait télécharger le dépôt (`.git`) et la clé. Autre dossier :
+`RACINE=/autre/chemin bash installer.sh`.
+
 ## 0. Avant tout : la sécurité du VPS
 
 Le mot de passe root du VPS a été écrit dans une conversation : **change-le** dès ta prochaine connexion (`passwd`),
@@ -82,7 +95,7 @@ Le projet › **Settings › Webhooks › Add new webhook** :
   - `journalctl -u overlays-webhook -f` : les push reçus, en direct ;
   - `journalctl -u overlays-maj -n 30` : les reconstructions.
 - Refaire le site à la main : `systemctl start overlays-maj` (seulement s'il y a du nouveau) ; tout refaire quoi qu'il
-  arrive : `runuser -u overlays -- bash -c 'set -a; . /etc/overlays.env; node /opt/overlays/depot/serveur/mettre-a-jour.mjs --forcer'`.
+  arrive : `runuser -u overlays -- bash -c 'set -a; . /etc/overlays.env; node /var/www/overlays/depot/serveur/mettre-a-jour.mjs --forcer'`.
 
 ## 5. Une seule fois chez chaque membre de la famille
 

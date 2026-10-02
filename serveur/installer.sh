@@ -6,8 +6,8 @@
 #    - Node.js (18 ou plus) et Git, s'ils manquent ;
 #    - un utilisateur système « overlays » (les services ne tournent PAS en root) ;
 #    - une clé SSH « de déploiement » en LECTURE SEULE pour lire le dépôt (GitHub ou GitLab) ;
-#    - une copie du dépôt dans /opt/overlays/depot, et le site dans /var/www/overlays
-#      (un zip + version.json + TUTO.pdf par overlay, et la page de téléchargement) ;
+#    - tout dans /var/www/overlays : depot/ (la copie du dépôt, d'où tourne le webhook — jamais servie)
+#      et site/ (ce que montre le serveur web : un zip + version.json + TUTO.pdf par overlay, la page) ;
 #    - le récepteur du webhook (service overlays-webhook) : un push → le site est refait aussitôt ;
 #    - un filet de sécurité : une vérification par heure (minuteur overlays-maj.timer) ;
 #    - le serveur web (Nginx, ou Caddy s'il est déjà là) : le site sur le port 80, /webhook transmis au récepteur.
@@ -30,9 +30,10 @@ DEPOT_URL="${DEPOT_URL:-git@gitlab.com:Bastien.Lambour/overlays.git}"
 BRANCHE="${BRANCHE:-main}"
 DOMAINE="${DOMAINE:-}"
 UTILISATEUR=overlays
-MAISON=/opt/overlays
+RACINE="${RACINE:-/var/www/overlays}"   # tout est là (réglable : RACINE=… bash installer.sh)
+MAISON="$RACINE"
 DEPOT="$MAISON/depot"
-SORTIE=/var/www/overlays
+SORTIE="$RACINE/site"   # SEUL dossier servi par Nginx/Caddy (depot/ et .ssh/ restent privés)
 PORT=9321
 ENV=/etc/overlays.env
 
@@ -63,8 +64,11 @@ ok "Git $(git --version | awk '{print $3}'), Node.js $(node --version)"
 dire "2/7 Utilisateur « $UTILISATEUR » et dossiers"
 id "$UTILISATEUR" >/dev/null 2>&1 || useradd --system --home-dir "$MAISON" --create-home --shell /usr/sbin/nologin "$UTILISATEUR"
 mkdir -p "$MAISON" "$SORTIE"
-chown -R "$UTILISATEUR:$UTILISATEUR" "$MAISON" "$SORTIE"
-ok "$MAISON (le dépôt) et $SORTIE (le site)"
+chown -R "$UTILISATEUR:$UTILISATEUR" "$MAISON"
+# Le serveur web traverse $MAISON (sans pouvoir le lister) et ne lit QUE site/ ; depot/ et .ssh/ restent privés
+chmod 711 "$MAISON"
+chmod 755 "$SORTIE"
+ok "$DEPOT (le dépôt, privé) et $SORTIE (le site)"
 en_overlays() { runuser -u "$UTILISATEUR" -- env HOME="$MAISON" "$@"; }
 
 # ---------------------------------------------------------------------
@@ -73,6 +77,7 @@ if [[ "$DEPOT_URL" == git@* || "$DEPOT_URL" == ssh://* ]]; then
   CLE="$MAISON/.ssh/id_ed25519"
   if [ ! -f "$CLE" ]; then
     en_overlays mkdir -p "$MAISON/.ssh"
+    chmod 700 "$MAISON/.ssh"
     en_overlays ssh-keygen -q -t ed25519 -N '' -C "overlays@$(hostname)" -f "$CLE"
   fi
   HOTE="$(printf '%s' "$DEPOT_URL" | sed -E 's#^(ssh://)?([^@]+@)?([^:/]+).*#\3#')"
@@ -95,6 +100,7 @@ if [ -d "$DEPOT/.git" ]; then
 else
   en_overlays git clone --quiet --branch "$BRANCHE" "$DEPOT_URL" "$DEPOT"
 fi
+chmod 750 "$DEPOT"
 en_overlays git -C "$DEPOT" fetch --quiet origin "$BRANCHE"
 en_overlays git -C "$DEPOT" checkout --quiet -B "$BRANCHE" "origin/$BRANCHE"
 ok "À jour : $(en_overlays git -C "$DEPOT" log -1 --format='%h %s')"
