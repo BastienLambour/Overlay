@@ -69,6 +69,12 @@
     bloc.querySelector('.alerte-nom').textContent = e.nom || '';
     bloc.querySelector('.alerte-msg').textContent = remplir(t.message, e);
     ecran.appendChild(bloc);
+    // Titre long (« Soutien moral officiel ») : on réduit la police jusqu'à ce qu'il tienne.
+    // On remesure une fois la police chargée (avant, la police de secours, plus étroite, fausse la mesure).
+    const titre = bloc.querySelector('.alerte-titre');
+    const ajuster = () => { titre.style.fontSize = ''; for (let taille = 64; titre.scrollWidth > titre.clientWidth && taille > 34; taille -= 2) titre.style.fontSize = taille + 'px'; };
+    ajuster();
+    document.fonts.load(`64px ${getComputedStyle(titre).fontFamily}`).then(ajuster);
     Son.jouer(e.type);
 
     const el = bloc.querySelector('.alerte');
@@ -77,6 +83,9 @@
       setTimeout(() => { bloc.remove(); fini(); }, 450);
     }, (CA.duree || 7) * 1000);
   }
+
+  // Charge la police des titres dès l'ouverture : la première alerte s'affiche directement avec
+  document.fonts.load(`64px ${getComputedStyle(document.documentElement).getPropertyValue('--f-titre')}`);
 
   Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
   Evenements.demarrer();

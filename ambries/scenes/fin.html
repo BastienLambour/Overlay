@@ -15,11 +15,11 @@
   .perso .g2 { position: absolute; left: -100px; top: 90px; width: 120px; height: 90px; }
 
   .colonne { position: absolute; left: 820px; top: 210px; width: 1000px; }
-  .gg { position: relative; display: inline-block; }
-  .gg .titre-pop { font-size: 330px; animation: gg-pop .8s .2s var(--rebond) both; }
+  .gg { display: flex; flex-direction: column; align-items: flex-start; }
+  .gg .titre-pop { font-size: var(--taille-titre, 300px); max-width: 1000px; animation: gg-pop .8s .2s var(--rebond) both; }
   @keyframes gg-pop { from { transform: scale(0) rotate(-20deg); } }
-  .gg .sticker { position: absolute; right: -150px; bottom: 60px; font-size: 48px; transform: rotate(8deg); animation: presque .6s 1.1s var(--rebond) both; }
-  @keyframes presque { from { transform: rotate(40deg) scale(0); } }
+  .gg .sticker { margin: 10px 0 0 30px; font-size: 44px; transform: rotate(4deg); animation: presque .6s 1.1s var(--rebond) both; }
+  @keyframes presque { from { transform: rotate(40deg) scale(0); } to { transform: rotate(4deg); } }
   .merci { font: 600 46px/1.3 var(--f-texte); color: var(--texte); text-shadow: 3px 3px 0 var(--encre), 0 0 14px var(--encre); margin: 26px 0 40px; animation: apparait .6s 1.5s both; }
   @keyframes apparait { from { opacity: 0; transform: translateY(20px); } }
   .derniers { display: flex; gap: 22px; flex-wrap: wrap; animation: apparait .6s 1.9s both; }
@@ -64,6 +64,10 @@
 <script src="../js/evenements.js"></script>
 <script>
   Commun.demarrer();
+
+  // Un titre court (« GG ! ») s'affiche en géant ; une phrase rapetisse pour tenir sur la largeur
+  const titre = document.querySelector('.gg .titre-pop'), n = titre.textContent.length;
+  titre.style.setProperty('--taille-titre', (n <= 6 ? 300 : n <= 12 ? 190 : n <= 24 ? 130 : 100) + 'px');
 
   // Pluie d'éclaboussures (blanches, néon et pop) qui tombent en tournant
   const couleurs = ['#fff', '#fff', 'var(--violet)', 'var(--accent)', 'var(--mauve)'];

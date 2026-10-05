@@ -58,9 +58,9 @@ const Composants = (() => {
     creer(parent, 'apercu-zone' + (jeu ? ' jeu' : ''), `${titre}<br>${z.l} × ${z.h} px<br>x ${z.x} · y ${z.y}`, z);
   }
 
-  // --- En-tête : avatar + pseudo néon + devise ; à droite « en direct » + heure ---
+  // --- En-tête : pseudo néon + devise (l'avatar est dans le bandeau, pas en double) ; à droite « en direct » + heure ---
   function entete(parent) {
-    creer(parent, 'entete', `${Commun.avatar(120)}
+    creer(parent, 'entete', `
       <div><div class="nom">${C.nomChaine || ''}</div><span class="sticker">${C.devise || ''}</span></div>`);
     creer(parent, 'direct', `<span class="sticker"><span class="point"></span>En direct</span><span class="heure" data-horloge>--:--</span>`);
   }

@@ -51,7 +51,7 @@
     <rect x="12" y="12" width="48" height="48" rx="9" fill="#28164A"/>
     <rect x="12" y="${60 - 48 * niveau}" width="48" height="${48 * niveau}" fill="${etoile ? '#FF4FD8' : '#A855F7'}" clip-path="url(#b${niveau})"/>
     ${etoile ? '<path d="M36 18 L40.5 29.5 L52.5 30 L43 37.5 L46.5 49.5 L36 42.5 L25.5 49.5 L29 37.5 L19.5 30 L31.5 29.5 Z" fill="#fff" stroke="#140A24" stroke-width="3" stroke-linejoin="round"/>'
-      : `<text x="36" y="47" text-anchor="middle" font-family="Bangers" font-size="30" fill="#fff" stroke="#140A24" stroke-width="3" paint-order="stroke">${Math.round(niveau * 100)}</text>`}</svg>`;
+      : `<text x="36" y="47" text-anchor="middle" style="font-family:var(--f-titre)" font-size="26" fill="#fff" stroke="#140A24" stroke-width="3" paint-order="stroke">${Math.round(niveau * 100)}</text>`}</svg>`;
 
   window.KIT = {
     elements: [
@@ -93,7 +93,7 @@
           el.innerHTML = `<div class="am" style="background:var(--fond-2)">${coulures(320, 160, 7, 11 + i)}
             <div style="position:absolute;inset:14px;border:4px solid #fff;border-radius:22px;box-shadow:var(--halo)"></div>
             <div style="position:absolute;left:34px;top:58px">${icone(icoPanneau[titre] || 'etoile', 58)}</div>
-            <div class="am-pop" style="position:absolute;left:106px;right:24px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 9 ? 42 : 52}px;-webkit-text-stroke-width:2px;text-shadow:3px 3px 0 var(--encre)">${titre}</div></div>`;
+            <div class="am-pop" style="position:absolute;left:106px;right:24px;top:0;bottom:0;display:flex;align-items:center;font-size:${Math.min(34, Math.floor(180 / (titre.length * 0.82)))}px;-webkit-text-stroke-width:2px;text-shadow:3px 3px 0 var(--encre)">${titre}</div></div>`;
         },
       })),
 
@@ -110,7 +110,7 @@
       } },
       { id: 'oups', groupe: 'emote', nom: 'Oups', l: 112, h: 112, rendu: el => {
         el.innerHTML = `<div class="am-emote"><svg viewBox="-60 -60 120 120" width="112" height="112" style="position:absolute"><polygon points="${Commun.eclat(12, 56, 38)}" fill="#fff" stroke="#140A24" stroke-width="5" stroke-linejoin="round"/></svg>
-          <span style="position:relative;font:400 34px/1 Bangers;color:#A855F7;transform:rotate(-10deg)">OUPS</span></div>`;
+          <span style="position:relative;font:400 28px/1 var(--f-titre);color:#A855F7;transform:rotate(-10deg)">OUPS</span></div>`;
       } },
       { id: 'exclamation', groupe: 'emote', nom: '!! (stress)', l: 112, h: 112, rendu: el => {
         el.innerHTML = `<div class="am-emote"><svg viewBox="0 0 60 60" width="100" height="100"><path d="M18 8 L22 36 M22 48 L22 50 M38 6 L40 34 M40 46 L40 48" fill="none" stroke="#A855F7" stroke-width="15" stroke-linecap="round"/>
