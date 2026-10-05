@@ -5,3 +5,7 @@ mes-reglages.js
 # Copies installées chez un streamer (jamais dans le dépôt)
 sauvegardes/
 version.json
+
+# Captures animées (outils/animer.mjs) : lourdes, refaites à la demande, jamais dans le dépôt
+**/captures/*.webp
+**/captures/*.gif

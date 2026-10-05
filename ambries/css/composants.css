@@ -9,7 +9,7 @@ html.transparent, html.transparent body, html.transparent #ecran { background: t
 .fond-decoupe { position: absolute; inset: 0; width: 1920px; height: 1080px; }
 
 /* ---------- En-tête : avatar + pseudo en néon + devise ---------- */
-.entete { position: absolute; left: 70px; top: 40px; display: flex; align-items: center; gap: 24px; }
+.entete { position: absolute; left: 80px; top: 34px; display: flex; align-items: center; gap: 24px; }
 .entete .nom { font: 400 72px/1 var(--f-neon); color: #fff; text-shadow: var(--halo-texte); white-space: nowrap; }
 .entete .sticker { font-size: 20px; margin-top: 8px; }
 .direct { position: absolute; right: 70px; top: 62px; display: flex; align-items: center; gap: 18px; }

@@ -60,8 +60,9 @@ const Fluide = (() => {
     const s = el('g', { transform: 'translate(0 205) rotate(-4)' }, medaillon);
     el('rect', { x: -223, y: -33, width: 460, height: 80, fill: 'var(--encre)' }, s);
     el('rect', { x: -230, y: -40, width: 460, height: 80, fill: 'var(--accent)', stroke: 'var(--encre)', 'stroke-width': 5 }, s);
-    const txt = el('text', { 'text-anchor': 'middle', y: 17, fill: 'var(--encre)', 'font-family': 'Bangers, cursive', 'font-size': 52, 'letter-spacing': 2 }, s);
+    const txt = el('text', { 'text-anchor': 'middle', y: 17, fill: 'var(--encre)', style: 'font-family: var(--f-titre)', 'font-size': 44, 'letter-spacing': 1 }, s);
     txt.textContent = 'CHANGEMENT DE SCÈNE !';
+    txt.setAttribute('textLength', 420); txt.setAttribute('lengthAdjust', 'spacingAndGlyphs');   // tient toujours dans sa plaque
 
     return { n, fond, forme, trame: `url(#trame${n})`, medaillon };
   }
