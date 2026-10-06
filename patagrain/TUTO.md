@@ -535,7 +535,7 @@ Le volume général et le bouton « son » sont dans `reglages.html` › **Alert
 | `!spectacle200` | 200 | le duel |
 | `!spectacle300` | 300 | le dragon |
 
-Les spectacles tirés au sort (dé du destin, potion, chifoumi, coffre, catapulte) changent à chaque fois. Ils passent l'un après l'autre, dans la même file que les alertes : rien ne se chevauche.
+Les spectacles tirés au sort (dé du destin, potion, chifoumi, coffre, catapulte) changent à chaque fois. Ils passent l'un après l'autre, dans la même file que les alertes : rien ne se chevauche. Pendant un spectacle, le bouffon des écrans **Starting soon**, **Pause** et **Fin** s'éclipse (pas de bouffon en double), puis revient tout seul quand c'est fini.
 
 **Comment ça marche** : StreamElements retire les grelots et son bot répond dans le chat, par exemple « 🔔 Gwendal jette 75 grelots dans le chapeau du bouffon… 🎭 ». L'overlay lit le chat, reconnaît **cette phrase exacte** et lance le spectacle. Si le spectateur n'a pas assez de grelots, StreamElements ne répond rien : il ne se passe rien. Un spectateur qui recopie la phrase lui-même ne déclenche rien : seul le bot compte.
 

@@ -85,7 +85,10 @@
 
   // Le bouffon au coin du feu (sans lui : le feu et la bûche seuls)
   const coin = document.getElementById('coin-du-feu');
-  if (P.bouffon()) Numeros.feu(document.getElementById('bouffon'), coin);
+  if (P.bouffon()) {
+    Numeros.feu(document.getElementById('bouffon'), coin);
+    Numeros.eclipser([document.getElementById('bouffon'), coin.querySelector('.bfx-zzz'), coin.querySelector('.bfx-reve')]);   // caché pendant un spectacle des Grelots
+  }
   else coin.querySelectorAll('#bouffon, .bfx-zzz, .bfx-reve').forEach(el => el.remove());
 
   const minutes = Number(P.params.get('minutes') ?? R.minutes);

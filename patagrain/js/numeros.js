@@ -8,6 +8,8 @@
      Numeros.feu(el, scene)         Pause : il rêve d'un d20 lancé au hasard ; sur un 1 il se réveille,
                                     grille un chamallow, le croque, et se rendort.
                                     « scene » contient les Z (.bfx-z) et la bulle de rêve (.bfx-reve)
+     Numeros.eclipser([els])        Starting soon, Pause, Fin : cache ces éléments pendant un spectacle des Grelots
+     Numeros.spectacleEnCours(oui)  (source Alertes) : « un spectacle est en cours » / « c'est fini »
      Numeros.taverne(el, chat)      Cam seule / Contenu : dépasse de la carte du chat,
                                     ses grelots tintent à chaque nouveau message
      Numeros.rappel(el)             Alertes : accroché d'une main à la corde de l'alerte
@@ -181,5 +183,24 @@ const Numeros = (() => {
     return el;
   }
 
-  return { cirque, feu, taverne, rappel, coucouJeu, auRevoir };
+  // ---------- Pendant un spectacle des Grelots, le bouffon des écrans s'éclipse (sinon il y en a deux) ----------
+  // La source Alertes note « spectacle en cours jusqu'à … » dans la mémoire commune des pages de l'overlay
+  // (localStorage) et la renouvelle chaque seconde tant qu'il dure ; les écrans (Starting soon, Pause, Fin)
+  // la regardent et cachent leur bouffon en fondu, puis le remettent quand c'est fini.
+  // (Si la source Alertes est coupée en plein spectacle, la note expire toute seule en 2,5 s.)
+  const CLE_SPECTACLE = `overlay-${(window.CONFIG || {}).id || 'defaut'}-spectacle`;
+  function spectacleEnCours(oui) {
+    try { oui ? localStorage.setItem(CLE_SPECTACLE, String(Date.now() + 2500)) : localStorage.removeItem(CLE_SPECTACLE); } catch (e) {}
+  }
+  function eclipser(elements) {
+    const liste = elements.filter(Boolean);
+    let cache = false;
+    setInterval(() => {
+      let fin = 0;
+      try { fin = Number(localStorage.getItem(CLE_SPECTACLE)) || 0; } catch (e) {}
+      if ((fin > Date.now()) !== cache) { cache = !cache; liste.forEach(el => el.classList.toggle('eclipse', cache)); }
+    }, 400);
+  }
+
+  return { cirque, feu, taverne, rappel, coucouJeu, auRevoir, spectacleEnCours, eclipser };
 })();

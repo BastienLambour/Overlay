@@ -81,6 +81,7 @@
   const bulle = document.getElementById('bulle');
   if (P.bouffon()) {
     Numeros.auRevoir(document.getElementById('bouffon'), bulle);
+    Numeros.eclipser([document.getElementById('bouffon'), bulle]);         // caché pendant un spectacle des Grelots
     // la bulle fait un petit « pop » à chaque nouvelle phrase
     new MutationObserver(() => { bulle.classList.remove('change', 'entree'); void bulle.offsetWidth; bulle.classList.add('change'); })
       .observe(bulle, { childList: true });

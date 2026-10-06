@@ -60,7 +60,10 @@
   function afficher(e, fini) {
     if (e.type === 'grelots') {                                      // un spectacle du bouffon, payé en grelots
       console.log('[Grelots] spectacle', e.spectacle, 'pour', e.nom);
-      return Grelots.jouer(ecran, e.spectacle, e.nom).then(fini, fini);
+      Numeros.spectacleEnCours(true);                               // le bouffon des écrans s'éclipse pendant ce temps
+      const veille = setInterval(() => Numeros.spectacleEnCours(true), 1000);
+      const termine = () => { clearInterval(veille); Numeros.spectacleEnCours(false); fini(); };
+      return Grelots.jouer(ecran, e.spectacle, e.nom).then(termine, termine);
     }
     const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
     const grande = GRANDES.includes(e.type);

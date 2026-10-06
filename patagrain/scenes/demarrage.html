@@ -72,6 +72,7 @@
 
   const chiffres = document.getElementById('chiffres');
   const bouffon = P.bouffon() ? Numeros.cirque(document.getElementById('bouffon')) : null;
+  if (bouffon) Numeros.eclipser([document.getElementById('bouffon')]);     // caché pendant un spectacle des Grelots
   const fini = () => { chiffres.textContent = R.texteFin; chiffres.classList.add('fini'); };
   P.compteARebours(chiffres, { heure: P.params.has('minutes') ? '' : P.params.get('heure') || R.heure, minutes: P.params.get('minutes') ?? R.minutes }, () => {
     // À zéro : le bouffon lance le d20, qui retombe sur 20 à côté du compteur… et les dés sont jetés !

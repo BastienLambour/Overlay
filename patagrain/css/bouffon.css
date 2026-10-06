@@ -550,3 +550,7 @@
 .gr-scene > .gr-bulle, .gr-scene > .gr-compte, .gr-scene > .gr-annonce, .gr-scene > .gr-note { z-index: 10; }
 .gr-nageoire svg { transform-origin: 50% 100%; animation: gr-nageoire .7s ease-in-out infinite alternate; }
 @keyframes gr-nageoire { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+/* Pendant un spectacle des Grelots, le bouffon des écrans s'éclipse en fondu (js/numeros.js › eclipser).
+   « filter » plutôt qu'« opacity » : l'opacité est déjà animée par l'entrée des éléments. */
+.eclipse { filter: opacity(0); transition: filter .6s ease; }
+.bouffon-cirque, .bouffon-fin, .bulle-fin, .bfx-p-feu, .bfx-zzz, .bfx-reve { transition: filter .6s ease; }
