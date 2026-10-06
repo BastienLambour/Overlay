@@ -14,6 +14,8 @@
    Groupes et tailles d'export (formats Twitch) :
      profil 800×800 · banniere 1200×480 · hors-ligne 1920×1080 · panneau 320×160
      emote 112 / 56 / 28 · badge 72 / 36 / 18
+     dons : page de dons StreamElements, ids 'dons-banniere' (640×200) et 'dons-fond' (1920×1080 ;
+            le formulaire de don se pose au milieu, ~640 px de large : décor sur les côtés)
 
    Sans paramètre : galerie de tout le kit, présentée comme sur Twitch.
    ?seul=<id>&taille=<px> : un seul élément à la taille voulue (utilisé par
@@ -32,6 +34,7 @@
     ['banniere', 'Bannière de profil', `${TB} › Bannière de profil (1200 × 480).`],
     ['hors-ligne', 'Écran hors-ligne', `${TB} › Bannière du lecteur vidéo (1920 × 1080), affichée quand tu n’es pas en live.`],
     ['panneau', 'Panneaux de bio', 'Sur ta chaîne › onglet À propos › Modifier les panneaux › + › envoie l’image (320 × 160), puis écris le texte en dessous.'],
+    ['dons', 'Page de dons StreamElements', 'streamelements.com › Revenue › Tipping settings › apparence de la page : Banner (640 × 200) et Background (1920 × 1080). Le formulaire de don se pose au milieu du fond.'],
     ['emote', 'Emotes', 'Tableau de bord › Récompenses des spectateurs › Emotes (affilié ou partenaire) : envoie les 3 tailles (112, 56, 28).'],
     ['badge', 'Badges d’abonné', 'Tableau de bord › Récompenses des spectateurs › Badges › Badges d’abonné : 3 tailles (72, 36, 18).'],
   ];

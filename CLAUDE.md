@@ -81,7 +81,7 @@ Conventions :
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamelements` (`actif`, `jeton` : vide dans config.js, le streamer le colle dans reglages.html → mes-reglages.js), `demarrage` (dont `minutes` et `heure`),
   `pause`, `fin`, `chat`, `objectif` (UNE barre : `affiche` "follow"|"sub", `automatique` [vrais totaux via StreamElements], `follow` et `sub` = `{ titre, cible, depart }` chacun ; `?objectif=sub|follow` sur une page), `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `miseAJour.adresse` (le serveur des mises à jour), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
-  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Soutenir), `couleurs` (variables de
+  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Commandes, Soutenir), `chaine.dons` (`titre`, `texte` de la page de dons StreamElements), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
   voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
@@ -144,7 +144,9 @@ Conventions :
 - **`chaine/` — kit de chaîne Twitch** : `kit.html` (moteur commun `_modele/chaine/`) affiche tous
   les visuels à l'échelle ; `elements.js` (propre à l'overlay) les dessine ; textes dans
   `config.js › chaine`. Formats Twitch : photo de profil 800×800, bannière de profil 1200×480,
-  écran hors-ligne 1920×1080, panneaux de bio 320×160, emotes 112/56/28, badges d'abonné 72/36/18.
+  écran hors-ligne 1920×1080, panneaux de bio 320×160, emotes 112/56/28, badges d'abonné 72/36/18 ; et la page de dons
+  StreamElements (groupe `dons`) : `dons-banniere` 640×200 et `dons-fond` 1920×1080 (le formulaire se pose au milieu, ~640 px : décor
+  et textes sur les côtés).
   `node outils/exporter-chaine.mjs` → PNG transparents dans `chaine/export/`.
 
 ## Fichiers communs (`_modele/`)

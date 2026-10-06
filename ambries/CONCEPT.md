@@ -44,7 +44,7 @@
 | Écrans et scènes | ✅ démarrage, pause, fin, cam-seule, contenu, jeu |
 | Sources | ✅ alertes, chat, bandeau, objectif, cam |
 | Transitions (vidéos Stinger) | ✅ splash (1050 ms), gouttes (1150 ms), pop-art (750 ms) |
-| Kit chaîne Twitch | ✅ 40 PNG dans `chaine/export/` |
+| Kit chaîne Twitch | ✅ 44 PNG dans `chaine/export/` |
 | TUTO.md | ✅ + TUTO.pdf |
 | Testé dans OBS / avec le vrai StreamElements | ⬜ (testé avec un faux serveur StreamElements) |
 
@@ -90,3 +90,4 @@
 - **2026-10-05** — Retours d'Ambries : (1) écran de fin, un titre en phrase décalait le sous-titre à droite → sous-titre sous le titre, taille du titre selon sa longueur ; (2) avatar en double (bandeau + au-dessus de la cam) → il ne reste que celui du bandeau (en-tête des scènes cam-seule/contenu et coin de la scène jeu sans avatar) ; (3) police : les 7 ressemblaient aux 1 → titres en Luckiest Guy (tailles réajustées : démarrage, titres d'alerte qui rapetissent s'ils sont longs, sticker des transitions, panneaux du kit). Vidéos de transition, kit, PDF et captures animées refaits.
 - **2026-10-05** — Ambries préfère **Bungee** à Luckiest Guy pour les titres. Tailles revérifiées (démarrage, alertes, scènes, panneaux du kit : taille calculée selon le nombre de lettres). Vidéos, kit, PDF et captures refaits.
 - **2026-10-05** — Captures animées plus utiles (Ambries les a supprimées) : dossier `captures/` retiré, ligne `animer.mjs` retirée du TUTO (l'outil reste dans `outils/`).
+- **2026-10-06** — Demande : « un fond et une bannière pour la page de dons StreamElements (640×200 et 1920×1080), régénérables comme le kit, et un panneau de bio Commandes » → kit : nouveau groupe **Page de dons StreamElements** (`dons-banniere.png`, `dons-fond.png` : avatar, coulures, pièces, « Fonds pour excuses » ; le milieu du fond reste libre pour le formulaire), textes dans `config.js › chaine.dons` (titre, texte ; reglages.html › Kit), panneau **Commandes** ajouté à `chaine.panneaux`. TUTO §7 : pas à pas StreamElements (Revenue › Tipping settings) et description du panneau Commandes.

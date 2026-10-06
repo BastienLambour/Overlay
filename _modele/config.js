@@ -128,6 +128,8 @@ window.CONFIG = {
   chaine: {
     slogan: "",                       // phrase sous le nom sur la bannière
     horsLigne: "Pas de live pour le moment",
+    // Page de dons StreamElements (bannière 640×200 et fond 1920×1080 du kit) : titre et petite phrase
+    dons: { titre: "Soutenir la chaîne", texte: "Merci pour ton soutien !" },
     planning: [                       // jours et heures de stream (panneau Planning)
       // ["Mercredi", "20h30"],
     ],
@@ -135,7 +137,7 @@ window.CONFIG = {
       // ["Discord", "discord.gg/…"],
     ],
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

@@ -129,6 +129,8 @@ window.ReglagesChamps = {
     { titre: 'Kit de chaîne Twitch', icone: '📺', champs: [
       { cle: 'chaine.slogan', type: 'texte', label: 'Slogan (bannière de profil)' },
       { cle: 'chaine.horsLigne', type: 'texte', label: 'Texte de l\'écran hors-ligne' },
+      { cle: 'chaine.dons.titre', type: 'texte', label: 'Page de dons StreamElements : titre', aide: 'Sur la bannière et le fond de ta page de dons (voir le kit). Ensuite, refais les images du kit.' },
+      { cle: 'chaine.dons.texte', type: 'texte', label: 'Page de dons StreamElements : petite phrase' },
       { cle: 'chaine.planning', type: 'paires', label: 'Planning', aide: 'Une ligne par jour, ex. « Mercredi | 20h30 ».' },
       { cle: 'chaine.reseaux', type: 'paires', label: 'Réseaux', aide: 'Une ligne par réseau, ex. « Discord | discord.gg/… ».' },
       { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne. Ensuite, refais les images : node outils/exporter-chaine.mjs' },

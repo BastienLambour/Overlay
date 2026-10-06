@@ -5,7 +5,8 @@
 (() => {
   const C = window.CONFIG || {};
   const K = C.chaine || {};
-  const I = Commun.icones;
+  // + icône « terminal » (panneau Commandes), propre au kit
+  const I = { ...Commun.icones, terminal: '<svg viewBox="0 0 32 32" class="icone"><rect x="3" y="6" width="26" height="20" rx="2"/><path d="M8 12.5 L12.5 16 L8 19.5 M15 20 H23"/></svg>' };
 
   document.head.insertAdjacentHTML('beforeend', `<style>
     .jv { position: absolute; inset: 0; background: var(--fond); color: var(--trait); font-family: var(--f-texte); overflow: hidden; }
@@ -35,7 +36,12 @@
   const planning = (K.planning || []).length
     ? K.planning.map(([j, h]) => `<div><span class="attention">${j}</span> · ${h}</div>`).join('')
     : '<div>Suis la chaîne pour être prévenu du prochain lancement</div>';
-  const icoPanneau = { 'À propos': 'planete', 'Planning': 'horloge', 'Règles': 'alerte', 'Soutenir': 'carburant', 'Réseaux': 'radar', 'Discord': 'groupe', 'Matériel': 'camera' };
+  const icoPanneau = { 'À propos': 'planete', 'Planning': 'horloge', 'Règles': 'alerte', 'Soutenir': 'carburant', 'Réseaux': 'radar', 'Discord': 'groupe', 'Matériel': 'camera', 'Commandes': 'terminal' };
+
+  // Jauge de carburant (page de dons) : n graduations, dont « plein » allumées
+  const jauge = (n, plein, l, h) => `<div style="display:flex;flex-direction:column-reverse;gap:${Math.round(h / n / 5)}px;width:${l}px;height:${h}px;padding:10px;border:3px solid var(--trait);box-sizing:border-box">
+    ${Array.from({ length: n }, (_, i) => `<i style="flex:1;background:${i < plein ? 'var(--accent)' : 'transparent'};border:2px solid ${i < plein ? 'var(--accent)' : 'var(--faible)'}"></i>`).join('')}</div>`;
+  const D = K.dons || {};
 
   // Badge d'abonné : galons orange sur plaque sombre
   const galons = n => `<svg viewBox="0 0 72 72" width="72" height="72"><rect x="3" y="3" width="66" height="66" rx="10" fill="#141920" stroke="#E6EAEE" stroke-width="3"/>
@@ -79,10 +85,37 @@
           el.innerHTML = `<div class="jv" style="background:var(--fond-2)">${coins.replace(/20px/g, '10px')}
             <div style="position:absolute;left:26px;top:30px;font:600 16px var(--f-mono);color:var(--accent)">${String(i + 1).padStart(2, '0')}</div>
             <div style="position:absolute;left:24px;top:58px">${icone(icoPanneau[titre] || 'cible', 64, 'var(--accent)')}</div>
-            <div class="jv-titre" style="position:absolute;left:112px;right:16px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 9 ? 42 : 52}px">${titre}</div>
+            <div class="jv-titre" style="position:absolute;left:112px;right:16px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 40 : 52}px">${titre}</div>
             <div class="hachures" style="position:absolute;right:26px;bottom:24px;width:70px;height:12px"></div></div>`;
         },
       })),
+
+      // Page de dons StreamElements : on fait le plein de la fusée
+      { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {
+        el.innerHTML = `<div class="jv"><div class="jv-grille"></div>${ciel(640, 200, 60)}${coins.replace(/20px/g, '10px')}
+          <div style="position:absolute;left:62px;top:-4px">${fusee(62, { angle: 40, flamme: true })}</div>
+          <div style="position:absolute;left:196px;top:40px;right:36px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">${icone('carburant', 26, 'var(--accent)')}<span class="label doux" style="font-size:15px">${C.nomChaine || ''}</span><span class="hachures" style="flex:1;height:10px"></span></div>
+            <div class="jv-titre" style="font-size:52px;white-space:nowrap">${D.titre || ''}</div>
+            <div style="font:600 18px var(--f-texte);color:var(--doux);margin-top:10px">${D.texte || ''}</div>
+          </div></div>`;
+      } },
+      { id: 'dons-fond', groupe: 'dons', nom: 'Fond de la page de dons', l: 1920, h: 1080, rendu: el => {
+        el.innerHTML = `<div class="jv"><div class="jv-grille"></div>${ciel(1920, 1080, 220)}${coins}
+          <svg style="position:absolute;left:-260px;bottom:-330px" width="900" height="900"><circle cx="450" cy="450" r="440" fill="var(--fond-2)" stroke="var(--trait)" stroke-width="3"/>
+            <circle cx="560" cy="300" r="60" fill="none" stroke="var(--doux)" stroke-width="3"/><circle cx="380" cy="220" r="34" fill="none" stroke="var(--doux)" stroke-width="3"/></svg>
+          <div style="position:absolute;left:300px;top:110px">${fusee(170, { angle: 25, flamme: true })}</div>
+          <div style="position:absolute;left:1340px;top:220px;width:480px">
+            <div style="display:flex;align-items:center;gap:20px;margin-bottom:18px"><span class="label attention">● Ravitaillement</span><span class="hachures" style="flex:1"></span></div>
+            <div class="jv-titre" style="font-size:104px">${D.titre || ''}</div>
+            <div style="font:600 32px/1.5 var(--f-texte);color:var(--doux);margin-top:26px">${D.texte || ''}</div>
+            <div style="display:flex;align-items:flex-end;gap:26px;margin-top:60px">
+              ${jauge(10, 7, 80, 300)}
+              <div><div style="margin-bottom:14px">${icone('carburant', 64, 'var(--accent)')}</div>
+                <div class="label doux" style="font-size:18px">Réservoir</div><div class="etiquette" style="margin-top:12px">${C.nomChaine || ''}</div></div>
+            </div>
+          </div></div>`;
+      } },
 
       // Emotes (112 × 112)
       { id: 'decollage', groupe: 'emote', nom: 'Décollage', l: 112, h: 112, rendu: el => {

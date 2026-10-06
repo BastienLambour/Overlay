@@ -241,12 +241,14 @@ window.CONFIG = {
   chaine: {
     slogan: "Voyage en direct",
     horsLigne: "Transmission interrompue",
+    // Page de dons StreamElements (bannière 640×200 et fond 1920×1080 du kit) : titre et petite phrase
+    dons: { titre: "Soutien de mission", texte: "Chaque don remplit le réservoir" },
     planning: [
       // jours et heures de stream, ex. ["Mercredi", "20h30"]
     ],
     reseaux: [], // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

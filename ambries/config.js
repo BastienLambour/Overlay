@@ -149,6 +149,8 @@ window.CONFIG = {
   chaine: {
     slogan: "10 % skill · 90 % d'excuses",   // phrase sous le nom sur la bannière
     horsLigne: "Hors ligne… sûrement en train de rater un truc facile",
+    // Page de dons StreamElements (bannière 640×200 et fond 1920×1080 du kit) : titre et petite phrase
+    dons: { titre: "Fonds pour excuses", texte: "Finance ma prochaine excuse" },
     planning: [                       // jours et heures de stream (panneau Planning)
       // ["Mercredi", "20h30"],
     ],
@@ -156,7 +158,7 @@ window.CONFIG = {
       // ["Discord", "discord.gg/…"],
     ],
     // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes

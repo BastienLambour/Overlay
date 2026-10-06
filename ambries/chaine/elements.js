@@ -42,7 +42,8 @@
   const planning = (K.planning || []).length
     ? K.planning.map(([j, h]) => `<div><span style="color:var(--accent)">${j}</span> · ${h}</div>`).join('')
     : '<div>Suis la chaîne pour être prévenu·e du prochain carnage</div>';
-  const icoPanneau = { 'À propos': 'bulle', 'Planning': 'calendrier', 'Règles': 'regles', 'Soutenir': 'coeur', 'Réseaux': 'groupe', 'Discord': 'groupe', 'Matériel': 'camera' };
+  const icoPanneau = { 'À propos': 'bulle', 'Planning': 'calendrier', 'Règles': 'regles', 'Soutenir': 'coeur', 'Réseaux': 'groupe', 'Discord': 'groupe', 'Matériel': 'camera', 'Commandes': 'manette' };
+  const D = K.dons || {};
 
   // Badge d'abonné : jauge de skill qui se remplit avec l'ancienneté
   const badge = (niveau, etoile = false) => `<svg viewBox="0 0 72 72" width="72" height="72">
@@ -96,6 +97,33 @@
             <div class="am-pop" style="position:absolute;left:106px;right:24px;top:0;bottom:0;display:flex;align-items:center;font-size:${Math.min(34, Math.floor(180 / (titre.length * 0.82)))}px;-webkit-text-stroke-width:2px;text-shadow:3px 3px 0 var(--encre)">${titre}</div></div>`;
         },
       })),
+
+      // Page de dons StreamElements : la cagnotte des excuses (le milieu reste libre pour le formulaire)
+      { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {
+        el.innerHTML = `<div class="am"><div class="am-lueur"></div>
+          <div class="am-trame" style="right:0;bottom:0;width:360px;height:200px;background-size:16px 16px;-webkit-mask:radial-gradient(circle at 100% 100%,#000 20%,transparent 70%)"></div>
+          ${coulures(640, 200, 9, 4)}${taches(640, 200, 8, 13)}
+          <div style="position:absolute;left:22px;top:42px">${Commun.avatar(150)}</div>
+          <div style="position:absolute;left:574px;top:132px;transform:rotate(14deg)">${icone('piece', 46)}</div>
+          <div style="position:absolute;left:192px;top:62px;right:20px">
+            <div class="am-pop" style="font-size:${Math.min(44, Math.floor(420 / ((D.titre || 'x').length * 0.66)))}px;white-space:nowrap;-webkit-text-stroke-width:2px;text-shadow:3px 3px 0 var(--encre)">${D.titre || ''}</div>
+            <span class="sticker" style="margin-top:14px;font-size:17px">${D.texte || ''}</span>
+          </div></div>`;
+      } },
+      { id: 'dons-fond', groupe: 'dons', nom: 'Fond de la page de dons', l: 1920, h: 1080, rendu: el => {
+        el.innerHTML = `<div class="am"><div class="am-lueur"></div>
+          <div class="am-trame" style="right:0;bottom:0;width:900px;height:700px;background-size:28px 28px;-webkit-mask:radial-gradient(circle at 100% 100%,#000 20%,transparent 70%)"></div>
+          ${coulures(1920, 1080, 18, 5)}${taches(1920, 1080, 22, 17)}
+          <div style="position:absolute;left:110px;top:380px">${Commun.avatar(440)}</div>
+          ${gribouillis('exclamation', 470, 330, 120)}${gribouillis('eclair', 60, 820, 130)}
+          <div style="position:absolute;left:1340px;top:330px;width:500px">
+            <span class="sticker" style="font-size:28px">${C.nomChaine || ''}</span>
+            <div class="am-pop" style="font-size:96px;margin:28px 0 30px">${D.titre || ''}</div>
+            <div style="font:700 32px/1.5 var(--f-texte);color:var(--lilas)">${D.texte || ''}</div>
+          </div>
+          ${[[1420, 820, 90, -12], [1560, 880, 70, 18], [1700, 800, 100, 8], [1810, 920, 60, -20], [560, 560, 70, 16]]
+            .map(([x, y, t, r]) => `<div style="position:absolute;left:${x}px;top:${y}px;transform:rotate(${r}deg)">${icone('piece', t)}</div>`).join('')}</div>`;
+      } },
 
       // Emotes (112 × 112) : lisibles jusqu'à 28 px
       { id: 'panique', groupe: 'emote', nom: 'Panique (son visage)', l: 112, h: 112, rendu: el => {

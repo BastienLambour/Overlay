@@ -27,6 +27,11 @@
   const badge = n => `<div class="cadre verre" style="left:6px;top:6px;width:60px;height:60px;--rayon:16px;--epaisseur:4px"></div>
     <div class="mn-emote">${neon(n, n.length > 1 ? 30 : 38)}</div>`;
 
+  const D = K.dons || {};
+  // Cœur en trait néon (page de dons)
+  const coeur = (t, ep = 9) => `<svg viewBox="0 0 120 110" width="${t}" height="${t * 110 / 120}" style="overflow:visible">
+    <path class="mn-trait" stroke-width="${ep}" d="M60 98 C22 72 8 52 12 32 C16 12 44 6 60 28 C76 6 104 12 108 32 C112 52 98 72 60 98 Z"/></svg>`;
+
   const planning = (K.planning || []).length
     ? K.planning.map(([j, h]) => `<div><b style="color:var(--accent)">${j}</b> · ${h}</div>`).join('')
     : '<div>Suis la chaîne pour être prévenu du prochain live</div>';
@@ -66,6 +71,24 @@
             <div class="mn-centre">${neon(titre, titre.length > 9 ? 40 : 50)}</div></div>`;
         },
       })),
+
+      // Page de dons StreamElements : cadres de verre et cœur néon, le milieu reste libre pour le formulaire
+      { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {
+        el.innerHTML = `<div class="mn">${fond(640, 200, graine + 3)}<div class="mn-voile"></div>
+          ${cadre(14, 14, 612, 172, '', '--rayon:22px;--epaisseur:4px')}
+          <div style="position:absolute;left:44px;top:52px">${coeur(104, 10)}</div>
+          <div class="mn-centre" style="left:150px;right:30px">${neon(D.titre || '', 50)}
+            <div style="font:800 18px var(--f-texte);color:var(--texte);margin-top:14px;letter-spacing:.04em">${D.texte || ''}</div></div></div>`;
+      } },
+      { id: 'dons-fond', groupe: 'dons', nom: 'Fond de la page de dons', l: 1920, h: 1080, rendu: el => {
+        el.innerHTML = `<div class="mn">${fond(1920, 1080)}<div class="mn-voile"></div>
+          ${cadre(90, 170, 480, 740, 'verre')}${cadre(1350, 170, 480, 740, 'verre')}
+          <div class="mn-centre" style="left:90px;width:480px;padding:0 30px">${neon((C.nomChaine || 'M').charAt(0), 230, 'margin-bottom:40px')}${neon(C.nomChaine || '', (C.nomChaine || '').length > 10 ? 52 : 70)}
+            <div style="font:800 26px var(--f-texte);color:var(--doux);margin-top:26px;letter-spacing:.06em">${K.slogan || ''}</div></div>
+          <div class="mn-centre" style="left:1350px;width:480px;padding:0 30px">${coeur(220)}
+            <div style="margin-top:46px">${neon(D.titre || '', (D.titre || '').length > 14 ? 50 : 62)}</div>
+            <div style="font:800 26px/1.5 var(--f-texte);color:var(--texte);margin-top:24px">${D.texte || ''}</div></div></div>`;
+      } },
 
       // Emotes (112 × 112) : néon lisible jusqu'en 28 px
       { id: 'gg', groupe: 'emote', nom: 'GG', l: 112, h: 112, rendu: el => { el.innerHTML = emoteTexte('GG', 66); } },
