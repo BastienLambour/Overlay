@@ -184,9 +184,12 @@ const Numeros = (() => {
   }
 
   // ---------- Pendant un spectacle des Grelots, le bouffon des écrans s'éclipse (sinon il y en a deux) ----------
-  // La source Alertes note « spectacle en cours jusqu'à … » dans la mémoire commune des pages de l'overlay
-  // (localStorage) et la renouvelle chaque seconde tant qu'il dure ; les écrans (Starting soon, Pause, Fin)
-  // la regardent et cachent leur bouffon en fondu, puis le remettent quand c'est fini.
+  // Deux moyens, pour que ça marche même si les sources d'OBS ne partagent pas leur mémoire :
+  //  1. la source Alertes note « spectacle en cours jusqu'à … » dans la mémoire commune des pages (localStorage)
+  //     et la renouvelle chaque seconde tant qu'il dure : c'est le plus précis (début et fin exacts) ;
+  //  2. l'écran lit lui-même le chat (js/chat.js) : quand il voit la réponse du bot (ou « !essai … »), il cache
+  //     son bouffon pendant la durée maximale du spectacle (js/grelots.js › duree), à la suite des autres.
+  // Si la note du 1 apparaît puis disparaît, le spectacle est fini : l'écran la croit et n'attend pas la fin du 2.
   // (Si la source Alertes est coupée en plein spectacle, la note expire toute seule en 2,5 s.)
   const CLE_SPECTACLE = `overlay-${(window.CONFIG || {}).id || 'defaut'}-spectacle`;
   function spectacleEnCours(oui) {
@@ -194,11 +197,21 @@ const Numeros = (() => {
   }
   function eclipser(elements) {
     const liste = elements.filter(Boolean);
-    let cache = false;
+    let cache = false, finEstimee = 0, noteActive = false;
+    const test = new URLSearchParams(location.search).has('test');
+    if (!test && typeof Chat !== 'undefined' && typeof Grelots !== 'undefined') Chat.ecouter(m => {
+      const s = Grelots.reconnaitre(m);
+      if (s) finEstimee = Math.max(finEstimee, Date.now()) + Grelots.duree(s.spectacle);
+    });
     setInterval(() => {
+      const maintenant = Date.now();
       let fin = 0;
       try { fin = Number(localStorage.getItem(CLE_SPECTACLE)) || 0; } catch (e) {}
-      if ((fin > Date.now()) !== cache) { cache = !cache; liste.forEach(el => el.classList.toggle('eclipse', cache)); }
+      const active = fin > maintenant;
+      if (noteActive && !active) finEstimee = Math.min(finEstimee, maintenant + 1200);   // c'est fini (petit délai : un autre peut suivre)
+      noteActive = active;
+      const doit = active || finEstimee > maintenant;
+      if (doit !== cache) { cache = doit; liste.forEach(el => el.classList.toggle('eclipse', cache)); }
     }, 400);
   }
 

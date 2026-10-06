@@ -202,7 +202,8 @@ window.CONFIG = {
     dons: { titre: "Offrande au royaume", texte: "Chaque pièce fait tinter le grelot du bouffon" },
     planning: [],
     reseaux: [],
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir",
+      "Discord", "YouTube", "TikTok", "Instagram", "X (Twitter)"],
   },
   test: {
     noms: ["SirMachin", "DameTruc", "Bob_le_Nain", "Ysolde", "Merlin_Pinpin", "Gwendal", "LaDameDuLac", "Perceval"],

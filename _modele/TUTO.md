@@ -139,7 +139,7 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 ---
 
 ## 7. Habiller la chaîne Twitch
-<tableau visuel / fichier de chaine/export/ / où l'envoyer (Marque, À propos › panneaux, Récompenses des spectateurs) + panneaux pas à pas + node outils/exporter-chaine.mjs>
+<tableau visuel / fichier de chaine/export/ / où l'envoyer (Marque, À propos › panneaux, Récompenses des spectateurs) + panneaux pas à pas (réseaux Discord/YouTube/TikTok/Instagram/X : Lien de l'image = adresse du réseau ; panneau Commandes : description = commandes du chat, StreamElements › Chatbot › Chat commands) + page de dons StreamElements pas à pas (Revenue › Tipping settings : Banner = dons-banniere.png 640×200, Background = dons-fond.png 1920×1080) + node outils/exporter-chaine.mjs>
 
 ---
 

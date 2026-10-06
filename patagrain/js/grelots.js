@@ -1056,6 +1056,11 @@ const Grelots = (() => {
     await b.allerA(115, 2000);
   }
 
+  // Durée maximale de chaque spectacle (ms, mesurée dans tous ses cas, + une marge) : les écrans s'en servent
+  // pour cacher leur bouffon pendant ce temps quand ils ne peuvent pas lire la mémoire commune (js/numeros.js › eclipser)
+  const DUREES = { chute: 14000, tarte: 14500, serenade: 12000, destin: 10000, potion: 13000, chifoumi: 18000, coffre: 11000, catapulte: 18500, duel: 15000, dragon: 12500 };
+  const duree = nom => DUREES[nom] || 15000;
+
   // Du plus petit au plus grand (les prix sont dans config.js)
   const SPECTACLES = { chute, tarte, serenade, destin, potion, chifoumi, coffre, catapulte, duel, dragon };
   // ---------- Repérer, dans le chat, la réponse du bot quand un spectateur a payé un spectacle ----------
@@ -1089,5 +1094,5 @@ const Grelots = (() => {
   }
 
   // Chemin vers la racine de l'overlay (pour les images) : « ../ » depuis design/, scenes/, sources/…
-  return { jouer, reconnaitre, liste: Object.keys(SPECTACLES), rival: RIVAL, chemin: '../' };
+  return { jouer, reconnaitre, duree, liste: Object.keys(SPECTACLES), rival: RIVAL, chemin: '../' };
 })();

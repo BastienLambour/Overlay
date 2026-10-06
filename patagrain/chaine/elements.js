@@ -97,7 +97,7 @@
         id: titre.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="pg-fond" style="border-radius:16px;border:6px solid var(--accent)"></div>
-            <div style="position:absolute;left:22px;top:38px;width:84px;height:84px">${ico(icoPanneau[titre] || 'd20').replace(/^<(svg|img)/, '<$1 style="width:84px;height:84px"')}</div>
+            <div style="position:absolute;left:22px;top:38px;width:84px;height:84px">${Reseaux.svg(titre, 84, 'color:var(--primaire);filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))') || ico(icoPanneau[titre] || 'd20').replace(/^<(svg|img)/, '<$1 style="width:84px;height:84px"')}</div>
             <div class="pg-titre" style="position:absolute;left:122px;right:14px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 38 : 50}px">${titre}</div>`;
         },
       })),

@@ -93,7 +93,7 @@
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="am" style="background:var(--fond-2)">${coulures(320, 160, 7, 11 + i)}
             <div style="position:absolute;inset:14px;border:4px solid #fff;border-radius:22px;box-shadow:var(--halo)"></div>
-            <div style="position:absolute;left:34px;top:58px">${icone(icoPanneau[titre] || 'etoile', 58)}</div>
+            <div style="position:absolute;left:34px;top:58px">${Reseaux.svg(titre, 58, 'color:var(--accent)') || icone(icoPanneau[titre] || 'etoile', 58)}</div>
             <div class="am-pop" style="position:absolute;left:106px;right:24px;top:0;bottom:0;display:flex;align-items:center;font-size:${Math.min(34, Math.floor(180 / (titre.length * 0.82)))}px;-webkit-text-stroke-width:2px;text-shadow:3px 3px 0 var(--encre)">${titre}</div></div>`;
         },
       })),

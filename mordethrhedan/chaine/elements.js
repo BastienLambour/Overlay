@@ -68,7 +68,11 @@
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="mn">${fond(320, 160, graine + titre.length)}<div class="mn-voile"></div>
             <div class="cadre verre" style="left:12px;top:12px;width:296px;height:136px;--rayon:18px;--epaisseur:4px"></div>
-            <div class="mn-centre">${neon(titre, titre.length > 9 ? 40 : 50)}</div></div>`;
+            ${Reseaux.cle(titre)
+              // Réseau : son logo en néon à gauche, le nom à droite
+              ? `<div style="position:absolute;left:36px;top:44px">${Reseaux.svg(titre, 72, 'color:var(--accent);filter:drop-shadow(0 0 2px var(--accent-fonce)) drop-shadow(0 0 6px var(--accent-halo))')}</div>
+                <div class="mn-centre" style="left:120px;right:20px">${neon(titre, Math.min(40, Math.floor(245 / titre.length)))}</div>`
+              : `<div class="mn-centre">${neon(titre, titre.length > 9 ? 40 : 50)}</div>`}</div>`;
         },
       })),
 

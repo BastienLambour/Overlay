@@ -84,7 +84,7 @@
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="jv" style="background:var(--fond-2)">${coins.replace(/20px/g, '10px')}
             <div style="position:absolute;left:26px;top:30px;font:600 16px var(--f-mono);color:var(--accent)">${String(i + 1).padStart(2, '0')}</div>
-            <div style="position:absolute;left:24px;top:58px">${icone(icoPanneau[titre] || 'cible', 64, 'var(--accent)')}</div>
+            <div style="position:absolute;left:24px;top:58px">${Reseaux.svg(titre, 64, 'color:var(--accent)') || icone(icoPanneau[titre] || 'cible', 64, 'var(--accent)')}</div>
             <div class="jv-titre" style="position:absolute;left:112px;right:16px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 40 : 52}px">${titre}</div>
             <div class="hachures" style="position:absolute;right:26px;bottom:24px;width:70px;height:12px"></div></div>`;
         },

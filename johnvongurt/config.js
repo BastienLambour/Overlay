@@ -247,8 +247,10 @@ window.CONFIG = {
       // jours et heures de stream, ex. ["Mercredi", "20h30"]
     ],
     reseaux: [], // [nom, pseudo], ex. ["Discord", "discord.gg/…"]
-    // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
+    // Titres des panneaux de bio (320×160) : on n'exporte que ceux listés ici. Un nom de réseau (Discord, YouTube, TikTok,
+    // Instagram, X, Twitch, Kick, Bluesky) prend son logo : retire ceux que tu n'utilises pas
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir",
+      "Discord", "YouTube", "TikTok", "Instagram", "X (Twitter)"],
   },
 
   // Mode test (?test=1) : pseudos utilisés pour les fausses alertes
