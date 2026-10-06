@@ -272,7 +272,12 @@ window.MES_REGLAGES = ${formater(perso)};
           label: `${NOMS_SCENES[sc] || sc} : ${(NOMS_ELEMENTS[el] || el).replace(/^[^\p{L}]+/u, '')}` };
       }));
     };
-    const sections = (RC.sections || []).map(s => ({ ...s, champs: [...(s.scenes ? champsScenes() : []), ...(s.champs || []), ...(s.sons ? champsSons() : [])]
+    // Section « tableau » : des réglages qui se répètent (une ligne par élément, une colonne par réglage).
+    // tableau: { lignes: [['grelots.spectacles.chute', '🍌 La peau de banane'], …], colonnes: [{ cle: 'prix', type: 'nombre', label: 'Prix', min: 1 }, …] }
+    // Chaque cellule est un champ ordinaire (clé = ligne + '.' + colonne) : il s'enregistre comme les autres.
+    const champsTableau = s => (s.tableau.lignes || []).flatMap(([ligne, nom]) => (s.tableau.colonnes || []).map(col => ({ ...col,
+      cle: `${ligne}.${col.cle}`, ligne, colonne: col.cle, label: `${nom || ligne} : ${col.label || col.cle}` })));
+    const sections = (RC.sections || []).map(s => ({ ...s, champs: [...(s.scenes ? champsScenes() : []), ...(s.tableau ? champsTableau(s) : []), ...(s.champs || []), ...(s.sons ? champsSons() : [])]
       .filter((c, i, l) => l.findIndex(x => x.cle === c.cle) === i)
       .filter(c => lire(enregistre, c.cle) !== undefined || c.ajouter) }))
       .filter(s => !s.sons || s.champs.length);
@@ -377,6 +382,24 @@ window.MES_REGLAGES = ${formater(perso)};
           elles, sont déjà fabriquées : pour qu'elles suivent, refais-les (voir le tuto, « Personnaliser »).</p>`;
     }
 
+    // ---------- Section « tableau » : une ligne par élément, une colonne par réglage ----------
+    // (styles de « Options des scènes » ; les largeurs sont écrites ici pour que le tableau reste lisible partout)
+    function tableauHTML(s) {
+      const champs = s.champs.filter(c => c.ligne);
+      if (!champs.length) return '';
+      const colonnes = s.tableau.colonnes || [], lignes = (s.tableau.lignes || []).filter(([l]) => champs.some(c => c.ligne === l));
+      const cellule = (ligne, col) => {
+        const c = champs.find(x => x.ligne === ligne && x.colonne === col.cle);
+        if (!c) return '<td class="rg-vide">—</td>';
+        const id = idChamp(c.cle), v = lire(valeurs, c.cle), titre = `aria-label="${echapper(c.label)}"`;
+        if (c.type === 'case') return `<td><label class="rg-bascule" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''} ${titre}><i></i></label></td>`;
+        if (c.type === 'nombre') return `<td><label data-cle="${c.cle}"><input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 'any'}" style="width:6em" ${titre}></label></td>`;
+        return `<td style="text-align:left"><label data-cle="${c.cle}"><input id="${id}" type="text" value="${echapper(v)}" style="width:100%;min-width:${c.large ? '24em' : '9em'};box-sizing:border-box" spellcheck="false" ${titre}></label></td>`;
+      };
+      return `<div class="rg-defile"><table class="rg-scenes rg-tableau"><thead><tr><th></th>${colonnes.map(col => `<th${col.aide ? ` title="${echapper(col.aide)}"` : ''}>${echapper(col.label || col.cle)}</th>`).join('')}</tr></thead>
+        <tbody>${lignes.map(([ligne, nom]) => `<tr><th>${echapper(nom || ligne)}</th>${colonnes.map(col => cellule(ligne, col)).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+
     // ---------- Options des scènes ----------
     const coordonnees = p => `x ${p.x} · y ${p.y} · ${p.l} × ${p.h}`;
     function scenesHTML(s) {
@@ -459,7 +482,8 @@ window.MES_REGLAGES = ${formater(perso)};
         <h2><span class="rg-icone">${s.icone || '⚙️'}</span>${echapper(s.titre)}</h2>
         ${s.aide ? `<p class="rg-aide">${echapper(s.aide)}</p>` : ''}
         ${s.scenes ? scenesHTML(s) : ''}
-        <div class="rg-champs">${s.champs.filter(c => !c.scene).map(champHTML).join('')}</div>
+        ${s.tableau ? tableauHTML(s) : ''}
+        <div class="rg-champs">${s.champs.filter(c => !c.scene && !c.ligne).map(champHTML).join('')}</div>
         ${s.ambiances ? ambiancesHTML() : ''}
         ${s.alertes && alertes.length ? alertesHTML() : ''}</section>`).join('');
       apercus();

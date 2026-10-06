@@ -7,6 +7,8 @@
    Types : texte · twitch · nombre · case · liste (une ligne = un élément) ·
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
            (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
+           (section « tableau: { lignes, colonnes } » : des réglages qui se répètent, en tableau ; lignes = [['cle.de.base', 'Nom affiché'], …],
+            colonnes = [{ cle, type: 'case'|'nombre'|'texte', label, min, max, large }, …] ; chaque cellule = la clé « cle.de.base.<cle> »)
    Couleurs : section { ambiances: true } avec des champs type 'couleur' (cle 'couleurs.<variable>', defaut: '#…'),
              et ambiances: [{ nom, valeurs: { 'couleurs.accent': '#…', … } }] pour les boutons en un clic.
    Options : logo (image en haut), scripts / styles (chargés pour l'aperçu),
