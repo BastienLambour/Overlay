@@ -8,8 +8,24 @@
    ===================================================================== */
 const Son = (() => {
   const C = (window.CONFIG || {}).alertes || {};
-  const VOLUME = 0.25;      // niveau de base des sons fabriqués
-  let ctx;
+  const VOLUME = 1;         // niveau de base des sons fabriqués (plus fort : on baisse dans OBS si besoin)
+  const RENFORT = 2;        // gain final, avant le limiteur
+  let ctx, sortieCtx, sortieNoeud;
+
+  // Sortie commune : gain fort + limiteur (compresseur) qui empêche la saturation
+  // quand plusieurs notes se superposent. Pour baisser : le mélangeur audio d'OBS,
+  // ou config.js › alertes.volume.
+  function sortie() {
+    if (sortieCtx !== ctx) {
+      const g = ctx.createGain(), lim = ctx.createDynamicsCompressor();
+      g.gain.value = RENFORT;
+      lim.threshold.value = -10; lim.knee.value = 4; lim.ratio.value = 20;
+      lim.attack.value = 0.002; lim.release.value = 0.2;
+      g.connect(lim).connect(ctx.destination);
+      sortieCtx = ctx; sortieNoeud = g;
+    }
+    return sortieNoeud;
+  }
 
   function bip(t, freq, duree, volume, forme = 'square') {
     const o = ctx.createOscillator(), g = ctx.createGain();
@@ -17,7 +33,7 @@ const Son = (() => {
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(volume, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
-    o.connect(g).connect(ctx.destination);
+    o.connect(g).connect(sortie());
     o.start(t); o.stop(t + duree + 0.05);
   }
 
@@ -27,7 +43,7 @@ const Son = (() => {
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
     const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
     s.buffer = buf; f.type = 'bandpass'; f.frequency.value = freq; g.gain.value = volume;
-    s.connect(f).connect(g).connect(ctx.destination); s.start(t);
+    s.connect(f).connect(g).connect(sortie()); s.start(t);
   }
 
   // Sirène d'alarme : une note qui monte et descend
@@ -37,7 +53,7 @@ const Son = (() => {
     for (let i = 0; i < fois; i++) { o.frequency.linearRampToValueAtTime(1000, t + i * 0.6 + 0.3); o.frequency.linearRampToValueAtTime(500, t + i * 0.6 + 0.6); }
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(volume * 0.5, t + 0.05);
     g.gain.setValueAtTime(volume * 0.5, t + fois * 0.6 - 0.1); g.gain.exponentialRampToValueAtTime(0.0001, t + fois * 0.6);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + fois * 0.6 + 0.05);
+    o.connect(g).connect(sortie()); o.start(t); o.stop(t + fois * 0.6 + 0.05);
   }
 
   const bips = (t, notes, pas, duree, v) => notes.forEach((f, i) => bip(t + i * pas, f, duree, v, i === notes.length - 1 ? 'sine' : 'square'));

@@ -8,8 +8,23 @@
    ===================================================================== */
 const Son = (() => {
   const C = (window.CONFIG || {}).alertes || {};
-  const VOLUME = 0.35;      // niveau de base des sons fabriqués
-  let ctx;
+  const VOLUME = 1;         // niveau de base des sons fabriqués (était 0.35 : trop faible en live)
+  const RENFORT = 2;        // gain final, avant le limiteur
+  let ctx, sortieCtx, sortieNoeud;
+
+  // Sortie commune : gain fort + limiteur (compresseur) qui empêche la saturation
+  // quand plusieurs notes se superposent (raid, pluie de cadeaux…)
+  function sortie() {
+    if (sortieCtx !== ctx) {
+      const g = ctx.createGain(), lim = ctx.createDynamicsCompressor();
+      g.gain.value = RENFORT;
+      lim.threshold.value = -10; lim.knee.value = 4; lim.ratio.value = 20;
+      lim.attack.value = 0.002; lim.release.value = 0.2;
+      g.connect(lim).connect(ctx.destination);
+      sortieCtx = ctx; sortieNoeud = g;
+    }
+    return sortieNoeud;
+  }
 
   // Note qui glisse d'une fréquence à l'autre (pop, boing…)
   function note(t, de, a, duree, volume, forme = 'sine') {
@@ -20,7 +35,7 @@ const Son = (() => {
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(volume, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
-    o.connect(g).connect(ctx.destination);
+    o.connect(g).connect(sortie());
     o.start(t); o.stop(t + duree + 0.05);
   }
 
@@ -30,7 +45,7 @@ const Son = (() => {
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
     const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
     s.buffer = buf; f.type = 'highpass'; f.frequency.value = 1400; g.gain.value = volume;
-    s.connect(f).connect(g).connect(ctx.destination); s.start(t);
+    s.connect(f).connect(g).connect(sortie()); s.start(t);
   }
 
   const pop = (t, v) => { note(t, 220, 900, 0.12, v); splash(t + 0.02, 0.25, v * 0.5); };

@@ -8,8 +8,24 @@
    ===================================================================== */
 const Son = (() => {
   const C = (window.CONFIG || {}).alertes || {};
-  const VOLUME = 0.3;       // niveau de base des sons fabriqués
-  let ctx;
+  const VOLUME = 1;         // niveau de base des sons fabriqués (plus fort : on baisse dans OBS si besoin)
+  const RENFORT = 2;        // gain final, avant le limiteur
+  let ctx, sortieCtx, sortieNoeud;
+
+  // Sortie commune : gain fort + limiteur (compresseur) qui empêche la saturation
+  // quand plusieurs notes se superposent. Pour baisser : le mélangeur audio d'OBS,
+  // ou config.js › alertes.volume.
+  function sortie() {
+    if (sortieCtx !== ctx) {
+      const g = ctx.createGain(), lim = ctx.createDynamicsCompressor();
+      g.gain.value = RENFORT;
+      lim.threshold.value = -10; lim.knee.value = 4; lim.ratio.value = 20;
+      lim.attack.value = 0.002; lim.release.value = 0.2;
+      g.connect(lim).connect(ctx.destination);
+      sortieCtx = ctx; sortieNoeud = g;
+    }
+    return sortieNoeud;
+  }
 
   // Une clochette : quelques harmoniques métalliques qui s'éteignent
   function clochette(t, freq, duree, volume) {
@@ -19,7 +35,7 @@ const Son = (() => {
       g.gain.setValueAtTime(0, t);
       g.gain.linearRampToValueAtTime(volume * part, t + 0.004);
       g.gain.exponentialRampToValueAtTime(0.0001, t + duree / ratio ** .4);
-      o.connect(g).connect(ctx.destination);
+      o.connect(g).connect(sortie());
       o.start(t); o.stop(t + duree + 0.05);
     });
   }
@@ -30,7 +46,7 @@ const Son = (() => {
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n) ** 3;
     const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
     s.buffer = buf; f.type = filtre; f.frequency.value = freq; f.Q.value = q; g.gain.value = volume;
-    s.connect(f).connect(g).connect(ctx.destination); s.start(t);
+    s.connect(f).connect(g).connect(sortie()); s.start(t);
   }
 
   // Un grelot secoué : petit bruit aigu très court + tintement
@@ -45,7 +61,7 @@ const Son = (() => {
     o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(55, t + 0.25);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(volume * 1.6, t + 0.005);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.4);
+    o.connect(g).connect(sortie()); o.start(t); o.stop(t + 0.4);
     bruit(t, 0.08, volume * 0.8, 'lowpass', 500);
   }
 

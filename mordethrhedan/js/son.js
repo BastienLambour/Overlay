@@ -7,8 +7,24 @@
    ===================================================================== */
 const Son = (() => {
   const C = (window.CONFIG || {}).alertes || {};
-  const VOLUME = 0.3;       // niveau de base des sons fabriqués
-  let ctx;
+  const VOLUME = 1;         // niveau de base des sons fabriqués (plus fort : on baisse dans OBS si besoin)
+  const RENFORT = 2;        // gain final, avant le limiteur
+  let ctx, sortieCtx, sortieNoeud;
+
+  // Sortie commune : gain fort + limiteur (compresseur) qui empêche la saturation
+  // quand plusieurs notes se superposent. Pour baisser : le mélangeur audio d'OBS,
+  // ou config.js › alertes.volume.
+  function sortie() {
+    if (sortieCtx !== ctx) {
+      const g = ctx.createGain(), lim = ctx.createDynamicsCompressor();
+      g.gain.value = RENFORT;
+      lim.threshold.value = -10; lim.knee.value = 4; lim.ratio.value = 20;
+      lim.attack.value = 0.002; lim.release.value = 0.2;
+      g.connect(lim).connect(ctx.destination);
+      sortieCtx = ctx; sortieNoeud = g;
+    }
+    return sortieNoeud;
+  }
 
   function note(t, freq, duree, volume) {
     const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
@@ -18,7 +34,7 @@ const Son = (() => {
     g.gain.linearRampToValueAtTime(volume, t + 0.015);
     g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
     g2.gain.value = 0.18;
-    o.connect(g); o2.connect(g2).connect(g); g.connect(ctx.destination);
+    o.connect(g); o2.connect(g2).connect(g); g.connect(sortie());
     o.start(t); o2.start(t); o.stop(t + duree + 0.05); o2.stop(t + duree + 0.05);
   }
 
@@ -28,7 +44,7 @@ const Son = (() => {
     o.type = 'sine'; o.frequency.setValueAtTime(55, t); o.frequency.exponentialRampToValueAtTime(110, t + duree);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(volume * 1.5, t + 0.1);
     g.gain.exponentialRampToValueAtTime(0.0001, t + duree + 0.2);
-    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + duree + 0.25);
+    o.connect(g).connect(sortie()); o.start(t); o.stop(t + duree + 0.25);
   }
 
   const suite = (t, notes, pas, duree, v) => notes.forEach((f, i) => note(t + i * pas, f, duree, v));
