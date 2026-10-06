@@ -7,7 +7,8 @@
      Bouffon.svg('tete')           portrait recadré sur la tête (emotes)
      Bouffon.svg('pied')           personnage entier articulé
      Bouffon.svg('pied', { epee: true })  … avec l'épée à la main
-     Bouffon.svg('tete', { expression: 'clin' | 'rire' | 'choc' | 'dort' })  expressions (emotes)
+     Bouffon.svg('tete', { expression: 'clin' | 'rire' | 'choc' | 'dort' | 'mechant' })  expressions (emotes)
+     classe « bouffon-malefique » sur un parent : son double maléfique (couleurs sombres, yeux rouges)
      classe « sans-chapeau » sur un parent : cache son chapeau (scène Jeu : le chapeau de la cam se soulève)
    Bouffon noir et bleu : bleu du thème, noirs --bouffon-habit / --bouffon-noir, or du thème.
    Articulations animables : .bf-epaule-g/d, .bf-coude-g/d, .bf-hanche-g/d,
@@ -33,42 +34,50 @@ const Bouffon = (() => {
 .expr-clin .bf-clin { opacity: 1; }
 .expr-clin .bf-bouche { transform: scale(1.25, 1.4); transform-box: fill-box; transform-origin: 50% 0; }
 .expr-choc .bf-oeil-g, .expr-choc .bf-oeil-d { transform: scale(1.45); transform-box: fill-box; transform-origin: 50% 50%; }
-.expr-choc .bf-sourcils { transform: translateY(-8px); }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
+.expr-choc .bf-sourcils { transform: translateY(-8px); }
+.expr-mechant .bf-sourcils, .expr-mechant .bf-bouche { display: none; }
+.expr-mechant .bf-sourcils-mechant, .expr-mechant .bf-bouche-mechant { display: inline; }
+/* Le bouffon maléfique : mêmes traits, couleurs sombres, yeux rouges */
+.bouffon-malefique { --primaire: #6B2FA0; --primaire-fonce: #3E1765; --accent: #9C7A2B; --bouffon-habit: #08080C; --bouffon-noir: #7E1426;
+  --bouffon-soulier: #15121C; --bouffon-peau: #CBB9C9; --bouffon-peau-ombre: #A994A8; --bouffon-cheveux: #2C2236; --bouffon-cheveux-fonce: #18121F;
+  --bouffon-poils: #18121F; --bouffon-iris: #E3243B; }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
     <clipPath id="__P__-gauche"><rect x="0" y="300" width="200" height="300"/></clipPath>
     <clipPath id="__P__-droite"><rect x="200" y="300" width="200" height="300"/></clipPath></defs>
   <g class="bf-tout">
-    <g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : se balancent (css/bouffon.css) -->
+    <g class="bf-cheveux"><path fill="var(--bouffon-cheveux-fonce, #9C7043)" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g>   <!-- cheveux de dos : se balancent (css/bouffon.css) -->
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M58 520 C60 440 100 392 150 378 L200 373 L250 378 C300 392 340 440 342 520 Z"/>
-    <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
+    <path fill="var(--bouffon-peau-ombre, #DDA982)" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <g class="bf-collerette"><polygon class="bf-bleu" points="104.0,398.0 128.0,387.5 116.0,444.4"/><circle class="bf-or" cx="116.0" cy="447.4" r="6.5"/><polygon class="bf-rouge" points="128.0,387.5 152.0,380.0 140.0,435.4"/><circle class="bf-or" cx="140.0" cy="438.4" r="6.5"/><polygon class="bf-bleu" points="152.0,380.0 176.0,375.5 164.0,429.4"/><circle class="bf-or" cx="164.0" cy="432.4" r="6.5"/><polygon class="bf-rouge" points="176.0,375.5 200.0,374.0 188.0,426.4"/><circle class="bf-or" cx="188.0" cy="429.4" r="6.5"/><polygon class="bf-bleu" points="200.0,374.0 224.0,375.5 212.0,426.4"/><circle class="bf-or" cx="212.0" cy="429.4" r="6.5"/><polygon class="bf-rouge" points="224.0,375.5 248.0,380.0 236.0,429.4"/><circle class="bf-or" cx="236.0" cy="432.4" r="6.5"/><polygon class="bf-bleu" points="248.0,380.0 272.0,387.5 260.0,435.4"/><circle class="bf-or" cx="260.0" cy="438.4" r="6.5"/><polygon class="bf-rouge" points="272.0,387.5 296.0,398.0 284.0,444.4"/><circle class="bf-or" cx="284.0" cy="447.4" r="6.5"/></g>
     <g class="bf-tete">
-      <path fill="#F0C8A4" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
-      <path fill="#DDA982" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
-      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M208 204 Q224 198 240 205" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/></g>
-      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="#86A08F"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
-      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="#86A08F"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
-      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="#8F6540" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
+      <path fill="var(--bouffon-peau, #F0C8A4)" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
+      <path fill="var(--bouffon-peau-ombre, #DDA982)" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
+      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M208 204 Q224 198 240 205" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <path class="bf-expr bf-sourcils-mechant" d="M157 198 L192 212 M243 198 L208 212" stroke="var(--bouffon-poils, #8F6540)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
+      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
+      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="var(--bouffon-poils, #8F6540)" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
       <path class="bf-expr bf-yeux-dort" d="M164 228 Q173 234 182 228 M218 228 Q227 234 236 228" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <path class="bf-expr bf-yeux-rire" d="M164 231 Q173 219 182 231 M218 231 Q227 219 236 231" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <g fill="rgba(255,255,255,.1)" stroke="#121418" stroke-width="6" stroke-linejoin="round">
         <rect x="151" y="212" width="44" height="29" rx="5"/><rect x="205" y="212" width="44" height="29" rx="5"/>
       </g>
       <path d="M195 222 L205 222 M151 220 L139 216 M249 220 L261 216" stroke="#121418" stroke-width="5" stroke-linecap="round"/>
-      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="#DDA982" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path fill="#8F6540" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
+      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="var(--bouffon-peau-ombre, #DDA982)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path fill="var(--bouffon-poils, #8F6540)" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
         M185 294 C193 297 207 297 215 294 C217 305 213 318 200 323 C187 318 183 305 185 294 Z"/>
       <path class="bf-bouche" d="M189 302 Q200 310 211 302" stroke="#B4655C" stroke-width="4" fill="none" stroke-linecap="round"/>
       <g class="bf-expr bf-bouche-rire"><path d="M186 298 Q200 326 214 298 Z" fill="#7A2E2E" stroke="#7A2E2E" stroke-width="2" stroke-linejoin="round"/>
         <path d="M189 299 H211 L209 304 H191 Z" fill="#fff"/></g>
       <ellipse class="bf-expr bf-bouche-o" cx="200" cy="308" rx="7" ry="9" fill="#7A2E2E"/>
+      <path class="bf-expr bf-bouche-mechant" d="M184 298 Q201 316 218 293 Q203 304 184 298 Z" fill="#2A0C12" stroke="#2A0C12" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="237" cy="268" r="2.6" fill="#7A4E36"/>
     </g>
-    <path fill="#B98B58" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
-    <path fill="#B98B58" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
-    <ellipse cx="143" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
-    <ellipse cx="257" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
+    <ellipse cx="143" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
+    <ellipse cx="257" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
     <circle cx="259" cy="263" r="5.5" fill="none" stroke="#1b1b1b" stroke-width="3"/>
     <g class="bf-chapeau">
       <!-- Chapeau PORTÉ : pointes larges et anguleuses attachées à la calotte, couronne courbe sur le front -->
@@ -105,7 +114,13 @@ const Bouffon = (() => {
 .expr-clin .bf-clin { opacity: 1; }
 .expr-clin .bf-bouche { transform: scale(1.25, 1.4); transform-box: fill-box; transform-origin: 50% 0; }
 .expr-choc .bf-oeil-g, .expr-choc .bf-oeil-d { transform: scale(1.45); transform-box: fill-box; transform-origin: 50% 50%; }
-.expr-choc .bf-sourcils { transform: translateY(-8px); }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
+.expr-choc .bf-sourcils { transform: translateY(-8px); }
+.expr-mechant .bf-sourcils, .expr-mechant .bf-bouche { display: none; }
+.expr-mechant .bf-sourcils-mechant, .expr-mechant .bf-bouche-mechant { display: inline; }
+/* Le bouffon maléfique : mêmes traits, couleurs sombres, yeux rouges */
+.bouffon-malefique { --primaire: #6B2FA0; --primaire-fonce: #3E1765; --accent: #9C7A2B; --bouffon-habit: #08080C; --bouffon-noir: #7E1426;
+  --bouffon-soulier: #15121C; --bouffon-peau: #CBB9C9; --bouffon-peau-ombre: #A994A8; --bouffon-cheveux: #2C2236; --bouffon-cheveux-fonce: #18121F;
+  --bouffon-poils: #18121F; --bouffon-iris: #E3243B; }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
     <clipPath id="__P__-gauche"><rect x="0" y="300" width="200" height="400"/></clipPath>
     <clipPath id="__P__-droite"><rect x="200" y="300" width="200" height="400"/></clipPath></defs>
   <g class="bf-tout" style="transform-origin:200px 790px">
@@ -125,8 +140,8 @@ const Bouffon = (() => {
         <circle class="bf-or" cx="271" cy="752" r="7"/>
       </g>
     </g>
-    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
-    <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="var(--bouffon-cheveux-fonce, #9C7043)" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
+    <path fill="var(--bouffon-peau-ombre, #DDA982)" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <polygon class="bf-bleu" points="108.0,588 134.3,588 121.1,618"/><circle class="bf-or" cx="121.1" cy="621" r="5.5"/><polygon class="bf-habit" points="134.3,588 160.6,588 147.4,618"/><circle class="bf-or" cx="147.4" cy="621" r="5.5"/><polygon class="bf-bleu" points="160.6,588 186.9,588 173.7,618"/><circle class="bf-or" cx="173.7" cy="621" r="5.5"/><polygon class="bf-habit" points="186.9,588 213.1,588 200.0,618"/><circle class="bf-or" cx="200.0" cy="621" r="5.5"/><polygon class="bf-bleu" points="213.1,588 239.4,588 226.3,618"/><circle class="bf-or" cx="226.3" cy="621" r="5.5"/><polygon class="bf-habit" points="239.4,588 265.7,588 252.6,618"/><circle class="bf-or" cx="252.6" cy="621" r="5.5"/><polygon class="bf-bleu" points="265.7,588 292.0,588 278.9,618"/><circle class="bf-or" cx="278.9" cy="621" r="5.5"/>
@@ -139,7 +154,7 @@ const Bouffon = (() => {
         <rect class="bf-habit" x="103" y="462" width="26" height="86" rx="13"/>
         <rect class="bf-or" x="102" y="530" width="28" height="9" rx="4"/>
         
-        <circle cx="116" cy="552" r="15" fill="#F0C8A4"/>
+        <circle cx="116" cy="552" r="15" fill="var(--bouffon-peau, #F0C8A4)"/>
       </g>
     </g>
     <g class="bf-epaule-d" style="transform-origin:284px 392px">
@@ -148,36 +163,38 @@ const Bouffon = (() => {
         <rect class="bf-bleu" x="271" y="462" width="26" height="86" rx="13"/>
         <rect class="bf-or" x="270" y="530" width="28" height="9" rx="4"/>
         
-        <circle cx="284" cy="552" r="15" fill="#F0C8A4"/>
+        <circle cx="284" cy="552" r="15" fill="var(--bouffon-peau, #F0C8A4)"/>
       </g>
     </g>
     <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-tete">
-      <path fill="#F0C8A4" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
-      <path fill="#DDA982" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
-      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M208 204 Q224 198 240 205" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/></g>
-      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="#86A08F"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
-      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="#86A08F"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
-      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="#8F6540" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
+      <path fill="var(--bouffon-peau, #F0C8A4)" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
+      <path fill="var(--bouffon-peau-ombre, #DDA982)" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
+      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M208 204 Q224 198 240 205" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <path class="bf-expr bf-sourcils-mechant" d="M157 198 L192 212 M243 198 L208 212" stroke="var(--bouffon-poils, #8F6540)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
+      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
+      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="var(--bouffon-poils, #8F6540)" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
       <path class="bf-expr bf-yeux-dort" d="M164 228 Q173 234 182 228 M218 228 Q227 234 236 228" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <path class="bf-expr bf-yeux-rire" d="M164 231 Q173 219 182 231 M218 231 Q227 219 236 231" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <g fill="rgba(255,255,255,.1)" stroke="#121418" stroke-width="6" stroke-linejoin="round">
         <rect x="151" y="212" width="44" height="29" rx="5"/><rect x="205" y="212" width="44" height="29" rx="5"/>
       </g>
       <path d="M195 222 L205 222 M151 220 L139 216 M249 220 L261 216" stroke="#121418" stroke-width="5" stroke-linecap="round"/>
-      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="#DDA982" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path fill="#8F6540" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
+      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="var(--bouffon-peau-ombre, #DDA982)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path fill="var(--bouffon-poils, #8F6540)" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
         M185 294 C193 297 207 297 215 294 C217 305 213 318 200 323 C187 318 183 305 185 294 Z"/>
       <path class="bf-bouche" d="M189 302 Q200 310 211 302" stroke="#B4655C" stroke-width="4" fill="none" stroke-linecap="round"/>
       <g class="bf-expr bf-bouche-rire"><path d="M186 298 Q200 326 214 298 Z" fill="#7A2E2E" stroke="#7A2E2E" stroke-width="2" stroke-linejoin="round"/>
         <path d="M189 299 H211 L209 304 H191 Z" fill="#fff"/></g>
       <ellipse class="bf-expr bf-bouche-o" cx="200" cy="308" rx="7" ry="9" fill="#7A2E2E"/>
+      <path class="bf-expr bf-bouche-mechant" d="M184 298 Q201 316 218 293 Q203 304 184 298 Z" fill="#2A0C12" stroke="#2A0C12" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="237" cy="268" r="2.6" fill="#7A4E36"/>
     </g>
-    <path fill="#B98B58" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
-    <path fill="#B98B58" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
-    <ellipse cx="143" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
-    <ellipse cx="257" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
+    <ellipse cx="143" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
+    <ellipse cx="257" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
     <circle cx="259" cy="263" r="5.5" fill="none" stroke="#1b1b1b" stroke-width="3"/>
     <g class="bf-chapeau">
       <!-- Chapeau PORTÉ : pointes larges et anguleuses attachées à la calotte, couronne courbe sur le front -->
@@ -215,7 +232,13 @@ const Bouffon = (() => {
 .expr-clin .bf-clin { opacity: 1; }
 .expr-clin .bf-bouche { transform: scale(1.25, 1.4); transform-box: fill-box; transform-origin: 50% 0; }
 .expr-choc .bf-oeil-g, .expr-choc .bf-oeil-d { transform: scale(1.45); transform-box: fill-box; transform-origin: 50% 50%; }
-.expr-choc .bf-sourcils { transform: translateY(-8px); }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
+.expr-choc .bf-sourcils { transform: translateY(-8px); }
+.expr-mechant .bf-sourcils, .expr-mechant .bf-bouche { display: none; }
+.expr-mechant .bf-sourcils-mechant, .expr-mechant .bf-bouche-mechant { display: inline; }
+/* Le bouffon maléfique : mêmes traits, couleurs sombres, yeux rouges */
+.bouffon-malefique { --primaire: #6B2FA0; --primaire-fonce: #3E1765; --accent: #9C7A2B; --bouffon-habit: #08080C; --bouffon-noir: #7E1426;
+  --bouffon-soulier: #15121C; --bouffon-peau: #CBB9C9; --bouffon-peau-ombre: #A994A8; --bouffon-cheveux: #2C2236; --bouffon-cheveux-fonce: #18121F;
+  --bouffon-poils: #18121F; --bouffon-iris: #E3243B; }</style><defs><clipPath id="__P__-centre" clipPathUnits="userSpaceOnUse"><polygon points="1090,90 1245,90 1218,173 1190,232 1165,180 1095,150"/></clipPath>
     <clipPath id="__P__-gauche"><rect x="0" y="300" width="200" height="400"/></clipPath>
     <clipPath id="__P__-droite"><rect x="200" y="300" width="200" height="400"/></clipPath></defs>
   <g class="bf-tout" style="transform-origin:200px 790px">
@@ -235,8 +258,8 @@ const Bouffon = (() => {
         <circle class="bf-or" cx="271" cy="752" r="7"/>
       </g>
     </g>
-    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="#9C7043" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
-    <path fill="#DDA982" d="M178 300 L222 300 L226 386 L174 386 Z"/>
+    <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-cheveux"><path fill="var(--bouffon-cheveux-fonce, #9C7043)" d="M200 118 C128 118 104 176 106 250 C108 320 106 380 102 432 L298 432 C294 380 292 320 294 250 C296 176 272 118 200 118 Z"/></g></g>   <!-- cheveux de dos : bougent avec la tête (même classe bf-haut) et se balancent (bf-cheveux) -->
+    <path fill="var(--bouffon-peau-ombre, #DDA982)" d="M178 300 L222 300 L226 386 L174 386 Z"/>
     <path class="bf-bleu" clip-path="url(#__P__-gauche)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <path class="bf-habit" clip-path="url(#__P__-droite)" d="M112 384 C150 368 250 368 288 384 L268 532 L292 590 L108 590 L132 532 Z"/>
     <polygon class="bf-bleu" points="108.0,588 134.3,588 121.1,618"/><circle class="bf-or" cx="121.1" cy="621" r="5.5"/><polygon class="bf-habit" points="134.3,588 160.6,588 147.4,618"/><circle class="bf-or" cx="147.4" cy="621" r="5.5"/><polygon class="bf-bleu" points="160.6,588 186.9,588 173.7,618"/><circle class="bf-or" cx="173.7" cy="621" r="5.5"/><polygon class="bf-habit" points="186.9,588 213.1,588 200.0,618"/><circle class="bf-or" cx="200.0" cy="621" r="5.5"/><polygon class="bf-bleu" points="213.1,588 239.4,588 226.3,618"/><circle class="bf-or" cx="226.3" cy="621" r="5.5"/><polygon class="bf-habit" points="239.4,588 265.7,588 252.6,618"/><circle class="bf-or" cx="252.6" cy="621" r="5.5"/><polygon class="bf-bleu" points="265.7,588 292.0,588 278.9,618"/><circle class="bf-or" cx="278.9" cy="621" r="5.5"/>
@@ -249,37 +272,39 @@ const Bouffon = (() => {
         <rect class="bf-habit" x="103" y="462" width="26" height="86" rx="13"/>
         <rect class="bf-or" x="102" y="530" width="28" height="9" rx="4"/>
         
-        <circle cx="116" cy="552" r="15" fill="#F0C8A4"/>
+        <circle cx="116" cy="552" r="15" fill="var(--bouffon-peau, #F0C8A4)"/>
       </g>
     </g>
     
     <g class="bf-haut" style="transform-origin:200px 380px"><g class="bf-tete">
-      <path fill="#F0C8A4" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
-      <path fill="#DDA982" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
-      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M208 204 Q224 198 240 205" stroke="#8F6540" stroke-width="4" fill="none" stroke-linecap="round"/></g>
-      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="#86A08F"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
-      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="#86A08F"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
-      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="#8F6540" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
+      <path fill="var(--bouffon-peau, #F0C8A4)" d="M200 150 C244 150 262 182 262 228 C262 282 236 322 200 326 C164 322 138 282 138 228 C138 182 156 150 200 150 Z"/>
+      <path fill="var(--bouffon-peau-ombre, #DDA982)" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
+      <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M208 204 Q224 198 240 205" stroke="var(--bouffon-poils, #8F6540)" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <path class="bf-expr bf-sourcils-mechant" d="M157 198 L192 212 M243 198 L208 212" stroke="var(--bouffon-poils, #8F6540)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
+      <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="var(--bouffon-iris, #86A08F)"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
+      <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="var(--bouffon-poils, #8F6540)" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
       <path class="bf-expr bf-yeux-dort" d="M164 228 Q173 234 182 228 M218 228 Q227 234 236 228" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <path class="bf-expr bf-yeux-rire" d="M164 231 Q173 219 182 231 M218 231 Q227 219 236 231" stroke="#1b1b1b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
       <g fill="rgba(255,255,255,.1)" stroke="#121418" stroke-width="6" stroke-linejoin="round">
         <rect x="151" y="212" width="44" height="29" rx="5"/><rect x="205" y="212" width="44" height="29" rx="5"/>
       </g>
       <path d="M195 222 L205 222 M151 220 L139 216 M249 220 L261 216" stroke="#121418" stroke-width="5" stroke-linecap="round"/>
-      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="#DDA982" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path fill="#8F6540" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
+      <path d="M199 234 C197 252 193 261 190 267 C196 271 205 271 210 267" stroke="var(--bouffon-peau-ombre, #DDA982)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path fill="var(--bouffon-poils, #8F6540)" fill-rule="evenodd" d="M181 287 C188 282 195 283 200 285 C205 283 212 282 219 287 C223 297 223 312 216 322 C211 329 206 332 200 332 C194 332 189 329 184 322 C177 312 177 297 181 287 Z
         M185 294 C193 297 207 297 215 294 C217 305 213 318 200 323 C187 318 183 305 185 294 Z"/>
       <path class="bf-bouche" d="M189 302 Q200 310 211 302" stroke="#B4655C" stroke-width="4" fill="none" stroke-linecap="round"/>
       <g class="bf-expr bf-bouche-rire"><path d="M186 298 Q200 326 214 298 Z" fill="#7A2E2E" stroke="#7A2E2E" stroke-width="2" stroke-linejoin="round"/>
         <path d="M189 299 H211 L209 304 H191 Z" fill="#fff"/></g>
       <ellipse class="bf-expr bf-bouche-o" cx="200" cy="308" rx="7" ry="9" fill="#7A2E2E"/>
+      <path class="bf-expr bf-bouche-mechant" d="M184 298 Q201 316 218 293 Q203 304 184 298 Z" fill="#2A0C12" stroke="#2A0C12" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="237" cy="268" r="2.6" fill="#7A4E36"/>
     </g>
-    <path fill="#B98B58" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
-    <path fill="#B98B58" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
-    <ellipse cx="143" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
-    <ellipse cx="257" cy="246" rx="7" ry="14" fill="#F0C8A4"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C160 134 132 160 128 210 C124 260 126 320 121 372 C118 398 119 416 123 432 L160 432 C156 404 152 370 150 330 C148 280 146 230 152 200 C160 172 178 152 200 148 Z"/>
+    <path fill="var(--bouffon-cheveux, #B98B58)" d="M200 132 C240 134 268 160 272 210 C276 260 274 320 279 372 C282 398 281 416 277 432 L240 432 C244 404 248 370 250 330 C252 280 254 230 248 200 C240 172 222 152 200 148 Z"/>
+    <ellipse cx="143" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
+    <ellipse cx="257" cy="246" rx="7" ry="14" fill="var(--bouffon-peau, #F0C8A4)"/>
     <circle cx="259" cy="263" r="5.5" fill="none" stroke="#1b1b1b" stroke-width="3"/>
     <g class="bf-chapeau">
       <!-- Chapeau PORTÉ : pointes larges et anguleuses attachées à la calotte, couronne courbe sur le front -->
@@ -303,13 +328,13 @@ const Bouffon = (() => {
         <rect class="bf-bleu" x="271" y="462" width="26" height="86" rx="13"/>
         <rect class="bf-or" x="270" y="530" width="28" height="9" rx="4"/>
         <image class="bf-sabre" href="../assets/epee.svg" x="252" y="512" width="64" height="208"/>
-        <circle cx="284" cy="552" r="15" fill="#F0C8A4"/>
+        <circle cx="284" cy="552" r="15" fill="var(--bouffon-peau, #F0C8A4)"/>
       </g>
     </g>
   </g>
 </svg>`;
   let n = 0;
-  // expression : 'clin' (clin d'œil), 'rire' (mort de rire), 'choc' (choqué), 'dort' (endormi) — rien = sourire
+  // expression : 'clin' (clin d'œil), 'rire' (mort de rire), 'choc' (choqué), 'dort' (endormi), 'mechant' — rien = sourire
   function svg(forme = 'buste', { epee = false, expression = '' } = {}) {
     const id = 'bf' + (++n);
     let s = forme === 'pied' ? (epee ? PIED_EPEE : PIED).replaceAll('__P__', id) : BUSTE.replaceAll('__P__', id);

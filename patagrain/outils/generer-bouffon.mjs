@@ -25,7 +25,9 @@ const f1 = v => v.toFixed(1);
 const g = v => String(Number(v.toPrecision(6)));
 
 // Couleurs fixes du personnage (peau, cheveux, yeux) ; le reste suit le thème
-const [PEAU, PEAU_OMBRE, CHEVEUX, CHEVEUX_FONCE, POILS, IRIS] = ['#F0C8A4', '#DDA982', '#B98B58', '#9C7043', '#8F6540', '#86A08F'];
+// Couleurs du personnage : variables CSS (valeurs par défaut = Patagrain) → on peut le recolorer (bouffon maléfique)
+const [PEAU, PEAU_OMBRE, CHEVEUX, CHEVEUX_FONCE, POILS, IRIS] = ['var(--bouffon-peau, #F0C8A4)', 'var(--bouffon-peau-ombre, #DDA982)',
+  'var(--bouffon-cheveux, #B98B58)', 'var(--bouffon-cheveux-fonce, #9C7043)', 'var(--bouffon-poils, #8F6540)', 'var(--bouffon-iris, #86A08F)'];
 
 // Symétrie gauche/droite d'un chemin (x -> 400 - x)
 const miroir = d => d.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (_, x, y) => `${g(400 - parseFloat(x))} ${y}`);
@@ -84,6 +86,7 @@ const tete = p => `<g class="bf-tete">
       <path fill="${PEAU_OMBRE}" opacity=".75" d="M132 190 C166 202 234 202 268 190 L268 198 C234 210 166 210 132 198 Z"/>
       <g class="bf-sourcils"><path d="M160 205 Q176 198 192 204" stroke="${POILS}" stroke-width="4" fill="none" stroke-linecap="round"/>
       <path d="M208 204 Q224 198 240 205" stroke="${POILS}" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <path class="bf-expr bf-sourcils-mechant" d="M157 198 L192 212 M243 198 L208 212" stroke="${POILS}" stroke-width="5.5" fill="none" stroke-linecap="round"/>
       <g class="bf-oeil-g"><ellipse cx="173" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="174" cy="227" r="4.8" fill="${IRIS}"/><circle cx="174" cy="227" r="2" fill="#1b1b1b"/></g>
       <g class="bf-oeil-d"><ellipse cx="227" cy="227" rx="9" ry="6.2" fill="#fff"/><circle cx="226" cy="227" r="4.8" fill="${IRIS}"/><circle cx="226" cy="227" r="2" fill="#1b1b1b"/></g>
       <path class="bf-clin" d="M218 229 Q227 222 236 229" stroke="${POILS}" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0"/>
@@ -100,6 +103,7 @@ const tete = p => `<g class="bf-tete">
       <g class="bf-expr bf-bouche-rire"><path d="M186 298 Q200 326 214 298 Z" fill="#7A2E2E" stroke="#7A2E2E" stroke-width="2" stroke-linejoin="round"/>
         <path d="M189 299 H211 L209 304 H191 Z" fill="#fff"/></g>
       <ellipse class="bf-expr bf-bouche-o" cx="200" cy="308" rx="7" ry="9" fill="#7A2E2E"/>
+      <path class="bf-expr bf-bouche-mechant" d="M184 298 Q201 316 218 293 Q203 304 184 298 Z" fill="#2A0C12" stroke="#2A0C12" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="237" cy="268" r="2.6" fill="#7A4E36"/>
     </g>
     <path fill="${CHEVEUX}" d="${MECHE_G}"/>
@@ -219,7 +223,13 @@ const STYLE_BOUFFON = `.bf-bleu { fill: var(--primaire, #3A9AD9); }
 .expr-clin .bf-clin { opacity: 1; }
 .expr-clin .bf-bouche { transform: scale(1.25, 1.4); transform-box: fill-box; transform-origin: 50% 0; }
 .expr-choc .bf-oeil-g, .expr-choc .bf-oeil-d { transform: scale(1.45); transform-box: fill-box; transform-origin: 50% 50%; }
-.expr-choc .bf-sourcils { transform: translateY(-8px); }`;
+.expr-choc .bf-sourcils { transform: translateY(-8px); }
+.expr-mechant .bf-sourcils, .expr-mechant .bf-bouche { display: none; }
+.expr-mechant .bf-sourcils-mechant, .expr-mechant .bf-bouche-mechant { display: inline; }
+/* Le bouffon maléfique : mêmes traits, couleurs sombres, yeux rouges */
+.bouffon-malefique { --primaire: #6B2FA0; --primaire-fonce: #3E1765; --accent: #9C7A2B; --bouffon-habit: #08080C; --bouffon-noir: #7E1426;
+  --bouffon-soulier: #15121C; --bouffon-peau: #CBB9C9; --bouffon-peau-ombre: #A994A8; --bouffon-cheveux: #2C2236; --bouffon-cheveux-fonce: #18121F;
+  --bouffon-poils: #18121F; --bouffon-iris: #E3243B; }`;
 
 const avecStyle = s => s.replace('<defs>', `<style>${STYLE_BOUFFON}</style><defs>`);
 
@@ -232,7 +242,8 @@ const js = `/* =================================================================
      Bouffon.svg('tete')           portrait recadré sur la tête (emotes)
      Bouffon.svg('pied')           personnage entier articulé
      Bouffon.svg('pied', { epee: true })  … avec l'épée à la main
-     Bouffon.svg('tete', { expression: 'clin' | 'rire' | 'choc' | 'dort' })  expressions (emotes)
+     Bouffon.svg('tete', { expression: 'clin' | 'rire' | 'choc' | 'dort' | 'mechant' })  expressions (emotes)
+     classe « bouffon-malefique » sur un parent : son double maléfique (couleurs sombres, yeux rouges)
      classe « sans-chapeau » sur un parent : cache son chapeau (scène Jeu : le chapeau de la cam se soulève)
    Bouffon noir et bleu : bleu du thème, noirs --bouffon-habit / --bouffon-noir, or du thème.
    Articulations animables : .bf-epaule-g/d, .bf-coude-g/d, .bf-hanche-g/d,
@@ -245,7 +256,7 @@ const Bouffon = (() => {
   const PIED = \`${avecStyle(pied('__P__'))}\`;
   const PIED_EPEE = \`${avecStyle(pied('__P__', true))}\`;
   let n = 0;
-  // expression : 'clin' (clin d'œil), 'rire' (mort de rire), 'choc' (choqué), 'dort' (endormi) — rien = sourire
+  // expression : 'clin' (clin d'œil), 'rire' (mort de rire), 'choc' (choqué), 'dort' (endormi), 'mechant' — rien = sourire
   function svg(forme = 'buste', { epee = false, expression = '' } = {}) {
     const id = 'bf' + (++n);
     let s = forme === 'pied' ? (epee ? PIED_EPEE : PIED).replaceAll('__P__', id) : BUSTE.replaceAll('__P__', id);

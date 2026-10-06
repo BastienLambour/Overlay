@@ -276,3 +276,277 @@
 @keyframes hp-jambe-g { 0%, 100% { transform: rotate(0); } 35%, 60% { transform: rotate(18deg); } }
 @keyframes hp-jambe-d { 0%, 100% { transform: rotate(0); } 35%, 60% { transform: rotate(-18deg); } }
 @keyframes ar-clin-trait { 0%, 60%, 72%, 100% { opacity: 0; } 64%, 68% { opacity: 1; } }
+
+/* =====================================================================
+   7. LES GRELOTS — spectacles à la demande (js/grelots.js)
+      la chute · la tarte · la sérénade · le jet du destin · la potion · le duel · le dragon
+   ===================================================================== */
+.gr-scene { position: absolute; inset: 0; pointer-events: none; overflow: hidden; container-type: size; }
+.gr-scene > * { position: absolute; }
+.gr-perso { bottom: 7cqh; height: 46cqh; width: 20cqh; left: 0; }
+.gr-perso > div { width: 100%; height: 100%; }
+.gr-miroir > div { transform: scaleX(-1); }
+.gr-cache-epee .bf-sabre { opacity: 0; }
+
+/* Marcher (le corps avance grâce à la page ; ici, les jambes et les bras) */
+.marche .bf-hanche-g { animation: gr-jambe .5s ease-in-out infinite alternate; }
+.marche .bf-hanche-d { animation: gr-jambe .5s ease-in-out -.5s infinite alternate; }
+.marche .bf-epaule-g { animation: gr-bras .5s ease-in-out -.5s infinite alternate; }
+.marche .bf-epaule-d { animation: gr-bras .5s ease-in-out infinite alternate; }
+.marche .bf-tout { animation: gr-pas .25s ease-in-out infinite alternate; }
+@keyframes gr-jambe { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+@keyframes gr-bras { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+@keyframes gr-pas { to { transform: translateY(-10px); } }
+
+/* Palier 1 : il trébuche, mouline des bras, s'étale… et se relève d'un bond */
+.chute .bf-tout { animation: gr-chute 2.6s both; }
+.chute .bf-epaule-g { animation: gr-mouline-g 2.6s ease-in-out both; }
+.chute .bf-epaule-d { animation: gr-mouline-d 2.6s ease-in-out both; }
+.chute .bf-hanche-g { animation: gr-jambe-air 2.6s ease-in-out both; }
+@keyframes gr-chute { 0% { transform: none; } 12% { transform: rotate(10deg) translateY(-30px); } 24% { transform: rotate(-14deg) translateY(-50px); }
+  38% { transform: rotate(-90deg) translate(-40px, -20px); animation-timing-function: cubic-bezier(.3, 1.6, .6, 1); } 44% { transform: rotate(-86deg) translate(-40px, -34px); }
+  50%, 78% { transform: rotate(-90deg) translate(-40px, -20px); } 88% { transform: translateY(-80px); } 100% { transform: none; } }
+@keyframes gr-mouline-g { 0% { transform: none; } 8% { transform: rotate(160deg); } 16% { transform: rotate(60deg); } 24% { transform: rotate(170deg); } 38%, 78% { transform: rotate(40deg); } 100% { transform: none; } }
+@keyframes gr-mouline-d { 0% { transform: none; } 8% { transform: rotate(-60deg); } 16% { transform: rotate(-165deg); } 24% { transform: rotate(-70deg); } 38%, 78% { transform: rotate(-30deg); } 100% { transform: none; } }
+@keyframes gr-jambe-air { 0%, 8% { transform: none; } 20% { transform: rotate(40deg); } 38%, 100% { transform: none; } }
+/* les « étoiles » (des grelots !) qui tournent au-dessus de sa tête quand il est par terre */
+.gr-etourdi { width: 10cqh; height: 4cqh; opacity: 0; }
+.gr-etourdi span { position: absolute; width: 2.6cqh; height: 2.6cqh; border-radius: 50%; background: var(--accent); box-shadow: inset 0 -.5cqh 0 rgba(0,0,0,.2);
+  animation: gr-orbite 1s linear infinite; }
+.gr-etourdi span:nth-child(2) { animation-delay: -.33s; } .gr-etourdi span:nth-child(3) { animation-delay: -.66s; }
+@keyframes gr-orbite { 0% { transform: translate(0, 1.5cqh) scale(.8); } 25% { transform: translate(3.5cqh, 0) scale(1); } 50% { transform: translate(7cqh, 1.5cqh) scale(.8); }
+  75% { transform: translate(3.5cqh, 3cqh) scale(.6); } 100% { transform: translate(0, 1.5cqh) scale(.8); } }
+
+/* Palier 2 : le duel — attaque à l'épée (le corps avance grâce à la page) */
+.attaque .bf-epaule-d { animation: gr-attaque .9s cubic-bezier(.5, 0, .3, 1) both; }
+.attaque .bf-tout { animation: gr-fente .9s ease-in-out both; }
+@keyframes gr-attaque { 0% { transform: rotate(-20deg); } 40% { transform: rotate(-165deg); } 62% { transform: rotate(40deg); } 100% { transform: rotate(-20deg); } }
+@keyframes gr-fente { 40% { transform: rotate(-4deg); } 62% { transform: rotate(8deg) translateY(10px); } 100% { transform: none; } }
+.en-garde .bf-epaule-d { transform: rotate(-40deg); }
+.en-garde .bf-coude-d { transform: rotate(-30deg); }
+.en-garde .bf-epaule-g { transform: rotate(30deg); }
+.en-garde .bf-tout { animation: gr-garde .7s ease-in-out infinite alternate; }
+@keyframes gr-garde { to { transform: translateY(8px) rotate(-2deg); } }
+/* l'étincelle quand les épées se croisent, la fumée quand le maléfique s'enfuit */
+.gr-etincelle { width: 14cqh; height: 14cqh; opacity: 0; background: radial-gradient(circle, #fff 0 12%, var(--accent) 13% 26%, transparent 27%);
+  clip-path: polygon(50% 0, 60% 38%, 100% 50%, 60% 62%, 50% 100%, 40% 62%, 0 50%, 40% 38%); }
+.gr-fumee { width: 26cqh; height: 26cqh; opacity: 0; }
+.gr-fumee span { position: absolute; border-radius: 50%; background: #8E8AA0; }
+.gr-epee-volante { width: 5cqh; }
+
+/* Palier 3 : le dragon */
+.dragon-svg g { transform-box: view-box; }
+.gr-dragon { width: 50cqw; bottom: 22cqh; left: 0; }
+.gr-dragon .dr-aile { transform-origin: 300px 182px; animation: dr-bat .55s ease-in-out infinite alternate; }
+.gr-dragon .dr-aile-arriere { transform-origin: 352px 176px; animation: dr-bat-arriere .55s ease-in-out infinite alternate; }
+.gr-dragon .dr-tete { transform-origin: 150px 160px; animation: dr-tete 1.6s ease-in-out infinite alternate; }
+.gr-dragon .dr-machoire { transform-origin: 150px 172px; }
+.gr-dragon .dr-feu { transform-origin: 52px 170px; transform: scaleX(0); opacity: 0; }
+.gr-dragon.crache .dr-machoire { transform: rotate(-22deg); transition: transform .2s; }
+.gr-dragon.crache .dr-feu { animation: dr-feu 1.4s ease-out both; }
+@keyframes dr-bat { from { transform: rotate(14deg); } to { transform: rotate(-26deg); } }
+@keyframes dr-bat-arriere { from { transform: rotate(10deg); } to { transform: rotate(-20deg); } }
+@keyframes dr-tete { from { transform: rotate(-4deg); } to { transform: rotate(5deg); } }
+@keyframes dr-feu { 0% { transform: scaleX(0); opacity: 1; } 30% { transform: scaleX(1.05); } 40%, 75% { transform: scaleX(.95) scaleY(1.08); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+/* il saute par-dessus les flammes, genoux repliés */
+.saute .bf-tout { animation: gr-saute 1.1s cubic-bezier(.3, .7, .4, 1) both; }
+.saute .bf-hanche-g { animation: gr-replie-g 1.1s ease-in-out both; }
+.saute .bf-hanche-d { animation: gr-replie-d 1.1s ease-in-out both; }
+.saute .bf-epaule-g { animation: hp-bras-g 1.1s ease-in-out both; }
+@keyframes gr-saute { 0%, 100% { transform: none; } 15% { transform: translateY(16px) scale(1.03, .95); } 50% { transform: translateY(-260px); } 85% { transform: translateY(0) scale(1.03, .96); } }
+@keyframes gr-replie-g { 0%, 15%, 100% { transform: none; } 40%, 65% { transform: rotate(48deg); } }
+@keyframes gr-replie-d { 0%, 15%, 100% { transform: none; } 40%, 65% { transform: rotate(-48deg); } }
+/* le coup final : bond, épée levée, puis abattue */
+.bondit .bf-epaule-d { animation: gr-coup-final 1.2s cubic-bezier(.5, 0, .3, 1) both; }
+.bondit .bf-epaule-g { animation: hp-bras-g 1.2s ease-in-out both; }
+@keyframes gr-coup-final { 0% { transform: rotate(-20deg); } 45% { transform: rotate(-175deg); } 70%, 100% { transform: rotate(50deg); } }
+.gr-entaille { height: 1.4cqh; width: 0; background: #FFF8E8; box-shadow: 0 0 2cqh #fff; border-radius: 1cqh; transform: rotate(-38deg); opacity: 0; }
+/* la pluie de grelots d'or */
+.gr-pluie span { position: absolute; top: -8cqh; width: 3.4cqh; height: 3.4cqh; border-radius: 50%; background: var(--accent);
+  box-shadow: inset 0 -.6cqh 0 rgba(0,0,0,.22), inset .5cqh .5cqh 0 rgba(255,255,255,.4); }
+.gr-voile { inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.55)); opacity: 0; }
+
+/* Le bandeau qui annonce le spectateur */
+.gr-annonce { top: 6cqh; left: 50%; translate: -50% 0; white-space: nowrap; padding: 1.4cqh 3cqw 1.8cqh; border-radius: 2cqh;
+  background: var(--surface); border: .5cqh solid var(--accent); box-shadow: 0 1cqh 0 rgba(0,0,0,.3); text-align: center; opacity: 0; }
+.gr-annonce small { display: block; font: 900 2.4cqh var(--f-texte); letter-spacing: .5cqh; text-transform: uppercase; color: var(--accent); }
+.gr-annonce b { font: 800 5.6cqh/1.1 var(--f-titre); color: var(--texte); }
+.gr-annonce b em { font-style: normal; color: var(--primaire); }
+
+/* ---------- Les petits spectacles (25 à 100 grelots) ----------
+   Angles des bras calculés pour que la main tombe au bon endroit du dessin
+   (visage, bouche, manche du banjo…) : épaule (116,392) / (284,392), bras 78 + 82. */
+/* La tarte à la crème : la crème sur le visage, il recule, s'essuie, goûte */
+.gr-tarte { width: 13cqh; }
+.gr-creme-visage { pointer-events: none; }
+.recule .bf-tout { animation: gr-recule .8s cubic-bezier(.3, 1.4, .6, 1) both; }
+@keyframes gr-recule { 25% { transform: rotate(-9deg) translateX(-26px); } 100% { transform: none; } }
+.essuie .bf-epaule-d { animation: gr-essuie .45s ease-in-out infinite alternate; }
+.essuie .bf-coude-d { transform: rotate(-4deg); }
+@keyframes gr-essuie { from { transform: rotate(142deg); } to { transform: rotate(163deg); } }
+.goute .bf-epaule-d { transform: rotate(180deg); transition: transform .35s ease-out; }
+.goute .bf-coude-d { transform: rotate(-78deg); transition: transform .35s ease-out; }
+.gr-bulle { font: 800 4.6cqh/1 var(--f-titre); color: var(--texte); background: var(--surface); border: .4cqh solid var(--accent);
+  border-radius: 2cqh; padding: .8cqh 1.6cqh 1.1cqh; white-space: nowrap; }
+
+/* La sérénade : il tient le banjo (main gauche sur le manche, main droite qui gratte) et chante faux */
+.tient-banjo .bf-epaule-g { animation: none; transform: rotate(-3deg); }
+.tient-banjo .bf-coude-g { transform: rotate(104deg); }
+.tient-banjo .bf-epaule-d { animation: none; transform: rotate(-16deg); }
+.tient-banjo .bf-coude-d { transform: rotate(82deg); }
+.gratte .bf-coude-d { animation: gr-gratte .2s ease-in-out infinite alternate; }
+@keyframes gr-gratte { from { transform: rotate(70deg); } to { transform: rotate(92deg); } }
+.chante .bf-tout { animation: gr-balance .9s ease-in-out infinite alternate; }
+.chante .bf-haut { animation: gr-tete-chant .9s ease-in-out infinite alternate; }
+@keyframes gr-balance { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes gr-tete-chant { from { transform: rotate(7deg); } to { transform: rotate(-7deg); } }
+.gr-note { font: 800 7cqh/1 var(--f-titre); color: var(--accent); text-shadow: 0 .4cqh 0 rgba(0,0,0,.3); }
+.gr-note.fausse { color: #9AA6B5; font-size: 4cqh; font-family: var(--f-texte); font-weight: 900; }
+.gr-grelot { width: 7cqh; height: 7cqh; border-radius: 50%; background: var(--accent);
+  box-shadow: inset 0 -1.1cqh 0 rgba(0,0,0,.22), inset .9cqh .9cqh 0 rgba(255,255,255,.4); }
+.gr-grelot::after { content: ''; position: absolute; left: 25%; right: 25%; top: 58%; height: .7cqh; border-radius: 1cqh; background: rgba(0,0,0,.45); }
+
+/* Le jet du destin : il lance le d20, puis réagit au résultat */
+.lance .bf-epaule-d { animation: gr-lance .8s cubic-bezier(.5, 0, .3, 1) both; }
+@keyframes gr-lance { 0% { transform: rotate(0); } 40% { transform: rotate(40deg); } 70% { transform: rotate(-160deg); } 100% { transform: rotate(-20deg); } }
+.gr-d20 { width: 17cqh; }
+.gr-d20.critique { filter: drop-shadow(0 0 2.4cqh var(--accent)); }
+.gr-d20.echec { filter: drop-shadow(0 0 2.4cqh #E3243B); }
+/* entre deux : il hausse les épaules, paumes en l'air */
+.haussement .bf-epaule-g { transform: rotate(15deg); } .haussement .bf-coude-g { transform: rotate(105deg); }
+.haussement .bf-epaule-d { transform: rotate(-15deg); } .haussement .bf-coude-d { transform: rotate(-105deg); }
+.haussement .bf-epaule-g, .haussement .bf-epaule-d, .haussement .bf-coude-g, .haussement .bf-coude-d { transition: transform .3s ease-out; }
+.haussement .bf-haut { transform: rotate(-8deg); transition: transform .3s; }
+.haussement .bf-tout { animation: gr-hausse .45s ease-in-out 4 alternate; }
+@keyframes gr-hausse { to { transform: translateY(-12px); } }
+/* bon résultat : pouce levé */
+.gr-pouce { opacity: 0; }
+.pouce .gr-pouce { opacity: 1; }
+.pouce .bf-epaule-d { transform: rotate(-150deg); transition: transform .3s cubic-bezier(.3, 1.5, .6, 1); }
+.pouce .bf-coude-d { transform: rotate(-30deg); transition: transform .3s; }
+.pouce .bf-tout { animation: gr-garde .5s ease-in-out infinite alternate; }
+/* échec critique : le dé sur le pied — il saute à cloche-pied, le chapeau lui tombe sur les yeux */
+.aie .bf-tout { animation: gr-cloche .3s ease-in-out infinite alternate; }
+.aie .bf-hanche-d { transform: rotate(-70deg); }
+.aie .bf-genou-d { transform: rotate(66deg); }
+.aie .bf-epaule-g { animation: gr-agite-g .3s ease-in-out infinite alternate; }
+.aie .bf-epaule-d { animation: gr-agite-d .3s ease-in-out infinite alternate; }
+@keyframes gr-cloche { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-46px) rotate(4deg); } }
+@keyframes gr-agite-g { from { transform: rotate(60deg); } to { transform: rotate(130deg); } }
+@keyframes gr-agite-d { from { transform: rotate(-60deg); } to { transform: rotate(-130deg); } }
+.chapeau-yeux .bf-chapeau { transform: translateY(58px) rotate(5deg) !important; transition: transform .25s cubic-bezier(.5, 1.6, .5, 1); animation: none !important; }
+/* 20 ! danse de la joie et confettis */
+.danse .bf-tout { animation: gr-danse .5s ease-in-out infinite alternate; }
+.danse .bf-epaule-g { animation: gr-agite-g .25s ease-in-out infinite alternate; }
+.danse .bf-epaule-d { animation: gr-agite-d .25s ease-in-out -.12s infinite alternate; }
+.danse .bf-hanche-g { animation: gr-jambe .25s ease-in-out infinite alternate; }
+.danse .bf-hanche-d { animation: gr-jambe .25s ease-in-out -.25s infinite alternate; }
+.danse .bf-chapeau { animation: bf-grelots .5s ease-in-out infinite; }
+@keyframes gr-danse { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-40px) rotate(6deg); } }
+.gr-confettis { inset: 0; }
+.gr-confettis span { position: absolute; top: -4cqh; width: 1.3cqh; height: 2.4cqh; border-radius: .3cqh; }
+
+/* La potion mystère : il la montre, la boit… et l'effet est tiré au sort */
+.tient-fiole .bf-epaule-d { animation: none; transform: rotate(30deg); transition: transform .4s ease-in-out; }
+.tient-fiole .bf-coude-d { transform: rotate(110deg); transition: transform .4s ease-in-out; }
+.boit .bf-epaule-d { animation: none; transform: rotate(199deg); transition: transform .45s ease-in-out; }
+.boit .bf-coude-d { transform: rotate(-100deg); transition: transform .45s ease-in-out; }
+.boit .bf-haut { transform: rotate(-10deg); transition: transform .45s; }
+.gr-perso > div.gr-effet { transform-origin: 50% 100%; }
+.gr-vert { --bouffon-peau: #9AD58C; --bouffon-peau-ombre: #74B067; }
+.ballon .bf-tout { animation: gr-ballon 1.1s ease-in-out infinite alternate; }
+.ballon .bf-epaule-g { animation: gr-agite-g .28s ease-in-out infinite alternate; }
+.ballon .bf-epaule-d { animation: gr-agite-d .28s ease-in-out infinite alternate; }
+.ballon .bf-hanche-g { animation: gr-jambe .35s ease-in-out infinite alternate; }
+.ballon .bf-hanche-d { animation: gr-jambe .35s ease-in-out -.35s infinite alternate; }
+@keyframes gr-ballon { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+
+/* ---------- Darktagrain, le rival (le bouffon maléfique) ---------- */
+/* il menace du poing */
+.menace .bf-epaule-d { animation: gr-menace .28s ease-in-out infinite alternate; }
+.menace .bf-coude-d { transform: rotate(-50deg); }
+@keyframes gr-menace { from { transform: rotate(-138deg); } to { transform: rotate(-165deg); } }
+/* il trépigne de rage */
+.trepigne .bf-tout { animation: gr-trepigne .2s ease-in-out infinite alternate; }
+.trepigne .bf-hanche-g { animation: gr-jambe .2s ease-in-out infinite alternate; }
+.trepigne .bf-hanche-d { animation: gr-jambe .2s ease-in-out -.2s infinite alternate; }
+.trepigne .bf-epaule-g { transform: rotate(28deg); } .trepigne .bf-epaule-d { transform: rotate(-28deg); }
+@keyframes gr-trepigne { to { transform: translateY(-12px); } }
+/* il boude, bras croisés */
+.boude .bf-epaule-g { transform: rotate(-13deg); } .boude .bf-coude-g { transform: rotate(-68deg); }
+.boude .bf-epaule-d { transform: rotate(13deg); } .boude .bf-coude-d { transform: rotate(76deg); }
+.boude .bf-haut { transform: rotate(6deg) translateY(6px); transition: transform .3s; }
+/* il se frotte les mains (devant le coffre) */
+.frotte .bf-epaule-g { transform: rotate(-1deg); } .frotte .bf-epaule-d { transform: rotate(1deg); }
+.frotte .bf-coude-g { animation: gr-frotte-g .16s ease-in-out infinite alternate; }
+.frotte .bf-coude-d { animation: gr-frotte-d .16s ease-in-out infinite alternate; }
+@keyframes gr-frotte-g { from { transform: rotate(-56deg); } to { transform: rotate(-70deg); } }
+@keyframes gr-frotte-d { from { transform: rotate(56deg); } to { transform: rotate(70deg); } }
+.gr-banane { width: 9cqh; }
+
+/* Chifoumi : poing agité trois fois, puis la main montrée */
+.chifoumi .bf-epaule-d { animation: gr-chifoumi .45s ease-in-out 3; }
+.chifoumi .bf-coude-d { transform: rotate(-30deg); }
+@keyframes gr-chifoumi { 0%, 100% { transform: rotate(-60deg); } 50% { transform: rotate(-125deg); } }
+.montre-main .bf-epaule-d { transform: rotate(-75deg); } .montre-main .bf-coude-d { transform: rotate(-20deg); }
+.gr-compte { font: 800 10cqh/1 var(--f-titre); color: var(--texte); text-shadow: 0 .6cqh 0 rgba(0,0,0,.35); white-space: nowrap; }
+.gr-symbole { width: 14cqh; height: 14cqh; padding: 1.6cqh; box-sizing: border-box; background: var(--surface); border: .5cqh solid var(--accent); border-radius: 50%; }
+.gr-symbole.perdant { border-color: #8E8AA0; opacity: .6; }
+.gr-symbole svg { display: block; width: 100%; height: 100%; }
+
+/* Le coffre au trésor */
+.gr-coffre { width: 25cqh; }
+.gr-coffre svg { display: block; width: 100%; overflow: visible; }
+.gr-coffre .cf-couvercle { transition: opacity .12s; }
+.gr-coffre.ouvert .cf-couvercle { opacity: 0; }
+.gr-coffre .cf-lueur { opacity: 0; transition: opacity .12s; }
+.gr-coffre.ouvert .cf-lueur { opacity: 1; }
+.gr-coffre.secoue { animation: gr-secoue-coffre .12s ease-in-out 6 alternate; }
+@keyframes gr-secoue-coffre { from { rotate: -3deg; } to { rotate: 3deg; } }
+.gr-objet { width: 16cqh; }
+.gr-objet svg, .gr-objet img { display: block; width: 100%; }
+.gr-rayons { width: 52cqh; height: 52cqh; border-radius: 50%; background: repeating-conic-gradient(rgba(255, 231, 150, .6) 0 9deg, transparent 9deg 18deg);
+  -webkit-mask: radial-gradient(circle, #000 15%, transparent 68%); mask: radial-gradient(circle, #000 15%, transparent 68%); animation: gr-tourne 7s linear infinite; }
+@keyframes gr-tourne { to { rotate: 360deg; } }
+.gr-rarete { font: 900 2.6cqh/1 var(--f-texte); letter-spacing: .4cqh; text-transform: uppercase; padding: .7cqh 1.6cqh; border-radius: 1cqh; color: #fff; white-space: nowrap; }
+.gr-rarete.legendaire { background: linear-gradient(90deg, #C98F1E, #F5B82E); color: #3A2606; }
+.gr-rarete.commun { background: #5B7A99; }
+.gr-rarete.nul { background: #7A5A3E; }
+.gr-odeur { font: 900 4cqh/1 var(--f-texte); color: #9DB36A; }
+
+/* Darktagrain à dos de dragon : assis à califourchon */
+.cavalier .bf-hanche-g { transform: rotate(40deg); } .cavalier .bf-genou-g { transform: rotate(-55deg); }
+.cavalier .bf-hanche-d { transform: rotate(-40deg); } .cavalier .bf-genou-d { transform: rotate(55deg); }
+.cavalier .bf-tout { animation: gr-garde .55s ease-in-out infinite alternate; }
+
+/* ---------- La catapulte (pile ou face, puis un atterrissage au hasard) ---------- */
+.gr-piece { width: 13cqh; height: 13cqh; border-radius: 50%; display: grid; place-items: center; box-sizing: border-box;
+  background: radial-gradient(circle at 35% 30%, #FFF1C2, var(--accent, #F5B82E) 55%, #B07A16); border: .6cqh solid #8E6A14;
+  font: 800 3.2cqh/1 var(--f-titre); color: #3A2606; }
+.gr-catapulte { width: 62cqh; }
+.gr-catapulte svg { display: block; width: 100%; overflow: visible; }
+.gr-catapulte .cp-bras { transform-box: view-box; transform-origin: 150px 110px; }
+/* en vol : il mouline des bras et des jambes */
+.vole .bf-epaule-g { animation: gr-agite-g .2s ease-in-out infinite alternate; }
+.vole .bf-epaule-d { animation: gr-agite-d .2s ease-in-out infinite alternate; }
+.vole .bf-hanche-g { animation: gr-jambe .2s ease-in-out infinite alternate; }
+.vole .bf-hanche-d { animation: gr-jambe .2s ease-in-out -.2s infinite alternate; }
+/* écrasé contre l'écran : bras et jambes en étoile */
+.vitre .bf-epaule-g { transform: rotate(125deg); } .vitre .bf-epaule-d { transform: rotate(-125deg); }
+.vitre .bf-hanche-g { transform: rotate(22deg); } .vitre .bf-hanche-d { transform: rotate(-22deg); }
+.gr-fissures { width: 70cqh; }
+.gr-fissures svg { display: block; width: 100%; }
+/* les décors d'atterrissage */
+.gr-decor svg { display: block; width: 100%; overflow: visible; }
+.gr-mouches span { background: #2A2A2A; width: 1.2cqh; height: 1.2cqh; box-shadow: none; }
+.gr-coeur { font: 900 5cqh/1 var(--f-texte); color: #FF6FA8; text-shadow: 0 .3cqh 0 rgba(0,0,0,.2); }
+.gr-goutte { width: 1.6cqh; height: 2.2cqh; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #8CC8F0; }
+.gr-copeau { width: 3cqh; height: .9cqh; border-radius: .3cqh; background: #8A5A2B; }
+.gr-taverne.secoue { animation: gr-secoue-coffre .1s ease-in-out 6 alternate; }
+.gr-taverne .tv-trou { opacity: 0; }
+.gr-taverne.troue .tv-trou { opacity: 1; }
+.pompette .bf-tout { animation: gr-balance .7s ease-in-out infinite alternate; }
+/* les bulles et les annonces passent toujours devant le décor (qui a ses propres plans) */
+.gr-scene > .gr-bulle, .gr-scene > .gr-compte, .gr-scene > .gr-annonce, .gr-scene > .gr-note { z-index: 10; }
+.gr-nageoire svg { transform-origin: 50% 100%; animation: gr-nageoire .7s ease-in-out infinite alternate; }
+@keyframes gr-nageoire { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }

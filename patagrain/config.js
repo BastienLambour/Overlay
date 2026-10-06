@@ -172,12 +172,37 @@ window.CONFIG = {
     jeuAuFollow: true,
     bulles: ["Merci d'être venus !", "À bientôt, aventuriers !"],
   },
+  // --- Les Grelots : spectacles du bouffon payés avec les points StreamElements de la chaîne.
+  //     Le mystère : les spectateurs ne connaissent que le prix (!spectacle10, !spectacle25…), pas le spectacle.
+  //     Dans StreamElements, chaque commande a un coût fixe (« -cost ») ; sa réponse doit être EXACTEMENT
+  //     la phrase « reponse » ci-dessous (${user} = le pseudo du spectateur). L'overlay repère cette phrase
+  //     dans le chat et joue le spectacle (source Alertes). Pas de !duel : il existe déjà (duel de points).
+  grelots: {
+    actif: true,
+    bot: "streamelements",      // le compte du bot qui répond dans le chat
+    rival: "Darktagrain",       // le nom du bouffon maléfique
+    essaiModos: false,          // true = les modos peuvent aussi lancer « !essai catapulte » (etc.) gratis (le streamer peut toujours)
+    spectacles: {
+      chute:     { actif: true, commande: "!spectacle10",  prix: 10,  reponse: "🔔 ${user} jette 10 grelots dans le chapeau du bouffon… 🎭" },
+      tarte:     { actif: true, commande: "!spectacle25",  prix: 25,  reponse: "🔔 ${user} jette 25 grelots dans le chapeau du bouffon… 🎭" },
+      serenade:  { actif: true, commande: "!spectacle50",  prix: 50,  reponse: "🔔 ${user} jette 50 grelots dans le chapeau du bouffon… 🎭" },
+      destin:    { actif: true, commande: "!spectacle75",  prix: 75,  reponse: "🔔 ${user} jette 75 grelots dans le chapeau du bouffon… 🎭" },
+      potion:    { actif: true, commande: "!spectacle100", prix: 100, reponse: "🔔 ${user} jette 100 grelots dans le chapeau du bouffon… 🎭" },
+      chifoumi:  { actif: true, commande: "!spectacle125", prix: 125, reponse: "🔔 ${user} jette 125 grelots dans le chapeau du bouffon… 🎭" },
+      coffre:    { actif: true, commande: "!spectacle150", prix: 150, reponse: "🔔 ${user} jette 150 grelots dans le chapeau du bouffon… 🎭" },
+      catapulte: { actif: true, commande: "!spectacle175", prix: 175, reponse: "🔔 ${user} jette 175 grelots dans le chapeau du bouffon… 🎭" },
+      duel:      { actif: true, commande: "!spectacle200", prix: 200, reponse: "🔔 ${user} jette 200 grelots dans le chapeau du bouffon… 🎭" },
+      dragon:    { actif: true, commande: "!spectacle300", prix: 300, reponse: "🔔 ${user} jette 300 grelots dans le chapeau du bouffon… 🎭" },
+    },
+  },
   chaine: {
     slogan: "Jeux vidéo & jeu de rôle, à la cour du bouffon",
     horsLigne: "Le bouffon se repose…",
+    // Page de dons StreamElements (bannière 640×200 et fond 1920×1080 du kit) : titre et petite phrase
+    dons: { titre: "Offrande au royaume", texte: "Chaque pièce fait tinter le grelot du bouffon" },
     planning: [],
     reseaux: [],
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Soutenir"],
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir"],
   },
   test: {
     noms: ["SirMachin", "DameTruc", "Bob_le_Nain", "Ysolde", "Merlin_Pinpin", "Gwendal", "LaDameDuLac", "Perceval"],

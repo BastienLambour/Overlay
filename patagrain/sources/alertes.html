@@ -15,7 +15,11 @@
   corde, salue de l'autre (config.js › bouffon.alertes ; ?bouffon=0 pour une carte seule).
   Options d'URL :
     ?position=haut | centre | bas   (défaut : haut)
-    ?test=1   fait défiler des alertes d'exemple
+    ?test=1   fait défiler des alertes d'exemple (et un spectacle des Grelots de temps en temps)
+  Les Grelots (config.js › grelots) : quand le bot StreamElements annonce dans le chat qu'un spectateur
+  a payé un spectacle, le bouffon le joue ici, par-dessus la scène, à la suite des alertes.
+    ?grelots=catapulte   joue ce spectacle tout de suite (pour essayer)
+    ?grelots=0           pas de spectacles sur cette source
 -->
 <div id="ecran"></div>
 
@@ -28,6 +32,9 @@
 <script src="../js/son.js"></script>
 <script src="../js/bouffon.js"></script>
 <script src="../js/numeros.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/dragon.js"></script>
+<script src="../js/grelots.js"></script>
 <script>
   const P = Commun;
   P.demarrer();
@@ -51,6 +58,10 @@
   }
 
   function afficher(e, fini) {
+    if (e.type === 'grelots') {                                      // un spectacle du bouffon, payé en grelots
+      console.log('[Grelots] spectacle', e.spectacle, 'pour', e.nom);
+      return Grelots.jouer(ecran, e.spectacle, e.nom).then(fini, fini);
+    }
     const t = (CA.textes || {})[e.type] || { titre: e.type, message: '' };
     const grande = GRANDES.includes(e.type);
     const el = document.createElement('div');
@@ -96,6 +107,25 @@
 
   Evenements.ecouter(e => { if (e) { file.push(e); suivante(); } });
   Evenements.demarrer();
+
+  // --- Les Grelots : la réponse du bot StreamElements dans le chat lance un spectacle ---
+  const CG = P.C.grelots || {};
+  const choix = P.params.get('grelots');
+  const spectacle = s => { file.push({ type: 'grelots', ...s }); suivante(); };
+  if (CG.actif !== false && choix !== '0') {
+    if (choix && choix !== '1') spectacle({ spectacle: choix, nom: 'Essai' });
+    if (P.test) {
+      const noms = (P.C.test || {}).noms || ['Gwendal'];
+      setInterval(() => spectacle({ spectacle: Grelots.liste[Math.floor(Math.random() * Grelots.liste.length)],
+        nom: noms[Math.floor(Math.random() * noms.length)] }), 45000);
+    } else {
+      Chat.ecouter(m => {
+        const s = Grelots.reconnaitre(m);
+        if (s) spectacle(s);
+        else if (m.login === String(CG.bot || 'streamelements').toLowerCase()) console.log('[Grelots] message du bot, pas un spectacle :', m.texte);
+      });
+    }
+  }
 </script>
 </body>
 </html>

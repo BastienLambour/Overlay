@@ -777,6 +777,44 @@
     </div>
   </section>
 
+  <!-- ================= LES GRELOTS (spectacles à la demande) ================= -->
+  <section id="grelots">
+    <h2>Les Grelots — les spectacles à la demande <span class="etiquette-nouveau">à valider</span></h2>
+    <p class="sous">Les spectateurs dépensent leurs <b>grelots</b> (les points StreamElements de la chaîne) avec une commande mystère dans le chat (<code>!spectacle10</code> … <code>!spectacle300</code> : on ne connaît que le prix) : le bouffon joue un spectacle par-dessus la scène. Plus on dépense, plus c'est grand. Du plus petit au plus grand (prix en grelots), avec un fil rouge : la rivalité entre Patagrain et <b>Darktagrain</b>, son double maléfique. Les démos tournent en boucle quand elles sont à l'écran ; les boutons relancent tout de suite (ou forcent un résultat pour voir chaque cas).</p>
+    <div class="numeros">
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-chute" data-spectacle="chute"></div>
+        <h3>🍌 10 grelots — la peau de banane</h3><p>Darktagrain pose une peau de banane (« Hé hé hé… ») et va guetter. Patagrain glisse dessus et s'étale, Darktagrain se moque… Patagrain se relève, furieux : « DARKTAGRAIN !!! », et le poursuit hors de l'écran.</p>
+        <button class="btn" data-grelots="chute">▶ Relancer</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-tarte" data-spectacle="tarte"></div>
+        <h3>🥧 25 grelots — la tarte à la crème</h3><p>Darktagrain lui lance une tarte en pleine figure et se moque. Patagrain s'essuie les lunettes, goûte : « Miam ! »… ce qui met Darktagrain dans une rage folle.</p>
+        <button class="btn" data-grelots="tarte">▶ Relancer</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-serenade" data-spectacle="serenade"></div>
+        <h3>🪕 50 grelots — la sérénade</h3><p>Il gratte le banjo et chante (faux : il y a des « couac ! »)… jusqu'à ce qu'un grelot lui tombe sur la tête. BONG.</p>
+        <button class="btn" data-grelots="serenade">▶ Relancer</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-destin" data-spectacle="destin"></div>
+        <h3>🎲 75 grelots — le jet du destin</h3><p>Un d20 géant, vrai tirage. 20 : danse de la joie et confettis. 1 : le dé lui tombe sur le pied, cloche-pied, chapeau sur les yeux. 11 à 19 : pouce levé. 2 à 10 : haussement d'épaules.</p>
+        <button class="btn" data-grelots="destin">▶ Relancer</button> <button class="btn" data-grelots="destin" data-forcer='{"de":20}'>Forcer 20</button> <button class="btn" data-grelots="destin" data-forcer='{"de":14}'>Forcer 14</button> <button class="btn" data-grelots="destin" data-forcer='{"de":6}'>Forcer 6</button> <button class="btn" data-grelots="destin" data-forcer='{"de":1}'>Forcer 1</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-potion" data-spectacle="potion"></div>
+        <h3>🧪 100 grelots — la potion mystère</h3><p>Il boit une potion violette… effet au hasard : géant, minuscule, tout vert ou il s'envole comme un ballon. Puis « pouf », tout redevient normal.</p>
+        <button class="btn" data-grelots="potion">▶ Relancer</button> <button class="btn" data-grelots="potion" data-forcer='{"effet":"geant"}'>Géant</button> <button class="btn" data-grelots="potion" data-forcer='{"effet":"minuscule"}'>Minuscule</button> <button class="btn" data-grelots="potion" data-forcer='{"effet":"vert"}'>Vert</button> <button class="btn" data-grelots="potion" data-forcer='{"effet":"ballon"}'>Ballon</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-chifoumi" data-spectacle="chifoumi"></div>
+        <h3>✂️ 125 grelots — pierre, feuille, ciseaux</h3><p>« Chi… fou… mi ! » contre Darktagrain, au hasard. Égalité : on rejoue. Patagrain gagne : il danse, Darktagrain trépigne (« GRRR ! ») et file. Il perd : Darktagrain danse en ricanant, Patagrain boude, bras croisés.</p>
+        <button class="btn" data-grelots="chifoumi">▶ Relancer</button> <button class="btn" data-grelots="chifoumi" data-forcer='{"chifoumi":"gagne"}'>Il gagne</button> <button class="btn" data-grelots="chifoumi" data-forcer='{"chifoumi":"perd"}'>Il perd</button> <button class="btn" data-grelots="chifoumi" data-forcer='{"chifoumi":"egalite"}'>Égalité</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-coffre" data-spectacle="coffre"></div>
+        <h3>🧰 150 grelots — le coffre au trésor</h3><p>Un coffre tombe du ciel ; il se frotte les mains et l'ouvre. Au hasard : <b>légendaire</b> (couronne du roi, épée légendaire : rayons, confettis, danse), <b>commun</b> (chope de cervoise, gros fromage : « Pas mal ! ») ou <b>nul</b> (vieille chaussette, poisson pas frais : « Pouah ! »).</p>
+        <button class="btn" data-grelots="coffre">▶ Relancer</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"couronne"}'>Couronne</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"epee"}'>Épée</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"chope"}'>Chope</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"fromage"}'>Fromage</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"chaussette"}'>Chaussette</button> <button class="btn" data-grelots="coffre" data-forcer='{"tresor":"poisson"}'>Poisson</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-catapulte" data-spectacle="catapulte"></div>
+        <h3>🏹 175 grelots — la catapulte</h3><p>Pile ou face d'abord : <b>pile</b>, Patagrain envoie Darktagrain ; <b>face</b>, Darktagrain envoie Patagrain. Puis l'atterrissage, au hasard : sur ses pieds (« Ta-da ! »), la tête dans la paille (jambes qui gigotent), écrasé contre l'écran comme sur une vitre, dans la mare (« PLOUF ! »), dans la bouse (mouches, « BEURK !!! »), chez les Dames du Lac, des sirènes (des cœurs pour Patagrain… « Ouste ! » pour Darktagrain), ou à travers le toit de la taverne (il ressort par la porte, une chope à la main : « Hips ! »). Raté : le lanceur rigole ; réussi : il enrage.</p>
+        <button class="btn" data-grelots="catapulte">▶ Relancer</button> <button class="btn" data-grelots="catapulte" data-forcer='{"piece":"pile"}'>Pile</button> <button class="btn" data-grelots="catapulte" data-forcer='{"piece":"face"}'>Face</button><br><button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"pieds"}'>Pieds</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"foin"}'>Paille</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"vitre"}'>Écran</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"eau"}'>Mare</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"bouse"}'>Bouse</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"lac"}'>Lac</button> <button class="btn" data-grelots="catapulte" data-forcer='{"atterrissage":"taverne"}'>Taverne</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-duel" data-spectacle="duel"></div>
+        <h3>⚔️ 200 grelots — le duel</h3><p>Duel à l'épée contre Darktagrain : trois passes d'armes, puis il est désarmé… et menace : « Tu vas voir… je reviens avec mon DRAGON ! » avant de s'enfuir. « Glups. »</p>
+        <button class="btn" data-grelots="duel">▶ Relancer</button></div>
+      <div class="numero"><div class="bfx-scene bfx-jeu" id="gr-dragon" data-spectacle="dragon"></div>
+        <h3>🐉 300 grelots — le dragon</h3><p>Darktagrain revient à dos de dragon (« Attaque, mon dragon ! »). Le dragon crache du feu, Patagrain saute par-dessus et les terrasse tous les deux. Pluie de grelots d'or !</p>
+        <button class="btn" data-grelots="dragon">▶ Relancer</button></div>
+    </div>
+  </section>
+
   <!-- ================= PALETTE ================= -->
   <section id="couleurs">
     <h2>Les couleurs</h2>
@@ -958,6 +996,8 @@
 
 <script src="../js/bouffon.js"></script>
 <script src="../js/numeros.js"></script>
+<script src="../js/dragon.js"></script>
+<script src="../js/grelots.js"></script>
 <script>
   // --- Réglages palette / police ---
   const racine = document.documentElement;
@@ -1042,6 +1082,28 @@
     chatDemo.insertAdjacentHTML('beforeend', `<div class="ligne" style="--c:${c}"><b>${n}</b> ${t}</div>`);
     while (chatDemo.children.length > 4) chatDemo.firstElementChild.remove();
   }, 2600);
+
+
+  // --- Les Grelots (démos des spectacles) : en boucle, seulement celles qui sont à l'écran ---
+  Grelots.chemin = '../';
+  const nomsDemo = ['Gwendal', 'LaDameDuLac', 'Bob_le_Nain', 'Pierrick', 'Morgane_la_Fée', 'Sire_Gauvain', 'Mélusine', 'Perceval', 'Viviane', 'Lancelot'];
+  function lancerGrelots(scene, forcer = {}) {
+    const tour = scene.tour = (scene.tour || 0) + 1;      // un nouveau lancement arrête la boucle précédente
+    scene.querySelectorAll('.gr-scene').forEach(z => z.remove());
+    (async () => {
+      let i = Grelots.liste.indexOf(scene.dataset.spectacle);
+      while (scene.tour === tour) {
+        if (!scene.visible) { await new Promise(r => setTimeout(r, 400)); continue; }
+        await Grelots.jouer(scene, scene.dataset.spectacle, nomsDemo[i++ % nomsDemo.length], forcer);
+        forcer = {};
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    })();
+  }
+  const vueGrelots = new IntersectionObserver(entrees => entrees.forEach(e => { e.target.visible = e.isIntersecting; }));
+  document.querySelectorAll('[data-spectacle]').forEach(scene => { vueGrelots.observe(scene); lancerGrelots(scene); });
+  document.querySelectorAll('[data-grelots]').forEach(b => b.onclick = () =>
+    lancerGrelots(document.getElementById('gr-' + b.dataset.grelots), b.dataset.forcer ? JSON.parse(b.dataset.forcer) : {}));
 
   // --- Le bouffon ---
   document.getElementById('bouffon-principal').innerHTML = Bouffon.svg();

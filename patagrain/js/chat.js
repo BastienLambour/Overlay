@@ -112,20 +112,7 @@ const Chat = (() => {
     // Les derniers messages déjà reçus (par cette page ou une autre scène)
     memoire.lire().forEach(m => ajouter(m, Date.now() - m.t));
 
-    const chaine = String(params.get('chaine') || C.chaineTwitch || '').toLowerCase().replace(/^#/, '');
-    if (!chaine) return console.warn('[Overlay] chaineTwitch manquant dans config.js');
-    let delai = 1000;
-    (function connecter() {
-      const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-      ws.onopen = () => {
-        delai = 1000;
-        ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-        ws.send('PASS SCHMOOPIIE');
-        ws.send('NICK justinfan' + Math.floor(10000 + Math.random() * 80000));
-        ws.send('JOIN #' + chaine);
-      };
-      ws.onmessage = e => e.data.split('\r\n').filter(Boolean).forEach(ligne => {
-        if (ligne.startsWith('PING')) return ws.send('PONG :tmi.twitch.tv');
+    brancher(ligne => {
         const m = ligne.match(/^(@\S+) :(\w+)!\S+ PRIVMSG #\S+ :(.*)$/);
         if (m) {
           const tags = lireTags(m[1]);
@@ -152,10 +139,43 @@ const Chat = (() => {
           memoire.retirer(m => !cible || m.userId === cible);
           conteneur.querySelectorAll(cible ? `[data-user="${CSS.escape(cible)}"]` : '.chat-msg').forEach(x => x.remove());
         }
+    });
+  }
+
+  // --- Connexion anonyme au chat (elle se relance toute seule) : « surLigne » reçoit chaque ligne brute de Twitch ---
+  function brancher(surLigne) {
+    const chaine = String(params.get('chaine') || C.chaineTwitch || '').toLowerCase().replace(/^#/, '');
+    if (!chaine) return console.warn('[Overlay] chaineTwitch manquant dans config.js');
+    let delai = 1000;
+    (function connecter() {
+      const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+      ws.onopen = () => {
+        delai = 1000;
+        ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+        ws.send('PASS SCHMOOPIIE');
+        ws.send('NICK justinfan' + Math.floor(10000 + Math.random() * 80000));
+        ws.send('JOIN #' + chaine);
+      };
+      ws.onmessage = e => e.data.split('\r\n').filter(Boolean).forEach(ligne => {
+        if (ligne.startsWith('PING')) return ws.send('PONG :tmi.twitch.tv');
+        surLigne(ligne);
       });
       ws.onclose = () => { setTimeout(connecter, delai); delai = Math.min(delai * 2, 30000); };
     })();
   }
 
-  return { monter };
+  // --- Tous les messages du chat, sans rien afficher (bots et commandes compris) ---
+  // surMessage({ login, pseudo, texte, badges }) : sert par exemple à repérer la réponse du bot
+  // StreamElements quand un spectateur dépense ses points (js/grelots.js).
+  function ecouter(surMessage) {
+    brancher(ligne => {
+      const m = ligne.match(/^(@\S+) :(\w+)!\S+ PRIVMSG #\S+ :(.*)$/);
+      if (!m) return;
+      const tags = lireTags(m[1]);
+      const action = m[3].match(/^\x01ACTION (.*)\x01$/);
+      surMessage({ login: m[2].toLowerCase(), pseudo: tags['display-name'] || m[2], texte: action ? action[1] : m[3], badges: tags.badges || '' });
+    });
+  }
+
+  return { monter, ecouter };
 })();

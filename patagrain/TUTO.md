@@ -14,7 +14,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 3. Les scènes, fiche par fiche : Starting soon · Pause · Fin · Cam seule · Contenu · Jeu
 4. Les sources à la carte : Alertes · Chat · Bandeau · Objectif · Cadre cam
 5. Les transitions : Rideau · Coup d'épée · Jet de dé
-6. Brancher le chat et les alertes (follows, abonnements, bits, raids, dons, objectif, sons des alertes)
+6. Brancher le chat et les alertes (follows, abonnements, bits, raids, dons, objectif, sons des alertes, les Grelots)
 7. Habiller la chaîne Twitch
 8. Tester sans être en live
 9. Personnaliser
@@ -317,7 +317,9 @@ Ces pages se posent **en plus**, dans n'importe quelle scène, pour composer tes
 1. Dans la scène « Global — Alertes » (voir 2.6) : geste A avec `sources/alertes.html`.
 2. Coche **Contrôler l'audio via OBS** : le son apparaît dans le mélangeur audio, règle son volume.
 
-**Options** : `?position=haut` (défaut), `centre` ou `bas` · `?bouffon=0` (la carte seule) · `?test=1`
+C'est aussi là que le bouffon joue **les spectacles des Grelots**, payés par les spectateurs (section 6.9), à la suite des alertes.
+
+**Options** : `?position=haut` (défaut), `centre` ou `bas` · `?bouffon=0` (la carte seule) · `?test=1` · `?grelots=catapulte` (joue ce spectacle tout de suite, pour essayer) · `?grelots=0` (pas de spectacles sur cette source)
 **Nécessite** StreamElements (section 6).
 
 ### 4.2 💬 Chat — `sources/chat.html`
@@ -456,7 +458,7 @@ Les alertes passent **une par une** (file d'attente) : pendant un raid suivi de 
 
 Twitch ne gère pas les dons en argent. Avec StreamElements, ils sont **déjà branchés** : ta page de dons est **`streamelements.com/<ton pseudo>/tip`** (à mettre dans un panneau de ta chaîne, « Soutenir »). Pour recevoir l'argent : streamelements.com › **Revenue** › **Tipping settings**, puis relie ton compte PayPal (ou un autre moyen proposé).
 
-Chaque don arrive tout seul dans l'overlay, avec son montant. *(Les dons faits par un autre service, Ko-fi, Streamlabs ou Tipeee, n'arrivent pas : passe par la page de dons StreamElements.)*
+Chaque don arrive tout seul dans l'overlay, avec son montant. *(Les dons faits par un autre service, Ko-fi, Streamlabs ou Tipeee, n'arrivent pas : passe par la page de dons StreamElements.)* Pour l'habiller aux couleurs de l'overlay (bannière et fond) : section 7.
 
 ### 6.6 L'objectif (followers OU abonnés, avec les vrais nombres)
 
@@ -516,6 +518,68 @@ Chaque alerte a **son propre son**, pour savoir ce qui se passe à l'oreille, m�
 Écris `aucun` dans une case pour que cette alerte reste silencieuse ; vide la case pour revenir au son de l'overlay.
 Le volume général et le bouton « son » sont dans `reglages.html` › **Alertes** ; dans OBS, le volume se règle aussi dans le mélangeur audio (case **Contrôler l'audio via OBS** de la source des alertes).
 
+### 6.9 Les Grelots : les spectacles du bouffon
+
+**À quoi ça sert** : tes spectateurs dépensent leurs **grelots** (les points de fidélité StreamElements) pour offrir un spectacle au bouffon, qui le joue par-dessus la scène (source Alertes). Le fil rouge : sa rivalité avec **Darktagrain**, le bouffon maléfique. Les spectateurs ne connaissent que le **prix** : le spectacle est une surprise.
+
+| Commande | Prix | Spectacle (secret !) |
+|---|---|---|
+| `!spectacle10` | 10 | la peau de banane |
+| `!spectacle25` | 25 | la tarte à la crème |
+| `!spectacle50` | 50 | la sérénade |
+| `!spectacle75` | 75 | le jet du destin |
+| `!spectacle100` | 100 | la potion mystère |
+| `!spectacle125` | 125 | pierre, feuille, ciseaux |
+| `!spectacle150` | 150 | le coffre au trésor |
+| `!spectacle175` | 175 | la catapulte |
+| `!spectacle200` | 200 | le duel |
+| `!spectacle300` | 300 | le dragon |
+
+Les spectacles tirés au sort (dé du destin, potion, chifoumi, coffre, catapulte) changent à chaque fois. Ils passent l'un après l'autre, dans la même file que les alertes : rien ne se chevauche.
+
+**Comment ça marche** : StreamElements retire les grelots et son bot répond dans le chat, par exemple « 🔔 Gwendal jette 75 grelots dans le chapeau du bouffon… 🎭 ». L'overlay lit le chat, reconnaît **cette phrase exacte** et lance le spectacle. Si le spectateur n'a pas assez de grelots, StreamElements ne répond rien : il ne se passe rien. Un spectateur qui recopie la phrase lui-même ne déclenche rien : seul le bot compte.
+
+**Créer les 10 commandes (une seule fois, 2 minutes)** : StreamElements doit être connecté à ta chaîne (son bot est déjà là, puisque `!grelots` marche). Dans **ton** chat Twitch, colle ces lignes **une par une** (ce sont des commandes pour le bot, réservées au streamer et aux modos) :
+
+```
+!command add !spectacle10 🔔 ${user} jette 10 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle10 -cost 10
+!command add !spectacle25 🔔 ${user} jette 25 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle25 -cost 25
+!command add !spectacle50 🔔 ${user} jette 50 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle50 -cost 50
+!command add !spectacle75 🔔 ${user} jette 75 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle75 -cost 75
+!command add !spectacle100 🔔 ${user} jette 100 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle100 -cost 100
+!command add !spectacle125 🔔 ${user} jette 125 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle125 -cost 125
+!command add !spectacle150 🔔 ${user} jette 150 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle150 -cost 150
+!command add !spectacle175 🔔 ${user} jette 175 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle175 -cost 175
+!command add !spectacle200 🔔 ${user} jette 200 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle200 -cost 200
+!command add !spectacle300 🔔 ${user} jette 300 grelots dans le chapeau du bouffon… 🎭
+!command options !spectacle300 -cost 300
+```
+
+Le bot répond à chaque ligne. Pour vérifier : tableau de bord StreamElements › **Chatbot** › **Commandes** › **Commandes personnalisées** : les 10 commandes y sont, avec leur coût. On peut aussi les créer ou les modifier là, à la souris (la réponse, et le coût dans les réglages avancés).
+
+> ⚠️ La **réponse** de chaque commande doit être **exactement** la phrase de `reglages.html` › **Les Grelots** (`${user}` compris). Si tu changes une phrase ou un prix, change-le aux **deux** endroits : dans StreamElements et dans `reglages.html`.
+
+**Pourquoi pas `!duel`** : StreamElements a déjà un `!duel` (un duel de points entre deux spectateurs, celui de ta bio). D'où les noms `!spectacle10`, `!spectacle25`…
+
+**Essayer sans dépenser de grelots** :
+- dans ton chat, écris `!essai catapulte` : le spectacle se joue tout de suite. Ça ne marche que pour toi, et pour les modos si tu coches la case dans `reglages.html` › **Les Grelots**. Noms : `chute`, `tarte`, `serenade`, `destin`, `potion`, `chifoumi`, `coffre`, `catapulte`, `duel`, `dragon` ;
+- sans être en live : `sources/alertes.html?grelots=catapulte` dans le navigateur, ou `reglages.html` › **Tester**.
+
+**Pour ta bio Twitch** (dans la description du panneau **Commandes**, section 7, ou dans « À propos » sous « Les Commandes de la Taverne ») :
+
+> **Les Spectacles du Bouffon** : `!spectacle10`, `!spectacle25`, `!spectacle50`, `!spectacle75`, `!spectacle100`, `!spectacle125`, `!spectacle150`, `!spectacle175`, `!spectacle200`, `!spectacle300`. Jette tes grelots dans le chapeau du bouffon… Plus tu donnes, plus le spectacle est grand. Lequel ? Surprise !
+
+> ⚠️ **Pas encore vérifié sur un vrai live** : testé avec un faux chat où un faux bot StreamElements répond. Si un spectacle ne part pas, regarde la phrase exacte du bot dans le chat et compare-la avec celle de `reglages.html`.
+
 ## 7. Habiller la chaîne Twitch
 
 Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Les images prêtes à envoyer sont dans `chaine/export/`.
@@ -525,7 +589,8 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 | Photo de profil | `profil.png` : le bouffon (800 × 800) · autre choix : `profil-embleme.png` (le d20) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
 | Bannière de profil | `banniere.png` (1200 × 480) | … › **Marque** › Bannière de profil |
 | Écran hors-ligne | `hors-ligne.png` (1920 × 1080) | … › **Marque** › Bannière du lecteur vidéo |
-| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-commandes.png`, `panneau-soutenir.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Page de dons StreamElements | `dons-banniere.png` (640 × 200) et `dons-fond.png` (1920 × 1080) | streamelements.com › **Revenue** › **Tipping settings** (pas à pas ci-dessous) |
 | Emotes | `emote-nat20`, `nat1`, `gg`, `grelot`, `epee`, et le bouffon : `bouffon`, `bouffon-clin`, `bouffon-rire`, `bouffon-choc` (-112, -56, -28) | Tableau de bord › **Récompenses des spectateurs** › Emotes *(affilié ou partenaire)* |
 | Badges d'abonné | `badge-mois-1` (d4), `-3` (d6), `-6` (d8), `-9` (bouclier), `-12` (d20) (-72, -36, -18) | Tableau de bord › **Récompenses des spectateurs** › Badges d'abonné |
 
@@ -535,7 +600,15 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 3. **Image** : choisis le PNG du panneau. **Description** : écris le texte (qui tu es, le planning, les règles du chat…).
 4. **Envoyer**, puis recommence pour les autres panneaux.
 
-**Changer les textes** (slogan, planning, titres des panneaux) : `reglages.html` › **Kit de chaîne Twitch**, puis refais les images : OBS › **Outils › Scripts** › **Refaire les images du kit Twitch** (2.8). Ou dans PowerShell :
+**Le panneau Commandes :** dans sa description, liste les commandes du chat, une par ligne avec ce qu'elle fait (ex. `!discord` : le lien du Discord · `!planning` : les jours de live). Elles se créent dans streamelements.com › **Chatbot** › **Chat commands** (le bot StreamElements doit être sur ta chaîne : **Chatbot** › **Join channel**). L'overlay cache déjà ces messages et les réponses du bot dans le chat de l'écran. Ajoutes-y les spectacles des Grelots (`!spectacle10` … `!spectacle300`) : le texte prêt à coller est en 6.9.
+
+**La page de dons StreamElements, pas à pas :**
+1. streamelements.com › **Revenue** › **Tipping settings**.
+2. Dans l'apparence de la page : **Banner** (bannière) → `chaine/export/dons-banniere.png` ; **Background** (fond) → `chaine/export/dons-fond.png`.
+3. **Save**, puis ouvre `streamelements.com/<ton pseudo>/tip` pour voir le résultat. Le formulaire de don se pose au milieu du fond : le décor est sur les côtés exprès.
+4. Mets ce lien dans la description du panneau **Soutenir**.
+
+**Changer les textes** (slogan, planning, titres des panneaux, titre et phrase de la page de dons) : `reglages.html` › **Kit de chaîne Twitch**, puis refais les images : OBS › **Outils › Scripts** › **Refaire les images du kit Twitch** (2.8). Ou dans PowerShell :
 
 ```
 cd G:\Projets\Overlay\patagrain
@@ -657,6 +730,11 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 
 **Les polices ne sont pas les bonnes**
 → Elles sont dans `assets/polices/` (pas besoin d'internet) : vérifie que le dossier est bien là, à côté de `css/`, puis actualise la source.
+
+**Un spectateur a payé un spectacle (`!spectacle…`) mais rien ne se passe**
+→ Le bot a-t-il répondu dans le chat ? Sinon, le spectateur n'avait pas assez de grelots, ou la commande n'existe pas dans StreamElements (6.9).
+→ S'il a répondu : sa phrase doit être **exactement** celle de `reglages.html` › **Les Grelots** (même texte, mêmes émojis, `${user}` à la place du pseudo). Corrige l'une ou l'autre.
+→ La source **Alertes** doit être dans la scène affichée, et l'identifiant Twitch rempli dans `reglages.html`. Essaie `!essai tarte` dans ton chat : si ça marche, c'est la phrase du bot qui diffère.
 
 **Le chat n'affiche rien**
 → Vérifie l'identifiant Twitch dans `reglages.html` (l'identifiant exact, en minuscules). Le chat n'affiche que les messages envoyés **après** l'ouverture de la page. Il a besoin d'internet.

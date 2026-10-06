@@ -33,12 +33,26 @@
     <path d="M50 2 L50 19 M7 26 L50 19 L93 26 M7 74 L16.5 77 M93 74 L83.5 77 M50 98 L16.5 77 L83.5 77 Z" stroke="rgba(0,0,0,.25)" stroke-width="2" fill="none"/>
     <text x="50" y="66" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="${String(chiffre).length > 1 ? 24 : 30}" fill="#152238">${chiffre}</text></svg>`;
 
+  // Pièces d'or (page de dons) : une pièce à plat, et une pile vue de côté
+  const piece = (x, y, t, r = 0) => `<svg viewBox="0 0 40 40" style="position:absolute;left:${x}px;top:${y}px;width:${t}px;height:${t}px;transform:rotate(${r}deg);filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))">
+    <circle cx="20" cy="20" r="18" fill="var(--accent)" stroke="#AD8120" stroke-width="3"/><circle cx="20" cy="20" r="11.5" fill="none" stroke="#AD8120" stroke-width="2"/>
+    <path d="M20 12.5 L22.1 17.6 L27.5 18 L23.4 21.4 L24.7 26.8 L20 23.9 L15.3 26.8 L16.6 21.4 L12.5 18 L17.9 17.6 Z" fill="#FFF3DC" opacity=".9"/></svg>`;
+  const pile = (x, bas, n, t = 120) => {
+    const h = n * 12 + 30;
+    return `<svg viewBox="0 0 110 ${h}" style="position:absolute;left:${x}px;top:${bas - h * t / 110}px;width:${t}px;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3))">${Array.from({ length: n }, (_, i) => {
+      const y = h - 16 - i * 12, d = (i % 2 ? 2 : -2);
+      return `<g transform="translate(${d} 0)"><ellipse cx="55" cy="${y + 10}" rx="50" ry="13" fill="#AD8120"/><rect x="5" y="${y}" width="100" height="10" fill="#AD8120"/>
+        <ellipse cx="55" cy="${y}" rx="50" ry="13" fill="var(--accent)" stroke="#AD8120" stroke-width="2"/></g>`;
+    }).join('')}</svg>`;
+  };
+  const D = K.dons || {};
+
   const planning = (K.planning || []).length
     ? K.planning.map(([j, h]) => `<div><b>${j}</b> · ${h}</div>`).join('')
     : '<div>Suis la chaîne pour être prévenu de la prochaine quête</div>';
 
   // Icône de chaque panneau de bio (par titre)
-  const icoPanneau = { 'À propos': 'parchemin', 'Planning': 'd20', 'Règles': 'bouclier', 'Soutenir': 'grelot', 'Réseaux': 'chapeau', 'Discord': 'chapeau', 'Matériel': 'd6' };
+  const icoPanneau = { 'À propos': 'parchemin', 'Planning': 'd20', 'Règles': 'bouclier', 'Soutenir': 'grelot', 'Réseaux': 'chapeau', 'Discord': 'chapeau', 'Matériel': 'd6', 'Commandes': 'd4' };
 
   window.KIT = {
     elements: [
@@ -84,9 +98,34 @@
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="pg-fond" style="border-radius:16px;border:6px solid var(--accent)"></div>
             <div style="position:absolute;left:22px;top:38px;width:84px;height:84px">${ico(icoPanneau[titre] || 'd20').replace(/^<(svg|img)/, '<$1 style="width:84px;height:84px"')}</div>
-            <div class="pg-titre" style="position:absolute;left:122px;right:14px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 9 ? 40 : 50}px">${titre}</div>`;
+            <div class="pg-titre" style="position:absolute;left:122px;right:14px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 38 : 50}px">${titre}</div>`;
         },
       })),
+
+      // Page de dons StreamElements : la bourse du bouffon
+      { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {
+        el.innerHTML = `<div class="pg-fond"></div>${fanions(8)}
+          ${piece(560, 122, 54, 18)}${piece(592, 66, 34, -10)}
+          <div style="position:absolute;left:4px;top:26px;width:176px;height:176px">${Bouffon.svg('buste', { expression: 'clin' }).replace(/viewBox="[^"]*"/, 'viewBox="-20 -10 440 440" width="176" height="176"')}</div>
+          <div class="pg-centre" style="left:180px;right:70px;padding-top:34px">
+            <img src="../assets/logo-couleur.svg" alt="" style="width:200px">
+            <div class="pg-titre" style="font-size:34px;margin-top:6px">${D.titre || ''}</div>
+            <div style="font:700 17px var(--f-texte);color:var(--texte-doux);margin-top:6px">${D.texte || ''}</div>
+          </div>
+          <div class="pg-liseré" style="bottom:0;height:6px"></div>`;
+      } },
+      { id: 'dons-fond', groupe: 'dons', nom: 'Fond de la page de dons', l: 1920, h: 1080, rendu: el => {
+        el.innerHTML = `<div class="pg-fond"></div>${fanions(23)}
+          ${deco([['d20', 60, 760, 170, -12], ['d6', 1700, 140, 130, 14], ['grelot', 560, 180, 90, 10], ['d8', 1290, 860, 120, -8], ['d4', 600, 900, 100, 6]])}
+          <div style="position:absolute;left:150px;top:170px;width:370px;height:851px">${Bouffon.svg('pied', { expression: 'rire' })}</div>
+          ${piece(470, 300, 70, 20)}${piece(530, 420, 50, -14)}${piece(455, 520, 40, 8)}
+          <div class="pg-centre" style="left:1330px;right:60px;bottom:330px">
+            <img src="../assets/logo-couleur.svg" alt="" style="width:470px;margin-bottom:30px">
+            <div class="pg-titre" style="font-size:84px;line-height:1.05">${D.titre || ''}</div>
+            <div style="font:700 30px/1.4 var(--f-texte);color:var(--texte-doux);margin-top:24px">${D.texte || ''}</div>
+          </div>
+          ${pile(1390, 1010, 7)}${pile(1500, 1010, 11, 130)}${pile(1625, 1010, 5)}${piece(1760, 920, 80, 12)}${piece(1460, 760, 46, -20)}`;
+      } },
 
       // Emotes : dessinées en 112 × 112, lisibles jusqu'en 28 × 28
       { id: 'nat20', groupe: 'emote', nom: 'Nat 20 (coup critique)', l: 112, h: 112, rendu: el => {
