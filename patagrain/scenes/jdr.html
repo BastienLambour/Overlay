@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Scène — JDR</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/bouffon.css">
+<link rel="stylesheet" href="../css/jdr.css">
+</head>
+<body>
+<!--
+  Scène « JDR » (mise en page A, le bandeau du bas) : la table CodexVTT en grand, les cartes des héros
+  en bas, le chat en haut à droite, et en bas à droite l'arène où les héros jouent leurs jets de dés.
+  Dans OBS, place la capture de CodexVTT SOUS cette source, dans la zone :
+    Table : x 40 · y 36 · 1360 × 765 px
+  La table de jeu (qui joue quel personnage) : reglages.html › Scène JDR (config.js › jdr).
+  Options : ?chat=0 · ?test=1 (paroles, PV et jets de dés au hasard, pour voir) · ?apercu=1 (la zone de la table)
+  CodexVTT (mode spectateur, js/codex.js) : jets de dés joués dans l'arène, PV sous les cartes (« à terre » à 0),
+  coups et soins, tour de combat, forme de Trayss (nom du portrait actif de sa fiche). Adresse + clé : reglages.html › Scène JDR.
+  ?journal=1 : l'état de la connexion à CodexVTT et les derniers événements, à l'écran.
+  Discord (bot « voix » du VPS, js/voix.js) : la carte de celui qui parle s'anime. Chaque place est reliée à son
+  joueur par la colonne « Discord » des réglages (pseudo, nom affiché ou identifiant). Clé : reglages.html › Scène JDR.
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../mes-reglages.js"></script>
+<script src="../js/couleurs.js"></script>
+<script src="../js/options.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/heros.js"></script>
+<script src="../js/jdr.js"></script>
+<script src="../js/jets.js"></script>
+<script src="../js/socket.io.min.js"></script>
+<script src="../js/codex.js"></script>
+<script src="../js/voix.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const C = CONFIG.jdr || {};
+  const p = Commun.params;
+  const TABLE = { x: 40, y: 36, l: 1360, h: 765 };
+  const voir = cle => p.get(cle) !== '0';
+
+  // --- le décor : la table de jeu est un trou transparent (OBS y place la capture de CodexVTT) ---
+  Composants.fondDecoupe(ecran, [TABLE]);
+  Composants.cadre(ecran, TABLE, { decor: false, nom: false, titre: p.has('titre') ? p.get('titre') : (C.titre || ''), apercuTitre: 'Table CodexVTT' });
+  if (voir('chat')) Composants.chat(ecran, { x: 1440, y: 36, l: 440, h: 560 });
+
+  // --- les cartes des héros, en bandeau sous la table ---
+  const table = JDR.table();
+  const bande = document.createElement('div');
+  const n = Math.max(1, table.length), largeur = 1360, hauteur = 240;
+  const em = Math.min(15.5, largeur / (n * 10 + (n - 1) * 1.6));     // la carte fait 10em de large (et ~15em de haut)
+  bande.style.cssText = `position:absolute;left:40px;top:${TABLE.y + TABLE.h + 18}px;width:${largeur}px;height:${hauteur}px;display:flex;justify-content:center;gap:${1.6 * em}px;font-size:${em}px`;
+  ecran.appendChild(bande);
+  const portraits = {};
+  table.forEach(t => { const el = JDR.portrait(t); bande.appendChild(el); portraits[t.place] = el; });
+  if (C.attenue !== false) document.body.classList.add('attenue');
+
+  // --- l'arène des jets, en bas à droite ---
+  const arene = document.createElement('div');
+  arene.className = 'arene';
+  Object.assign(arene.style, { left: '1440px', top: '616px', width: '440px', height: '444px' });
+  ecran.appendChild(arene);
+  const parNom = Object.fromEntries(table.map(t => [JDR.normaliser(t.fiche.nom), t.place]));
+  const placeDuNom = nom => {                    // « Trayss », « Ba Heng Ze », « Kenai le gardien »… → la place
+    const n = JDR.normaliser(nom);
+    if (!n) return;
+    if (parNom[n]) return parNom[n];
+    const t = table.find(t => { const f = JDR.normaliser(t.fiche.nom); return n.startsWith(f) || f.startsWith(n.split(' ')[0]); });
+    return t && t.place;
+  };
+  const jets = Jets.monter(arene, { heros: jet => JDR.pied(jet.heros || (portraits[placeDuNom(jet.characterName)] || {}).dataset?.perso || (table[1] || table[0] || {}).perso || 'mj') });
+
+  // --- CodexVTT : la table envoie les jets, les PV, le combat et la forme des personnages ---
+  const placeDeFiche = {};                       // id de fiche CodexVTT → place
+  const FORMES = [[/dragon/, 'trayss'], [/entre|mi|demi|hybride/, 'trayss-mi'], [/humain/, 'trayss-humaine']];
+  function perso(c) {
+    const place = placeDuNom(c.name);
+    if (!place || !portraits[place]) return;
+    placeDeFiche[c.id] = place;
+    const el = portraits[place];
+    if (el.dataset.perso.startsWith('trayss') && c.form) {
+      const forme = FORMES.find(([motif]) => motif.test(JDR.normaliser(c.form)));
+      if (forme) el.dessin(forme[1]);
+    }
+    if (el.dataset.perso === 'autre' && c.portrait) el.photo(Codex.url(c.portrait));   // sans dessin : le portrait de la fiche
+    if (c.hpMax > 0) el.pv(c.hp, c.hpMax);
+  }
+  function combat(cb) {
+    const actif = cb && cb.isActive && (cb.order || []).find(o => o.id === cb.currentId);
+    const place = actif && !actif.isNpc && (placeDeFiche[actif.sheetId] || placeDuNom(actif.name));
+    Object.entries(portraits).forEach(([k, el]) => el.tour(k === place));
+  }
+  Codex.brancher({
+    etat: e => { (e.characters || []).forEach(perso); combat(e.combat); },
+    perso,
+    pv: h => { const el = portraits[placeDeFiche[h.sheetId]]; if (!el) return; el.pv(h.hp, h.hpMax); el.coup(h.delta); },
+    combat,
+    jet: r => {
+      const place = (r.sheetId != null && placeDeFiche[r.sheetId]) || placeDuNom(r.characterName);
+      if (!place || !portraits[place]) return;    // un jet libre d'un inconnu : on ne le joue pas
+      const el = portraits[place], t = table.find(t => t.place === place);
+      jets.jouer({ ...r, labelFr: r.label, heros: el.dataset.perso, couleur: t.fiche.couleur, portrait: el.dataset.photo || '' });
+    },
+  });
+
+  // --- Discord : qui parle (le bot « voix » du VPS) ---
+  const placeDeDiscord = {};                     // identifiant Discord → place
+  const silences = {};
+  Voix.brancher({
+    salon: e => {
+      Object.keys(placeDeDiscord).forEach(k => delete placeDeDiscord[k]);
+      table.forEach(t => { const m = Voix.trouver(e.membres, t.discord); if (m) placeDeDiscord[m.id] = t.place; });
+      Object.entries(portraits).forEach(([place, el]) => el.parler((e.parlent || []).some(id => placeDeDiscord[id] === place)));
+    },
+    parle: (id, oui) => {
+      const el = portraits[placeDeDiscord[id]];
+      if (!el) return;
+      clearTimeout(silences[id]);
+      if (oui) el.parler(true);
+      else silences[id] = setTimeout(() => el.parler(false), 250);   // une respiration ne coupe pas l'animation
+    },
+  });
+
+  // --- mode test : on fait parler, on blesse, on soigne, et on lance des dés, au hasard ---
+  if (p.has('test')) {
+    const tour = () => {
+      Object.values(portraits).forEach(el => el.parler(false));
+      const liste = Object.values(portraits);
+      if (liste.length && Math.random() > .15) liste[Math.floor(Math.random() * liste.length)].parler(true);
+      setTimeout(tour, 900 + Math.random() * 1600);
+    };
+    tour();
+    const pv = {};
+    table.filter(t => t.place !== 'mj').forEach(t => { pv[t.place] = { pv: 20 + (t.place.charCodeAt(1) * 7) % 20, max: 0 }; pv[t.place].max = pv[t.place].pv; portraits[t.place].pv(pv[t.place].pv, pv[t.place].max); });
+    setInterval(() => {
+      const places = Object.keys(pv); if (!places.length) return;
+      const k = places[Math.floor(Math.random() * places.length)], e = pv[k];
+      e.pv = e.pv <= 0 ? e.max : Math.max(0, e.pv - Math.ceil(e.max * (.2 + Math.random() * .5)));
+      portraits[k].pv(e.pv, e.max);
+    }, 2600);
+    const JETS = [['skill', 'Athlétisme'], ['skill', 'Discrétion'], ['skill', 'Arcanes'], ['skill', 'Persuasion'], ['attack', "Attaque à l'arbalète"],
+      ['attack', "Attaque à l'épée"], ['skill', 'Perception'], ['save', 'Sauvegarde de Dextérité'], ['skill', 'Escalade'], ['attack', 'Sort de feu']];
+    const heros = table.filter(t => t.place !== 'mj');
+    let i = 0;
+    const lancer = () => {
+      if (!heros.length) return;
+      const h = heros[i % heros.length], [kind, labelFr] = JETS[(i * 3) % JETS.length], de = [17, 6, 20, 13, 1, 15, 9][i % 7];
+      const jet = { characterName: h.fiche.nom, kind, labelFr, formula: 'd20 + 5', result: de + 5, isCritSuccess: de === 20, isCritFail: de === 1 };
+      if (i % 3 !== 2) { jet.nd = 15; jet.isSuccess = de + 5 >= 15; }
+      jets.jouer(jet);
+      i++;
+    };
+    lancer();
+    setInterval(lancer, 8000);
+  }
+
+  Commun.demarrer();
+  Evenements.demarrer();
+</script>
+</body>
+</html>

@@ -9,3 +9,6 @@ version.json
 # Captures animées (outils/animer.mjs) : lourdes, refaites à la demande, jamais dans le dépôt
 **/captures/*.webp
 **/captures/*.gif
+
+# Le bot « voix » (serveur/voix) : ses bibliothèques sont installées sur le VPS (npm ci), jamais dans le dépôt
+node_modules/

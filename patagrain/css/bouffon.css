@@ -554,3 +554,71 @@
    « filter » plutôt qu'« opacity » : l'opacité est déjà animée par l'entrée des éléments. */
 .eclipse { filter: opacity(0); transition: filter .6s ease; }
 .bouffon-cirque, .bouffon-fin, .bulle-fin, .bfx-p-feu, .bfx-zzz, .bfx-reve { transition: filter .6s ease; }
+
+/* =====================================================================
+   8. LES GESTES DES JETS DE DÉS (scène JDR, js/jets.js) — sur le même squelette :
+      bouffon et héros (js/heros.js). Classes « gj-… » posées sur le conteneur du dessin.
+   ===================================================================== */
+/* courir : plus vite que marcher, le corps penché */
+.gj-courir .bf-hanche-g { animation: gr-jambe .22s ease-in-out infinite alternate; }
+.gj-courir .bf-hanche-d { animation: gr-jambe .22s ease-in-out -.22s infinite alternate; }
+.gj-courir .bf-epaule-g { animation: gj-bras-course .22s ease-in-out -.22s infinite alternate; }
+.gj-courir .bf-epaule-d { animation: gj-bras-course .22s ease-in-out infinite alternate; }
+.gj-courir .bf-tout { animation: gj-foulee .11s ease-in-out infinite alternate; }
+@keyframes gj-bras-course { from { transform: rotate(-34deg); } to { transform: rotate(34deg); } }
+@keyframes gj-foulee { from { transform: rotate(-5deg) translateY(0); } to { transform: rotate(-5deg) translateY(-14px); } }
+/* grimper : les bras montent l'un après l'autre */
+.gj-grimper .bf-epaule-g { animation: gj-grimpe-g .45s ease-in-out infinite alternate; }
+.gj-grimper .bf-epaule-d { animation: gj-grimpe-d .45s ease-in-out -.45s infinite alternate; }
+.gj-grimper .bf-hanche-g { animation: gr-jambe .45s ease-in-out infinite alternate; }
+.gj-grimper .bf-hanche-d { animation: gr-jambe .45s ease-in-out -.45s infinite alternate; }
+@keyframes gj-grimpe-g { from { transform: rotate(110deg); } to { transform: rotate(168deg); } }
+@keyframes gj-grimpe-d { from { transform: rotate(-110deg); } to { transform: rotate(-168deg); } }
+/* accroupi (se cacher, crocheter) : jambes pliées, le corps descend */
+.gj-cacher .bf-tout, .gj-crocheter .bf-tout { transform: translateY(70px); transition: transform .3s ease-out; }
+.gj-cacher .bf-hanche-g, .gj-crocheter .bf-hanche-g { transform: rotate(30deg); }
+.gj-cacher .bf-genou-g, .gj-crocheter .bf-genou-g { transform: rotate(-64deg); }
+.gj-cacher .bf-hanche-d, .gj-crocheter .bf-hanche-d { transform: rotate(-30deg); }
+.gj-cacher .bf-genou-d, .gj-crocheter .bf-genou-d { transform: rotate(64deg); }
+.gj-cacher .bf-epaule-g { transform: rotate(40deg); } .gj-cacher .bf-coude-g { transform: rotate(-112deg); }
+.gj-cacher .bf-epaule-d { transform: rotate(-40deg); } .gj-cacher .bf-coude-d { transform: rotate(112deg); }
+.gj-cacher .bf-haut { transform: rotate(5deg) translateY(10px); }
+/* crocheter / fouiller : les mains au travail devant lui */
+.gj-crocheter .bf-epaule-g { transform: rotate(3deg); } .gj-crocheter .bf-coude-g { transform: rotate(-62deg); }
+.gj-crocheter .bf-epaule-d { transform: rotate(-3deg); }
+.gj-crocheter .bf-coude-d { animation: gj-crochete .16s ease-in-out infinite alternate; }
+.gj-crocheter .bf-haut { transform: rotate(-4deg) translateY(8px); }
+@keyframes gj-crochete { from { transform: rotate(56deg); } to { transform: rotate(70deg); } }
+/* lire / étudier : le livre ouvert à deux mains, la tête penchée */
+.gj-lire .bf-epaule-g { transform: rotate(16deg); } .gj-lire .bf-coude-g { transform: rotate(-100deg); }
+.gj-lire .bf-epaule-d { transform: rotate(-16deg); } .gj-lire .bf-coude-d { transform: rotate(100deg); }
+.gj-lire .bf-haut { animation: gj-lit 1.6s ease-in-out infinite alternate; }
+@keyframes gj-lit { from { transform: rotate(4deg) translateY(8px); } to { transform: rotate(-4deg) translateY(8px); } }
+/* observer : la main en visière, il scrute à gauche puis à droite */
+.gj-observer .bf-epaule-d { transform: rotate(150deg); } .gj-observer .bf-coude-d { transform: rotate(25deg); }
+.gj-observer .bf-haut { animation: gj-scrute 1.4s ease-in-out infinite alternate; }
+@keyframes gj-scrute { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+/* parler (persuasion, tromperie…) : il gesticule */
+.gj-parler .bf-epaule-d { animation: gj-explique-d .5s ease-in-out infinite alternate; }
+.gj-parler .bf-coude-d { transform: rotate(-70deg); }
+.gj-parler .bf-epaule-g { animation: gj-explique-g .5s ease-in-out -.25s infinite alternate; }
+.gj-parler .bf-coude-g { transform: rotate(60deg); }
+.gj-parler .bf-tout { animation: gr-balance .9s ease-in-out infinite alternate; }
+@keyframes gj-explique-d { from { transform: rotate(-30deg); } to { transform: rotate(-80deg); } }
+@keyframes gj-explique-g { from { transform: rotate(20deg); } to { transform: rotate(60deg); } }
+/* lancer un sort : les bras levés en V, il s'élève un peu */
+.gj-sort .bf-epaule-g { transform: rotate(148deg); } .gj-sort .bf-coude-g { transform: rotate(-18deg); }
+.gj-sort .bf-epaule-d { transform: rotate(-148deg); } .gj-sort .bf-coude-d { transform: rotate(18deg); }
+.gj-sort .bf-tout { animation: gj-eleve .8s ease-in-out infinite alternate; }
+@keyframes gj-eleve { from { transform: translateY(0); } to { transform: translateY(-18px); } }
+/* parer (jet de sauvegarde) : bras croisés devant, il encaisse */
+.gj-parer .bf-epaule-g { transform: rotate(-13deg); } .gj-parer .bf-coude-g { transform: rotate(-68deg); }
+.gj-parer .bf-epaule-d { transform: rotate(13deg); } .gj-parer .bf-coude-d { transform: rotate(76deg); }
+.gj-parer .bf-tout { transform: translateY(24px); transition: transform .2s; }
+.gj-parer .bf-hanche-g { transform: rotate(14deg); } .gj-parer .bf-hanche-d { transform: rotate(-14deg); }
+/* encaisser un coup : il recule d'un coup, secoué */
+.gj-encaisse .bf-tout { animation: gj-encaisse .6s cubic-bezier(.3, 1.4, .6, 1) both; }
+@keyframes gj-encaisse { 20% { transform: rotate(-10deg) translateX(-24px); } 45% { transform: rotate(6deg) translateX(10px); } 100% { transform: none; } }
+/* soigné : les bras qui s'ouvrent, il se redresse */
+.gj-soigne .bf-epaule-g { transform: rotate(60deg); transition: transform .4s; } .gj-soigne .bf-epaule-d { transform: rotate(-60deg); transition: transform .4s; }
+.gj-soigne .bf-tout { animation: gj-eleve 1s ease-in-out 2 alternate; }

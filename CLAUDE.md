@@ -81,7 +81,8 @@ Conventions :
 - **Clés de `config.js`** : `id`, `nomChaine`, `chaineTwitch`, `afficherZones`, `streamelements` (`actif`, `jeton` : vide dans config.js, le streamer le colle dans reglages.html → mes-reglages.js), `demarrage` (dont `minutes` et `heure`),
   `pause`, `fin`, `chat`, `objectif` (UNE barre : `affiche` "follow"|"sub", `automatique` [vrais totaux via StreamElements], `follow` et `sub` = `{ titre, cible, depart }` chacun ; `?objectif=sub|follow` sur une page), `bandeau` (cases affichées : `follow`, `abonne`, `soutien`, `objectif`
   [+ `ceSoir`], false = cachée), `miseAJour.adresse` (le serveur des mises à jour), `alertes` (`duree`, `son`, `volume`, `sons` [un par type : "" = son de l'overlay, "aucun", ou "sons/x.mp3"], `anonyme`, `textes`), `test.noms`,
-  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Commandes, Soutenir, Discord, YouTube, TikTok, Instagram, X (Twitter) ; un nom de réseau prend son logo, voir `chaine/reseaux.js`), `chaine.dons` (`titre`, `texte` de la page de dons StreamElements), `couleurs` (variables de
+  `chaine.panneaux` (standard : À propos, Planning, Règles, Matériel, Commandes, Soutenir, Mes créations, Discord, YouTube, TikTok, Instagram, X (Twitter) ; un nom de réseau, « Mes sites » ou « Mes créations » prend son logo, voir `chaine/reseaux.js` ; « Planning » + `chaine.planning` rempli
+  [`[jour, "heure | jeu"]`] = panneau planning de la semaine, plus haut, dessiné par `elements.js` › `panneauPlanning`), `chaine.dons` (`titre`, `texte` de la page de dons StreamElements), `couleurs` (variables de
   `theme.css` à remplacer, sans les « -- » ; vide = couleur d'origine), `options` (options d'URL par page, ex. `options.jeu.cam`,
   voir `js/options.js`). Les réglages propres au thème s'ajoutent à côté (ex. `couleur`, `fond`).
 - **Paramètres d'URL communs** : `?test=1` (faux messages/alertes, ne touche pas au vrai
@@ -192,7 +193,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   Seule exception au « tout en Node » (c'est un script pour OBS lui-même). Lua 5.1 (LuaJIT d'OBS) : pas de goto, utf8, //.
 - `outils/capturer.mjs` : capture PNG d'une page, figée à des instants donnés
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;
-  signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut.
+  signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut. `--transparent` (fond transparent), `--decoupe=x,y,l,h`,
+  `--fichier=<png>` : faire une IMAGE d'une source (ex. `mordethrhedan/outils/cadre-image.mjs` : le cadre néon en PNG).
 - `chaine/reseaux.js` : logos des réseaux (Discord, YouTube, TikTok, Instagram, X, Twitch, Kick, Bluesky), d'une couleur
   (currentColor) ; `Reseaux.svg(titre, taille, style)` → le logo si le titre d'un panneau est un réseau, sinon '' (l'overlay garde
   alors son icône) ; `Reseaux.cle(titre)`. Chargé par `kit.html` avant `elements.js`.
@@ -233,6 +235,12 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   existant `/etc/ssl/private/bastien-lambour.fr.cer` (vérifié : il doit couvrir le nom) ; UN fichier Nginx, aucun autre site touché
   (le VPS héberge d'autres sites !), retiré si `nginx -t` refuse ; services systemd
   `overlays-webhook` + `overlays-maj.timer`, Nginx (ou Caddy s'il est là). Testé en conteneur (systemd simulé, vrai Nginx).
+- `voix/` : **bot Discord « voix »** (qui parle dans un salon vocal → overlays ; scène JDR de Patagrain, `js/voix.js`). `voix.mjs` (discord.js +
+  @discordjs/voice + ws : SEULE partie avec des bibliothèques npm, `npm ci` sur le VPS, node_modules jamais dans Git) : suit `SUIVRE` (le MJ) dans
+  les salons vocaux, micro coupé, `selfDeaf: false`, repère qui parle à l'arrivée des paquets (rien de déchiffré) ; WebSocket 127.0.0.1:9322 `/voix`
+  (Nginx/Caddy : `location /voix` ajouté par installer.sh), `{ type:'bonjour', cle }` puis `salon` / `parle` ; `--simulation` (faux salon).
+  `installer-voix.sh` (après installer.sh) : jeton demandé, `/etc/overlays-voix.env` (DISCORD_JETON, SUIVRE, SALON, CLE — SECRETS), services
+  `overlays-voix` + `overlays-voix-maj.path` (relance quand le dépôt change). Testé : simulation → overlay ; pas le vrai Discord ni le VPS.
 - On ne se connecte JAMAIS au VPS à la place de l'utilisateur (pas de mot de passe saisi par nous) : il lance installer.sh lui-même.
 
 Pour `chat.js`, `son.js`, `transition.js`, `commun.js` : partir de la version d'un overlay

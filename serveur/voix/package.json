@@ -1,0 +1,14 @@
+{
+  "name": "overlays-voix",
+  "private": true,
+  "description": "Le bot Discord des overlays : dit aux overlays qui parle dans le salon vocal (serveur/voix/LISEZMOI.md)",
+  "type": "module",
+  "main": "voix.mjs",
+  "scripts": { "start": "node voix.mjs" },
+  "engines": { "node": ">=22.12" },
+  "dependencies": {
+    "@discordjs/voice": "0.19.2",
+    "discord.js": "14.27.0",
+    "ws": "8.22.0"
+  }
+}

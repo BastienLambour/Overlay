@@ -36,6 +36,9 @@ window.CONFIG = {
     fin: {
       bouffon: true,
     },
+    jdr: {
+      chat: true,
+    },
   },
   couleurs: {
     primaire: "",
@@ -172,6 +175,32 @@ window.CONFIG = {
     jeuAuFollow: true,
     bulles: ["Merci d'être venus !", "À bientôt, aventuriers !"],
   },
+  // --- La scène JDR (scenes/jdr.html) : la table de jeu. Une place = qui joue (joueur), quel personnage (perso),
+  //     son Discord (pseudo, nom affiché ou identifiant : sa carte s'anime quand il parle). present: false = place vide ce soir.
+  //     perso : mj, zokhran, namerya, kenai, trayss (dragon), trayss-mi (entre les deux), trayss-humaine, baheng, dvergrost,
+  //             ou "autre" : un personnage sans dessin → la carte prend le portrait de sa fiche CodexVTT (un aventurier encapuchonné
+  //             en attendant, et dans l'arène des jets). nom / titre : vide = ceux du dessin ; pour « autre », nom = celui de la fiche CodexVTT.
+  jdr: {
+    titre: "La Malédiction de Pangée",
+    attenue: true,                 // ceux qui se taisent sont un peu éteints
+    // CodexVTT en mode spectateur (lecture seule) : jets de dés, PV, tour de combat, forme de Trayss.
+    // adresse = celle de CodexVTT (ex. "https://codex.exemple.fr") ; la CLÉ est un SECRET : laisse-la vide ici,
+    // colle-la dans reglages.html › Scène JDR (elle va dans mes-reglages.js, jamais dans les zips).
+    codex: { actif: true, adresse: "", cle: "" },
+    // Discord : le bot « voix » du VPS dit qui parle (serveur/voix). adresse vide = celle des mises à jour + /voix
+    // (wss://overlays.bastien-lambour.fr/voix). La CLÉ est un SECRET : colle-la dans reglages.html › Scène JDR.
+    discord: { actif: true, adresse: "", cle: "" },
+    places: {
+      mj: { present: true, joueur: "", perso: "mj", nom: "", titre: "", discord: "" },
+      p1: { present: true, joueur: "", perso: "zokhran", nom: "", titre: "", discord: "" },
+      p2: { present: true, joueur: "", perso: "namerya", nom: "", titre: "", discord: "" },
+      p3: { present: true, joueur: "", perso: "kenai", nom: "", titre: "", discord: "" },
+      p4: { present: true, joueur: "", perso: "trayss", nom: "", titre: "", discord: "" },
+      p5: { present: true, joueur: "", perso: "baheng", nom: "", titre: "", discord: "" },
+      p6: { present: false, joueur: "", perso: "dvergrost", nom: "", titre: "", discord: "" },
+    },
+  },
+
   // --- Les Grelots : spectacles du bouffon payés avec les points StreamElements de la chaîne.
   //     Le mystère : les spectateurs ne connaissent que le prix (!spectacle10, !spectacle25…), pas le spectacle.
   //     Dans StreamElements, chaque commande a un coût fixe (« -cost ») ; sa réponse doit être EXACTEMENT
@@ -201,8 +230,7 @@ window.CONFIG = {
     // Page de dons StreamElements (bannière 640×200 et fond 1920×1080 du kit) : titre et petite phrase
     dons: { titre: "Offrande au royaume", texte: "Chaque pièce fait tinter le grelot du bouffon" },
     planning: [],
-    reseaux: [],
-    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir",
+    panneaux: ["À propos", "Planning", "Règles", "Matériel", "Commandes", "Soutenir", "Mes créations",
       "Discord", "YouTube", "TikTok", "Instagram", "X (Twitter)"],
   },
   test: {

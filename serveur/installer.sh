@@ -11,7 +11,8 @@
 #    - le récepteur du webhook (service overlays-webhook) : un push → le site est refait aussitôt ;
 #    - un filet de sécurité : une vérification par heure (minuteur overlays-maj.timer) ;
 #    - le serveur web : UN fichier Nginx (aucun autre site touché) — https://overlays.bastien-lambour.fr avec le
-#      certificat des autres sites (80 → 443), /webhook transmis au récepteur ; Caddy s'il est là à la place de Nginx.
+#      certificat des autres sites (80 → 443), /webhook transmis au récepteur, /voix au bot Discord (s'il est installé :
+#      serveur/voix/installer-voix.sh) ; Caddy s'il est là à la place de Nginx.
 #
 #  Utilisation (depuis ton PC, dans le dossier du dépôt) :
 #      scp serveur/installer.sh root@ADRESSE_DU_VPS:
@@ -212,6 +213,9 @@ $SITE {
 	handle /webhook {
 		reverse_proxy 127.0.0.1:$PORT
 	}
+	handle /voix* {
+		reverse_proxy 127.0.0.1:9322
+	}
 	handle {
 		root * $SORTIE
 		header /*.json Cache-Control "no-cache"
@@ -242,6 +246,15 @@ else
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         client_max_body_size 5m;
+    }
+    # le bot Discord « voix » (serveur/voix, installé à part par installer-voix.sh) : WebSocket des overlays
+    location /voix {
+        proxy_pass http://127.0.0.1:9322;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection \"upgrade\";
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_read_timeout 120s;
     }
     # version.json et les zips : toujours la dernière version (pas de cache)
     location ~ \.(json|zip)\$ {

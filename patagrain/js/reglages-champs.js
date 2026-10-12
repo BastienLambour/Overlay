@@ -6,7 +6,7 @@
            paires (« A | B » par ligne) · choix · secret · heure · couleur · son
            (section « scenes: true » : le tableau des options des scènes, construit depuis config.js › options)
            (section « tableau: { lignes, colonnes } » : des réglages qui se répètent, en tableau ; lignes = [['cle.de.base', 'Nom affiché'], …],
-            colonnes = [{ cle, type: 'case'|'nombre'|'texte', label, min, max, large }, …] ; chaque cellule = la clé « cle.de.base.<cle> »)
+            colonnes = [{ cle, type: 'case'|'nombre'|'texte'|'choix', label, min, max, large, options: [[valeur, libellé]…] }, …] ; chaque cellule = la clé « cle.de.base.<cle> »)
    ===================================================================== */
 window.ReglagesChamps = {
   logo: 'assets/logo-couleur.svg',
@@ -22,7 +22,7 @@ window.ReglagesChamps = {
   ],
 
   // Options des scènes : noms des lignes et colonnes du tableau (en plus de ceux par défaut)
-  scenes: { demarrage: 'Starting soon' },
+  scenes: { demarrage: 'Starting soon', jdr: 'JDR' },
   elements: { bouffon: '🃏 Bouffon' },
 
   sections: [
@@ -104,6 +104,28 @@ window.ReglagesChamps = {
       { cle: 'bouffon.jeuAuFollow', type: 'case', label: 'Scène Jeu : il sort la tête à chaque follow' },
       { cle: 'bouffon.bulles', type: 'liste', label: 'Écran Fin : ce que dit sa bulle', aide: 'Une phrase par ligne ; elles s\'alternent.' },
     ] },
+    { titre: 'Scène JDR', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table CodexVTT en grand, les cartes des héros en bas, l’arène des jets en bas à droite. Le tableau dit qui est à la table ce soir : décoche « Présent » pour une place vide, choisis le personnage de chacun. CodexVTT : la table envoie toute seule les jets de dés, les PV et le tour de combat (tuto, fiche JDR). Discord : le bot du VPS dit qui parle, et la carte du joueur s’anime (tuto, fiche JDR).', champs: [
+      { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne', aide: 'Affiché au-dessus de la table.' },
+      { cle: 'jdr.attenue', type: 'case', label: 'Ceux qui se taisent sont un peu éteints' },
+      { cle: 'jdr.codex.actif', type: 'case', label: 'Brancher CodexVTT (jets de dés, PV, combat)' },
+      { cle: 'jdr.codex.adresse', type: 'texte', label: 'Adresse de CodexVTT', aide: 'Celle que tu tapes dans ton navigateur pour jouer, ex. https://codex.exemple.fr (sans rien après).' },
+      { cle: 'jdr.codex.cle', type: 'secret', label: 'Clé spectateur de la table', aide: 'CodexVTT › Tableau de bord › Modifier la table › « Overlay de stream (spectateur) » › Créer une clé. Elle ne s’affiche qu’une fois : colle-la ici tout de suite. Elle ne permet que de regarder.' },
+      { cle: 'jdr.discord.actif', type: 'case', label: 'Brancher Discord (la carte de celui qui parle s’anime)' },
+      { cle: 'jdr.discord.adresse', type: 'texte', label: 'Adresse du bot Discord', aide: 'Vide = celle du serveur des mises à jour (wss://overlays.bastien-lambour.fr/voix). À changer seulement si le bot est ailleurs.' },
+      { cle: 'jdr.discord.cle', type: 'secret', label: 'Clé du bot Discord', aide: 'Affichée à la fin de l’installation du bot sur le VPS (serveur/voix/installer-voix.sh), et dans /etc/overlays-voix.env (CLE=…).' },
+    ] },
+    { titre: 'Scène JDR : la table de jeu', icone: '🧙', aide: 'Nom et sous-titre vides = ceux du dessin. Un nouveau personnage sans dessin : choisis « Autre » et écris son nom exactement comme sur sa fiche CodexVTT ; sa carte prend le portrait de la fiche (un aventurier encapuchonné tant que CodexVTT n’est pas branché).', tableau: {
+      lignes: [['jdr.places.mj', '👑 Maître du jeu'], ['jdr.places.p1', 'Place 1'], ['jdr.places.p2', 'Place 2'], ['jdr.places.p3', 'Place 3'],
+        ['jdr.places.p4', 'Place 4'], ['jdr.places.p5', 'Place 5'], ['jdr.places.p6', 'Place 6']],
+      colonnes: [
+        { cle: 'present', type: 'case', label: 'Présent' },
+        { cle: 'joueur', type: 'texte', label: 'Joueur' },
+        { cle: 'perso', type: 'choix', label: 'Personnage', options: [['mj', 'Patagrain (maître du jeu)'], ['zokhran', 'Zokhran'], ['namerya', 'Namerya'], ['kenai', 'Kenai'], ['trayss', 'Trayss (forme dragon)'], ['trayss-mi', 'Trayss (entre les deux)'], ['trayss-humaine', 'Trayss (forme humaine)'], ['baheng', 'Ba Heng Ze'], ['dvergrost', 'Dvergrost'], ['autre', 'Autre : portrait de sa fiche CodexVTT']] },
+        { cle: 'nom', type: 'texte', label: 'Nom du personnage' },
+        { cle: 'titre', type: 'texte', label: 'Sous-titre' },
+        { cle: 'discord', type: 'texte', label: 'Discord (pseudo ou nom)' },
+      ],
+    }, champs: [] },
     { titre: 'Les Grelots', icone: '🔔', aide: 'Les spectateurs paient un spectacle du bouffon avec leurs grelots (les points StreamElements), avec une commande mystère par prix : !spectacle10, !spectacle25… Le spectacle reste une surprise. Pour essayer gratuitement en direct : écris « !essai catapulte » dans ton chat (ou chute, tarte, serenade, destin, potion, chifoumi, coffre, duel, dragon). Mise en place : TUTO, section 6.9.', champs: [
       { cle: 'grelots.actif', type: 'case', label: 'Les spectacles sont actifs' },
       { cle: 'grelots.rival', type: 'texte', label: 'Nom du bouffon maléfique' },
@@ -134,14 +156,13 @@ window.ReglagesChamps = {
       { cle: 'streamelements.actif', type: 'case', label: 'Se connecter à StreamElements' },
       { cle: 'streamelements.jeton', type: 'secret', label: 'Ton jeton StreamElements (JWT Token)', aide: 'streamelements.com › ton avatar en haut à droite › ta chaîne › « Afficher les secrets » › copie le JWT Token, colle-le ici (tuto, section 6).' },
     ] },
-    { titre: 'Kit de chaîne Twitch', icone: '📺', champs: [
+    { titre: 'Kit de chaîne Twitch', icone: '📺', aide: 'Les textes des images de ta chaîne Twitch (ouvre chaine/kit.html pour les voir). Après un changement, refais les images : OBS › Outils › Scripts › « Refaire les images du kit Twitch ».', champs: [
       { cle: 'chaine.slogan', type: 'texte', label: 'Slogan (bannière de profil)' },
       { cle: 'chaine.horsLigne', type: 'texte', label: 'Texte de l\'écran hors-ligne' },
-      { cle: 'chaine.dons.titre', type: 'texte', label: 'Page de dons StreamElements : titre', aide: 'Sur la bannière et le fond de ta page de dons (voir le kit). Ensuite, refais les images du kit.' },
+      { cle: 'chaine.dons.titre', type: 'texte', label: 'Page de dons StreamElements : titre' },
       { cle: 'chaine.dons.texte', type: 'texte', label: 'Page de dons StreamElements : petite phrase' },
-      { cle: 'chaine.planning', type: 'paires', label: 'Planning', aide: 'Une ligne par jour, ex. « Mercredi | 20h30 ».' },
-      { cle: 'chaine.reseaux', type: 'paires', label: 'Réseaux', aide: 'Une ligne par réseau, ex. « Discord | discord.gg/… ».' },
-      { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne. Un nom de réseau (Discord, YouTube, TikTok, Instagram, X (Twitter), Twitch, Kick, Bluesky) prend son logo : retire ceux que tu n’utilises pas. Ensuite, refais les images : node outils/exporter-chaine.mjs' },
+      { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne, dans l’ordre de ta chaîne. Un nom de réseau (Discord, YouTube, TikTok, Instagram, X (Twitter), Twitch, Kick, Bluesky), « Mes sites » ou « Mes créations » prend son logo : retire ceux que tu n’utilises pas.' },
+      { cle: 'chaine.planning', type: 'paires', label: 'Planning (panneau de bio)', aide: 'Une ligne par jour : « Mercredi | 20h30 », ou avec le jeu : « Mercredi | 20h30 | Minecraft ». Rempli, le panneau Planning affiche ta semaine ; vide, il garde juste son titre.' },
     ] },
     { titre: 'Mises à jour', icone: '🔄', aide: 'D\'où l\'overlay se met à jour : bouton « Mettre à jour l\'overlay » du script OBS (outils/actualiser-obs.lua), ou double-clic sur mettre-a-jour.cmd. Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l\'ancienne version est gardée dans sauvegardes.', champs: [
       { cle: 'miseAJour.adresse', type: 'texte', label: 'Adresse du serveur des overlays', aide: 'Ex. https://overlays.bastien-lambour.fr (celle de la page de téléchargement). À ne changer que si on te le dit.' },
@@ -152,6 +173,7 @@ window.ReglagesChamps = {
   ],
 
   tests: [
+    ['🎲 Scène JDR', 'scenes/jdr.html?test=1'],
     ['🔔 Alertes', 'sources/alertes.html?test=1'],
     ['🎭 Un spectacle des Grelots (la catapulte)', 'sources/alertes.html?grelots=catapulte'],
     ['🎭 Starting soon (12 s)', 'scenes/demarrage.html?minutes=0.2'],

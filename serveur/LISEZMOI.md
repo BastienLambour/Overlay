@@ -23,6 +23,7 @@ Un overlay qui n'a pas changé garde sa version : son streamer n'a rien à tél�
 | `construire.mjs` | fabrique le site : un zip, un `version.json` et le `TUTO.pdf` par overlay, et la page `index.html` |
 | `mettre-a-jour.mjs` | récupère le dépôt, et relance `construire.mjs` seulement s'il a changé |
 | `webhook.mjs` | reçoit les « push » de GitHub ou GitLab (vérifie le secret, ne garde que la bonne branche) |
+| `voix/` | le bot Discord « voix » (qui parle dans le salon vocal → scène JDR) : installé à part, voir `voix/LISEZMOI.md` ; le site lui transmet `/voix` |
 
 ## Où sont les choses sur le VPS
 
