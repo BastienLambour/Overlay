@@ -37,7 +37,7 @@ window.CONFIG = {
       bouffon: true,
     },
     jdr: {
-      chat: true,
+      chat: true,                  // le chat sous le titre de la campagne (un jet de dés passe par-dessus)
     },
   },
   couleurs: {
@@ -183,6 +183,9 @@ window.CONFIG = {
   jdr: {
     titre: "La Malédiction de Pangée",
     attenue: true,                 // ceux qui se taisent sont un peu éteints
+    dureeResultat: 4,              // secondes : le résultat d'un jet reste affiché dans l'arène une fois les dés posés
+    // les jets PUBLICS de tes PNJ et créatures (CodexVTT) : joués dans l'arène par un aventurier encapuchonné à cette couleur
+    pnj: { jouer: true, couleur: "#5A2A3A" },
     // CodexVTT en mode spectateur (lecture seule) : jets de dés, PV, tour de combat, forme de Trayss.
     // adresse = celle de CodexVTT (ex. "https://codex.exemple.fr") ; la CLÉ est un SECRET : laisse-la vide ici,
     // colle-la dans reglages.html › Scène JDR (elle va dans mes-reglages.js, jamais dans les zips).

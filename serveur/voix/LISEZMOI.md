@@ -6,6 +6,9 @@ du joueur qui parle s'anime (bouche, rebond, halo) et les autres s'estompent.
 - Il tourne sur le VPS, à côté du serveur des mises à jour (service `overlays-voix`).
 - Il **suit une personne** (toi, le MJ) : quand tu entres dans un salon vocal, il y entre aussi, micro
   coupé, et il en sort avec toi. Les joueurs le voient dans la liste du salon : c'est normal.
+- **Seulement pour le JDR** : il ne te suit que dans les salons que tu lui donnes (`SALONS`, par exemple
+  « JDR »), et seulement quand la scène JDR est ouverte dans OBS (`AVEC_OVERLAY=1`, par défaut). Il ressort
+  2 minutes après que tu as quitté la scène JDR (le temps d'une pause sans qu'il parte et revienne).
 - Il repère qui parle **à l'arrivée du son** : il ne le déchiffre pas, ne l'écoute pas, n'enregistre rien.
 - Les overlays se branchent sur `wss://overlays.bastien-lambour.fr/voix` avec une **clé** (secrète).
 
@@ -36,7 +39,8 @@ scp serveur/voix/installer-voix.sh root@ADRESSE_DU_VPS:
 ssh -t root@ADRESSE_DU_VPS "bash installer-voix.sh"
 ```
 
-Il demande le **jeton** (collé, il ne s'affiche pas) et **ton pseudo Discord** (celui qu'il suivra).
+Il demande le **jeton** (collé, il ne s'affiche pas), **ton pseudo Discord** (celui qu'il suivra) et
+**les salons** où il a le droit de te suivre (leurs noms, séparés par des virgules ; Entrée = tous).
 À la fin, il affiche :
 - le **lien d'invitation** du bot : ouvre-le, choisis ton serveur Discord, **Autoriser**.
   Il ne demande que deux droits : voir les salons et s'y connecter ;
@@ -61,13 +65,16 @@ Rien à faire : le bot démarre avec le VPS, te suit, et se met à jour tout seu
 | voir ce qu'il fait | `journalctl -u overlays-voix -f` |
 | le relancer | `systemctl restart overlays-voix` |
 | changer de jeton ou de personne suivie | relancer `bash installer-voix.sh` avec `DISCORD_JETON=…` ou `SUIVRE=…` devant |
+| changer les salons permis | `SALONS="JDR, Table de jeu" bash installer-voix.sh` (`SALONS=` vide = tous) |
+| qu'il te suive même sans la scène JDR | `AVEC_OVERLAY=0 bash installer-voix.sh` |
 | refaire la clé des overlays | `NOUVELLE_CLE=1 bash installer-voix.sh` (puis la recoller dans les réglages) |
 | rester dans un salon fixe | `SALON=<identifiant du salon> bash installer-voix.sh` |
 | tester sans Discord | `systemctl stop overlays-voix`, puis `runuser -u overlays -- env CLE=<la clé> node /var/www/overlays/depot/serveur/voix/voix.mjs --simulation` (un faux salon où l'on parle au hasard ; Ctrl+C), puis `systemctl start overlays-voix` |
 
 ## Dépannage
 
-- **Le bot n'entre pas dans le salon** : `journalctl -u overlays-voix -n 30`. « suit « … » » : vérifie le
+- **Le bot n'entre pas dans le salon** : est-ce un salon permis (`SALONS`), et la scène JDR est-elle ouverte dans OBS
+  (`AVEC_OVERLAY`) ? Puis `journalctl -u overlays-voix -n 30`. « suit « … » » : vérifie le
   pseudo (celui de ton profil Discord). « impossible d'entrer » : donne-lui « Voir le salon » et
   « Se connecter » sur ce salon.
 - **« clé refusée par le bot »** dans le journal de l'overlay : recolle la clé (`CLE=` dans `/etc/overlays-voix.env`).

@@ -29,9 +29,11 @@ patagrain/
 ├── reglages.html        ← LA page pour changer les textes et réglages (elle écrit mes-reglages.js)
 ├── config.js            ← les valeurs par défaut (remplacé à chaque mise à jour de l'overlay)
 ├── mettre-a-jour.cmd    ← met l'overlay à jour (double-clic), en gardant tes réglages : voir 2.1
+├── fabriquer-images.cmd ← fabrique SANS OBS le planning de la semaine, les images du kit, les vidéos de transition (double-clic) : voir 7
 ├── mes-reglages.js      ← TES réglages, écrits par reglages.html (apparaît au 1er enregistrement ; à garder)
 ├── index.html           ← la vitrine : aperçu de tout
 ├── TUTO.md / TUTO.pdf   ← ce tutoriel
+├── TUTO-JDR.md / .pdf  ← le tuto de la scène JDR et du bot Discord
 ├── CONCEPT.md / .pdf    ← le résumé du projet (DA, choix, ce qu'il reste à faire)
 ├── scenes/              ← les écrans et overlays de scène (une page = une scène OBS)
 ├── sources/             ← les éléments à poser où tu veux (alertes, chat…)
@@ -307,44 +309,26 @@ Taille de la webcam : `560` × `315` en 1440p, `420` × `236` en 1080p.
 
 ### 3.7 🎲 JDR — `scenes/jdr.html`
 
-**À quoi ça sert** : tes parties de jeu de rôle. Ta table CodexVTT en grand, les **cartes des héros** en bas (le maître du jeu et chaque personnage, dessinés dans le style de Patagrain), le chat en haut à droite, et en bas à droite **l'arène** où les héros viendront jouer leurs jets de dés.
+**Tout est dans le tuto à part : `TUTO-JDR.pdf`** (la scène, la table de jeu, CodexVTT, le bot Discord,
+le dépannage). En bref :
 
-**Avant** : dans `reglages.html` › **Scène JDR**, écris le nom de la campagne, puis remplis **la table de jeu** : pour chaque place, coche « Présent », écris le nom du joueur et choisis son personnage (Trayss a ses trois formes dans la liste). Décoche « Présent » pour une place vide ce soir. **Enregistrer**.
-
-**Un nouveau joueur, un nouveau personnage ?** Pas besoin de dessin : sur sa ligne, choisis le personnage **« Autre : portrait de sa fiche CodexVTT »** et écris son **nom exactement comme sur sa fiche CodexVTT** (son sous-titre aussi, si tu veux). Sa carte prend l'image de sa fiche dès que CodexVTT est branché (voir plus bas) ; avant, et dans l'arène des jets, c'est un **aventurier encapuchonné** à la couleur de sa carte. Les colonnes « Nom du personnage » et « Sous-titre » servent aussi à renommer un personnage dessiné (vides = ceux du dessin).
+**À quoi ça sert** : tes parties de jeu de rôle. Ta table CodexVTT en grand, les **cartes des héros** en dessous (le maître du jeu et chaque personnage, dessinés dans le style de Patagrain), et à droite le **titre de la campagne** puis le **chat** ; pendant un jet de dés, **l'arène** passe par-dessus le chat et le héros y joue son jet.
 
 **Dans OBS :**
 1. **Scènes › +** : « JDR ».
 2. **+ › Scène** › « Global — Alertes ».
-3. Geste A avec `scenes/jdr.html`.
-4. **+ › Capture de fenêtre** › « Table » : la fenêtre de ton navigateur ouvert sur CodexVTT (ou **+ › Navigateur** avec l'adresse de ta table).
+3. Geste A avec `scenes/jdr.html`, cases **Arrêter la source lorsqu'elle n'est pas visible** (le bot Discord sait ainsi que tu es en JDR) et **Actualiser le navigateur quand la scène devient active** cochées.
+4. **+ › Capture de fenêtre** › « Table » : la fenêtre de ton navigateur ouvert sur CodexVTT.
 5. Geste B sur la table :
 
 | Source | Position 1440p | Taille 1440p | Position 1080p | Taille 1080p |
 |---|---|---|---|---|
-| Table | `53`, `48` | `1813` × `1020` | `40`, `36` | `1360` × `765` |
+| Table | `53`, `48` | `2000` × `1125` | `40`, `36` | `1500` × `844` |
 
-6. Ordre final : `Global — Alertes` · `Overlay` · `Table`.
+6. **+ › Capture audio d'application** › Discord (pour que le stream entende les joueurs).
+7. Ordre final : `Global — Alertes` · `Overlay` · `Table` · `Discord`.
 
-**Brancher CodexVTT (une seule fois, 2 minutes)** : la table envoie alors toute seule à l'overlay les **jets de dés** (le héros vient les jouer dans l'arène : il court et saute s'il réussit son Athlétisme, il court et tombe s'il le rate…), les **PV** sous chaque carte (« À terre » à 0), les **coups reçus** (−9 en rouge) et les **soins** (+5 en vert), **à qui c'est le tour** en combat (« ⚔ Son tour » sur la carte), et **la forme de Trayss**. L'overlay ne fait que regarder : il ne voit ni les jets cachés du MJ, ni ses fiches, ni la carte.
-1. Dans CodexVTT : **Tableau de bord › Modifier la table › « Overlay de stream (spectateur) » › Créer une clé**. La clé ne s'affiche **qu'une fois** : copie-la tout de suite. L'adresse à utiliser est écrite juste en dessous.
-2. Dans `reglages.html` › **Scène JDR** : coche « Brancher CodexVTT », colle l'**adresse** (ex. `https://codex.exemple.fr`, sans rien après) et la **clé spectateur**. **Enregistrer**. La clé est secrète : elle reste sur ton PC (dans `mes-reglages.js`), jamais dans les mises à jour.
-3. Dans OBS, actualise la source (ou le bouton « Actualiser toutes les sources Navigateur » du script).
-4. Les personnages sont retrouvés **par leur nom** : le nom de la fiche CodexVTT doit commencer comme celui de la carte (« Kenai », « Ba Heng Ze »…). Un jet d'une fiche qui n'est pas à la table n'est pas joué.
-5. **Trayss** : sur sa fiche, nomme ses portraits **« Dragon »**, **« Entre deux »** et **« Humaine »**. Quand le joueur change de portrait actif, la carte change de forme.
-6. **Vérifier** : ajoute `?journal=1` à l'adresse de la source (ou ouvre `scenes/jdr.html?journal=1` dans ton navigateur) : un cadre « 🎲 CodexVTT » en haut à droite dit « connecté » (bord vert) et montre chaque événement reçu. Bord rouge : « pas d'adresse ou pas de clé », « refusé par CodexVTT » (mauvaise clé) ou « clé révoquée » (une nouvelle clé a été créée : recolle-la). Retire `?journal=1` ensuite.
-
-Une nouvelle clé **remplace** l'ancienne : si tu en recrées une, recolle-la dans les réglages.
-
-**Options** : `?chat=0` · `?test=1` (pour voir : les héros parlent, prennent des coups, tombent à terre et jouent des jets au hasard) · `?apercu=1` (montre la zone de la table) · `?titre=…` · `?journal=1` (les connexions à CodexVTT et à Discord)
-
-**Brancher Discord (une seule fois)** : la carte de celui qui parle s'anime (bouche, rebond, halo à sa couleur) et les autres s'estompent. C'est un petit **bot Discord** sur ton VPS qui le dit à l'overlay : il te suit dans les salons vocaux, micro coupé (les joueurs le voient dans la liste : c'est normal), et ne fait que repérer qui parle — il n'écoute ni n'enregistre rien.
-1. **Installer le bot** (une fois, environ 15 minutes) : suis `serveur/voix/LISEZMOI.md` — créer le bot sur le site de Discord, lancer `installer-voix.sh` sur le VPS, inviter le bot sur ton serveur Discord. À la fin, le script affiche la **clé du bot**.
-2. Dans `reglages.html` › **Scène JDR** : coche « Brancher Discord », laisse l'adresse **vide**, colle la **clé du bot Discord**.
-3. Dans le tableau des joueurs, colonne **Discord** : le **pseudo Discord** de chacun (celui de son profil, ou son nom affiché sur ton serveur). **Enregistrer**, puis actualise la source dans OBS.
-4. **Vérifier** : `?journal=1` à la fin de l'adresse de la source : un cadre « 🎙 Discord » montre le salon, ceux qui y sont (bord vert) et « parle : … ». Bord rouge : « pas d'adresse ou pas de clé », « clé refusée par le bot » (recolle-la) ou « coupé » (le bot ou le VPS ne répond pas : voir le LISEZMOI du bot). Retire `?journal=1` ensuite.
-
-Si une carte ne bouge pas quand son joueur parle : le pseudo de la colonne « Discord » ne correspond pas. Le journal donne les noms exacts du salon.
+**Options** : `?chat=0` · `?test=1` (les héros parlent, prennent des coups, tombent à terre et jouent des jets au hasard) · `?apercu=1` (la zone de la table) · `?titre=…` · `?journal=1` (les connexions à CodexVTT et à Discord)
 
 ## 4. Les sources à la carte
 
@@ -644,7 +628,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 **Les panneaux des réseaux** (Discord, YouTube, TikTok, Instagram, X) : à l'étape 3, remplis aussi **Lien de l'image** avec l'adresse du réseau (ton invitation Discord `https://discord.gg/…`, ta chaîne YouTube…) : un clic sur l'image y mène. Tu n'as pas un de ces réseaux ? Retire son nom dans `reglages.html` › **Kit de chaîne Twitch** › Panneaux de bio. Un autre réseau (Twitch, Kick, Bluesky) : ajoute son nom, il prend son logo.
 
 **Le panneau Planning de la semaine :** dans `reglages.html` › **Kit de chaîne Twitch** › **Planning**, écris une ligne par jour : `Mercredi | 20h30`, ou avec le jeu : `Mercredi | 20h30 | Minecraft`. Juste en dessous, choisis la **semaine** dans le calendrier, puis clique **🖼️ Fabriquer l'image du planning** : la page enregistre le planning, OBS fabrique l'image en quelques secondes et la page te la montre. Elle est rangée dans `chaine/export/plannings/` (ex. `planning-2027-semaine-08.png`, avec « Semaine 8 · du 22 au 28 février » sous le titre) : **un fichier par semaine, les anciens restent**. Sur Twitch : ta chaîne › **À propos** › **Modifier les panneaux** › panneau Planning › change l'image.
-Il faut **Edge ou Chrome** et **OBS ouvert avec le script `actualiser-obs.lua`** (2.8) : c'est lui qui fabrique l'image (si OBS est fermé, la demande attend qu'il s'ouvre). Sans OBS, dans PowerShell : `node outils/exporter-chaine.mjs --semaine=2027-W08`. Planning vide = le panneau titre « Planning ».
+Il faut **Edge ou Chrome**. L'image est fabriquée par **OBS** s'il est ouvert avec le script `actualiser-obs.lua` à jour (après une mise à jour de l'overlay, recharge-le : Outils › Scripts › ↻) ; **sans OBS** (pour préparer tes streams à l'avance), double-clique sur **`fabriquer-images.cmd`** dans le dossier de l'overlay quand la page te le propose : il prend la demande et la page affiche l'image. Tu peux aussi le lancer seul : un petit menu propose le planning d'une semaine (tape son numéro, ou Entrée pour cette semaine), les images du kit ou les vidéos de transition. Planning vide = le panneau titre « Planning ».
 
 **Le panneau Mes créations :** dans sa description, mets tes liens (site, boutique, portfolio…), et dans **Lien de l'image** le principal. Tu préfères « Mes sites » (avec un globe) ? Renomme-le dans la liste des panneaux de `reglages.html`.
 
@@ -742,10 +726,12 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 | Script | À quoi il sert | Quand | Commande |
 |---|---|---|---|
 | `actualiser-obs.lua` | bouton « Actualiser toutes les sources Navigateur » dans OBS, bouton « Placer les webcams » (et replacement automatique), et actualisation automatique quand tes réglages changent | une fois, à installer dans OBS (section 2) | *pas de commande :* OBS › Outils › Scripts › + |
+| `fabriquer-images.cmd` | fabrique sans OBS : le planning d'une semaine (et répond au bouton des réglages), les images du kit, les vidéos de transition | quand OBS est fermé | double-clic (dossier de l'overlay) |
 | `mettre-a-jour.cmd` | met l'overlay à jour depuis le serveur (double-clic), en gardant tes réglages ; c'est aussi ce que fait le bouton d'OBS | quand une nouvelle version est annoncée |
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs ou du bouffon | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
+| `generer-pdf.mjs` (JDR) | refait `TUTO-JDR.pdf` | après une modification de `TUTO-JDR.md` | `node outils/generer-pdf.mjs TUTO-JDR.md` |
 | `capturer.mjs` | fait une capture PNG d'une page (pour vérifier une animation, ou l'envoyer) | pour vérifier | `node outils/capturer.mjs "scenes/jeu.html?test=1"` |
 | `polices-locales.mjs` | copie dans `assets/polices/` les polices du thème (pour ne plus dépendre d'internet) | seulement si on change de police (déjà fait) | `node outils/polices-locales.mjs` *(internet nécessaire)* |
 | `generer-bouffon.mjs` | redessine le bouffon, son chapeau et le logo | seulement si on modifie le dessin (puis refaire vidéos et kit) | `node outils/generer-bouffon.mjs` |
@@ -755,6 +741,9 @@ Les scripts se servent de **Microsoft Edge** en coulisses (déjà installé avec
 ---
 
 ## 10. Dépannage
+
+**Le bouton « Fabriquer l'image du planning » ne fait rien**
+→ La page dit ce qui bloque, sous le bouton. « Personne n'a pris la demande » : double-clique sur `fabriquer-images.cmd` (sans OBS) ; ou, dans OBS, recharge le script `actualiser-obs.lua` (Outils › Scripts › ↻) et vérifie que son **Dossier de l'overlay** est bien celui que tu as choisi dans `reglages.html`. Il faut Edge ou Chrome (pas Firefox).
 
 **« Mettre à jour l'overlay » ne marche pas**
 → Le message est sous le bouton (OBS › Outils › Scripts) et dans **Journal des scripts**. « Serveur injoignable » : vérifie ta connexion, ou l'adresse dans `reglages.html` › **Mises à jour**. « Certains fichiers n'ont pas pu être remplacés » : OBS les utilise (souvent les vidéos de transition) → ferme OBS, double-clique sur `mettre-a-jour.cmd`. Si le dossier de l'overlay a des accents dans son chemin et que le bouton ne fait rien : utilise `mettre-a-jour.cmd`. Rien n'est perdu : l'ancienne version est dans `sauvegardes`.

@@ -16,6 +16,10 @@
    Réglages (variables d'environnement, dans /etc/overlays-voix.env) :
      DISCORD_JETON   le jeton du bot (Discord Developer Portal › ton application › Bot › Reset Token) — SECRET
      SUIVRE          la personne à suivre : son pseudo Discord, son nom affiché ou son identifiant
+     SALONS          (facultatif) les salons vocaux où il a le droit de te suivre, séparés par des virgules : leur nom
+                     (« JDR, Table de jeu ») ou leur identifiant. Vide = tous les salons du serveur.
+     AVEC_OVERLAY    1 (défaut) = il n'entre que si un overlay est connecté (la scène JDR ouverte dans OBS), et ressort
+                     2 minutes après le départ du dernier ; 0 = il te suit même sans overlay
      SALON           (facultatif) l'identifiant d'un salon vocal où rester tout le temps, au lieu de suivre quelqu'un
      CLE             la clé que les overlays collent dans leurs réglages — SECRET
      PORT            (défaut 9322)
@@ -34,6 +38,9 @@ const SUIVRE = (process.env.SUIVRE || '').trim();
 const SALON = (process.env.SALON || '').trim();
 const CLE = (process.env.CLE || '').trim();
 const PORT = Number(process.env.PORT) || 9322;
+const SALONS = String(process.env.SALONS || '').split(',').map(s => s.trim()).filter(Boolean);
+const AVEC_OVERLAY = !/^(0|non|false)$/i.test(String(process.env.AVEC_OVERLAY ?? '1').trim());
+const GRACE = Number(process.env.GRACE_MS) || 120000;              // le temps d'aller sur une autre scène et de revenir sans qu'il quitte le salon
 const heure = () => new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' });
 const dire = (...t) => console.log(`[${heure()}]`, ...t);
 const SIMULATION = process.argv.includes('--simulation');
@@ -53,6 +60,8 @@ const photo = () => ({ type: 'salon', salon: etat.salon, membres: etat.membres, 
 const http = createServer((q, r) => { r.writeHead(q.url === '/voix/sante' ? 200 : 404, { 'Content-Type': 'text/plain; charset=utf-8' }); r.end(q.url === '/voix/sante' ? 'ok' : ''); });
 const wss = new WebSocketServer({ server: http, path: '/voix', maxPayload: 4096 });
 const abonnes = new Set();
+let departOverlay = 0;                // quand le dernier overlay est parti
+const overlayLa = () => !AVEC_OVERLAY || abonnes.size > 0 || Date.now() - departOverlay < GRACE;
 const bonneCle = c => { const a = Buffer.from(String(c || '')), b = Buffer.from(CLE); return a.length === b.length && timingSafeEqual(a, b); };
 wss.on('connection', (ws, q) => {
   const qui = q.headers['x-real-ip'] || q.socket.remoteAddress;
@@ -67,8 +76,14 @@ wss.on('connection', (ws, q) => {
     abonnes.add(ws);
     dire(`overlay connecté (${abonnes.size}) :`, qui);
     ws.send(JSON.stringify(photo()));
+    if (abonnes.size === 1) suivre();
   });
-  ws.on('close', () => { clearTimeout(delai); if (abonnes.delete(ws)) dire(`overlay parti (${abonnes.size})`); });
+  ws.on('close', () => {
+    clearTimeout(delai);
+    if (!abonnes.delete(ws)) return;
+    dire(`overlay parti (${abonnes.size})`);
+    if (!abonnes.size) { departOverlay = Date.now(); setTimeout(suivre, GRACE + 1000); }
+  });
   ws.on('error', () => {});
 });
 // un « ping » toutes les 30 s : Nginx ne coupe pas, et on oublie les overlays disparus
@@ -98,11 +113,14 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 function normal(t) { return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/^@/, '').trim(); }
 const estLui = m => m && !m.user.bot && [m.id, m.user.username, m.user.globalName, m.displayName].some(v => v && normal(v) === normal(SUIVRE));
 
-// le salon où il faut être : celui de SALON, sinon celui où est la personne suivie
+// le salon où il faut être : celui de SALON, sinon celui où est la personne suivie, s'il est permis (SALONS),
+// et seulement si un overlay l'écoute (AVEC_OVERLAY)
+const permis = c => !SALONS.length || SALONS.some(s => s === c.id || normal(s) === normal(c.name));
 function salonVoulu() {
+  if (!overlayLa()) return null;
   if (SALON) { const c = client.channels.cache.get(SALON); return c && c.isVoiceBased() ? c : null; }
   for (const g of client.guilds.cache.values())
-    for (const v of g.voiceStates.cache.values()) if (v.channel && estLui(v.member)) return v.channel;
+    for (const v of g.voiceStates.cache.values()) if (v.channel && estLui(v.member)) return permis(v.channel) ? v.channel : null;
   return null;
 }
 
@@ -116,7 +134,7 @@ function majMembres(canal) {
 
 let ici = null;                    // le salon où le bot est
 let enCours = Promise.resolve();
-function suivre() { enCours = enCours.then(aller).catch(e => dire('⚠', e.message)); }
+function suivre() { if (SIMULATION || !client.isReady()) return; enCours = enCours.then(aller).catch(e => dire('⚠', e.message)); }
 async function aller() {
   const voulu = salonVoulu();
   if (voulu?.id === ici?.id) return majMembres(ici);
@@ -141,7 +159,8 @@ async function aller() {
 
 client.once(Events.ClientReady, c => {
   dire(`Connecté à Discord : ${c.user.tag} — serveurs : ${c.guilds.cache.map(g => g.name).join(', ') || 'aucun (invite le bot !)'}`);
-  dire(SALON ? `Reste dans le salon ${SALON}` : `Suit « ${SUIVRE} » dans les salons vocaux`);
+  dire(SALON ? `Reste dans le salon ${SALON}` : `Suit « ${SUIVRE} » ${SALONS.length ? 'dans : ' + SALONS.join(', ') : 'dans tous les salons vocaux'}`
+    + (AVEC_OVERLAY ? ', seulement quand un overlay est ouvert' : ''));
   suivre();
 });
 client.on(Events.VoiceStateUpdate, (avant, apres) => {

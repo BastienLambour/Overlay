@@ -19,6 +19,9 @@
 #  Réglages (variables à mettre devant la commande, toutes facultatives) :
 #      DISCORD_JETON   le jeton du bot (sinon il le demande)
 #      SUIVRE          ton pseudo Discord : le bot te suit dans les salons vocaux (sinon il le demande)
+#      SALONS          les salons vocaux où il a le droit de te suivre, séparés par des virgules (« JDR, Table de jeu ») ;
+#                      SALONS= vide = tous les salons (sinon il le demande à la première installation)
+#      AVEC_OVERLAY    1 (défaut) = il n'entre que quand la scène JDR est ouverte dans OBS ; 0 = il te suit tout le temps
 #      SALON           l'identifiant d'un salon vocal où rester tout le temps (au lieu de suivre quelqu'un)
 #      NOUVELLE_CLE=1  refaire la clé des overlays (l'ancienne ne marche plus : la recoller dans les réglages)
 # =====================================================================
@@ -62,6 +65,9 @@ dire "3/6 Le bot Discord (jeton, personne à suivre, clé des overlays)"
 JETON="${DISCORD_JETON:-$(lire_env "$ENV" DISCORD_JETON)}"
 SUIVRE="${SUIVRE:-$(lire_env "$ENV" SUIVRE)}"
 SALON="${SALON:-$(lire_env "$ENV" SALON)}"
+PREMIERE=1; grep -q '^SALONS=' "$ENV" 2>/dev/null && PREMIERE=0
+[ -n "${SALONS+x}" ] && PREMIERE=0 || SALONS="$(lire_env "$ENV" SALONS)"
+AVEC_OVERLAY="${AVEC_OVERLAY:-$(lire_env "$ENV" AVEC_OVERLAY)}"; AVEC_OVERLAY="${AVEC_OVERLAY:-1}"
 CLE="$(lire_env "$ENV" CLE)"
 [ -n "${NOUVELLE_CLE:-}" ] && CLE=""
 # une question à l'API de Discord avec le jeton du bot : discord <jeton> <chemin> <champ>
@@ -79,18 +85,31 @@ if [ -z "$SALON" ] && [ -z "$SUIVRE" ]; then
   read -r -p "  Ton pseudo Discord (le bot te suivra dans les salons vocaux) : " SUIVRE < /dev/tty
   [ -n "$SUIVRE" ] || stop "Pseudo vide."
 fi
+if [ -z "$SALON" ] && [ "$PREMIERE" = 1 ] && clavier; then
+  printf '  Dans quels salons vocaux le bot a-t-il le droit de te suivre ? Leurs noms, séparés par des virgules
+'
+  read -r -p "  (ex. « JDR, Table de jeu » ; Entrée = tous les salons) : " SALONS < /dev/tty
+fi
 [ -n "$CLE" ] || CLE="$(openssl rand -hex 16)"
 cat > "$ENV" <<EOF
 # Réglages du bot Discord « voix » des overlays (service overlays-voix). SECRET : ne pas le mettre dans le dépôt.
 # Après une modification : systemctl restart overlays-voix
 DISCORD_JETON=$JETON
 SUIVRE=$SUIVRE
+# SALONS : où il a le droit de te suivre (noms ou identifiants, séparés par des virgules ; vide = partout)
+SALONS=$SALONS
+# AVEC_OVERLAY=1 : seulement quand la scène JDR est ouverte dans OBS (il ressort 2 min après) ; 0 = tout le temps
+AVEC_OVERLAY=$AVEC_OVERLAY
 SALON=$SALON
 CLE=$CLE
 PORT=$PORT
 EOF
 chown "root:$UTILISATEUR" "$ENV"; chmod 640 "$ENV"
-if [ -n "$SALON" ]; then QUOI="reste dans le salon $SALON"; else QUOI="te rejoint dans les salons vocaux (il suit « $SUIVRE »)"; fi
+if [ -n "$SALON" ]; then QUOI="reste dans le salon $SALON"
+else
+  QUOI="te rejoint (il suit « $SUIVRE ») $( [ -n "$SALONS" ] && printf 'dans : %s' "$SALONS" || printf 'dans tous les salons vocaux' )"
+  [ "$AVEC_OVERLAY" = 1 ] && QUOI="$QUOI, quand la scène JDR est ouverte dans OBS"
+fi
 ok "$ENV : le bot $QUOI"
 APPLI="$(discord "$JETON" applications/@me id)"
 # Voir les salons (1024) + Se connecter (1048576) : rien d'autre

@@ -104,9 +104,12 @@ window.ReglagesChamps = {
       { cle: 'bouffon.jeuAuFollow', type: 'case', label: 'Scène Jeu : il sort la tête à chaque follow' },
       { cle: 'bouffon.bulles', type: 'liste', label: 'Écran Fin : ce que dit sa bulle', aide: 'Une phrase par ligne ; elles s\'alternent.' },
     ] },
-    { titre: 'Scène JDR', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table CodexVTT en grand, les cartes des héros en bas, l’arène des jets en bas à droite. Le tableau dit qui est à la table ce soir : décoche « Présent » pour une place vide, choisis le personnage de chacun. CodexVTT : la table envoie toute seule les jets de dés, les PV et le tour de combat (tuto, fiche JDR). Discord : le bot du VPS dit qui parle, et la carte du joueur s’anime (tuto, fiche JDR).', champs: [
-      { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne', aide: 'Affiché au-dessus de la table.' },
+    { titre: 'Scène JDR', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table CodexVTT en grand, les cartes des héros en bas, à droite le titre de la campagne puis le chat, et l’arène des jets qui passe par-dessus le chat pendant un jet. Le tableau dit qui est à la table ce soir : décoche « Présent » pour une place vide, choisis le personnage de chacun. CodexVTT : la table envoie toute seule les jets de dés, les PV et le tour de combat (tuto, fiche JDR). Discord : le bot du VPS dit qui parle, et la carte du joueur s’anime (tuto, fiche JDR).', champs: [
+      { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne', aide: 'Affiché en haut à droite, au-dessus de l’arène des jets.' },
       { cle: 'jdr.attenue', type: 'case', label: 'Ceux qui se taisent sont un peu éteints' },
+      { cle: 'jdr.pnj.jouer', type: 'case', label: 'Jouer aussi les jets de mes PNJ et créatures dans l’arène', aide: 'Seulement les jets PUBLICS lancés dans CodexVTT (un jet privé n’arrive jamais à l’overlay). Joués par un aventurier encapuchonné, avec le nom du PNJ.' },
+      { cle: 'jdr.pnj.couleur', type: 'couleur', label: 'Couleur de la cape des PNJ' },
+      { cle: 'jdr.dureeResultat', type: 'nombre', label: 'Le résultat d’un jet reste affiché … secondes', min: 1, max: 20, aide: 'Une fois les dés posés. S’il y a d’autres jets qui attendent, il reste moins longtemps (2 secondes au plus).' },
       { cle: 'jdr.codex.actif', type: 'case', label: 'Brancher CodexVTT (jets de dés, PV, combat)' },
       { cle: 'jdr.codex.adresse', type: 'texte', label: 'Adresse de CodexVTT', aide: 'Celle que tu tapes dans ton navigateur pour jouer, ex. https://codex.exemple.fr (sans rien après).' },
       { cle: 'jdr.codex.cle', type: 'secret', label: 'Clé spectateur de la table', aide: 'CodexVTT › Tableau de bord › Modifier la table › « Overlay de stream (spectateur) » › Créer une clé. Elle ne s’affiche qu’une fois : colle-la ici tout de suite. Elle ne permet que de regarder.' },

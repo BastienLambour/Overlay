@@ -13,7 +13,8 @@
      jets.jouer(jet)                                              // file d'attente : un jet à la fois
    En même temps que les dés 3D de CodexVTT : le jet arrive à l'instant du lancer (résultat déjà connu), les dés se
    posent 1 à 2 s plus tard. Le héros fait donc son ÉLAN tout de suite, et le DÉNOUEMENT (résultat sur la carte,
-   saut, chute, critique) attend DENOUEMENT ms après l'arrivée du jet.  Jets.monter(zone, { denouement: 1500 })
+   saut, chute, critique) attend DENOUEMENT ms après l'arrivée du jet.  Jets.monter(zone, { denouement: 1500, duree: 4000 })
+   duree : combien de temps le résultat reste affiché une fois les dés posés (moitié moins si d'autres jets attendent).
    Gestes : css/bouffon.css, sections 7 (grelots) et 8 (gestes des jets).
    ===================================================================== */
 const Jets = (() => {
@@ -63,7 +64,7 @@ const Jets = (() => {
   const MOTS = { crit: 'Critique !', fumble: 'Échec critique…', ok: 'Réussite !', rate: 'Échec…' };
   const MOTS_ATTAQUE = { ok: 'Touché !', rate: 'Raté…' };
 
-  function monter(zone, { heros = jet => sansAccent(jet.characterName).split(' ')[0], denouement: DENOUEMENT = 1500 } = {}) {
+  function monter(zone, { heros = jet => sansAccent(jet.characterName).split(' ')[0], denouement: DENOUEMENT = 1500, duree: DUREE = 4000 } = {}) {
     const file = [];
     let occupe = false;
     async function suivant() {
@@ -192,7 +193,10 @@ const Jets = (() => {
           await attendre(700);
         }
       }
-      await attendre(500);
+      // le résultat reste lisible DUREE ms après le dénouement (moins longtemps si d'autres jets attendent)
+      await denoue();
+      const reste = (file.length ? Math.min(DUREE, 2000) : DUREE) - (performance.now() - t0 - DENOUEMENT);
+      await attendre(Math.max(500, reste));
       await bouger(carte, [{ opacity: 1 }, { opacity: 0 }], 400);
       await bouger(perso, [{ opacity: getComputedStyle(perso).opacity }, { opacity: 0 }], 300);
       zone.innerHTML = '';

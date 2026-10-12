@@ -61,25 +61,38 @@
   border-radius: .4em; white-space: nowrap; font: 800 .7em var(--f-titre); color: #3A2606; background: var(--accent); box-shadow: 0 0 0 .12em #6B4423; }
 .portrait.son-tour .pt-image { box-shadow: 0 0 0 .28em var(--accent), 0 0 0 .42em #6B4423, 0 0 1.4em .3em color-mix(in srgb, var(--accent) 70%, transparent); }
 
+/* ---------- le titre de la campagne (en haut à droite, au-dessus de l'arène) ---------- */
+.jdr-titre { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 18px 16px;
+  text-align: center; border-radius: 22px; background: var(--surface); box-shadow: 0 0 0 4px var(--accent), 0 10px 24px rgba(0, 0, 0, .45); }
+.jdr-titre img { width: 74px; height: 74px; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .3)); animation: vacille-de 4s ease-in-out infinite; }
+.jdr-titre b { font: 800 34px/1.02 var(--f-titre); color: var(--texte); text-wrap: balance; }
+.jdr-titre small { font: 900 13px var(--f-texte); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+/* ---------- le chat, sous le titre : il s'efface pendant un jet de dés (l'arène passe par-dessus) ---------- */
+.taverne { transition: opacity .4s; }
+.taverne.sous-jet { opacity: 0; }
+.arene.sur-chat { background: linear-gradient(color-mix(in srgb, var(--fond) 60%, transparent), color-mix(in srgb, var(--fond) 92%, transparent)); }
+
 /* ---------- l'arène des jets (js/jets.js) ---------- */
-.arene { position: absolute; container-type: size; overflow: hidden; border-radius: 22px; background: linear-gradient(transparent 55%, rgba(5, 8, 16, .55));
+/* --u : l'unité des textes et des effets = 1 % du plus petit côté (l'arène peut être haute et étroite) */
+.arene { --u: min(1cqh, 1cqw); position: absolute; container-type: size; overflow: hidden; border-radius: 22px; background: linear-gradient(transparent 55%, rgba(5, 8, 16, .55));
   box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--accent) 50%, transparent); }
 .arene > * { position: absolute; }
 .arene:empty { opacity: 0; }                     /* cachée tant qu'aucun jet ne se joue */
 .arene { transition: opacity .4s; }
-.arene-perso { bottom: 3cqh; left: 0; height: 66cqh; width: 28.7cqh; }
+.arene-perso { bottom: 3cqh; left: 0; height: min(66cqh, 105cqw); width: calc(min(66cqh, 105cqw) * .435); }
 .arene-perso svg { width: 100%; height: 100%; }
-.arene-carte { left: 4cqw; right: 4cqw; top: 4cqh; padding: 1.6cqh 3cqw 2cqh; border-radius: 3cqh; text-align: center; background: var(--surface);
-  box-shadow: 0 0 0 .8cqh var(--accent), 0 2cqh 4cqh rgba(0, 0, 0, .5); opacity: 0; }
-.arene-carte small { display: block; font: 900 4.6cqh var(--f-texte); letter-spacing: .3cqh; text-transform: uppercase; color: var(--accent); }
-.arene-carte b { display: inline; font: 800 7.5cqh/1.1 var(--f-titre); margin-right: 2cqw; }
-.arene-carte i { display: inline-block; padding: .4cqh 2.5cqw .7cqh; border-radius: 2cqh; font: 800 5.6cqh var(--f-titre); font-style: normal; vertical-align: .4cqh; }
+.arene-carte { left: 4cqw; right: 4cqw; top: calc(4 * var(--u)); padding: calc(1.6 * var(--u)) 3cqw calc(2 * var(--u)); border-radius: calc(3 * var(--u)); text-align: center; background: var(--surface);
+  box-shadow: 0 0 0 calc(.8 * var(--u)) var(--accent), 0 calc(2 * var(--u)) calc(4 * var(--u)) rgba(0, 0, 0, .5); opacity: 0; }
+.arene-carte small { display: block; font: 900 calc(5 * var(--u)) var(--f-texte); letter-spacing: calc(.3 * var(--u)); text-transform: uppercase; color: var(--accent); }
+.arene-carte b { display: inline; font: 800 calc(8 * var(--u))/1.1 var(--f-titre); margin-right: 2cqw; }
+.arene-carte i { display: table; margin: calc(.8 * var(--u)) auto 0; padding: calc(.4 * var(--u)) 2.5cqw calc(.7 * var(--u)); border-radius: calc(2 * var(--u)); font: 800 calc(6.2 * var(--u)) var(--f-titre); font-style: normal; vertical-align: calc(.4 * var(--u)); }
 .arene-carte i.ok { background: #2F7A4F; color: #fff; } .arene-carte i.rate { background: #8E1F1F; color: #fff; }
 .arene-carte i.crit { background: var(--accent); color: #3A2606; } .arene-carte i.fumble { background: #3A0A0A; color: #FFB4A8; }
 .arene-carte i.hope { background: #2F6C9C; color: #fff; } .arene-carte i.fear { background: #4A1E5A; color: #F2D6FF; }
-.arene-carte .arene-photo { float: left; width: 15cqh; height: 15cqh; margin: -.4cqh 2cqw 0 0; border-radius: 50%; object-fit: cover; object-position: 50% 22%;
-  box-shadow: 0 0 0 .6cqh var(--accent); }
+.arene-carte .arene-photo { float: left; width: calc(15 * var(--u)); height: calc(15 * var(--u)); margin: calc(-.4 * var(--u)) 2cqw 0 0; border-radius: 50%; object-fit: cover; object-position: 50% 22%;
+  box-shadow: 0 0 0 calc(.6 * var(--u)) var(--accent); }
 .arene-carte b.arene-attente { display: inline-block; margin: 0; animation: arene-de .6s linear infinite; }   /* les dés roulent encore */
 @keyframes arene-de { to { transform: rotate(360deg); } }
-.arene-trait { height: 1.4cqh; width: 18cqw; background: linear-gradient(90deg, transparent, #F2E6C8); border-radius: 1cqh; }
-.arene-etoile { font: 900 12cqh/1 var(--f-titre); color: var(--accent); }
+.arene-trait { height: calc(1.4 * var(--u)); width: 18cqw; background: linear-gradient(90deg, transparent, #F2E6C8); border-radius: 1cqh; }
+.arene-etoile { font: 900 calc(13 * var(--u))/1 var(--f-titre); color: var(--accent); }
