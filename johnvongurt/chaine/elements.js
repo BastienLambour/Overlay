@@ -47,6 +47,22 @@
   const galons = n => `<svg viewBox="0 0 72 72" width="72" height="72"><rect x="3" y="3" width="66" height="66" rx="10" fill="#141920" stroke="#E6EAEE" stroke-width="3"/>
     ${Array.from({ length: n }, (_, i) => `<path d="M16 ${ (n === 1 ? 40 : n === 2 ? 34 : 28) + i * 12} L36 ${(n === 1 ? 28 : n === 2 ? 22 : 16) + i * 12} L56 ${(n === 1 ? 40 : n === 2 ? 34 : 28) + i * 12}" fill="none" stroke="#FF9F1C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</svg>`;
 
+  // Planning (reglages.html › Kit › Planning) : « Mercredi | 20h30 » ou « Mercredi | 20h30 | Minecraft »
+  const jours = (K.planning || []).map(([jour, reste]) => { const [heure, ...quoi] = String(reste || '').split('|'); return { jour, heure: heure.trim(), quoi: quoi.join('|').trim() }; });
+  const ligneJour = jours.some(j => j.quoi) ? 62 : 44;
+  const hautPlanning = 96 + jours.length * ligneJour + 24;
+  // Panneau Planning rempli : la semaine, en plus haut (même largeur que les autres panneaux)
+  const panneauPlanning = el => {
+    el.innerHTML = `<div class="jv" style="background:var(--fond-2)">${coins.replace(/20px/g, '10px')}
+      <div style="position:absolute;left:24px;top:28px">${icone('horloge', 44, 'var(--accent)')}</div>
+      <div class="jv-titre" style="position:absolute;left:82px;top:26px;font-size:46px">Planning</div>
+      <div style="position:absolute;left:44px;right:36px;top:96px">${jours.map((j, n) => `<div style="height:${ligneJour}px;border-top:1px solid var(--faible);display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;align-items:baseline;gap:12px"><span style="font:600 14px var(--f-mono);color:var(--accent)">${String(n + 1).padStart(2, '0')}</span>
+          <span class="jv-titre" style="font-size:26px;flex:1">${j.jour}</span><span style="font:600 22px var(--f-mono);color:var(--accent)">${j.heure}</span></div>
+        ${j.quoi ? `<div style="font:600 16px var(--f-texte);color:var(--doux);margin:2px 0 0 32px">${j.quoi}</div>` : ''}</div>`).join('')}</div>
+      <div class="hachures" style="position:absolute;right:26px;bottom:14px;width:70px;height:8px"></div></div>`;
+  };
+
   window.KIT = {
     elements: [
       { id: 'profil', groupe: 'profil', nom: 'Fusée en orbite', l: 800, h: 800, rendu: el => {
@@ -85,10 +101,11 @@
           el.innerHTML = `<div class="jv" style="background:var(--fond-2)">${coins.replace(/20px/g, '10px')}
             <div style="position:absolute;left:26px;top:30px;font:600 16px var(--f-mono);color:var(--accent)">${String(i + 1).padStart(2, '0')}</div>
             <div style="position:absolute;left:24px;top:58px">${Reseaux.svg(titre, 64, 'color:var(--accent)') || icone(icoPanneau[titre] || 'cible', 64, 'var(--accent)')}</div>
-            <div class="jv-titre" style="position:absolute;left:112px;right:16px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 40 : 52}px">${titre}</div>
+            <div class="jv-titre" style="position:absolute;left:112px;right:16px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 9 ? Math.floor(192 / (titre.length * 0.5)) : titre.length > 8 ? 40 : 52}px">${titre}</div>
             <div class="hachures" style="position:absolute;right:26px;bottom:24px;width:70px;height:12px"></div></div>`;
         },
-      })),
+      }))
+        .map(e => jours.length && /^planning$/i.test(e.nom.trim()) ? { ...e, h: hautPlanning, rendu: panneauPlanning } : e),
 
       // Page de dons StreamElements : on fait le plein de la fusée
       { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {

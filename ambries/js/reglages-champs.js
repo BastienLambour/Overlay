@@ -88,14 +88,13 @@ window.ReglagesChamps = {
       { cle: 'streamelements.actif', type: 'case', label: 'Se connecter à StreamElements' },
       { cle: 'streamelements.jeton', type: 'secret', label: 'Ton jeton StreamElements (JWT Token)', aide: 'streamelements.com › ton avatar en haut à droite › ta chaîne › « Afficher les secrets » › copie le JWT Token, colle-le ici (tuto, section 6).' },
     ] },
-    { titre: 'Kit de chaîne Twitch', icone: '📺', champs: [
+    { titre: 'Kit de chaîne Twitch', icone: '📺', aide: 'Les textes des images de ta chaîne Twitch (ouvre chaine/kit.html pour les voir). Après un changement, refais les images : OBS › Outils › Scripts › « Refaire les images du kit Twitch ».', champs: [
       { cle: 'chaine.slogan', type: 'texte', label: 'Slogan (sous le nom, sur la bannière)' },
       { cle: 'chaine.horsLigne', type: 'texte', label: 'Texte de l\'écran hors-ligne' },
-      { cle: 'chaine.dons.titre', type: 'texte', label: 'Page de dons StreamElements : titre', aide: 'Sur la bannière et le fond de ta page de dons (voir le kit). Ensuite, refais les images du kit.' },
+      { cle: 'chaine.dons.titre', type: 'texte', label: 'Page de dons StreamElements : titre' },
       { cle: 'chaine.dons.texte', type: 'texte', label: 'Page de dons StreamElements : petite phrase' },
-      { cle: 'chaine.planning', type: 'paires', label: 'Planning', aide: 'Une ligne par jour, ex. « Mercredi | 20h30 ».' },
-      { cle: 'chaine.reseaux', type: 'paires', label: 'Réseaux', aide: 'Une ligne par réseau, ex. « Discord | discord.gg/… ». Vide = panneau Réseaux masqué.' },
-      { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne. Un nom de réseau (Discord, YouTube, TikTok, Instagram, X (Twitter), Twitch, Kick, Bluesky) prend son logo : retire ceux que tu n’utilises pas. Ensuite, refais les images : node outils/exporter-chaine.mjs' },
+      { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne, dans l’ordre de ta chaîne. Un nom de réseau (Discord, YouTube, TikTok, Instagram, X (Twitter), Twitch, Kick, Bluesky), « Mes sites » ou « Mes créations » prend son logo : retire ceux que tu n’utilises pas.' },
+      { cle: 'chaine.planning', type: 'paires', label: 'Planning (panneau de bio)', aide: 'Une ligne par jour : « Mercredi | 20h30 », ou avec le jeu : « Mercredi | 20h30 | Minecraft ». Rempli, le panneau Planning affiche ta semaine ; vide, il garde juste son titre.' },
     ] },
     { titre: 'Mises à jour', icone: '🔄', aide: 'D\'où l\'overlay se met à jour : bouton « Mettre à jour l\'overlay » du script OBS (outils/actualiser-obs.lua), ou double-clic sur mettre-a-jour.cmd. Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l\'ancienne version est gardée dans sauvegardes.', champs: [
       { cle: 'miseAJour.adresse', type: 'texte', label: 'Adresse du serveur des overlays', aide: 'Ex. https://overlays.bastien-lambour.fr (celle de la page de téléchargement). À ne changer que si on te le dit.' },

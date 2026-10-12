@@ -36,6 +36,21 @@
     ? K.planning.map(([j, h]) => `<div><b style="color:var(--accent)">${j}</b> · ${h}</div>`).join('')
     : '<div>Suis la chaîne pour être prévenu du prochain live</div>';
 
+  // Planning (reglages.html › Kit › Planning) : « Mercredi | 20h30 » ou « Mercredi | 20h30 | Minecraft »
+  const jours = (K.planning || []).map(([jour, reste]) => { const [heure, ...quoi] = String(reste || '').split('|'); return { jour, heure: heure.trim(), quoi: quoi.join('|').trim() }; });
+  const ligneJour = jours.some(j => j.quoi) ? 62 : 44;
+  const hautPlanning = 96 + jours.length * ligneJour + 24;
+  // Panneau Planning rempli : la semaine, en plus haut (même largeur que les autres panneaux)
+  const panneauPlanning = el => {
+    el.innerHTML = `<div class="mn">${fond(320, hautPlanning, graine + 8)}<div class="mn-voile"></div>
+      <div class="cadre verre" style="left:12px;top:12px;width:296px;height:${hautPlanning - 24}px;--rayon:18px;--epaisseur:4px"></div>
+      <div class="mn-centre" style="bottom:auto;height:96px">${neon('Planning', 44)}</div>
+      <div style="position:absolute;left:34px;right:34px;top:96px">${jours.map(j => `<div style="height:${ligneJour}px;display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font:800 22px var(--f-texte);color:var(--texte)"><span>${j.jour}</span>
+          <span style="color:var(--accent);text-shadow:0 0 6px var(--accent-halo)">${j.heure}</span></div>
+        ${j.quoi ? `<div style="font:700 16px var(--f-texte);color:var(--doux);margin-top:2px">${j.quoi}</div>` : ''}</div>`).join('')}</div></div>`;
+  };
+
   window.KIT = {
     avant() {
       Commun.appliquerCouleur(Commun.params.get('couleur') || C.couleur);
@@ -71,10 +86,11 @@
             ${Reseaux.cle(titre)
               // Réseau : son logo en néon à gauche, le nom à droite
               ? `<div style="position:absolute;left:36px;top:44px">${Reseaux.svg(titre, 72, 'color:var(--accent);filter:drop-shadow(0 0 2px var(--accent-fonce)) drop-shadow(0 0 6px var(--accent-halo))')}</div>
-                <div class="mn-centre" style="left:120px;right:20px">${neon(titre, Math.min(40, Math.floor(245 / titre.length)))}</div>`
+                <div class="mn-centre" style="left:120px;right:20px">${titre.length > 9 ? neon(titre, Math.min(34, Math.floor(400 / titre.length)), 'white-space:normal;line-height:1.05;text-align:center') : neon(titre, Math.min(40, Math.floor(245 / titre.length)))}</div>`
               : `<div class="mn-centre">${neon(titre, titre.length > 9 ? 40 : 50)}</div>`}</div>`;
         },
-      })),
+      }))
+        .map(e => jours.length && /^planning$/i.test(e.nom.trim()) ? { ...e, h: hautPlanning, rendu: panneauPlanning } : e),
 
       // Page de dons StreamElements : cadres de verre et cœur néon, le milieu reste libre pour le formulaire
       { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {

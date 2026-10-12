@@ -7,11 +7,15 @@
        node outils/capturer.mjs scenes/jeu.html?test=1
        node outils/capturer.mjs "transitions/rideau.html?mode=complet" 0 700 1400
        node outils/capturer.mjs chaine/kit.html --largeur=1240 --hauteur=3000 --dossier=C:\temp
+       node outils/capturer.mjs "sources/cadre.html?x=40&y=40" --transparent --fichier=assets/cadre.png
 
    Les nombres sont des instants en millisecondes : toutes les animations sont
    mises en pause à cet instant (getAnimations → currentTime) avant la capture.
    Sans nombre : capture après 1,5 s d'animation normale.
    Résultat : un PNG par instant, dans --dossier (par défaut : dossier temporaire affiché).
+   --transparent : fond transparent (pour faire une IMAGE d'une source : cadre, logo…).
+   --decoupe=x,y,l,h : ne garde que ce rectangle de la page (pixels de la fenêtre).
+   --fichier=<chemin.png> : enregistre la capture sous ce nom (une seule capture), depuis le dossier de l'overlay.
    Nécessite : Microsoft Edge (installé avec Windows).
 
    FICHIER COMMUN : identique dans tous les overlays (copie de _modele/outils/).
@@ -30,7 +34,9 @@ const page = args.find(a => !a.startsWith('--') && !/^\d+(\.\d+)?$/.test(a));
 const instants = args.filter(a => /^\d+(\.\d+)?$/.test(a)).map(Number);
 if (!page) { console.error('Indique une page, ex. : node outils/capturer.mjs scenes/jeu.html?test=1'); process.exit(1); }
 const L = Number(option('largeur', 1920)), H = Number(option('hauteur', 1080));
-const SORTIE = option('dossier', mkdtempSync(join(tmpdir(), 'overlay-capture-')));
+const DECOUPE = option('decoupe', '') ? option('decoupe').split(',').map(Number) : null;
+const FICHIER = option('fichier', '') ? resolve(RACINE, option('fichier')) : '';
+const SORTIE = FICHIER ? dirname(FICHIER) : option('dossier', mkdtempSync(join(tmpdir(), 'overlay-capture-')));
 mkdirSync(SORTIE, { recursive: true });
 
 const [chemin, requete] = page.split('?');
@@ -72,13 +78,16 @@ await cdp('Runtime.enable');
 const erreurs = [];
 ecouteurs.push(m => { if (m.method === 'Runtime.exceptionThrown') erreurs.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text); });
 await cdp('Emulation.setDeviceMetricsOverride', { width: L, height: H, deviceScaleFactor: 1, mobile: false });
+if (args.includes('--transparent')) await cdp('Emulation.setDefaultBackgroundColorOverride', { color: { r: 0, g: 0, b: 0, a: 0 } });
 const charge = new Promise(r => ecouteurs.push(m => m.method === 'Page.loadEventFired' && r()));
 await cdp('Page.navigate', { url });
 await charge;
 await evaluer('document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {})))).then(() => true)');
 
 async function capture(fichier) {
-  const { data } = await cdp('Page.captureScreenshot', { format: 'png' });
+  if (FICHIER) fichier = basename(FICHIER);
+  const clip = DECOUPE ? { clip: { x: DECOUPE[0], y: DECOUPE[1], width: DECOUPE[2], height: DECOUPE[3], scale: 1 } } : {};
+  const { data } = await cdp('Page.captureScreenshot', { format: 'png', ...clip });
   writeFileSync(join(SORTIE, fichier), Buffer.from(data, 'base64'));
   console.log(`  ${join(SORTIE, fichier)}`);
 }

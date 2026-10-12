@@ -54,6 +54,20 @@
   // Icône de chaque panneau de bio (par titre)
   const icoPanneau = { 'À propos': 'parchemin', 'Planning': 'd20', 'Règles': 'bouclier', 'Soutenir': 'grelot', 'Réseaux': 'chapeau', 'Discord': 'chapeau', 'Matériel': 'd6', 'Commandes': 'd4' };
 
+  // Planning (reglages.html › Kit › Planning) : « Mercredi | 20h30 » ou « Mercredi | 20h30 | Minecraft »
+  const jours = (K.planning || []).map(([jour, reste]) => { const [heure, ...quoi] = String(reste || '').split('|'); return { jour, heure: heure.trim(), quoi: quoi.join('|').trim() }; });
+  const ligneJour = jours.some(j => j.quoi) ? 62 : 44;
+  const hautPlanning = 96 + jours.length * ligneJour + 24;
+  // Panneau Planning rempli : la semaine, en plus haut (même largeur que les autres panneaux)
+  const panneauPlanning = el => {
+    el.innerHTML = `<div class="pg-fond" style="border-radius:16px;border:6px solid var(--accent)"></div>
+      <div style="position:absolute;left:22px;top:20px;width:56px;height:56px">${ico('d20').replace(/^<(svg|img)/, '<$1 style="width:56px;height:56px"')}</div>
+      <div class="pg-titre" style="position:absolute;left:92px;top:20px;height:56px;display:flex;align-items:center;font-size:46px">Planning</div>
+      <div style="position:absolute;left:24px;right:24px;top:96px">${jours.map(j => `<div style="height:${ligneJour}px;border-top:2px dashed color-mix(in srgb, var(--accent) 45%, transparent);display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font:800 22px var(--f-texte);color:var(--texte)"><span>${j.jour}</span><span style="color:var(--accent)">${j.heure}</span></div>
+        ${j.quoi ? `<div style="font:700 16px var(--f-texte);color:var(--texte-doux);margin-top:2px">${j.quoi}</div>` : ''}</div>`).join('')}</div>`;
+  };
+
   window.KIT = {
     elements: [
       // Photo de profil : le bouffon (tête et chapeau), cadré pour le rond de Twitch
@@ -98,9 +112,10 @@
         groupe: 'panneau', nom: titre, l: 320, h: 160, rendu: el => {
           el.innerHTML = `<div class="pg-fond" style="border-radius:16px;border:6px solid var(--accent)"></div>
             <div style="position:absolute;left:22px;top:38px;width:84px;height:84px">${Reseaux.svg(titre, 84, 'color:var(--primaire);filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))') || ico(icoPanneau[titre] || 'd20').replace(/^<(svg|img)/, '<$1 style="width:84px;height:84px"')}</div>
-            <div class="pg-titre" style="position:absolute;left:122px;right:14px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 8 ? 38 : 50}px">${titre}</div>`;
+            <div class="pg-titre" style="position:absolute;left:122px;right:14px;top:0;bottom:0;display:flex;align-items:center;font-size:${titre.length > 9 ? Math.floor(184 / (titre.length * 0.5)) : titre.length > 8 ? 38 : 50}px">${titre}</div>`;
         },
-      })),
+      }))
+        .map(e => jours.length && /^planning$/i.test(e.nom.trim()) ? { ...e, h: hautPlanning, rendu: panneauPlanning } : e),
 
       // Page de dons StreamElements : la bourse du bouffon
       { id: 'dons-banniere', groupe: 'dons', nom: 'Bannière de la page de dons', l: 640, h: 200, rendu: el => {

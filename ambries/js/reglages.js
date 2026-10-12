@@ -244,6 +244,7 @@ window.MES_REGLAGES = ${formater(perso)};
     // Réglages qui n'existent plus (streamerbot, streamlabs : remplacés par StreamElements) : oubliés au prochain « Enregistrer »
     const OBSOLETES = ['streamerbot', 'streamlabs'];
     OBSOLETES.forEach(k => delete enregistre[k]);
+    if (enregistre.chaine) delete enregistre.chaine.reseaux;   // ancien champ « Réseaux » du kit (les logos viennent des panneaux)
     let valeurs = copie(enregistre);                   // ce qu'il y a dans le formulaire
     const nom = enregistre.nomChaine || enregistre.id || 'Overlay';
     document.title = `${nom} — Réglages`;
@@ -393,6 +394,7 @@ window.MES_REGLAGES = ${formater(perso)};
         if (!c) return '<td class="rg-vide">—</td>';
         const id = idChamp(c.cle), v = lire(valeurs, c.cle), titre = `aria-label="${echapper(c.label)}"`;
         if (c.type === 'case') return `<td><label class="rg-bascule" data-cle="${c.cle}"><input id="${id}" type="checkbox" ${v ? 'checked' : ''} ${titre}><i></i></label></td>`;
+        if (c.type === 'choix') return `<td style="text-align:left"><label data-cle="${c.cle}"><select id="${id}" ${titre}>${(c.options || []).map(([val, lib]) => `<option value="${echapper(val)}" ${val === v ? 'selected' : ''}>${echapper(lib)}</option>`).join('')}</select></label></td>`;
         if (c.type === 'nombre') return `<td><label data-cle="${c.cle}"><input id="${id}" type="number" value="${echapper(v)}" ${c.min != null ? `min="${c.min}"` : ''} ${c.max != null ? `max="${c.max}"` : ''} step="${c.pas || 'any'}" style="width:6em" ${titre}></label></td>`;
         return `<td style="text-align:left"><label data-cle="${c.cle}"><input id="${id}" type="text" value="${echapper(v)}" style="width:100%;min-width:${c.large ? '24em' : '9em'};box-sizing:border-box" spellcheck="false" ${titre}></label></td>`;
       };
@@ -606,6 +608,7 @@ window.MES_REGLAGES = ${formater(perso)};
       const repris = difference(ancien, defaut);
       delete repris.id;
       OBSOLETES.forEach(k => delete repris[k]);
+      if (repris.chaine) delete repris.chaine.reseaux;
       const chemins = feuilles(repris);
       chemins.forEach(c => ecrireCle(valeurs, c, copie({ v: lire(repris, c) }).v));
       if (Array.isArray(repris.ambiances)) valeurs.ambiances = copie(repris.ambiances);

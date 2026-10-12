@@ -339,6 +339,14 @@ Pour l'avoir toujours : `reglages.html` › **Options des scènes** › « Speed
 
 **Options** : `?verre=1` (intérieur fumé) · `?apercu=1`
 
+**En image (au lieu d'une source Navigateur)** : le même cadre en PNG transparent, plus léger pour OBS, ou pour l'utiliser ailleurs. Dans PowerShell, dans le dossier de l'overlay, avec la taille de ce que tu encadres :
+
+```
+node outils/cadre-image.mjs 380x290
+```
+
+L'image arrive dans `assets/cadres/cadre-380x290.png` (ajoute `verre` après la taille pour l'intérieur fumé). Dans OBS : **+** › **Image** › ce fichier. L'image a **50 px de marge** de chaque côté (pour le halo) : place-la 50 px plus haut et plus à gauche que ce qu'elle encadre. Elle garde la couleur du moment : si tu changes de couleur dans `reglages.html`, refais-la.
+
 ### 4.5 ⏲ Compte à rebours — `sources/compte-a-rebours.html`
 
 **À quoi ça sert** : un compte à rebours seul, en police néon, à poser où tu veux.
@@ -534,7 +542,7 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 | Photo de profil | `profil.png` (800 × 800) | Tableau de bord des créateurs › Paramètres › Chaîne › **Marque** › Photo de profil |
 | Bannière de profil | `banniere.png` (1200 × 480) | … › **Marque** › Bannière de profil |
 | Écran hors-ligne | `hors-ligne.png` (1920 × 1080) | … › **Marque** › Bannière du lecteur vidéo |
-| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-commandes.png`, `panneau-soutenir.png`, et les réseaux : `panneau-discord.png`, `panneau-youtube.png`, `panneau-tiktok.png`, `panneau-instagram.png`, `panneau-x-twitter.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
+| Panneaux de bio | `panneau-a-propos.png`, `panneau-planning.png`, `panneau-regles.png`, `panneau-materiel.png`, `panneau-commandes.png`, `panneau-soutenir.png`, `panneau-mes-creations.png`, et les réseaux : `panneau-discord.png`, `panneau-youtube.png`, `panneau-tiktok.png`, `panneau-instagram.png`, `panneau-x-twitter.png` (320 × 160) | Ta chaîne › onglet **À propos** › **Modifier les panneaux** › **+** |
 | Page de dons StreamElements | `dons-banniere.png` (640 × 200) et `dons-fond.png` (1920 × 1080) | streamelements.com › **Revenue** › **Tipping settings** (pas à pas ci-dessous) |
 | Emotes | `emote-gg`, `pb`, `reset`, `gold`, `coeur`, `manette` (-112, -56, -28) | Tableau de bord › **Récompenses des spectateurs** › Emotes *(affilié ou partenaire)* |
 | Badges d'abonné | `badge-mois-1`, `-3`, `-6`, `-9`, `-12` (-72, -36, -18) | Tableau de bord › **Récompenses des spectateurs** › Badges d'abonné |
@@ -546,6 +554,10 @@ Tous les visuels sont dans `chaine/` : ouvre `chaine/kit.html` pour les voir. Le
 4. **Envoyer**, puis recommence pour les autres panneaux.
 
 **Les panneaux des réseaux** (Discord, YouTube, TikTok, Instagram, X) : à l'étape 3, remplis aussi **Lien de l'image** avec l'adresse du réseau (ton invitation Discord `https://discord.gg/…`, ta chaîne YouTube…) : un clic sur l'image y mène. Tu n'as pas un de ces réseaux ? Retire son nom dans `reglages.html` › **Kit de chaîne Twitch** › Panneaux de bio. Un autre réseau (Twitch, Kick, Bluesky) : ajoute son nom, il prend son logo.
+
+**Le panneau Planning :** remplis `reglages.html` › **Kit de chaîne Twitch** › **Planning**, une ligne par jour : `Mercredi | 20h30`, ou avec le jeu : `Mercredi | 20h30 | Minecraft`. Enregistre, puis refais les images (OBS › **Outils › Scripts** › **Refaire les images du kit Twitch**) : `panneau-planning.png` devient le planning de la semaine, aux couleurs de l'overlay (plus haut que les autres panneaux, c'est normal : Twitch l'accepte). Planning vide = le panneau titre « Planning ». À refaire quand tes horaires changent.
+
+**Le panneau Mes créations :** dans sa description, mets tes liens (site, boutique, portfolio…), et dans **Lien de l'image** le principal. Tu préfères « Mes sites » (avec un globe) ? Renomme-le dans la liste des panneaux de `reglages.html`.
 
 **Le panneau Commandes :** dans sa description, liste les commandes du chat, une par ligne avec ce qu'elle fait (ex. `!discord` : le lien du Discord · `!planning` : les jours de live). Elles se créent dans streamelements.com › **Chatbot** › **Chat commands** (le bot StreamElements doit être sur ta chaîne : **Chatbot** › **Join channel**). L'overlay cache déjà ces messages et les réponses du bot dans le chat de l'écran.
 
@@ -643,6 +655,7 @@ Ces scripts **refont les fichiers « fabriqués »** : vidéos de transition, im
 | `generer-transitions.mjs` | refait les vidéos `transitions/videos/*.webm` (Stinger) | après un changement de couleurs | `node outils/generer-transitions.mjs` *(ffmpeg nécessaire)* |
 | `exporter-chaine.mjs` | refait les images `chaine/export/*.png` (profil, bannière, panneaux, emotes, badges) | après un changement de couleurs ou des textes du kit | `node outils/exporter-chaine.mjs` |
 | `generer-pdf.mjs` | refait `TUTO.pdf` et `CONCEPT.pdf` depuis les `.md` | après une modification de `TUTO.md` ou `CONCEPT.md` | `node outils/generer-pdf.mjs` |
+| `cadre-image.mjs` | fabrique le cadre néon en image PNG transparente, à la taille voulue (4.4) | pour une source Image au lieu de la page | `node outils/cadre-image.mjs 380x290` |
 | `capturer.mjs` | fait une capture PNG d'une page (pour vérifier une animation, ou l'envoyer) | pour vérifier | `node outils/capturer.mjs "scenes/jeu.html?test=1"` |
 | `polices-locales.mjs` | copie dans `assets/polices/` les polices du thème (pour ne plus dépendre d'internet) | seulement si on change de police (déjà fait) | `node outils/polices-locales.mjs` *(internet nécessaire)* |
 

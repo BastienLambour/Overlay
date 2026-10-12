@@ -3,6 +3,7 @@
    Un panneau dont le titre est le nom d'un réseau (Discord, YouTube, TikTok,
    Instagram, X / Twitter, Twitch, Kick, Bluesky…) prend son logo, d'une seule couleur
    (currentColor : la couleur du thème), à la place de l'icône du thème.
+   Aussi : « Mes sites » / « Mon site » (globe) et « Mes créations » / « Portfolio » (pinceau).
 
      Reseaux.svg('Discord', 64)   → <svg> du logo, ou '' si le titre n'est pas un réseau
 
@@ -19,10 +20,14 @@ window.Reseaux = (() => {
     twitch: '<path fill="currentColor" fill-rule="evenodd" d="M7 3 L4 8 V26 H10 V30 H14 L18 26 H23 L29 20 V3 Z M8 6 H26 V18.5 L22 22.5 H17 L13 26.5 V22.5 H8 Z M14 10 H17 V17 H14 Z M20.5 10 H23.5 V17 H20.5 Z"/>',
     kick: '<path fill="currentColor" d="M5 4 H12 V11 H15 V7.5 H18.5 V4 H27 V12 H23.5 V15.5 H20 V16.5 H23.5 V20 H27 V28 H18.5 V24.5 H15 V21 H12 V28 H5 Z"/>',
     bluesky: '<path fill="currentColor" d="M8.4 5.6 C11.6 8 15 12.8 16 15.2 C17 12.8 20.4 8 23.6 5.6 C25.9 3.9 29.6 2.6 29.6 6.8 C29.6 7.6 29.1 13.8 28.9 15.9 C28 19.6 24.2 20.5 20.8 20 C26.7 21 28.2 24.3 25 27.6 C18.8 33.9 16.1 26 16 24.6 C15.9 26 13.2 33.9 7 27.6 C3.8 24.3 5.3 21 11.2 20 C7.8 20.5 4 19.6 3.1 15.9 C2.9 13.8 2.4 7.6 2.4 6.8 C2.4 2.6 6.1 3.9 8.4 5.6 Z"/>',
+    site: '<g fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="16" cy="16" r="12.5"/><ellipse cx="16" cy="16" rx="5.5" ry="12.5"/><path d="M3.5 16 H28.5 M5.5 9.5 H26.5 M5.5 22.5 H26.5"/></g>',
+    creations: '<path fill="currentColor" d="M25.5 3.2 C26.6 2.4 28.2 2.6 29 3.6 C29.8 4.6 29.6 6.1 28.6 7 L17.6 17.4 L14.4 14.3 Z"/><path fill="currentColor" d="M13.2 15.6 L16.3 18.7 C15.9 22.4 13.4 25.4 9.4 26.6 C7.2 27.3 4.8 27.2 3 26.6 C4.8 25.4 5.4 24.2 5.7 22.4 C6.2 18.8 9.2 15.9 13.2 15.6 Z"/><path d="M22 23.5 L23.2 26.3 L26.2 26.6 L23.9 28.5 L24.6 31.4 L22 29.8 L19.4 31.4 L20.1 28.5 L17.8 26.6 L20.8 26.3 Z" fill="currentColor" transform="translate(4.5 -4) scale(.85)"/>',
   };
   // Titre de panneau → réseau (minuscules, sans accents ni espaces)
   const NOMS = { discord: 'discord', youtube: 'youtube', tiktok: 'tiktok', instagram: 'instagram', insta: 'instagram',
-    x: 'x', twitter: 'x', xtwitter: 'x', twitterx: 'x', twitch: 'twitch', kick: 'kick', bluesky: 'bluesky' };
+    x: 'x', twitter: 'x', xtwitter: 'x', twitterx: 'x', twitch: 'twitch', kick: 'kick', bluesky: 'bluesky',
+    messites: 'site', monsite: 'site', site: 'site', sites: 'site', siteweb: 'site', siteinternet: 'site', liens: 'site', mesliens: 'site',
+    mescreations: 'creations', creations: 'creations', mestravaux: 'creations', portfolio: 'creations', mesprojets: 'creations' };
   const cle = titre => NOMS[String(titre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '')] || '';
   return {
     cle,
