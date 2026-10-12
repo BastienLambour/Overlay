@@ -463,7 +463,14 @@ end
 local taches = {
   transitions = { nom = "Vidéos de transition", fichier = nil, debut = 0, message = "", manque = false, decroches = {} },
   kit = { nom = "Images du kit Twitch", fichier = nil, debut = 0, message = "", manque = false, decroches = {} },
+  planning = { nom = "Image du planning", fichier = nil, debut = 0, message = "", manque = false, decroches = {} },
 }
+
+-- Réponse à reglages.html (bouton « Fabriquer l'image du planning ») : la page lit ce fichier dans le dossier de l'overlay
+local function repondre_page(texte)
+  local f = io.open(dossier .. "/outils/demande-resultat.txt", "wb")
+  if f ~= nil then f:write(texte); f:close() end
+end
 
 -- Les transitions Stinger dont la vidéo est dans <overlay>/transitions/videos/
 local function stingers(action)
@@ -517,40 +524,61 @@ local function suivre_tache(quoi)
   t.message = texte:match("message=([^\r\n]*)") or ""
   t.manque = (etat == "manque")
   if quoi == "transitions" then raccrocher_stingers(t.decroches); t.decroches = {} end
+  if quoi == "planning" then repondre_page(texte) end
   obs.script_log(etat == "erreur" and obs.LOG_WARNING or obs.LOG_INFO, t.message)
 end
 taches.transitions.suivre = function() suivre_tache("transitions") end
 taches.kit.suivre = function() suivre_tache("kit") end
+taches.planning.suivre = function() suivre_tache("planning") end
 
-local function refaire(quoi)
+-- semaine (planning seulement) : « 2027-W08 »
+local function refaire(quoi, semaine)
   local t = taches[quoi]
+  local function refus(message)
+    t.message = message
+    obs.script_log(obs.LOG_WARNING, message)
+    if quoi == "planning" then repondre_page("etat=erreur\nmessage=" .. message .. "\n") end
+  end
   if package.config:sub(1, 1) ~= "\\" then
-    t.message = "Le bouton marche sous Windows : ailleurs, lance node outils/" .. (quoi == "kit" and "exporter-chaine" or "generer-transitions") .. ".mjs"
-    obs.script_log(obs.LOG_WARNING, t.message)
-    return
+    return refus("Le bouton marche sous Windows : ailleurs, lance node outils/" .. (quoi == "transitions" and "generer-transitions" or "exporter-chaine") .. ".mjs")
   end
-  if t.fichier ~= nil then return end   -- déjà en cours
+  if t.fichier ~= nil then
+    if quoi == "planning" then repondre_page("etat=erreur\nmessage=Une image du planning est déjà en fabrication : attends qu'elle soit finie.\n") end
+    return   -- déjà en cours
+  end
+  if quoi == "planning" and (semaine == nil or not semaine:match("^%d%d%d%d%-W%d%d?$")) then return refus("Semaine illisible.") end
   local ps1 = dossier .. "/outils/refaire.ps1"
-  if lire(ps1) == nil then
-    t.message = "outils/refaire.ps1 introuvable dans " .. dossier .. " (mets l'overlay à jour)"
-    obs.script_log(obs.LOG_WARNING, t.message)
-    return
-  end
+  if lire(ps1) == nil then return refus("outils/refaire.ps1 introuvable dans " .. dossier .. " (mets l'overlay à jour)") end
   local installer = t.manque
   t.manque = false
   t.fichier = (os.getenv("TEMP") or dossier) .. "\\refaire-" .. quoi .. "-" .. os.time() .. ".txt"
   t.debut = os.time()
   if quoi == "transitions" then t.decroches = decrocher_stingers() end
   t.message = t.nom .. " : en cours" .. (installer and " (installation de Node.js / ffmpeg d'abord, 2 à 5 minutes)" or "")
-    .. (quoi == "transitions" and "… 1 à 2 minutes par vidéo ; en attendant, les transitions de l'overlay sont coupées." or "… 1 à 2 minutes.")
+    .. (quoi == "transitions" and "… 1 à 2 minutes par vidéo ; en attendant, les transitions de l'overlay sont coupées." or quoi == "planning" and "… quelques secondes." or "… 1 à 2 minutes.")
   obs.script_log(obs.LOG_INFO, t.message)
   os.execute('start "" /min powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' .. ps1:gsub("/", "\\")
-    .. '" -Quoi ' .. quoi .. (installer and " -Installer" or "") .. ' -Sortie "' .. t.fichier .. '"')
+    .. '" -Quoi ' .. quoi .. (semaine and (" -Semaine " .. semaine) or "") .. (installer and " -Installer" or "") .. ' -Sortie "' .. t.fichier .. '"')
   obs.timer_add(t.suivre, 1000)
 end
 
--- Toutes les 2 secondes : config.js ou mes-reglages.js (les réglages du streamer) ont-ils changé ?
+-- Une demande de reglages.html ? (bouton « Fabriquer l'image du planning » : il écrit outils/demande.txt
+-- dans le dossier de l'overlay, « quoi=planning » et « semaine=2027-W08 » ; la réponse va dans outils/demande-resultat.txt)
+local function verifier_demande()
+  if dossier == "" then return end
+  local chemin = dossier .. "/outils/demande.txt"
+  local texte = lire(chemin)
+  if texte == nil then return end
+  os.remove(chemin)
+  if texte:match("quoi=planning") then
+    obs.script_log(obs.LOG_INFO, "reglages.html demande l'image du planning")
+    refaire("planning", texte:match("semaine=([%dW%-]+)"))
+  end
+end
+
+-- Toutes les 2 secondes : une demande de reglages.html ? config.js ou mes-reglages.js (les réglages du streamer) ont-ils changé ?
 local function surveiller()
+  verifier_demande()
   if (not auto and not auto_cams) or dossier == "" then return end
   local texte = lire(dossier .. "/config.js")
   if texte == nil then return end
@@ -607,7 +635,7 @@ function script_properties()
   end)
   if obs.OBS_TEXT_INFO ~= nil then
     local lignes = {}
-    for _, quoi in ipairs({ "transitions", "kit" }) do
+    for _, quoi in ipairs({ "transitions", "kit", "planning" }) do
       local t = taches[quoi]
       if t.message ~= "" then table.insert(lignes, t.message) end
     end

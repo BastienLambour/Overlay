@@ -329,7 +329,84 @@ window.MES_REGLAGES = ${formater(perso)};
         default: saisie = `<input id="${id}" type="text" value="${echapper(v)}">`;
       }
       const large = ['liste', 'paires'].includes(c.type) || c.large ? ' rg-large' : '';
-      return `<label class="rg-champ${large}" data-cle="${c.cle}"><span>${echapper(c.label)}</span>${saisie}${aide}</label>`;
+      return `<label class="rg-champ${large}" data-cle="${c.cle}"><span>${echapper(c.label)}</span>${saisie}${aide}</label>`
+        + (c.planning ? planningHTML() : '');
+    }
+
+    // --- Champ « planning: true » (chaine.planning) : choisir une semaine et fabriquer l'image du panneau Planning ---
+    // La page ne peut pas lancer de programme : elle dépose outils/demande.txt dans le dossier de l'overlay ; le script OBS
+    // (outils/actualiser-obs.lua) la voit, lance outils/refaire.ps1 -Quoi planning, et répond dans outils/demande-resultat.txt.
+    const semaineDe = (d = new Date()) => {
+      const j = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      j.setUTCDate(j.getUTCDate() - ((j.getUTCDay() + 6) % 7) + 3);              // le jeudi de la semaine
+      const j4 = new Date(Date.UTC(j.getUTCFullYear(), 0, 4));
+      const n = 1 + Math.round(((j - j4) / 864e5 - 3 + ((j4.getUTCDay() + 6) % 7)) / 7);
+      return `${j.getUTCFullYear()}-W${String(n).padStart(2, '0')}`;
+    };
+    let semaineChoisie = semaineDe();
+    function planningHTML() {
+      return `<div class="rg-champ rg-large rg-planning"><span>Image du planning</span>
+        <div class="rg-nouvelle" style="margin-top:0;align-items:center">
+          <input type="week" id="rg-semaine" value="${semaineChoisie}" aria-label="Semaine du planning" style="flex:0 1 220px">
+          <button type="button" id="rg-fabriquer-planning">🖼️ Fabriquer l’image du planning</button></div>
+        <small>Choisis la semaine, puis clique : l’image (« Planning · Semaine 8 · du … au … ») arrive dans <code>chaine/export/plannings/</code>,
+          un fichier par semaine : ceux des autres semaines restent. Il faut Edge ou Chrome, et OBS ouvert avec le script actualiser-obs.lua (tuto 2.8).</small>
+        <div id="rg-planning-resultat" style="font-weight:700"></div></div>`;
+    }
+    async function fabriquerPlanning() {
+      const sortie = document.getElementById('rg-planning-resultat');
+      const dire = (html, ok) => { sortie.innerHTML = html; sortie.style.color = ok === true ? '#8BD17C' : ok === false ? 'var(--rg-accent)' : ''; };
+      const semaine = document.getElementById('rg-semaine').value;
+      if (!/^\d{4}-W\d{2}$/.test(semaine)) return dire('Choisis d’abord la semaine.', false);
+      relire();
+      if (!(lire(valeurs, 'chaine.planning') || []).length) return dire('Le planning est vide : écris tes jours au-dessus (ex. « Mercredi | 20h30 | Minecraft »).', false);
+      const commande = `<code>node outils/exporter-chaine.mjs --semaine=${semaine}</code>`;
+      if (!window.showDirectoryPicker) return dire(`Ce bouton marche avec Edge ou Chrome. Sinon : enregistre, puis dans PowerShell (dossier de l’overlay) : ${commande}`, false);
+      // L'image est faite avec les réglages enregistrés : on enregistre d'abord le planning s'il a changé
+      if (changements().some(c => c.chemin === 'chaine.planning')) {
+        await enregistrer(['chaine.planning']);
+        if (changements().some(c => c.chemin === 'chaine.planning')) return dire('Le planning n’a pas pu être enregistré : regarde le message en bas de la page.', false);
+      }
+      const dossier = await garde();
+      if (!dossier || (await dossier.requestPermission({ mode: 'readwrite' })) !== 'granted') {
+        return dire('Clique une fois sur « 💾 Enregistrer mes réglages » (la page te demande le dossier de l’overlay), puis reclique ici.', false);
+      }
+      try {
+        const outils = await dossier.getDirectoryHandle('outils');
+        const lireFichier = async nom => { try { return await (await (await outils.getFileHandle(nom)).getFile()).text(); } catch (e) { return null; } };
+        await outils.removeEntry('demande-resultat.txt').catch(() => {});
+        const f = await outils.getFileHandle('demande.txt', { create: true });
+        const w = await f.createWritable(); await w.write(`quoi=planning\nsemaine=${semaine}\n`); await w.close();
+        dire('⏳ Demande envoyée à OBS…');
+        const debut = Date.now();
+        while (Date.now() - debut < 180000) {
+          await new Promise(r => setTimeout(r, 1000));
+          const texte = await lireFichier('demande-resultat.txt');
+          if (texte) {
+            await outils.removeEntry('demande-resultat.txt').catch(() => {});
+            const etat = (/etat=(.*)/.exec(texte) || [])[1], message = ((/message=(.*)/.exec(texte) || [])[1] || '').trim();
+            if (etat !== 'fini') return dire((etat === 'manque' ? '🧰 ' : '⚠️ ') + echapper(message), false);
+            // Montrer l'image : son chemin est à la fin du message (chaine\export\plannings\….png)
+            let image = '';
+            try {
+              const morceaux = message.split(' : ').pop().split(/[\\/]/);
+              let d = dossier;
+              for (const m of morceaux.slice(0, -1)) d = await d.getDirectoryHandle(m);
+              image = `<br><img src="${URL.createObjectURL(await (await d.getFileHandle(morceaux.at(-1))).getFile())}" alt="" style="max-width:320px;margin-top:10px;border-radius:8px">`;
+            } catch (e) { image = ''; }
+            return dire(`✅ ${echapper(message)} — à envoyer sur Twitch (ta chaîne › À propos › panneau Planning › changer l’image).${image}`, true);
+          }
+          if (Date.now() - debut > 8000) {
+            dire(await lireFichier('demande.txt')
+              ? `⏳ OBS ne répond pas encore : ouvre OBS avec le script <b>actualiser-obs.lua</b> (Outils › Scripts, tuto 2.8), la demande partira dès qu’il la verra. Sans OBS : ${commande}`
+              : '⏳ OBS fabrique l’image… (quelques secondes ; plus longtemps si Node.js doit d’abord s’installer)', null);
+          }
+        }
+        dire('⚠️ Pas de réponse d’OBS au bout de 3 minutes : regarde OBS › Outils › Scripts (le message sous les boutons).', false);
+      } catch (e) {
+        console.error('[Réglages]', e);
+        dire('⚠️ Impossible de déposer la demande : ' + echapper(e.message), false);
+      }
     }
 
     function alertesHTML() {
@@ -653,7 +730,9 @@ window.MES_REGLAGES = ${formater(perso)};
       addEventListener('pointermove', bouger);
       addEventListener('pointerup', fin);
     });
+    document.addEventListener('change', e => { if (e.target.id === 'rg-semaine') semaineChoisie = e.target.value; });
     document.addEventListener('click', e => {
+      if (e.target.id === 'rg-fabriquer-planning') { e.preventDefault(); return fabriquerPlanning(); }
       const origine = e.target.closest && e.target.closest('.rg-origine');
       if (origine) {
         e.preventDefault();

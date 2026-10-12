@@ -29,8 +29,22 @@ window.Reseaux = (() => {
     messites: 'site', monsite: 'site', site: 'site', sites: 'site', siteweb: 'site', siteinternet: 'site', liens: 'site', mesliens: 'site',
     mescreations: 'creations', creations: 'creations', mestravaux: 'creations', portfolio: 'creations', mesprojets: 'creations' };
   const cle = titre => NOMS[String(titre || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '')] || '';
+  // Semaine du planning : « 2027-W08 » (?semaine= dans l'adresse du kit, donné par reglages.html › Fabriquer l'image du planning)
+  // → { an, numero, texte: 'du 22 au 28 février' }, ou null
+  function semaine(valeur = new URLSearchParams(location.search).get('semaine')) {
+    const m = /^(\d{4})-W(\d{1,2})$/.exec(valeur || '');
+    if (!m) return null;
+    const an = +m[1], numero = +m[2];
+    const j4 = new Date(Date.UTC(an, 0, 4));
+    const lundi = new Date(j4); lundi.setUTCDate(j4.getUTCDate() - ((j4.getUTCDay() + 6) % 7) + (numero - 1) * 7);
+    const dimanche = new Date(lundi); dimanche.setUTCDate(lundi.getUTCDate() + 6);
+    const jour = (d, mois) => d.toLocaleDateString('fr-FR', { day: 'numeric', ...(mois ? { month: 'long' } : {}), timeZone: 'UTC' });
+    const memeMois = lundi.getUTCMonth() === dimanche.getUTCMonth();
+    return { an, numero, texte: `du ${jour(lundi, !memeMois)} au ${jour(dimanche, true)}` };
+  }
   return {
     cle,
+    semaine,
     svg(titre, taille = 64, style = '') {
       const c = cle(titre);
       return c ? `<svg viewBox="0 0 32 32" width="${taille}" height="${taille}" style="display:block;overflow:visible;${style}">${LOGOS[c]}</svg>` : '';

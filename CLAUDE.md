@@ -124,6 +124,11 @@ Conventions :
   éléments, interrupteurs ; noms dans `ReglagesChamps.scenes` / `.elements`), et pour une webcam à préréglages (js/zones.js) un bloc :
   préréglages avec leurs coordonnées, « Position perso » X/Y/Largeur/Hauteur, « Pas de webcam », plan 16:9 où l'on glisse la cam.
   On n'écrit plus les `options.*` une par une dans reglages-champs.js.
+  **Image du planning** (champ `chaine.planning` avec `planning: true`) : calendrier de semaine + « 🖼️ Fabriquer l'image du planning ». Une
+  page ne lance pas de programme : elle enregistre le planning, dépose `outils/demande.txt` (`quoi=planning`, `semaine=2027-W08`) dans le dossier ;
+  `actualiser-obs.lua` (toutes les 2 s, `verifier_demande`) lance `refaire.ps1 -Quoi planning` et répond dans `outils/demande-resultat.txt`
+  (etat=/message=, le chemin de l'image à la fin) ; la page affiche l'image. Fichiers jamais livrés (.gitignore, construire.mjs).
+  `chaine/reseaux.js › Reseaux.semaine()` lit `?semaine=` (sous-titre « Semaine 8 · du 22 au 28 février » dans `panneauPlanning`).
   **Mes ambiances** (section Couleurs, `ambiances: true`) : le streamer nomme les couleurs affichées et clique
   💾 → `mes-reglages.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
   les autres changements en attente ; un clic remet toutes les valeurs de la section (couleur non citée = d'origine),
@@ -211,7 +216,7 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   Le bouton « Mettre à jour l'overlay » d'`actualiser-obs.lua` le lance en arrière-plan (`start /min`, sans bloquer OBS),
   suit le fichier résultat avec un minuteur, puis actualise les sources et replace les webcams. Testé avec PowerShell 7 sous Linux
   (robocopy simulé), pas sous Windows.
-- `outils/refaire.ps1` (UTF-8 AVEC BOM) : `-Quoi transitions|kit` → `node outils/generer-transitions.mjs` / `exporter-chaine.mjs` (cwd = overlay,
+- `outils/refaire.ps1` (UTF-8 AVEC BOM) : `-Quoi transitions|kit|planning` (+ `-Semaine 2027-W08` : `exporter-chaine.mjs --semaine=…` → `chaine/export/plannings/planning-2027-semaine-08.png`, un fichier par semaine) → `node outils/generer-transitions.mjs` / `exporter-chaine.mjs` (cwd = overlay,
   sortie de node dans `%TEMP%\\overlay-refaire-<quoi>.log` via `cmd /c`), `-Sortie` (etat=fini|manque|erreur), `-Installer` (winget
   OpenJS.NodeJS.LTS / Gyan.FFmpeg puis PATH relu ; sans lui : etat=manque, rien installé). Boutons « Refaire les vidéos de transition » /
   « Refaire les images du kit Twitch » d'`actualiser-obs.lua` : lancé en arrière-plan, 2e clic après « manque » = -Installer ; les

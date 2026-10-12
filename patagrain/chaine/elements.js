@@ -57,13 +57,17 @@
   // Planning (reglages.html › Kit › Planning) : « Mercredi | 20h30 » ou « Mercredi | 20h30 | Minecraft »
   const jours = (K.planning || []).map(([jour, reste]) => { const [heure, ...quoi] = String(reste || '').split('|'); return { jour, heure: heure.trim(), quoi: quoi.join('|').trim() }; });
   const ligneJour = jours.some(j => j.quoi) ? 62 : 44;
-  const hautPlanning = 96 + jours.length * ligneJour + 24;
+  // Planning d'une semaine précise (?semaine=2027-W08, bouton « Fabriquer l'image du planning » de reglages.html) : sous-titre en plus
+  const SEMAINE = Reseaux.semaine();
+  const decalage = SEMAINE ? 34 : 0;
+  const hautPlanning = 96 + decalage + jours.length * ligneJour + 24;
   // Panneau Planning rempli : la semaine, en plus haut (même largeur que les autres panneaux)
   const panneauPlanning = el => {
     el.innerHTML = `<div class="pg-fond" style="border-radius:16px;border:6px solid var(--accent)"></div>
       <div style="position:absolute;left:22px;top:20px;width:56px;height:56px">${ico('d20').replace(/^<(svg|img)/, '<$1 style="width:56px;height:56px"')}</div>
       <div class="pg-titre" style="position:absolute;left:92px;top:20px;height:56px;display:flex;align-items:center;font-size:46px">Planning</div>
-      <div style="position:absolute;left:24px;right:24px;top:96px">${jours.map(j => `<div style="height:${ligneJour}px;border-top:2px dashed color-mix(in srgb, var(--accent) 45%, transparent);display:flex;flex-direction:column;justify-content:center">
+      ${SEMAINE ? `<div style="position:absolute;font:800 17px var(--f-texte);color:var(--accent);left:24px;top:82px">Semaine ${SEMAINE.numero} · ${SEMAINE.texte}</div>` : ''}
+      <div style="position:absolute;left:24px;right:24px;top:${96 + decalage}px">${jours.map(j => `<div style="height:${ligneJour}px;border-top:2px dashed color-mix(in srgb, var(--accent) 45%, transparent);display:flex;flex-direction:column;justify-content:center">
         <div style="display:flex;justify-content:space-between;align-items:baseline;font:800 22px var(--f-texte);color:var(--texte)"><span>${j.jour}</span><span style="color:var(--accent)">${j.heure}</span></div>
         ${j.quoi ? `<div style="font:700 16px var(--f-texte);color:var(--texte-doux);margin-top:2px">${j.quoi}</div>` : ''}</div>`).join('')}</div>`;
   };

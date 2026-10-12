@@ -4,6 +4,9 @@
    Utilisation (dans le dossier de l'overlay) :
        node outils/exporter-chaine.mjs              → tout le kit
        node outils/exporter-chaine.mjs banniere gg  → seulement ces éléments
+       node outils/exporter-chaine.mjs --semaine=2027-W08
+                     → le panneau Planning de cette semaine (« Semaine 8 · du 22 au 28 février »),
+                       dans chaine/export/plannings/planning-2027-semaine-08.png : les anciens restent
 
    Résultat : chaine/export/ (bannière, hors-ligne, panneaux, emotes et badges
    dans toutes les tailles demandées par Twitch, fond transparent).
@@ -21,7 +24,13 @@ const RACINE = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGE = pathToFileURL(join(RACINE, 'chaine', 'kit.html')).href;
 const SORTIE = join(RACINE, 'chaine', 'export');
 const PORT = 9335;
-const choix = process.argv.slice(2);
+const args = process.argv.slice(2);
+const SEMAINE = ((args.find(a => a.startsWith('--semaine=')) || '').split('=')[1] || '').toUpperCase();
+if (SEMAINE && !/^\d{4}-W\d{1,2}$/.test(SEMAINE)) { console.error(`Semaine illisible : ${SEMAINE} (attendu : 2027-W08).`); process.exit(1); }
+// Avec --semaine : seulement le panneau Planning, rangé à part (un fichier par semaine)
+const choix = SEMAINE ? ['planning'] : args.filter(a => !a.startsWith('--'));
+const [AN, NUMERO] = SEMAINE ? SEMAINE.split('-W') : [];
+const nomSemaine = SEMAINE ? join('plannings', `planning-${AN}-semaine-${NUMERO.padStart(2, '0')}.png`) : '';
 
 // Edge (installé avec Windows), ou un autre navigateur Chromium indiqué par la variable NAVIGATEUR (Chrome, Chromium…)
 const EDGE = [process.env.NAVIGATEUR, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe']
@@ -72,10 +81,17 @@ await ouvrir(PAGE);
 const liste = (await evaluer('window.listeExport || []')).filter(x => !choix.length || choix.includes(x.id));
 if (!liste.length) console.log('Aucun élément à exporter (chaine/elements.js est-il rempli ?)');
 
-mkdirSync(SORTIE, { recursive: true });
+mkdirSync(join(SORTIE, SEMAINE ? 'plannings' : ''), { recursive: true });
+if (SEMAINE && !liste.length) console.log('Pas de panneau « Planning » dans config.js › chaine.panneaux.');
 for (const x of liste) {
   await cdp('Emulation.setDeviceMetricsOverride', { width: x.l, height: x.h, deviceScaleFactor: 1, mobile: false });
-  await ouvrir(`${PAGE}?seul=${encodeURIComponent(x.id)}&taille=${x.taille}`);
+  await ouvrir(`${PAGE}?seul=${encodeURIComponent(x.id)}&taille=${x.taille}${SEMAINE ? '&semaine=' + SEMAINE : ''}`);
+  // La hauteur du planning dépend de la semaine (sous-titre) : on la relit sur la page
+  if (SEMAINE) {
+    const h = await evaluer("Math.round(document.querySelector('.kit-boite')?.getBoundingClientRect().height || 0)");
+    if (h && h !== x.h) { x.h = h; await cdp('Emulation.setDeviceMetricsOverride', { width: x.l, height: x.h, deviceScaleFactor: 1, mobile: false }); }
+    x.fichier = nomSemaine;
+  }
   for (let i = 0; i < 50 && !(await evaluer('window.pret === true')); i++) await attendre(100);
   await attendre(150);
   const { data } = await cdp('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: x.l, height: x.h, scale: 1 } });

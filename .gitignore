@@ -12,3 +12,7 @@ version.json
 
 # Le bot « voix » (serveur/voix) : ses bibliothèques sont installées sur le VPS (npm ci), jamais dans le dépôt
 node_modules/
+
+# Fabriqués chez le streamer : demandes de reglages.html au script OBS, plannings de la semaine
+**/outils/demande*.txt
+**/chaine/export/plannings/

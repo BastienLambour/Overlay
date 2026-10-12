@@ -26,7 +26,7 @@ const DEPOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SORTIE = resolve(process.env.SORTIE || '/var/www/overlays/site');
 const ADRESSE = (process.env.ADRESSE || 'https://overlays.bastien-lambour.fr').replace(/\/+$/, '');
 // Jamais livrés : les réglages perso du streamer, ses sauvegardes, les fichiers techniques
-const EXCLUS_FICHIERS = new Set(['mes-reglages.js', '.DS_Store', 'Thumbs.db', 'desktop.ini']);
+const EXCLUS_FICHIERS = new Set(['mes-reglages.js', '.DS_Store', 'Thumbs.db', 'desktop.ini', 'demande.txt', 'demande-resultat.txt']);
 const EXCLUS_DOSSIERS = new Set(['sauvegardes', '.git', 'node_modules']);
 
 // ---------- Les overlays du dépôt ----------

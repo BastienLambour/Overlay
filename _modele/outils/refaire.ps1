@@ -5,6 +5,9 @@
    et « Refaire les images du kit Twitch ». Il tourne en arrière-plan, sans bloquer OBS.
      -Quoi transitions   node outils/generer-transitions.mjs → transitions/videos/*.webm
      -Quoi kit           node outils/exporter-chaine.mjs     → chaine/export/*.png (le dossier s'ouvre à la fin)
+     -Quoi planning -Semaine 2027-W08
+                         node outils/exporter-chaine.mjs --semaine=… → chaine/export/plannings/planning-2027-semaine-08.png
+                         (demandé par reglages.html › « Fabriquer l'image du planning », via le script OBS)
      -Installer          installe d'abord ce qui manque (Node.js, et ffmpeg pour les transitions) avec winget
      -Sortie <fichier>   écrit le résultat (etat=fini|manque|erreur, message=…) pour le script OBS
 
@@ -16,7 +19,8 @@
    Enregistré en UTF-8 AVEC BOM : sinon Windows PowerShell 5.1 lit mal les accents.
    ===================================================================== #>
 param(
-  [ValidateSet('transitions', 'kit')] [string] $Quoi = 'transitions',
+  [ValidateSet('transitions', 'kit', 'planning')] [string] $Quoi = 'transitions',
+  [ValidatePattern('^(\d{4}-W\d{1,2})?$')] [string] $Semaine = '',
   [string] $Sortie = '',
   [switch] $Installer
 )
@@ -76,6 +80,10 @@ try {
   # --- Le script de l'overlay ---
   $script = if ($Quoi -eq 'transitions') { 'outils\generer-transitions.mjs' } else { 'outils\exporter-chaine.mjs' }
   if (-not (Test-Path -LiteralPath (Join-Path $racine $script))) { Finir 'erreur' "$script introuvable dans $racine." }
+  if ($Quoi -eq 'planning') {
+    if (-not $Semaine) { Finir 'erreur' "Quelle semaine ? (-Semaine 2027-W08)" }
+    $script = "$script --semaine=$Semaine"
+  }
   Push-Location $racine
   try {
     # par cmd : la sortie de node va telle quelle (UTF-8) dans le journal ; sa progression sur la sortie d'erreur n'est pas une erreur
@@ -90,6 +98,11 @@ try {
   if ($Quoi -eq 'transitions') {
     $n = @(Get-ChildItem -LiteralPath (Join-Path $racine 'transitions\videos') -Filter *.webm -ErrorAction SilentlyContinue).Count
     Finir 'fini' "Vidéos de transition refaites ($n) : OBS les recharge tout seul."
+  } elseif ($Quoi -eq 'planning') {
+    $an, $numero = $Semaine.Split('-W')[0], $Semaine.Split('W')[1]
+    $fichier = "chaine\export\plannings\planning-$an-semaine-$($numero.PadLeft(2, '0')).png"
+    if (-not (Test-Path -LiteralPath (Join-Path $racine $fichier))) { Finir 'erreur' "L'image n'a pas été fabriquée (le panneau « Planning » est-il dans la liste des panneaux ?). Journal : $journal" }
+    Finir 'fini' "Planning de la semaine $([int]$numero) prêt : $fichier"
   } else {
     $dossierKit = Join-Path $racine 'chaine\export'
     $n = @(Get-ChildItem -LiteralPath $dossierKit -Filter *.png -ErrorAction SilentlyContinue).Count
