@@ -27,7 +27,7 @@ Chaque page a sa **fiche** : tu peux suivre une fiche seule, sans lire le reste.
 
 ## 1. Ce qu'il y a dans le dossier
 
-<arborescence commentée : reglages.html (LA page des réglages), config.js, index.html, TUTO, CONCEPT, scenes/, sources/, transitions/, chaine/,
+<arborescence commentée : reglages.html (LA page des réglages), config.js, mes-reglages.js, mettre-a-jour.cmd (mise à jour, 2.1), fabriquer-images.cmd (planning / kit / vidéos SANS OBS, double-clic : voir 7), index.html, TUTO, CONCEPT, scenes/, sources/, transitions/, chaine/,
  outils/ (les scripts, et actualiser-obs.lua pour OBS : voir 9), assets/ (dont polices/), design/, css/ js/>
 
 ---
@@ -139,7 +139,7 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 ---
 
 ## 7. Habiller la chaîne Twitch
-<tableau visuel / fichier de chaine/export/ / où l'envoyer (Marque, À propos › panneaux, Récompenses des spectateurs) + panneaux pas à pas (Planning : reglages › Kit › Planning « Mercredi | 20h30 | Minecraft » + semaine + 🖼️ Fabriquer l'image du planning [Edge/Chrome, OBS ouvert avec le script] → chaine/export/plannings/planning-AAAA-semaine-NN.png, les anciens restent ; sans OBS : node outils/exporter-chaine.mjs --semaine=2027-W08 ; Mes créations : liens en description ; réseaux Discord/YouTube/TikTok/Instagram/X : Lien de l'image = adresse du réseau ; panneau Commandes : description = commandes du chat, StreamElements › Chatbot › Chat commands) + page de dons StreamElements pas à pas (Revenue › Tipping settings : Banner = dons-banniere.png 640×200, Background = dons-fond.png 1920×1080) + node outils/exporter-chaine.mjs>
+<tableau visuel / fichier de chaine/export/ / où l'envoyer (Marque, À propos › panneaux, Récompenses des spectateurs) + panneaux pas à pas (Planning : reglages › Kit › Planning « Mercredi | 20h30 | Minecraft » + semaine + 🖼️ Fabriquer l'image du planning [Edge/Chrome ; fabriquée par OBS (script) ou, sans OBS, double-clic sur fabriquer-images.cmd] → chaine/export/plannings/planning-AAAA-semaine-NN.png, les anciens restent ; sans OBS : node outils/exporter-chaine.mjs --semaine=2027-W08 ; Mes créations : liens en description ; réseaux Discord/YouTube/TikTok/Instagram/X : Lien de l'image = adresse du réseau ; panneau Commandes : description = commandes du chat, StreamElements › Chatbot › Chat commands) + page de dons StreamElements pas à pas (Revenue › Tipping settings : Banner = dons-banniere.png 640×200, Background = dons-fond.png 1920×1080) + node outils/exporter-chaine.mjs>
 
 ---
 
@@ -157,10 +157,10 @@ Presque tout se règle dans **`reglages.html`** (2.1), sans toucher au code.
 
 ### Les scripts du dossier `outils/`
 <installer Node.js LTS (nodejs.org ou winget install OpenJS.NodeJS.LTS) + ffmpeg (winget install Gyan.FFmpeg) ; ouvrir le Terminal
- dans le dossier ; tableau Script / À quoi il sert / Quand / Commande : actualiser-obs.lua, generer-transitions, exporter-chaine,
+ dans le dossier ; tableau Script / À quoi il sert / Quand / Commande : actualiser-obs.lua, mettre-a-jour.cmd, fabriquer-images.cmd (sans OBS : planning d'une semaine — et réponse au bouton des réglages —, kit, vidéos ; double-clic), generer-transitions, exporter-chaine (--semaine=2027-W08),
  generer-pdf, capturer, polices-locales (+ scripts propres à l'overlay)>
 
 ---
 
 ## 10. Dépannage
-<problèmes fréquents : page blanche, polices, chat vide, alertes, son, alerte mal affichée (journal ?journal=1), les réglages ne changent rien (actualiser / script), cam décalée, compte à rebours, ancienne image encore affichée (Ctrl+F5 / OBS › Actualiser le cache de la page actuelle), réglages disparus après une mise à jour (garder mes-reglages.js ; 📥 reprendre un ancien config.js)>
+<problèmes fréquents : page blanche, polices, chat vide, alertes, son, alerte mal affichée (journal ?journal=1), les réglages ne changent rien (actualiser / script), cam décalée, compte à rebours, ancienne image encore affichée (Ctrl+F5 / OBS › Actualiser le cache de la page actuelle), réglages disparus après une mise à jour (garder mes-reglages.js ; 📥 reprendre un ancien config.js), le bouton « Fabriquer l'image du planning » ne fait rien (message sous le bouton ; « personne n'a pris la demande » → fabriquer-images.cmd sans OBS, ou recharger actualiser-obs.lua (↻) réglé sur le même dossier ; Edge/Chrome, pas Firefox)>

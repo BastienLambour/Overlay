@@ -350,7 +350,8 @@ window.MES_REGLAGES = ${formater(perso)};
           <input type="week" id="rg-semaine" value="${semaineChoisie}" aria-label="Semaine du planning" style="flex:0 1 220px">
           <button type="button" id="rg-fabriquer-planning">🖼️ Fabriquer l’image du planning</button></div>
         <small>Choisis la semaine, puis clique : l’image (« Planning · Semaine 8 · du … au … ») arrive dans <code>chaine/export/plannings/</code>,
-          un fichier par semaine : ceux des autres semaines restent. Il faut Edge ou Chrome, et OBS ouvert avec le script actualiser-obs.lua (tuto 2.8).</small>
+          un fichier par semaine : ceux des autres semaines restent. Il faut Edge ou Chrome ; l’image est fabriquée par OBS (script actualiser-obs.lua)
+          ou, sans OBS, par un double-clic sur <b>fabriquer-images.cmd</b> (dossier de l’overlay).</small>
         <div id="rg-planning-resultat" style="font-weight:700"></div></div>`;
     }
     async function fabriquerPlanning() {
@@ -367,9 +368,15 @@ window.MES_REGLAGES = ${formater(perso)};
         await enregistrer(['chaine.planning']);
         if (changements().some(c => c.chemin === 'chaine.planning')) return dire('Le planning n’a pas pu être enregistré : regarde le message en bas de la page.', false);
       }
+      // Le dossier de l'overlay (choisi au premier « Enregistrer ») ; on ne redemande la permission que si elle n'est plus accordée
+      // (après un enregistrement, le navigateur refuse une nouvelle question tant qu'on n'a pas recliqué)
       const dossier = await garde();
-      if (!dossier || (await dossier.requestPermission({ mode: 'readwrite' })) !== 'granted') {
-        return dire('Clique une fois sur « 💾 Enregistrer mes réglages » (la page te demande le dossier de l’overlay), puis reclique ici.', false);
+      let permis = false;
+      try { permis = dossier && ((await dossier.queryPermission({ mode: 'readwrite' })) === 'granted' || (await dossier.requestPermission({ mode: 'readwrite' })) === 'granted'); }
+      catch (e) { permis = false; }
+      if (!permis) {
+        return dire(dossier ? 'Le navigateur demande ton accord pour écrire dans le dossier de l’overlay : reclique sur le bouton.'
+          : 'Clique une fois sur « 💾 Enregistrer mes réglages » (la page te demande le dossier de l’overlay), puis reclique ici.', false);
       }
       try {
         const outils = await dossier.getDirectoryHandle('outils');
@@ -398,8 +405,9 @@ window.MES_REGLAGES = ${formater(perso)};
           }
           if (Date.now() - debut > 8000) {
             dire(await lireFichier('demande.txt')
-              ? `⏳ OBS ne répond pas encore : ouvre OBS avec le script <b>actualiser-obs.lua</b> (Outils › Scripts, tuto 2.8), la demande partira dès qu’il la verra. Sans OBS : ${commande}`
-              : '⏳ OBS fabrique l’image… (quelques secondes ; plus longtemps si Node.js doit d’abord s’installer)', null);
+              ? `⏳ Personne n’a pris la demande. <b>Sans OBS</b> : double-clique sur <b>fabriquer-images.cmd</b> dans le dossier de l’overlay, l’image apparaîtra ici.
+                 <b>Avec OBS</b> : il faut le script <b>actualiser-obs.lua</b> à jour (Outils › Scripts › ↻ pour le recharger après une mise à jour), réglé sur ce dossier-ci.`
+              : '⏳ L’image est en fabrication… (quelques secondes ; plus longtemps si Node.js doit d’abord s’installer)', null);
           }
         }
         dire('⚠️ Pas de réponse d’OBS au bout de 3 minutes : regarde OBS › Outils › Scripts (le message sous les boutons).', false);

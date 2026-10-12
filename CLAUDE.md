@@ -127,7 +127,9 @@ Conventions :
   **Image du planning** (champ `chaine.planning` avec `planning: true`) : calendrier de semaine + « 🖼️ Fabriquer l'image du planning ». Une
   page ne lance pas de programme : elle enregistre le planning, dépose `outils/demande.txt` (`quoi=planning`, `semaine=2027-W08`) dans le dossier ;
   `actualiser-obs.lua` (toutes les 2 s, `verifier_demande`) lance `refaire.ps1 -Quoi planning` et répond dans `outils/demande-resultat.txt`
-  (etat=/message=, le chemin de l'image à la fin) ; la page affiche l'image. Fichiers jamais livrés (.gitignore, construire.mjs).
+  (etat=/message=, le chemin de l'image à la fin) ; la page affiche l'image. Sans OBS : `fabriquer-images.cmd` (racine, CRLF) → `outils/fabriquer.ps1`
+  (UTF-8 AVEC BOM) traite la demande en attente et répond à la page, sinon menu : planning d'une semaine / kit / transitions (via refaire.ps1,
+  propose d'installer Node.js / ffmpeg). La page vérifie `queryPermission` AVANT `requestPermission` (après un enregistrement, plus de geste utilisateur). Fichiers jamais livrés (.gitignore, construire.mjs).
   `chaine/reseaux.js › Reseaux.semaine()` lit `?semaine=` (sous-titre « Semaine 8 · du 22 au 28 février » dans `panneauPlanning`).
   **Mes ambiances** (section Couleurs, `ambiances: true`) : le streamer nomme les couleurs affichées et clique
   💾 → `mes-reglages.js › ambiances: [{ nom, valeurs: { "couleurs.accent": "#…" } }]`, écrit tout de suite SANS appliquer
@@ -216,6 +218,10 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   Le bouton « Mettre à jour l'overlay » d'`actualiser-obs.lua` le lance en arrière-plan (`start /min`, sans bloquer OBS),
   suit le fichier résultat avec un minuteur, puis actualise les sources et replace les webcams. Testé avec PowerShell 7 sous Linux
   (robocopy simulé), pas sous Windows.
+- `fabriquer-images.cmd` (racine de l'overlay, CRLF) + `outils/fabriquer.ps1` (UTF-8 AVEC BOM) : fabriquer SANS OBS, par double-clic. Traite
+  `outils/demande.txt` s'il y en a une (bouton « Fabriquer l'image du planning » de reglages.html) et répond dans `outils/demande-resultat.txt`
+  (la page affiche l'image) ; sinon menu : 1 planning d'une semaine (Entrée = cette semaine, « 8 », « 2027-W08 »), 2 images du kit, 3 vidéos de
+  transition. Passe par `refaire.ps1` (propose d'installer Node.js / ffmpeg s'ils manquent). Testé sous Windows (PowerShell 5.1).
 - `outils/refaire.ps1` (UTF-8 AVEC BOM) : `-Quoi transitions|kit|planning` (+ `-Semaine 2027-W08` : `exporter-chaine.mjs --semaine=…` → `chaine/export/plannings/planning-2027-semaine-08.png`, un fichier par semaine) → `node outils/generer-transitions.mjs` / `exporter-chaine.mjs` (cwd = overlay,
   sortie de node dans `%TEMP%\\overlay-refaire-<quoi>.log` via `cmd /c`), `-Sortie` (etat=fini|manque|erreur), `-Installer` (winget
   OpenJS.NodeJS.LTS / Gyan.FFmpeg puis PATH relu ; sans lui : etat=manque, rien installé). Boutons « Refaire les vidéos de transition » /
