@@ -15,7 +15,8 @@
        jet(jet),                 // un jet public, déjà lu (voir lire)
        etat(texte),              // « connecté », « déconnecté », « clé révoquée »… (pour un petit voyant)
      })
-     perso = { …ta place, id, nom, nomCodex, portrait (adresse complète ou ''), pv, pvMax, stress, stressMax, forme, aTerre, moi, mj }
+     perso = { …ta place, id, nom, nomCodex, portrait (adresse complète ou ''), pv, pvMax, stress, stressMax, forme, aTerre, moi, mj,
+               apparence (la fiche d'apparence liée dans le labo de CodexVTT, ou null) }
      Partie.lire(jet) → { …jet, perso, moi, pnj, geste, verdict, mot, libelle, resultat }
        geste   : courir, grimper, cacher, crocheter, lire, observer, menacer, parler, danser, parer, sort, tirer,
                  frapper, soigner, garde, neutre (d'après le libellé de la compétence)
@@ -102,7 +103,7 @@ const Partie = (() => {
     return !!x && !!y && (x === y || x.startsWith(y + ' ') || y.startsWith(x + ' ') || x.split(' ')[0] === y.split(' ')[0]);
   };
   const copie = p => p && { ...p };
-  const VIDE = { id: null, nomCodex: '', portrait: '', pv: null, pvMax: null, stress: null, stressMax: null, forme: '', aTerre: false };
+  const VIDE = { id: null, nomCodex: '', apparence: null, portrait: '', pv: null, pvMax: null, stress: null, stressMax: null, forme: '', aTerre: false };
   // Les champs d'un personnage de CodexVTT, posés sur un perso
   function poser(p, c) {
     Object.assign(p, {
@@ -110,6 +111,8 @@ const Partie = (() => {
       portrait: typeof Codex !== 'undefined' && c.portrait ? Codex.url(c.portrait) : (c.portrait || ''),
       pv: c.hp ?? null, pvMax: c.hpMax ?? null, stress: c.stress ?? null, stressMax: c.stressMax ?? null,
       forme: c.form || '', aTerre: !!c.down || (c.hpMax > 0 && c.hp <= 0),
+      // l'apparence liée à la fiche dans le labo de CodexVTT (champ facultatif « appearance ») : voir js/apparence.js
+      apparence: c.appearance && typeof c.appearance === 'object' ? c.appearance : (p.apparence || null),
     });
     if (!p.nom) p.nom = c.name || 'Aventurier';
     p.moi = !p.mj && (estMoi(p.nom, p.id) || estMoi(c.name, c.id));

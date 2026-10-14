@@ -34,6 +34,10 @@
 <script src="../js/codex.js"></script>
 <script src="../js/voix.js"></script>
 <script src="../js/partie.js"></script>
+<script src="../js/apparence.js"></script>
+<script src="../js/persos.js"></script>
+<script src="../js/persos-style.js"></script>
+<script src="../js/scenette.js"></script>
 <script src="../js/jdr.js"></script>
 <script>
   const ecran = document.getElementById('ecran');
@@ -62,7 +66,15 @@
     });
   }
 
-  const jouer = JDR.file(j => JDR.jet(ecran, j.moi ? MON_JET : AUTRE_JET, j, { petit: !j.moi }));
+  // Un jet : le compteur (en grand sur la table si c'est le tien, en petit en haut du chat sinon) et la SCÉNETTE au-dessus
+  // du chat (js/scenette.js) : le personnage joue son geste, puis réagit au résultat
+  const DUREE = Math.max(1, Number(J.dureeResultat) || 4) * 1000;
+  const SCENE_MOI = { x: CHAT.x, y: CHAT.y, l: CHAT.l, h: 520 };
+  const SCENE = { x: CHAT.x, y: AUTRE_JET.y + AUTRE_JET.h + 12, l: CHAT.l, h: 320 };
+  const jouer = JDR.file(j => Promise.all([
+    JDR.jet(ecran, j.moi ? MON_JET : AUTRE_JET, j, { petit: !j.moi }),
+    J.scenettes === false ? null : Scenette.jouer(ecran, j.moi ? SCENE_MOI : SCENE, j, { duree: DUREE, denouement: JDR.DENOUEMENT }),
+  ]));
   Partie.brancher({
     table,
     perso: q => cartes[cle(q)] && cartes[cle(q)].maj(q),

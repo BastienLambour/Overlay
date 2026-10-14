@@ -301,6 +301,8 @@ Pour que le script reconnaisse ta webcam, **son nom doit contenir « cam »** (e
 
 **Vérifier** : avec `?test=1`, les cartes s'affichent et un jet passe toutes les 6 s. En vrai : `?journal=1` doit dire « connecté » pour CodexVTT, et le salon Discord du MJ.
 
+**Les personnages dessinés** : un personnage du **catalogue commun** de la famille (même nom que dans CodexVTT) apparaît sur sa carte **dessiné au style de ta chaîne** (sa bouche bouge quand il parle, il est K.O. à 0 PV, sa forme suit CodexVTT) ; pendant un jet, il passe **au-dessus du chat** et joue la scène (il court, se cache, lance un sort, frappe…, puis rit, est choqué ou tombe K.O. selon le résultat). Les autres gardent le portrait de leur fiche CodexVTT. Pour créer un personnage : ouvre **`createur.html`** (dossier de l'overlay), choisis ses traits, puis **Copier la fiche** et envoie-la à Bastien, qui l'ajoute au catalogue (il arrive chez tout le monde à la mise à jour suivante).
+
 > Les cartes du MJ et des joueurs de la liste « Qui joue qui » s'affichent tout de suite ; leurs PV et portraits arrivent quand CodexVTT est branché. Un personnage de CodexVTT absent de la liste s'ajoute tout seul à la fin.
 
 ---

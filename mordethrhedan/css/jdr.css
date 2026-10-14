@@ -61,3 +61,11 @@
 .fil .puce i { font: 400 16px var(--f-titre); font-style: normal; color: #fff; }
 .fil .puce i.rate, .fil .puce i.fumble { color: #FF4D6D; } .fil .puce i.crit { color: #FFE066; }
 .fil-titre { position: absolute; font: 400 18px var(--f-ecran); color: var(--doux); letter-spacing: .12em; text-transform: uppercase; }
+
+/* --- Un personnage dessiné (catalogue commun) à la place du portrait --- */
+.jc-portrait.dessin { background: transparent; }
+.jc-portrait.dessin svg { width: 100%; height: 100%; display: block; }
+
+/* --- La scénette au-dessus du chat (js/scenette.js) --- */
+.scenette .sc-fond { background: #0B0D0E; border-radius: 18px; box-shadow: inset 0 0 0 3px var(--accent), 0 0 calc(14px * var(--halo)) var(--accent-halo); }
+.jet { background: #0B0D0E; border-radius: 18px; }   /* opaque : le chat ne se voit pas à travers le compteur */

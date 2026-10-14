@@ -112,7 +112,7 @@ Un **point** • à côté d'un réglage veut dire qu'il a changé et n'est pas 
 ### 3.x 🎲 JDR — `scenes/jdr.html` (FACULTATIVE : seulement si l'overlay a la scène JDR)
 <à quoi ça sert (la table CodexVTT en grand, les cartes dessous, MJ compris, titre + chat à droite ; tout vient de CodexVTT ; ta carte « toi », tes jets en grand) ;
  à régler une fois dans reglages.html › Scène JDR (mon perso, adresse + clé CodexVTT données par le MJ, « qui joue qui » sur Discord + pseudo du MJ, clé du bot) ;
- étapes OBS (scène, alertes, overlay, capture de CodexVTT avec sa zone x/y/l/h) ; options ?chat=0 ?moi= ?titre= ?test=1 ?journal=1 ; vérifier>
+ personnages dessinés (catalogue commun, style de la chaîne, scénettes au-dessus du chat, createur.html pour en créer) ; étapes OBS (scène, alertes, overlay, capture de CodexVTT avec sa zone x/y/l/h) ; options ?chat=0 ?moi= ?titre= ?test=1 ?journal=1 ; vérifier>
 
 ---
 

@@ -219,6 +219,16 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   en grand, cartes dessous, titre + chat à droite) dans mordethrhedan (néon), johnvongurt (mission control), ambries (comics) : chacun a `css/jdr.css`
   + `js/jdr.js` avec la MÊME interface `JDR.carte(ecran, z, perso, opts)` (.maj .coup .tour .parler .oter), `JDR.jet(ecran, z, jet, { petit })`,
   `JDR.file(jouer)` : seul le dessin change. Patagrain garde sa scène (héros dessinés, arène), branchée sur le même moteur.
+- **Personnages (module JDR)** : `js/apparence.js` (une FICHE de traits → les formes d'un buste 200×240 : tête humaine|orc|draconide, carrure,
+  peau, yeux, coupe, oreilles, cornes, dents, pilosité, tenue, accessoires (liste), signe, objet/objet2 pour les gestes, formes ; expressions
+  parle|rire|choc|ko ; `Apparence.calques/svg/fusion/trouver(nom)`), `js/persos.js` (window.PERSOS : le CATALOGUE COMMUN, le même partout ; le nom =
+  celui de CodexVTT), `js/persos-style.js` (PROPRE à l'overlay : `PersosStyle.rendu(fiche, { expression, forme, cadrage })` — mordethrhedan « trait
+  néon », johnvongurt « écusson de mission », ambries « sticker » ; Patagrain garde ses héros dessinés, avec un traducteur fiche → style Patagrain
+  pour les persos du catalogue sans dessin), `js/scenette.js` (pendant un jet, le perso passe AU-DESSUS DU CHAT, joue son geste puis réagit au
+  verdict), `createur.html` (racine, commun : créateur de personnage, aperçu au style de la chaîne, copier/télécharger la fiche → on la colle dans
+  `_modele/js/persos.js` puis on recopie partout), `design/moodboard-persos.html` (les directions de style). Cartes JDR : apparence liée à la fiche dans le LABO de CodexVTT
+  (champ facultatif `appearance` du mode spectateur → `perso.apparence` dans Partie) d'abord, sinon le perso du catalogue =
+  son dessin (la bouche bouge quand il parle, K.O. à 0 PV, forme de CodexVTT), sinon le portrait CodexVTT.
 - `chaine/reseaux.js` : logos des réseaux (Discord, YouTube, TikTok, Instagram, X, Twitch, Kick, Bluesky), d'une couleur
   (currentColor) ; `Reseaux.svg(titre, taille, style)` → le logo si le titre d'un panneau est un réseau, sinon '' (l'overlay garde
   alors son icône) ; `Reseaux.cle(titre)`. Chargé par `kit.html` avant `elements.js`.

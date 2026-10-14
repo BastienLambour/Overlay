@@ -28,14 +28,29 @@ const JDR = (() => {
     const el = Composants.creer(ecran, 'jc', `<div class="jc-portrait" style="width:${portrait}px;height:${portrait}px;font-size:${portrait * .5}px"></div>
       <div class="jc-corps"><div class="jc-nom" style="font-size:${nom}px"></div><div class="jc-sous"></div><div class="jc-barre"><i></i></div><div class="jc-pv"></div></div>
       <span class="sticker jc-tag toi">toi</span><span class="sticker blanc jc-tag tour">son tour</span><span class="jc-bulle"></span>`, z);
+    // Le personnage dessiné (catalogue commun js/persos.js, au style de la chaîne : js/persos-style.js) s'il y est ;
+    // sinon le portrait de CodexVTT. Il bouge la bouche quand il parle, K.O. à 0 PV, sa forme (Trayss) suit CodexVTT.
+    let fiche = null, dernier = p, bouge = null, ouverte = false;
+    const dessiner = q => {
+      const b = el.querySelector('.jc-portrait');
+      b.classList.add('dessin');
+      b.innerHTML = PersosStyle.rendu(fiche, { forme: q.forme, expression: q.aTerre ? 'ko' : ouverte ? 'parle' : '', cadrage: 'tete' });
+    };
     const maj = q => {
+      dernier = q;
+      // l'apparence liée dans le labo de CodexVTT d'abord, sinon le catalogue commun (js/persos.js)
+      fiche = typeof PersosStyle !== 'undefined' && typeof Apparence !== 'undefined' ? (q.apparence || Apparence.trouver(q.nom, q.nomCodex)) : null;
       el.querySelector('.jc-nom').textContent = q.nom;
       el.querySelector('.jc-sous').textContent = q.mj ? 'Maître du jeu' : (q.forme || '');
       el.classList.toggle('moi', !!q.moi);
       el.classList.toggle('a-terre', !!q.aTerre);
       const boite = el.querySelector('.jc-portrait');
+      if (fiche) dessiner(q);
+      else {
+      boite.classList.remove('dessin');
       if (q.portrait && boite.dataset.src !== q.portrait) { const img = new Image(); img.alt = ''; img.onload = () => { boite.replaceChildren(img); boite.dataset.src = q.portrait; }; img.src = q.portrait; }
       if (!boite.firstChild) boite.innerHTML = `<b>${(q.nom || '?').charAt(0)}</b>`;
+      }
       const ok = q.pvMax > 0;
       el.querySelector('.jc-barre').style.visibility = ok ? '' : 'hidden';
       el.querySelector('.jc-pv').textContent = ok ? `${q.pv} / ${q.pvMax} PV` : '';
@@ -48,6 +63,10 @@ const JDR = (() => {
       coup: d => { const c = document.createElement('div'); c.className = 'jc-coup ' + (d < 0 ? 'blesse' : 'soin'); c.textContent = (d > 0 ? '+' : '') + d; el.appendChild(c); setTimeout(() => c.remove(), 1700); },
       tour: oui => el.classList.toggle('tour', !!oui),
       parler: oui => {
+        if (fiche) {
+          if (oui && !bouge) bouge = setInterval(() => { ouverte = !ouverte; dessiner(dernier); }, 170);
+          if (!oui && bouge) { clearInterval(bouge); bouge = null; ouverte = false; dessiner(dernier); }
+        }
         if (oui && !el.classList.contains('parle')) el.querySelector('.jc-bulle').textContent = BULLES[Math.floor(Math.random() * BULLES.length)];
         el.classList.toggle('parle', !!oui);
         if (J.attenue !== false) ecran.classList.toggle('jdr-parole', !!ecran.querySelector('.jc.parle'));
