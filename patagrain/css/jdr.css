@@ -1,26 +1,34 @@
 /* =====================================================================
    PATAGRAIN — la scène JDR : cartes de héros, parole, « à terre », PV, et l'arène des jets.
-   Les portraits sont en em : leur taille suit font-size (réglé par la scène).
+   Les cartes sont en em : 1em = 1/10 de leur hauteur (réglé par la scène, JDR.portrait().placer).
    Dessins : js/heros.js (squelette du bouffon) ; gestes des jets : css/bouffon.css § 8.
    ===================================================================== */
 
-/* ---------- la carte de héros ---------- */
-.portrait { --c: var(--accent); position: relative; width: 10em; display: flex; flex-direction: column; align-items: center; transition: filter .35s; }
-.pt-cadre { position: relative; width: 100%; }
-.pt-image { position: relative; overflow: hidden; aspect-ratio: 3 / 4; border-radius: 50% 50% .5em .5em / 26% 26% .5em .5em;
+/* ---------- la carte de héros (horizontale) : le héros à gauche, le nom et les PV à droite ----------
+   Placée par la scène (left/top/width/height) ; 1em = 1/10 de sa hauteur ; --pw = largeur du médaillon ; --fn = taille du nom */
+.portrait { --c: var(--accent); position: absolute; box-sizing: border-box; display: flex; align-items: center; gap: .7em; padding: .6em .9em .6em .6em;
+  border-radius: 1em; background: linear-gradient(100deg, color-mix(in srgb, var(--c) 22%, var(--surface)), var(--surface) 55%);
+  box-shadow: 0 0 0 .22em #E9D9B0, 0 0 0 .36em #6B4423, 0 .5em 1.1em rgba(0, 0, 0, .45); transition: filter .35s, box-shadow .3s; }
+.pt-cadre { position: relative; flex: none; width: var(--pw, 7em); height: 100%; }
+.pt-image { position: relative; overflow: hidden; width: 100%; height: 100%; border-radius: 50% 50% .45em .45em / 30% 30% .45em .45em;
   background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c) 55%, #1A2234), #0E1422 72%);
-  box-shadow: 0 0 0 .28em #E9D9B0, 0 0 0 .42em #6B4423, 0 0 0 .52em color-mix(in srgb, var(--c) 75%, #000); }
-.pt-image::after { content: ''; position: absolute; inset: 55% 0 0; background: linear-gradient(transparent, rgba(10, 8, 6, .85)); }
-.pt-image .heros-svg { position: absolute; left: -6%; width: 112%; height: auto; top: 50%; translate: 0 -46%; }
+  box-shadow: 0 0 0 .14em #E9D9B0, 0 0 0 .26em color-mix(in srgb, var(--c) 75%, #000); }
+.pt-image .heros-svg { position: absolute; left: -22%; width: 144%; height: auto; top: 50%; translate: 0 -40%; }
 .pt-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
 .pt-vide { position: absolute; inset: 0; display: grid; place-items: center; font: 800 3.5em var(--f-titre); color: #5C6B80; }
-.pt-nom { position: relative; z-index: 2; margin-top: -2.5em; padding: 0 .4em; text-align: center; white-space: nowrap;
-  font: 800 1.15em/1.05 var(--f-titre); color: var(--texte); text-shadow: 0 .1em .3em #000; }
-.pt-nom small { display: block; font: 800 .5em var(--f-texte); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-.pt-ondes { position: absolute; z-index: 3; right: .5em; top: .5em; display: flex; gap: .12em; align-items: flex-end; height: .9em; opacity: 0; transition: opacity .2s; }
+.pt-texte { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: .2em; }
+.pt-nom { font: 800 var(--fn, 1.8em)/1.05 var(--f-titre); color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 .08em .25em #000; }
+.pt-titre { font: 800 .62em/1.2 var(--f-texte); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-titre:empty { display: none; }
+.pt-ondes { position: absolute; z-index: 3; right: .3em; top: .3em; display: flex; gap: .12em; align-items: flex-end; height: .9em; opacity: 0; transition: opacity .2s; }
 .pt-ondes i { width: .18em; height: 30%; border-radius: .1em; background: var(--c); }
+/* « Toi » : le personnage de jdr.monPerso (l'overlay d'un joueur) */
+.portrait.moi { box-shadow: 0 0 0 .22em var(--c), 0 0 0 .36em #6B4423, 0 0 1.2em color-mix(in srgb, var(--c) 55%, transparent); }
+.portrait.moi::after { content: 'Toi'; position: absolute; z-index: 6; top: -1.05em; right: 1em; padding: .1em .6em .18em; border-radius: .4em;
+  font: 800 .7em var(--f-titre); color: #fff; background: var(--c); box-shadow: 0 0 0 .12em #6B4423; }
 
 /* ---------- quand il parle : rebond, lueur à sa couleur, ondes, bouche qui s'ouvre ---------- */
+.portrait.parle { box-shadow: 0 0 0 .22em var(--c), 0 0 0 .36em #6B4423, 0 0 1.3em .2em color-mix(in srgb, var(--c) 60%, transparent); }
 .portrait.parle .pt-cadre { filter: drop-shadow(0 0 .45em var(--c)) drop-shadow(0 0 1.1em color-mix(in srgb, var(--c) 60%, transparent)); animation: pt-rebond .34s ease-in-out infinite alternate; }
 .portrait.parle .pt-ondes { opacity: 1; }
 .portrait.parle .pt-ondes i { animation: pt-onde .45s ease-in-out infinite alternate; }
@@ -36,15 +44,17 @@
 .attenue .parole .portrait:not(.parle):not(.a-terre) { filter: saturate(.6) brightness(.78); }
 
 /* ---------- PV et « à terre » ---------- */
-.pt-pv { position: relative; z-index: 2; width: 86%; height: .6em; margin-top: .4em; border-radius: .3em; background: #2A0E10; box-shadow: 0 0 0 .12em #0A0605; overflow: hidden; }
-.pt-pv[hidden] { display: none; }
+.pt-vie { display: flex; flex-direction: column; gap: .2em; margin-top: .25em; }
+.pt-vie[hidden] { display: none; }
+.pt-vie b { font: 900 .62em var(--f-texte); color: var(--texte); white-space: nowrap; }
+.pt-pv { position: relative; height: .62em; border-radius: .3em; background: #2A0E10; box-shadow: 0 0 0 .12em #0A0605; overflow: hidden; }
 .pt-pv i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #3FA34A, #8BD17C); transition: width .5s ease-out; }
 .pt-pv.bas i { background: linear-gradient(90deg, #C9302C, #F5B82E); }
-.pt-pv b { position: absolute; inset: -.1em 0 0; font: 900 .5em/1.3 var(--f-texte); text-align: center; color: #fff; text-shadow: 0 0 .3em #000; }
-.pt-etat { position: absolute; z-index: 4; left: 50%; top: 58%; translate: -50% 0; padding: .15em .7em .25em; border-radius: .3em; white-space: nowrap;
-  font: 800 .9em var(--f-titre); color: #FFE7E2; background: #8E1F1F; box-shadow: 0 0 0 .12em #3A0A0A; rotate: -6deg; opacity: 0; transition: opacity .3s; }
+.pt-etat { position: absolute; z-index: 4; left: 50%; top: 58%; translate: -50% 0; padding: .12em .5em .2em; border-radius: .3em; white-space: nowrap;
+  font: 800 .75em var(--f-titre); color: #FFE7E2; background: #8E1F1F; box-shadow: 0 0 0 .12em #3A0A0A; rotate: -6deg; opacity: 0; transition: opacity .3s; }
 .portrait.a-terre .pt-etat { opacity: 1; }
 .portrait.a-terre .pt-image { filter: grayscale(.85) brightness(.72); }
+.portrait.a-terre .pt-nom { color: color-mix(in srgb, var(--texte) 55%, #777); }
 .portrait.a-terre .pt-cadre { animation: pt-chute .5s ease-out; }
 @keyframes pt-chute { 20% { transform: translateX(-.25em) rotate(-2deg); } 40% { transform: translateX(.25em) rotate(2deg); } 60% { transform: translateX(-.15em); } }
 
@@ -57,9 +67,9 @@
 .portrait.soigne .pt-image { animation: pt-soigne 1.1s ease-out; }
 @keyframes pt-touche { 0%, 40% { filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-30deg); } 15% { transform: translateX(-.2em); } 30% { transform: translateX(.2em); } 100% { filter: none; transform: none; } }
 @keyframes pt-soigne { 0%, 30% { filter: brightness(1.35) drop-shadow(0 0 .6em #8BEA7C); } 100% { filter: none; } }
-.portrait.son-tour::before { content: '⚔ Son tour'; position: absolute; z-index: 6; top: -1.25em; left: 50%; translate: -50% 0; padding: .12em .6em .2em;
+.portrait.son-tour::before { content: '⚔ Son tour'; position: absolute; z-index: 6; top: -1.05em; left: 1em; padding: .1em .6em .18em;
   border-radius: .4em; white-space: nowrap; font: 800 .7em var(--f-titre); color: #3A2606; background: var(--accent); box-shadow: 0 0 0 .12em #6B4423; }
-.portrait.son-tour .pt-image { box-shadow: 0 0 0 .28em var(--accent), 0 0 0 .42em #6B4423, 0 0 1.4em .3em color-mix(in srgb, var(--accent) 70%, transparent); }
+.portrait.son-tour { box-shadow: 0 0 0 .22em var(--accent), 0 0 0 .36em #6B4423, 0 0 1.4em .2em color-mix(in srgb, var(--accent) 65%, transparent); }
 
 /* ---------- le titre de la campagne (en haut à droite, au-dessus de l'arène) ---------- */
 .jdr-titre { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 18px 16px;

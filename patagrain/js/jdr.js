@@ -6,8 +6,10 @@
                ou "autre" : sans dessin → l'aventurier encapuchonné à la couleur de la carte, puis le portrait de sa fiche CodexVTT
        nom, titre : vides = ceux du dessin
    JDR.table()            → les places occupées, dans l'ordre : [{ place, joueur, perso, discord, fiche }]
-   JDR.portrait(place)    → la carte de héros (élément), avec .parler(oui), .pv(pv, max), .coup(delta) (coup reçu < 0, soin > 0),
-                            .tour(oui) (c'est son tour de combat), .dessin(perso) (change de dessin : forme de Trayss),
+   JDR.portrait(place)    → la carte de héros, HORIZONTALE (le héros à gauche ; nom, sous-titre, PV à droite), avec
+                            .placer({ x, y, l, h }, tailleNom) (sa place et sa taille ; le texte rétrécit s'il ne tient pas),
+                            .parler(oui), .pv(pv, max), .coup(delta) (coup reçu < 0, soin > 0), .tour(oui) (son tour de combat),
+                            .moi(oui) (« Toi » : le personnage de jdr.monPerso), .dessin(perso) (change de dessin),
                             .photo(adresse) (le portrait de la fiche CodexVTT, pour un personnage « autre »)
    JDR.pied(perso)        → le dessin en pied pour l'arène des jets (« autre » → aventurier)
    JDR.normaliser(texte)  → minuscules sans accents (pour retrouver un personnage par son nom)
@@ -48,13 +50,25 @@ const JDR = (() => {
     el.dataset.place = p.place;
     el.style.setProperty('--c', p.fiche.couleur);
     el.style.setProperty('--c-heros', p.fiche.couleur);           // la cape de l'aventurier
-    el.innerHTML = `<div class="pt-cadre"><div class="pt-image"></div><div class="pt-ondes"><i></i><i></i><i></i></div></div>
-      <div class="pt-nom"></div><div class="pt-etat">💀 À terre</div><div class="pt-pv" hidden><i></i><b></b></div>`;
-    const nom = el.querySelector('.pt-nom');
-    nom.textContent = p.fiche.nom;
-    const sous = document.createElement('small');
-    sous.textContent = p.joueur ? `${p.fiche.titre} · ${p.joueur}` : p.fiche.titre;
-    nom.appendChild(sous);
+    el.innerHTML = `<div class="pt-cadre"><div class="pt-image"></div><div class="pt-ondes"><i></i><i></i><i></i></div><div class="pt-etat">💀 À terre</div></div>
+      <div class="pt-texte"><div class="pt-nom"></div><div class="pt-titre"></div>
+        <div class="pt-vie" hidden><div class="pt-pv"><i></i></div><b></b></div></div>`;
+    el.querySelector('.pt-nom').textContent = p.fiche.nom;
+    el.querySelector('.pt-titre').textContent = p.joueur ? `${p.fiche.titre ? p.fiche.titre + ' · ' : ''}${p.joueur}` : p.fiche.titre;
+    // le nom rétrécit (jusqu'à 35 %) au lieu d'être coupé ; le sous-titre un peu (70 %), puis « … »
+    const ajuster = () => el.querySelectorAll('.pt-nom, .pt-titre').forEach(e => {
+      e.style.fontSize = '';
+      const depart = parseFloat(getComputedStyle(e).fontSize);
+      const plancher = depart * (e.classList.contains('pt-nom') ? .35 : .7);   // le sous-titre reste lisible (sinon « … »)
+      for (let f = depart; e.scrollWidth > e.clientWidth && f > plancher; f -= .5) e.style.fontSize = f + 'px';
+    });
+    el.placer = (z, tailleNom) => {
+      Object.assign(el.style, { left: z.x + 'px', top: z.y + 'px', width: z.l + 'px', height: z.h + 'px', fontSize: z.h / 10 + 'px' });
+      el.style.setProperty('--pw', Math.round(Math.min(z.h * .72, z.l * .34)) + 'px');
+      el.style.setProperty('--fn', tailleNom + 'em');
+      requestAnimationFrame(ajuster);
+      if (document.fonts) document.fonts.ready.then(ajuster);
+    };
     const boite = el.querySelector('.pt-image');
     el.dessin = perso => {
       if (el.dataset.perso === perso) return;
@@ -79,10 +93,10 @@ const JDR = (() => {
       if (bande) bande.classList.toggle('parole', !!bande.querySelector('.portrait.parle'));
     };
     el.pv = (pv, max) => {
-      const barre = el.querySelector('.pt-pv');
-      barre.hidden = false;
+      const vie = el.querySelector('.pt-vie'), barre = el.querySelector('.pt-pv');
+      vie.hidden = false;
       barre.querySelector('i').style.width = Math.max(0, pv / max * 100) + '%';
-      barre.querySelector('b').textContent = `${pv} / ${max} PV`;
+      vie.querySelector('b').textContent = `${pv} / ${max} PV`;
       barre.classList.toggle('bas', pv <= max / 3);
       el.classList.toggle('a-terre', pv <= 0);
       el.querySelector('.heros-svg')?.classList.toggle('expr-ko', pv <= 0);
@@ -98,6 +112,7 @@ const JDR = (() => {
       setTimeout(() => chiffre.remove(), 1600);
     };
     el.tour = oui => el.classList.toggle('son-tour', !!oui);
+    el.moi = oui => el.classList.toggle('moi', !!oui);
     return el;
   }
 

@@ -78,9 +78,10 @@
   // La table est celle des réglages (jdr.places : le MJ, puis les places 1 à 6), affichée tout de suite, même sans
   // CodexVTT. Le moteur commun (js/partie.js) la relie aux fiches CodexVTT (par le nom) et y ajoute, à la fin, les
   // personnages de CodexVTT qui n'ont pas de place (dessinés en « autre » : le portrait de leur fiche).
+  // Le rang : toute la largeur sous la table, une carte horizontale par personnage (comme les autres overlays)
+  const RANG = { x: TABLE.x, y: TABLE.y + TABLE.h + 18, l: TABLE.l, h: 1044 - (TABLE.y + TABLE.h + 18) };
   const bande = document.createElement('div');
-  const haut = TABLE.y + TABLE.h + 16, hauteur = 1064 - haut;
-  bande.style.cssText = `position:absolute;left:${TABLE.x}px;top:${haut}px;width:${TABLE.l}px;height:${hauteur}px;display:flex;justify-content:center`;
+  bande.style.cssText = `position:absolute;left:0;top:0`;
   ecran.appendChild(bande);
   if (C.attenue !== false) document.body.classList.add('attenue');
   const cartes = new Map();                      // clé (place réglée, ou « c<id de fiche> ») → la carte
@@ -105,12 +106,17 @@
         cartes.set(k, JDR.portrait(t));
       }
       bande.appendChild(cartes.get(k));          // dans l'ordre de la table
+      cartes.get(k).moi(p.moi);
       majCarte(p);
     });
     for (const [k, el] of cartes) if (!vues.has(k)) { el.remove(); cartes.delete(k); }
-    const n = Math.max(1, cartes.size);
-    const em = Math.min(hauteur / 15.5, TABLE.l / (n * 10 + (n - 1) * 1.6));   // la carte fait 10em de large (et ~15em de haut)
-    Object.assign(bande.style, { fontSize: em + 'px', gap: 1.6 * em + 'px' });
+    // largeur d'une carte : le rang partagé, sans dépasser 420 px (une carte seule ne s'étale pas) ; « toi » un peu plus haute
+    const n = Math.max(1, persos.length), ecart = 20, l = Math.min(420, (RANG.l - ecart * (n - 1)) / n);
+    persos.forEach((p, i) => {
+      const z = { x: Math.round(RANG.x + i * (l + ecart)), y: RANG.y, l: Math.round(l), h: RANG.h };
+      if (p.moi) { z.y -= 14; z.h += 14; }
+      cartes.get(cle(p)).placer(z, n > 6 ? 1.25 : n > 5 ? 1.5 : n > 4 ? 1.65 : 1.85);
+    });
   }
 
   // --- CodexVTT (moteur commun) : jets, PV, coups et soins, tour de combat, PNJ ---

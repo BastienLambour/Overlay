@@ -26,7 +26,7 @@ L'écran est fait en **1920 × 1080**. Il s'adapte tout seul à ton canevas OBS 
 | Zone | Où | Ce qu'on y voit |
 |---|---|---|
 | La table | en grand à gauche (1500 × 844) | ta fenêtre CodexVTT, capturée par OBS **sous** l'overlay (c'est un trou transparent) |
-| Les cartes des héros | sous la table | le MJ et chaque personnage : nom, joueur, PV, « à terre », celui qui parle |
+| Les cartes des héros | sous la table, sur toute la largeur | une carte par personnage, le MJ compris : le héros à gauche ; nom, sous-titre, joueur, barre de PV à droite ; « à terre », « ⚔ Son tour », celui qui parle (et « Toi » sur l'overlay d'un joueur) |
 | Le titre de la campagne | en haut à droite | « La Malédiction de Pangée », avec l'emblème |
 | Le chat | à droite, sous le titre | le chat Twitch (« La taverne ») |
 | L'arène des jets | au même endroit que le chat | pendant un jet de dés, le héros vient le jouer (le chat s'efface, puis revient) |
