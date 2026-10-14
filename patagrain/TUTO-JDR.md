@@ -34,7 +34,7 @@ L'écran est fait en **1920 × 1080**. Il s'adapte tout seul à ton canevas OBS 
 Trois choses envoient des informations à l'overlay. Aucune n'est obligatoire : sans elles, la scène
 s'affiche quand même, les cartes restent simplement immobiles.
 
-- **CodexVTT** (ta table de jeu) : les jets de dés, les PV, le tour de combat, la forme de Trayss.
+- **CodexVTT** (ta table de jeu) : les jets de dés, les PV, le tour de combat.
   L'overlay ne fait que **regarder** : il ne voit ni tes jets privés, ni tes fiches de MJ, ni la carte.
 - **Le bot Discord** (sur ton VPS) : qui parle dans le salon vocal.
 - **StreamElements** : les alertes (follow, sub…), comme dans toutes les scènes.
@@ -79,7 +79,7 @@ s'affiche quand même, les cartes restent simplement immobiles.
 > 💡 Pour voir la zone de la table : ouvre `scenes/jdr.html?apercu=1` dans ton navigateur.
 
 > ⚠️ OBS montre **ta** vue de MJ : brouillard levé, jetons cachés… Ne montre à l'écran que ce que les
-> joueurs peuvent voir. Une « vue joueur » à mettre directement dans OBS est à l'étude avec CodexVTT.
+> joueurs peuvent voir.
 
 ### 2.4 Le son de Discord (pour que le stream entende les joueurs)
 
@@ -119,6 +119,7 @@ Ouvre `reglages.html` (dans le dossier de l'overlay), section **Scène JDR**.
 | Le résultat d'un jet reste affiché … secondes | une fois les dés posés (4 par défaut ; 2 au plus si d'autres jets attendent) |
 | Jouer aussi les jets de mes PNJ et créatures | tes jets **publics** de PNJ, joués par un aventurier encapuchonné (4.4) |
 | Couleur de la cape des PNJ | bordeaux par défaut |
+| Mon personnage (si je joue au lieu d'être MJ) | vide pour toi (tu es le MJ) ; le jour où tu joues dans la partie de quelqu'un d'autre : le nom de ton personnage dans CodexVTT |
 
 ### 3.2 Le tableau « la table de jeu »
 
@@ -128,7 +129,7 @@ Une ligne par place : le maître du jeu, puis les places 1 à 6.
 |---|---|
 | Présent | décoche pour une place vide ce soir (la carte disparaît) |
 | Joueur | son prénom ou pseudo (écrit sous le nom du personnage) |
-| Personnage | le dessin : Patagrain (MJ), Zokhran, Namerya, Kenai, Trayss (3 formes), Ba Heng Ze, Dvergrost, ou **Autre** |
+| Personnage | le dessin : Patagrain (MJ), Zokhran, Namerya, Kenai, Trayss (dragon, entre les deux, humaine), Ba Heng Ze, Dvergrost, ou **Autre** |
 | Nom du personnage | vide = celui du dessin. Sert à le renommer, et **obligatoire pour « Autre »** |
 | Sous-titre | vide = celui du dessin (« Poète de la marmite »…) |
 | Discord | son **pseudo Discord** (celui de son profil) ou son nom affiché sur ton serveur |
@@ -151,6 +152,11 @@ Pas besoin de dessin :
 Par leur **nom** : le nom de la fiche CodexVTT doit commencer comme celui de la carte (« Kenai »,
 « Ba Heng Ze »…). Les accents et les majuscules ne comptent pas.
 
+Un personnage de CodexVTT qui **n'a pas de place** dans le tableau (un nouveau joueur que tu as oublié
+d'ajouter, un invité d'un soir) **s'ajoute tout seul en bout de table**, avec le portrait de sa fiche
+(ou l'aventurier encapuchonné). Pour qu'il ait son pseudo Discord et sa bouche qui bouge, donne-lui
+quand même une place (3.3).
+
 ## 4. Brancher CodexVTT
 
 ### 4.1 La clé spectateur (une fois)
@@ -169,8 +175,9 @@ recolle-la dans les réglages.
 
 ### 4.2 Trayss et ses trois formes
 
-Sur la fiche de Trayss dans CodexVTT, nomme ses portraits **« Dragon »**, **« Entre deux »** et
-**« Humaine »**. Quand son joueur change de portrait actif, sa carte change de forme toute seule.
+La forme de Trayss **se choisit dans les réglages**, pas dans CodexVTT : `reglages.html` › Scène JDR ›
+le tableau › sa ligne › colonne **Personnage** : « Trayss (forme dragon) », « Trayss (entre les deux) » ou
+« Trayss (forme humaine) ». **Enregistrer** : la carte change dès que la source s'actualise.
 
 ### 4.3 Ce qui se passe pendant la partie
 
@@ -341,8 +348,9 @@ Le bot se met à jour tout seul quand le dépôt change : rien à faire.
 
 ## 7. Tester sans rien brancher
 
-- **La scène seule** : ouvre `scenes/jdr.html?test=1` dans ton navigateur (ou dans OBS). Les héros
-  parlent, prennent des coups, tombent à terre et jouent des jets au hasard.
+- **La scène seule** : ouvre `scenes/jdr.html?test=1` dans ton navigateur (ou dans OBS). Une partie de
+  démonstration : les cartes parlent au hasard, Kenai, Namerya, Zokhran et Trayss ont des PV et prennent
+  des coups, c'est le tour de Kenai, et un jet de dés est joué toutes les 6 secondes.
 - **Le bot sans Discord** (sur le VPS) : il fabrique un faux salon où de faux joueurs parlent au hasard.
   Arrête le vrai bot, lance le faux, puis relance le vrai :
 
@@ -370,20 +378,16 @@ Pendant que le faux tourne, mets dans la colonne Discord les noms `Patagrain`, `
 | Aucun jet ne s'affiche | `?journal=1` (4.5) ; le jet était-il **public** ? la fiche est-elle à la table (3.4) ? |
 | Un héros ne joue pas ses jets | le nom de sa fiche CodexVTT ne commence pas comme celui de sa carte (3.4) |
 | Les PV ne bougent pas | la fiche s'est-elle bien enregistrée dans CodexVTT (pas de message d'erreur) ? Puis `?journal=1` : les « hp » doivent arriver |
-| Trayss ne change pas de forme | ses portraits doivent s'appeler « Dragon », « Entre deux », « Humaine » (4.2) |
+| Trayss n'a pas la bonne forme | choisis-la dans le tableau des réglages, colonne Personnage (4.2), puis **Enregistrer** |
 | Le bot ne vient pas | es-tu dans un salon permis, avec la scène JDR affichée dans OBS (5.5) ? Sinon : `journalctl -u overlays-voix -n 50` (5.6) |
 | Le bot vient, mais une carte ne bouge pas quand son joueur parle | son pseudo dans la colonne Discord ne correspond pas : `?journal=1` donne les noms exacts du salon |
 | « coupé (1006) » en boucle dans le journal Discord | ouvre <https://overlays.bastien-lambour.fr/voix/sante> dans ton navigateur : il doit afficher `ok`. Sinon relance l'installation (5.2), qui répare le site |
 | Une modification des réglages ne se voit pas | actualise la source ; si ça ne suffit pas : Propriétés › « Actualiser le cache de la page actuelle » |
 
-## 9. Ce qui n'a pas encore été testé en vrai
+## 9. Ce qui a été testé
 
-Tout a été vérifié avec de faux serveurs : un faux CodexVTT, un faux Discord, le bot en simulation.
-**Jamais encore** :
+- Avec de faux serveurs (un faux CodexVTT, un faux Discord, le bot en simulation) : tout ce que décrit ce tuto.
+- **En vrai, par toi** (octobre 2026) : la scène dans OBS, CodexVTT branché, le bot Discord installé sur le VPS : ça marche.
 
-- dans OBS ;
-- avec le vrai CodexVTT en ligne (le mode spectateur doit être en ligne sur ton serveur) ;
-- avec le vrai Discord, ni le script d'installation sur ton VPS.
-
-Au premier essai, garde `?journal=1` ouvert. Si quelque chose ne marche pas, copie ce qu'il affiche
-(ou ce qu'affiche le script d'installation) et envoie-le.
+Si quelque chose ne marche plus, garde `?journal=1` ouvert : copie ce qu'il affiche (ou ce qu'affiche le
+script d'installation) et envoie-le.

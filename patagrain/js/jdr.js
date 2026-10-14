@@ -103,5 +103,5 @@ const JDR = (() => {
 
   const normaliser = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
-  return { table, portrait, normaliser, pied: dessine, FICHES };
+  return { table, portrait, normaliser, pied: dessine, teinte, FICHES };
 })();
