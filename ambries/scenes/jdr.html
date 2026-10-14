@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Ambries_ — JDR</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/jdr.css">
+</head>
+<body>
+<!--
+  Scène « JDR » (disposition A, « table en bas ») : source Navigateur 1920 × 1080, AU-DESSUS de la capture de CodexVTT.
+  La table CodexVTT en grand (trou transparent : OBS y met la capture), les cartes des personnages dessous (le MJ compris),
+  le nom de la campagne et le chat à droite. Tout vient de CodexVTT (mode spectateur) : personnages, portraits, PV, jets, tour.
+  Discord (bot « voix » du VPS) : la carte de celui qui parle sautille et lance une bulle.
+  Réglages : reglages.html › Scène JDR. Zone de la table : x 60 · y 60 · 1400 × 788 px.
+  ?test=1 : démo · ?apercu=1 : la zone de la table · ?journal=1 : les connexions · ?chat=0 · ?moi=Kenai · ?titre=…
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../mes-reglages.js"></script>
+<script src="../js/couleurs.js"></script>
+<script>
+  (() => { const q = new URLSearchParams(location.search); if (q.has('moi')) CONFIG.jdr = { ...(CONFIG.jdr || {}), monPerso: q.get('moi') }; })();
+</script>
+<script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/socket.io.min.js"></script>
+<script src="../js/codex.js"></script>
+<script src="../js/voix.js"></script>
+<script src="../js/partie.js"></script>
+<script src="../js/jdr.js"></script>
+<script>
+  const ecran = document.getElementById('ecran');
+  const J = CONFIG.jdr || {};
+  const p = Commun.params;
+  // --- La disposition A ---
+  const TABLE = { x: 60, y: 60, l: 1400, h: 788 }, RANG = { x: 60, y: 896, l: 1400, h: 140 };
+  const TITRE = { x: 1500, y: 40, l: 380, h: 150 }, CHAT = { x: 1500, y: 230, l: 360, h: 806 };
+  const MON_JET = { x: 460, y: 470, l: 600, h: 360 }, AUTRE_JET = { x: 1490, y: 230, l: 380, h: 330 };
+  Composants.fondDecoupe(ecran, [TABLE]);
+  Composants.cadre(ecran, TABLE, { titre: 'La partie', nom: false, doodle: false, jeu: true });
+  const titre = Composants.creer(ecran, 'jdr-titre', '<span class="sticker">Campagne</span><b></b>', TITRE);
+  titre.querySelector('b').textContent = p.get('titre') || J.titre || CONFIG.nomChaine || '';
+  if (p.get('chat') !== '0') Composants.chat(ecran, CHAT);
+
+  // --- Les cartes : une par personnage (le MJ compris) ---
+  let cartes = {};
+  const cle = q => q.nom;
+  function table(persos) {
+    Object.values(cartes).forEach(c => c.oter()); cartes = {};
+    if (!persos.length) return;
+    const n = persos.length, ecart = 22, l = Math.min(420, (RANG.l - ecart * (n - 1)) / n);
+    persos.forEach((q, i) => {
+      const z = { x: Math.round(RANG.x + i * (l + ecart)), y: RANG.y, l: Math.round(l), h: RANG.h };
+      cartes[cle(q)] = JDR.carte(ecran, z, q, { portrait: Math.min(z.h - 44, l * .3), nom: n > 5 ? 16 : n > 4 ? 18 : 23 });
+    });
+  }
+
+  const jouer = JDR.file(j => JDR.jet(ecran, j.moi ? MON_JET : AUTRE_JET, j, { petit: !j.moi }));
+  Partie.brancher({
+    table,
+    perso: q => cartes[cle(q)] && cartes[cle(q)].maj(q),
+    coup: (q, d) => cartes[cle(q)] && cartes[cle(q)].coup(d),
+    tour: q => Object.entries(cartes).forEach(([k, c]) => c.tour(!!q && cle(q) === k)),
+    jet: j => {
+      if (j.pnj && !J.pnj) return;
+      if (!j.moi && J.autresJets === false) return;
+      jouer(j);
+    },
+  }, { places: Partie.placesReglees() });
+  Partie.voix((q, oui) => cartes[cle(q)] && cartes[cle(q)].parler(oui));
+  Commun.demarrer();
+</script>
+</body>
+</html>

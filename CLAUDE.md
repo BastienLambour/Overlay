@@ -202,6 +202,23 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   (`node outils/capturer.mjs "transitions/x.html?mode=complet" 0 700 1400 --dossier=…`) ;
   signale aussi les erreurs JavaScript. L'outil de vérification visuelle par défaut. `--transparent` (fond transparent), `--decoupe=x,y,l,h`,
   `--fichier=<png>` : faire une IMAGE d'une source (ex. `mordethrhedan/outils/cadre-image.mjs` : le cadre néon en PNG).
+- **Module JDR (facultatif : seulement les overlays qui ont `scenes/jdr.html`)** : `js/socket.io.min.js` (client Socket.IO 4.8, copié : rien
+  téléchargé au chargement), `js/codex.js` (CodexVTT en mode SPECTATEUR, lecture seule : `Codex.brancher(rappels)`, `Codex.url()`, `?journal=1` ;
+  protocole `G:\Projets\Codex\codex-web\docs\SPECTATEUR.md`), `js/partie.js` (objet `Partie`, ne dessine RIEN) : la table construite depuis
+  CodexVTT (`state.characters` : nom, portrait, PV, forme ; plus rien à recopier dans les réglages), `config.js › jdr.monPerso` (nom du perso ou
+  id de fiche : l'overlay d'un JOUEUR met sa carte en avant, `moi: true`, et joue ses jets en grand), lecture des jets (`geste` d'après la
+  compétence, `verdict`, `mot`, `resultat`), PNJ, tour de combat, démo `?test=1`. Table RÉGLÉE facultative (`{ places: [{ nom, mj, fiche, …} ] }`) : affichée tout
+  de suite même sans CodexVTT, le MJ (`mj: true`) n'étant pas un personnage CodexVTT ; reliée aux fiches par id ou par nom, les autres persos s'ajoutent. Rappels : `table`, `perso`, `coup`, `tour`, `jet`, `etat`.
+  Chaque overlay DESSINE à son style (cartes, arène des jets). Plusieurs streamers d'une même partie (MJ + joueurs) : même adresse, même clé
+  spectateur ; chacun mixe son overlay sur sa vidéo, le retard Twitch est donc le même : rien à synchroniser. Les commandes du chat restent
+  propres à chaque chaîne. `js/voix.js` (bot Discord « voix » du VPS) + `Partie.voix((perso, oui) => …)` : qui parle, d'après le champ `discord`
+  des places ; `Partie.placesReglees()` = la table réglée de `jdr.mj { nom, discord }` (le MJ a sa carte) + `jdr.joueurs [[perso, pseudo Discord]…]`. Un overlay qui a son propre format de table (Patagrain : `jdr.places`) le garde
+  et passe ses places converties à `Partie.brancher(…, { places })` (ne jamais casser un format que des mes-reglages.js utilisent déjà).
+  Config : `jdr { titre, monPerso, mj, joueurs, autresJets, pnj, dureeResultat, attenue, codex { actif, adresse, cle }, discord { actif, adresse, cle } }`
+  (clés = SECRETS → mes-reglages.js). Scène JDR (disposition A « table en bas » : table CodexVTT
+  en grand, cartes dessous, titre + chat à droite) dans mordethrhedan (néon), johnvongurt (mission control), ambries (comics) : chacun a `css/jdr.css`
+  + `js/jdr.js` avec la MÊME interface `JDR.carte(ecran, z, perso, opts)` (.maj .coup .tour .parler .oter), `JDR.jet(ecran, z, jet, { petit })`,
+  `JDR.file(jouer)` : seul le dessin change. Patagrain garde sa scène (héros dessinés, arène), branchée sur le même moteur.
 - `chaine/reseaux.js` : logos des réseaux (Discord, YouTube, TikTok, Instagram, X, Twitch, Kick, Bluesky), d'une couleur
   (currentColor) ; `Reseaux.svg(titre, taille, style)` → le logo si le titre d'un panneau est un réseau, sinon '' (l'overlay garde
   alors son icône) ; `Reseaux.cle(titre)`. Chargé par `kit.html` avant `elements.js`.

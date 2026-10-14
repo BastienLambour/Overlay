@@ -1,0 +1,59 @@
+/* =====================================================================
+   SCÈNE JDR (scenes/jdr.html) — style comics néon : cartes-stickers, portrait dans l'anneau néon,
+   bulle « bla bla » quand quelqu'un parle, jet en « POW ! » de BD. Couleurs du thème (css/theme.css).
+   ===================================================================== */
+/* --- Une carte --- */
+.jc { position: absolute; display: flex; align-items: center; gap: 16px; padding: 0 18px; box-sizing: border-box;
+  background: var(--surface); border: 4px solid #fff; border-radius: 22px; box-shadow: var(--halo), var(--ombre-pop); transition: opacity .4s; }
+.jc-portrait { flex: none; position: relative; border-radius: 50%; display: grid; place-items: center; background: var(--fond-2);
+  border: 4px solid #fff; box-shadow: 0 0 10px var(--violet), inset 0 0 10px var(--violet); overflow: hidden; }
+.jc-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.jc-portrait b { font: 400 1em/1 var(--f-titre); color: #fff; -webkit-text-stroke: 2px var(--encre); paint-order: stroke fill; }
+.jc-corps { flex: 1; min-width: 0; }
+.jc-nom { font: 400 26px/1 var(--f-titre); color: #fff; letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  -webkit-text-stroke: 2px var(--encre); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--encre); }
+.jc-sous { font: 600 15px var(--f-texte); color: var(--lilas); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jc-barre { height: 14px; border-radius: 8px; background: var(--fond); border: 3px solid var(--encre); margin-top: 8px; overflow: hidden; }
+.jc-barre i { display: block; height: 100%; width: 100%; background: var(--ok); transition: width .6s; }
+.jc.bas .jc-barre i { background: var(--accent); }
+.jc-pv { font: 600 14px var(--f-texte); color: var(--doux); margin-top: 3px; }
+.jc-tag { position: absolute; top: -18px; display: none; font-size: 16px; padding: 6px 12px 4px; }
+.jc-tag.toi { right: 16px; }
+.jc-tag.tour { left: 16px; transform: rotate(3deg); }
+.jc.moi { border-color: var(--accent); }
+.jc.moi .jc-tag.toi, .jc.tour .jc-tag.tour { display: block; }
+.jc.a-terre { opacity: .5; filter: grayscale(.6); }
+.jc.a-terre .jc-sous::after { content: ' · K.O.'; color: var(--accent); font-weight: 800; }
+/* Il parle : l'anneau devient rose, la carte sautille, une bulle « bla bla » sort du portrait */
+.jc.parle .jc-portrait { border-color: var(--accent); box-shadow: 0 0 6px #fff, 0 0 18px var(--accent), 0 0 36px var(--accent); }
+.jc.parle { animation: sautille .45s ease-in-out infinite alternate; }
+@keyframes sautille { to { transform: translateY(-5px) rotate(-.6deg); } }
+.jc-bulle { position: absolute; left: 0; top: -40px; display: none; font: 400 17px/1 var(--f-titre); color: var(--encre); background: #fff;
+  border: 3px solid var(--encre); border-radius: 16px 16px 16px 4px; padding: 6px 10px 4px; box-shadow: 3px 3px 0 var(--encre); white-space: nowrap; }
+.jc.parle .jc-bulle { display: block; }
+.jdr-parole .jc:not(.parle):not(.moi) { opacity: .65; }
+.jc-coup { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font: 400 44px var(--f-titre); -webkit-text-stroke: 3px var(--encre);
+  paint-order: stroke fill; animation: coup 1.6s ease-out forwards; }
+.jc-coup.blesse { color: var(--accent); } .jc-coup.soin { color: var(--ok); }
+@keyframes coup { 0% { opacity: 0; transform: translateY(-20%) scale(.5) rotate(-10deg); } 15% { opacity: 1; transform: translateY(-50%) scale(1.2) rotate(-6deg); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-120%); } }
+
+/* --- Le titre de la campagne --- */
+.jdr-titre { position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px; padding: 0 22px; box-sizing: border-box; }
+.jdr-titre b { font: 400 34px/1.05 var(--f-titre); color: #fff; -webkit-text-stroke: 3px var(--encre); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--encre), 0 0 20px var(--violet); }
+
+/* --- Le jet : « POW ! » --- */
+.jet { position: absolute; display: grid; place-items: center; text-align: center; }
+.jet .eclat { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.jet .eclat path { fill: var(--accent); stroke: var(--encre); stroke-width: 6; stroke-linejoin: round; }
+.jet.ok .eclat path, .jet.crit .eclat path { fill: #FFE14D; }
+.jet .contenu { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.jet small { font: 400 18px var(--f-titre); color: var(--encre); background: #fff; border: 3px solid var(--encre); padding: 4px 10px 2px; transform: rotate(-3deg); }
+.jet .chiffre { font: 400 120px/1 var(--f-titre); color: #fff; -webkit-text-stroke: 5px var(--encre); paint-order: stroke fill; text-shadow: 6px 6px 0 var(--encre); }
+.jet .chiffre.roule { opacity: .6; }
+.jet .formule { font: 700 17px var(--f-texte); color: var(--encre); }
+.jet .mot { font: 400 38px/1 var(--f-titre); color: #fff; -webkit-text-stroke: 3px var(--encre); paint-order: stroke fill; text-shadow: 4px 4px 0 var(--encre);
+  opacity: 0; transform: scale(.4) rotate(-8deg); transition: .3s var(--rebond); }
+.jet .mot.vu { opacity: 1; transform: rotate(-5deg); }
+.jet.petit .chiffre { font-size: 74px; -webkit-text-stroke-width: 4px; } .jet.petit .mot { font-size: 26px; } .jet.petit small { font-size: 14px; }
+.jet.entre { animation: entre .4s var(--rebond); }
+@keyframes entre { from { opacity: 0; transform: scale(.3) rotate(12deg); } }

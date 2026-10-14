@@ -265,6 +265,25 @@ window.CONFIG = {
       "Cosmo",
     ],
   },
+  // --- Scène JDR (scenes/jdr.html) : les parties de jeu de rôle sur CodexVTT ---
+  // La table vient de CodexVTT (mode spectateur, lecture seule) : personnages, portraits, PV, jets, combat.
+  // Les CLÉS sont des SECRETS : laisse-les vides ici, colle-les dans reglages.html › Scène JDR (elles vont dans mes-reglages.js).
+  jdr: {
+    titre: "",                     // le nom de la campagne (en haut à droite)
+    monPerso: "",                  // TON personnage dans CodexVTT (son nom, ex. "Kenai") : sa carte en avant (« toi »), tes jets en grand.
+                                   // Vide = tu es le MJ, ou tu regardes : toute la table pareil.
+    mj: { nom: "Patagrain", discord: "" },  // le MJ : une carte à son nom (il n'est pas un personnage de CodexVTT) ; discord = son pseudo, pour l'animer quand il parle
+    joueurs: [                     // qui joue qui sur Discord : [nom du perso, pseudo Discord] (les cartes s'affichent tout de suite)
+      // ["Kenai", "mordethrhedan"],
+    ],
+    autresJets: true,              // les jets des autres joueurs, en petit (false = seulement les tiens)
+    pnj: false,                    // les jets PUBLICS des PNJ du MJ, en petit
+    dureeResultat: 4,              // secondes : le résultat d'un jet reste affiché une fois les dés posés
+    attenue: true,                 // quand quelqu'un parle, les autres cartes s'éteignent un peu
+    codex: { actif: true, adresse: "", cle: "" },     // l'adresse de CodexVTT (la même pour toute la table) ; clé donnée par le MJ
+    discord: { actif: true, adresse: "", cle: "" },   // le bot « voix » du VPS ; adresse vide = celle des mises à jour + /voix
+  },
+
   // --- Mises à jour : le serveur d'où l'overlay se met à jour (bouton « Mettre à jour l'overlay » du
   //     script OBS, ou mettre-a-jour.cmd). Tes réglages (mes-reglages.js) ne sont jamais remplacés.
   miseAJour: {

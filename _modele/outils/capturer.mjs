@@ -13,6 +13,7 @@
    mises en pause à cet instant (getAnimations → currentTime) avant la capture.
    Sans nombre : capture après 1,5 s d'animation normale.
    Résultat : un PNG par instant, dans --dossier (par défaut : dossier temporaire affiché).
+   --attendre=ms : sans instants, temps laissé à la page avant la capture (défaut 1500 ; ex. 4000 pour voir un jet de la démo).
    --transparent : fond transparent (pour faire une IMAGE d'une source : cadre, logo…).
    --decoupe=x,y,l,h : ne garde que ce rectangle de la page (pixels de la fenêtre).
    --fichier=<chemin.png> : enregistre la capture sous ce nom (une seule capture), depuis le dossier de l'overlay.
@@ -92,7 +93,7 @@ async function capture(fichier) {
   console.log(`  ${join(SORTIE, fichier)}`);
 }
 if (!instants.length) {
-  await attendre(1500);
+  await attendre(Number(option('attendre', 1500)));
   await capture(`capture-${nom}.png`);
 } else {
   for (const t of instants) {

@@ -18,7 +18,7 @@ window.ReglagesChamps = {
   ],
 
   // Options des scènes : noms des lignes et colonnes du tableau (en plus de ceux par défaut)
-  scenes: { cam: 'Cadre de la cam (Jeu)' },
+  scenes: { cam: 'Cadre de la cam (Jeu)', jdr: 'JDR' },
   elements: { pseudo: '🏷️ Pseudo sur le cadre' },
 
   sections: [
@@ -89,6 +89,23 @@ window.ReglagesChamps = {
       { cle: 'chaine.panneaux', type: 'liste', label: 'Panneaux de bio', aide: 'Un titre par ligne, dans l’ordre de ta chaîne. Un nom de réseau (Discord, YouTube, TikTok, Instagram, X (Twitter), Twitch, Kick, Bluesky), « Mes sites » ou « Mes créations » prend son logo : retire ceux que tu n’utilises pas.' },
       { cle: 'chaine.planning', type: 'paires', planning: true, label: 'Planning (panneau de bio)', aide: 'Une ligne par jour : « Mercredi | 20h30 », ou avec le jeu : « Mercredi | 20h30 | Minecraft ». Rempli, le panneau Planning affiche ta semaine ; vide, il garde juste son titre.' },
     ] },
+    { titre: 'Scène JDR (CodexVTT)', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table, les personnages, leurs PV et les jets viennent tout seuls de CodexVTT. La carte de celui qui parle sur Discord s’anime.', champs: [
+      { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne' },
+      { cle: 'jdr.monPerso', type: 'texte', label: 'Mon personnage (si je joue)', aide: 'Son nom dans CodexVTT (ex. Kenai) : sa carte est mise en avant (« toi ») et tes jets sont joués en grand. Laisse vide si tu es le MJ.' },
+      { cle: 'jdr.mj.nom', type: 'texte', label: 'Le MJ : son nom', aide: 'Une carte à son nom (le MJ n’est pas un personnage de CodexVTT). Vide = pas de carte de MJ.' },
+      { cle: 'jdr.mj.discord', type: 'texte', label: 'Le MJ : son pseudo Discord', aide: 'Pour animer sa carte quand il parle.' },
+      { cle: 'jdr.joueurs', type: 'paires', label: 'Qui joue qui sur Discord', aide: 'Une ligne par personnage : « Kenai | pseudo Discord » (le nom comme dans CodexVTT). Les cartes s’affichent tout de suite, même avant CodexVTT.' },
+      { cle: 'jdr.autresJets', type: 'case', label: 'Montrer aussi les jets des autres joueurs (en petit)' },
+      { cle: 'jdr.pnj', type: 'case', label: 'Montrer les jets publics des PNJ du MJ (en petit)' },
+      { cle: 'jdr.dureeResultat', type: 'nombre', label: 'Le résultat d’un jet reste affiché … secondes', min: 1, max: 20 },
+      { cle: 'jdr.attenue', type: 'case', label: 'Quand quelqu’un parle, les autres cartes s’éteignent un peu' },
+      { cle: 'jdr.codex.actif', type: 'case', label: 'Brancher CodexVTT (jets de dés, PV, combat)' },
+      { cle: 'jdr.codex.adresse', type: 'texte', label: 'Adresse de CodexVTT', aide: 'La même pour toute la table (ex. https://codex.exemple.fr, sans rien après).' },
+      { cle: 'jdr.codex.cle', type: 'secret', label: 'Clé spectateur de la table', aide: 'Donnée par le MJ (CodexVTT › Tableau de bord › Modifier la table › « Overlay de stream (spectateur) »). La même pour tous les overlays de la partie. Elle ne permet que de regarder.' },
+      { cle: 'jdr.discord.actif', type: 'case', label: 'Brancher Discord (la carte de celui qui parle s’anime)' },
+      { cle: 'jdr.discord.adresse', type: 'texte', label: 'Adresse du bot Discord', aide: 'Vide = celle du serveur des mises à jour (…/voix).' },
+      { cle: 'jdr.discord.cle', type: 'secret', label: 'Clé du bot Discord', aide: 'Donnée par Bastien (affichée à la fin de l’installation du bot sur le VPS).' },
+    ] },
     { titre: 'Mises à jour', icone: '🔄', aide: 'D\'où l\'overlay se met à jour : bouton « Mettre à jour l\'overlay » du script OBS (outils/actualiser-obs.lua), ou double-clic sur mettre-a-jour.cmd. Tes réglages (mes-reglages.js) ne sont jamais remplacés ; l\'ancienne version est gardée dans sauvegardes.', champs: [
       { cle: 'miseAJour.adresse', type: 'texte', label: 'Adresse du serveur des overlays', aide: 'Ex. https://overlays.bastien-lambour.fr (celle de la page de téléchargement). À ne changer que si on te le dit.' },
     ] },
@@ -98,6 +115,7 @@ window.ReglagesChamps = {
   ],
 
   tests: [
+    ['🎲 Scène JDR', 'scenes/jdr.html?test=1'],
     ['🔔 Alertes', 'sources/alertes.html?test=1'],
     ['⏱️ Démarrage', 'scenes/demarrage.html?test=1'],
     ['☕ Pause', 'scenes/pause.html?test=1'],

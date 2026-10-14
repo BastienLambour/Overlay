@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Scène — JDR</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/jdr.css">
+</head>
+<body>
+<!--
+  Scène « JDR » (disposition A, « table en bas ») : source Navigateur 1920 × 1080, AU-DESSUS de la capture de CodexVTT.
+  La table CodexVTT en grand (trou transparent : OBS y met la capture), les cartes des personnages dessous, le nom de la
+  campagne et le chat à droite. Tout vient de CodexVTT (mode spectateur) : personnages, portraits, PV, jets, tour de combat.
+  Discord (bot « voix » du VPS) : la carte de celui qui parle s'anime.
+  Réglages : reglages.html › Scène JDR (adresse + clé de CodexVTT, ton personnage, qui joue qui sur Discord).
+  ?test=1 : une table de démo, des jets et des voix au hasard · ?apercu=1 : la zone de la table · ?journal=1 : les connexions
+  ?chat=0 : pas de chat · ?moi=Kenai : ton personnage (passe avant les réglages)
+-->
+<div id="ecran"></div>
+
+<script src="../config.js"></script>
+<script src="../mes-reglages.js"></script>
+<script src="../js/couleurs.js"></script>
+<script>
+  // ?moi= dans l'adresse passe avant les réglages (pratique pour essayer)
+  (() => { const q = new URLSearchParams(location.search); if (q.has('moi')) CONFIG.jdr = { ...(CONFIG.jdr || {}), monPerso: q.get('moi') }; })();
+</script>
+<script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/socket.io.min.js"></script>
+<script src="../js/codex.js"></script>
+<script src="../js/voix.js"></script>
+<script src="../js/partie.js"></script>
+<script src="../js/jdr.js"></script>
+<script>
+  Commun.demarrer();
+  const ecran = document.getElementById('ecran');
+  const J = CONFIG.jdr || {};
+  const p = Commun.params;
+  // --- La disposition A : la table, le rang des cartes, le titre, le chat ---
+  const TABLE = { x: 45, y: 45, l: 1440, h: 810 }, RANG = { x: 45, y: 888, l: 1440, h: 150 };
+  const TITRE = { x: 1520, y: 45, l: 355, h: 110 }, CHAT = { x: 1520, y: 190, l: 355, h: 845 };
+  const MON_JET = { x: 470, y: 520, l: 590, h: 300 }, AUTRE_JET = { x: 1520, y: 190, l: 355, h: 300 };
+  Composants.fond(ecran, [TABLE]);
+  Composants.zoneApercu(ecran, TABLE, 'Capture de CodexVTT', 'jeu');
+  Composants.cadre(ecran, TABLE);
+  Composants.cadre(ecran, TITRE, { verre: true });
+  Composants.titre(ecran, TITRE, p.get('titre') || J.titre || CONFIG.nomChaine || '', String(J.titre || '').length > 18 ? 34 : 44);
+  if (p.get('chat') !== '0') Composants.chat(ecran, CHAT);
+  else Composants.cadre(ecran, CHAT, { verre: true });
+
+  // --- Les cartes : une par personnage (le MJ compris), « toi » un peu plus haute ---
+  let cartes = {};
+  const cle = q => q.nom;
+  function table(persos) {
+    Object.values(cartes).forEach(c => c.oter()); cartes = {};
+    if (!persos.length) return;
+    const n = persos.length, ecart = 20, l = Math.min(420, (RANG.l - ecart * (n - 1)) / n);   // une carte seule ne s'étale pas sur toute la largeur
+    persos.forEach((q, i) => {
+      const z = { x: Math.round(RANG.x + i * (l + ecart)), y: RANG.y, l: Math.round(l), h: RANG.h };
+      if (q.moi) { z.y -= 14; z.h += 14; }
+      cartes[cle(q)] = JDR.carte(ecran, z, q, { portrait: Math.min(z.h - 40, l * .35), nom: n > 5 ? 20 : n > 4 ? 23 : 28 });
+    });
+  }
+
+  // --- Les jets : le tien en grand sur la table, ceux des autres en petit en haut du chat ---
+  const jouer = JDR.file(j => JDR.jet(ecran, j.moi ? MON_JET : AUTRE_JET, j, { petit: !j.moi }));
+
+  Partie.brancher({
+    table,
+    perso: q => cartes[cle(q)] && cartes[cle(q)].maj(q),
+    coup: (q, d) => cartes[cle(q)] && cartes[cle(q)].coup(d),
+    tour: q => Object.entries(cartes).forEach(([k, c]) => c.tour(!!q && cle(q) === k)),
+    jet: j => {
+      if (j.pnj && !J.pnj) return;                                   // les PNJ du MJ : pas joués (reglages.html › Scène JDR)
+      if (!j.moi && J.autresJets === false) return;                  // seulement mes jets
+      jouer(j);
+    },
+  }, { places: Partie.placesReglees() });
+  Partie.voix((q, oui) => cartes[cle(q)] && cartes[cle(q)].parler(oui));
+</script>
+</body>
+</html>

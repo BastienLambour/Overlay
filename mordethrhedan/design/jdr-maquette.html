@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr" class="transparent">
+<head>
+<meta charset="UTF-8">
+<title>Maquette — Scène JDR</title>
+<link rel="stylesheet" href="../css/theme.css">
+<link rel="stylesheet" href="../css/composants.css">
+<link rel="stylesheet" href="../css/jdr.css">
+</head>
+<body>
+<!--
+  MAQUETTE du moodboard JDR (design/moodboard-jdr.html) : trois dispositions de la scène JDR, aux couleurs de l'overlay.
+  ?d=A | B | C   ·   ?moi=Kenai (vue d'un joueur : sa carte en avant) ou ?moi= (vue du MJ)   ·   démo : Partie (js/partie.js)
+-->
+<div id="ecran"></div>
+<script src="../config.js"></script>
+<script src="../mes-reglages.js"></script>
+<script src="../js/couleurs.js"></script>
+<script>
+  // Maquette : la démo de Partie, et « mon perso » choisi dans l'adresse
+  (() => { const q = new URLSearchParams(location.search); CONFIG.jdr = { ...(CONFIG.jdr || {}), monPerso: q.has('moi') ? q.get('moi') : 'Kenai', titre: (CONFIG.jdr || {}).titre || 'La Malédiction de Pangée' }; })();
+</script>
+<script src="../js/options.js"></script>
+<script src="../js/zones.js"></script>
+<script src="../js/commun.js"></script>
+<script src="../js/fond.js"></script>
+<script src="../js/chat.js"></script>
+<script src="../js/evenements.js"></script>
+<script src="../js/composants.js"></script>
+<script src="../js/partie.js"></script>
+<script>
+  Commun.demarrer();
+  const ecran = document.getElementById('ecran');
+  const D = (Commun.params.get('d') || 'A').toUpperCase();
+  const J = CONFIG.jdr || {};
+  const attendre = ms => new Promise(r => setTimeout(r, ms));
+  const DENOUEMENT = 1500, DUREE = 4000;
+
+  // ---------- Une carte de personnage ----------
+  function carte(z, p, { portrait = z.h - 36, nom = 30 } = {}) {
+    const cadre = Composants.cadre(ecran, z, { verre: true, rayon: 18 });
+    const el = Composants.creer(ecran, 'jc', `<div class="jc-portrait" style="width:${portrait}px;height:${portrait}px;font-size:${portrait * .55}px"></div>
+      <div class="jc-corps"><div class="jc-nom" style="font-size:${nom}px"></div><div class="jc-sous"></div><div class="jc-barre"><i></i></div><div class="jc-pv"></div></div>
+      <span class="jc-tag toi">toi</span><span class="jc-tag tour">son tour</span>`, z);
+    el.querySelector('.jc-nom').textContent = p.nom;
+    el.querySelector('.jc-sous').textContent = p.mj ? 'Maître du jeu' : (p.forme || '');
+    const maj = q => {
+      el.classList.toggle('moi', !!q.moi); cadre.classList.toggle('jc-cadre-moi', !!q.moi);
+      el.classList.toggle('a-terre', !!q.aTerre);
+      const boite = el.querySelector('.jc-portrait');
+      if (q.portrait) { if (!boite.querySelector('img')) boite.innerHTML = `<img src="${q.portrait}" alt="">`; }
+      else boite.innerHTML = `<b>${(q.nom || '?').charAt(0)}</b>`;
+      const ok = q.pvMax > 0;
+      el.querySelector('.jc-barre').style.visibility = ok ? '' : 'hidden';
+      el.querySelector('.jc-pv').textContent = ok ? `${q.pv} / ${q.pvMax} PV` : '';
+      if (ok) el.querySelector('.jc-barre i').style.width = Math.max(0, q.pv / q.pvMax * 100) + '%';
+      el.classList.toggle('bas', ok && q.pv <= q.pvMax / 3);
+    };
+    maj(p);
+    return { el, cadre, maj,
+      coup: d => { const c = document.createElement('div'); c.className = 'jc-coup ' + (d < 0 ? 'blesse' : 'soin'); c.textContent = (d > 0 ? '+' : '') + d; el.appendChild(c); setTimeout(() => c.remove(), 1700); },
+      tour: oui => el.classList.toggle('tour', oui),
+      flash: texte => { const f = document.createElement('div'); f.className = 'jc-flash'; f.textContent = texte; el.appendChild(f); setTimeout(() => f.remove(), 4100); },
+      oter: () => { el.remove(); cadre.remove(); } };
+  }
+
+  // ---------- Le compteur néon d'un jet : les chiffres défilent, puis se posent (en même temps que les dés de CodexVTT) ----------
+  async function panneauJet(z, j, { petit = false } = {}) {
+    const cadre = Composants.cadre(ecran, z, { verre: true, rayon: 22 });
+    const el = Composants.creer(ecran, 'jet entre' + (petit ? ' petit' : ''), '<small></small><div class="chiffre roule">--</div><div class="formule"></div><div class="mot"></div>', z);
+    el.querySelector('small').textContent = `${j.perso ? j.perso.nom : j.characterName} · ${j.libelle}`;
+    const chiffre = el.querySelector('.chiffre');
+    const tic = setInterval(() => { chiffre.textContent = 1 + Math.floor(Math.random() * 20); }, 55);
+    await attendre(DENOUEMENT);
+    clearInterval(tic);
+    chiffre.classList.remove('roule');
+    chiffre.textContent = j.result;
+    el.querySelector('.formule').textContent = j.resultat;
+    const mot = el.querySelector('.mot');
+    if (j.mot) { mot.textContent = j.mot; mot.className = 'mot vu ' + (j.verdict || ''); }
+    await attendre(DUREE);
+    await el.animate([{ opacity: 1 }, { opacity: 0 }], 400).finished; el.remove(); cadre.remove();
+  }
+  // Un jet à la fois
+  const file = []; let occupe = false;
+  async function suivant(jouer) { if (occupe || !file.length) return; occupe = true; try { await jouer(file.shift()); } finally { occupe = false; suivant(jouer); } }
+
+  // ---------- Les trois dispositions ----------
+  const DISPOSITIONS = {
+    // A — Table en bas : la table CodexVTT en grand, les cartes en rang dessous, le chat à droite
+    A() {
+      const TABLE = { x: 45, y: 45, l: 1440, h: 810 }, RANG = { x: 45, y: 888, l: 1440, h: 150 };
+      const TITRE = { x: 1520, y: 45, l: 355, h: 110 }, CHAT = { x: 1520, y: 190, l: 355, h: 845 };
+      Composants.fond(ecran, [TABLE]);
+      Composants.zoneApercu(ecran, TABLE, 'Capture de CodexVTT', 'jeu');
+      Composants.cadre(ecran, TABLE);
+      Composants.cadre(ecran, TITRE, { verre: true });
+      Composants.titre(ecran, TITRE, J.titre, 34);
+      Composants.chat(ecran, CHAT);
+      let cartes = {};
+      return {
+        table(persos) {
+          Object.values(cartes).forEach(c => c.oter()); cartes = {};
+          const n = persos.length, ecart = 20, l = (RANG.l - ecart * (n - 1)) / n;
+          persos.forEach((p, i) => { const z = { x: Math.round(RANG.x + i * (l + ecart)), y: RANG.y, l: Math.round(l), h: RANG.h };
+            if (p.moi) { z.y -= 14; z.h += 14; }
+            cartes[p.id ?? p.nom] = carte(z, p, { portrait: z.h - 40, nom: n > 4 ? 26 : 30 }); });
+        },
+        cartes: () => cartes,
+        jet: j => panneauJet(j.moi ? { x: 470, y: 520, l: 590, h: 300 } : { x: 1520, y: 190, l: 355, h: 300 }, j, { petit: !j.moi }),
+      };
+    },
+    // B — Colonne de vie : la table en grand, les persos empilés à droite, le fil des jets en bas
+    B() {
+      const TABLE = { x: 45, y: 45, l: 1440, h: 810 }, BAS = { x: 45, y: 888, l: 1440, h: 150 }, COL = { x: 1520, y: 45, l: 355 };
+      Composants.fond(ecran, [TABLE]);
+      Composants.zoneApercu(ecran, TABLE, 'Capture de CodexVTT', 'jeu');
+      Composants.cadre(ecran, TABLE);
+      Composants.cadre(ecran, BAS, { verre: true });
+      const fil = Composants.creer(ecran, 'fil', '', { x: BAS.x + 250, y: BAS.y, l: BAS.l - 250, h: BAS.h });
+      Composants.titre(ecran, { x: BAS.x, y: BAS.y, l: 250, h: BAS.h }, J.titre.replace(/ de /, '<br>de '), 26);
+      let cartes = {};
+      return {
+        table(persos) {
+          Object.values(cartes).forEach(c => c.oter()); cartes = {};
+          const h = Math.min(150, (990 - 18 * (persos.length - 1)) / persos.length);
+          persos.forEach((p, i) => { cartes[p.id ?? p.nom] = carte({ x: COL.x, y: Math.round(COL.y + i * (h + 18)), l: COL.l, h: Math.round(h) }, p, { portrait: Math.round(h) - 40, nom: 28 }); });
+        },
+        cartes: () => cartes,
+        async jet(j) {
+          const puce = document.createElement('div'); puce.className = 'puce';
+          puce.innerHTML = '<small></small><b>…</b><i></i>';
+          puce.querySelector('small').textContent = `${j.perso ? j.perso.nom : j.characterName} · ${j.libelle}`;
+          fil.prepend(puce); while (fil.children.length > 5) fil.lastChild.remove();
+          const grand = j.moi ? panneauJet({ x: 470, y: 520, l: 590, h: 300 }, j) : attendre(DENOUEMENT + DUREE);
+          await attendre(DENOUEMENT);
+          puce.querySelector('b').textContent = j.result;
+          const i = puce.querySelector('i'); i.textContent = j.mot; i.className = j.verdict;
+          await grand;
+        },
+      };
+    },
+    // C — Joueur en vedette : ta webcam, TA carte en grand et tes jets en grand ; la table à droite ; les autres en petit dessous
+    C() {
+      const CAM = { x: 45, y: 45, l: 380, h: 285 }, MOI = { x: 45, y: 360, l: 380, h: 300 }, CHAT = { x: 45, y: 690, l: 380, h: 345 };
+      const TITRE = { x: 460, y: 26, l: 1415, h: 96 }, TABLE = { x: 460, y: 128, l: 1415, h: 796 }, RANG = { x: 460, y: 948, l: 1415, h: 87 };
+      Composants.fond(ecran, [CAM, TABLE]);
+      Composants.zoneApercu(ecran, CAM, 'Ta webcam', 'jeu');
+      Composants.zoneApercu(ecran, TABLE, 'Capture de CodexVTT', 'jeu');
+      Composants.cadre(ecran, CAM); Composants.cadre(ecran, TABLE);
+      Composants.titre(ecran, TITRE, J.titre, 60);
+      Composants.chat(ecran, CHAT);
+      let cartes = {}, cadreMoi = null;
+      return {
+        table(persos) {
+          Object.values(cartes).forEach(c => c.oter()); cartes = {};
+          if (cadreMoi) cadreMoi.remove();
+          const moi = persos.find(p => p.moi), autres = persos.filter(p => !p.moi);
+          if (moi) {
+            const c = carte(MOI, moi, { portrait: 140, nom: 38 });
+            c.el.style.flexDirection = 'column'; c.el.style.justifyContent = 'center'; c.el.style.gap = '10px';
+            c.el.querySelector('.jc-corps').style.cssText = 'flex:none;width:100%;text-align:center';
+            cartes[moi.id ?? moi.nom] = c;
+          } else cadreMoi = Composants.titre(ecran, MOI, 'Vue du MJ', 40);
+          const n = Math.max(1, autres.length), ecart = 18, l = (RANG.l - ecart * (n - 1)) / n;
+          autres.forEach((p, i) => { cartes[p.id ?? p.nom] = carte({ x: Math.round(RANG.x + i * (l + ecart)), y: RANG.y, l: Math.round(l), h: RANG.h }, p, { portrait: 60, nom: 24 }); });
+        },
+        cartes: () => cartes,
+        async jet(j) {
+          if (j.moi) return panneauJet({ x: 500, y: 600, l: 560, h: 290 }, j);
+          const c = j.perso && cartes[j.perso.id ?? j.perso.nom];       // un autre joueur : son résultat s'affiche sur sa petite carte
+          await attendre(DENOUEMENT);
+          if (c) c.flash(`${j.result}${j.mot ? ' · ' + j.mot : ''}`);
+          await attendre(1500);
+        },
+      };
+    },
+  };
+
+  const vue = DISPOSITIONS[D] ? DISPOSITIONS[D]() : DISPOSITIONS.A();
+  Partie.brancher({
+    table: persos => vue.table(persos),
+    perso: p => { const c = vue.cartes()[p.id ?? p.nom]; if (c) c.maj(p); },
+    coup: (p, d) => { const c = vue.cartes()[p.id ?? p.nom]; if (c) c.coup(d); },
+    tour: p => Object.entries(vue.cartes()).forEach(([k, c]) => c.tour(!!p && String(p.id ?? p.nom) === k)),
+    jet: j => { if (j.pnj) return; file.push(j); suivant(vue.jet); },
+  }, { demo: true });
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mordethrhedan — Moodboard scène JDR</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  html, body { height: auto; overflow: auto; background: #07090A; color: var(--texte); font-family: var(--f-texte); margin: 0; }
+  .page { max-width: 1240px; margin: 0 auto; padding: 24px 20px 90px; }
+  .label { font: 800 13px var(--f-texte); letter-spacing: .16em; text-transform: uppercase; color: var(--doux); }
+  h1 { font: 400 64px/1 var(--f-titre); color: var(--accent); text-shadow: 0 0 calc(18px * var(--halo)) var(--accent-halo); margin: 10px 0 14px; }
+  h2 { font: 400 40px/1 var(--f-titre); color: var(--accent); margin: 64px 0 8px; text-shadow: 0 0 calc(16px * var(--halo)) var(--accent-halo); display: flex; gap: 16px; align-items: center; }
+  h2::before { content: attr(data-num); font: 800 15px var(--f-texte); color: var(--accent); border: 2px solid var(--accent); border-radius: 8px; padding: 4px 8px; text-shadow: none; }
+  .sous { color: var(--doux); max-width: 80ch; line-height: 1.6; font-size: 17px; margin: 0 0 18px; }
+  .sous b { color: var(--texte); }
+  .reglages { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px 18px; justify-content: center; align-items: center;
+    padding: 10px 16px; background: rgba(7, 9, 10, .95); border-bottom: 2px solid var(--accent-doux); }
+  .reglages span { font: 800 12px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; color: var(--doux); }
+  .btn { font: 800 14px var(--f-texte); color: var(--texte); background: #16191B; border: 2px solid #2A2F31; border-radius: 999px; padding: 7px 16px; cursor: pointer; text-decoration: none; }
+  .btn.actif { border-color: var(--accent); color: var(--accent); }
+  .ecran { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 0 0 2px #1B1F21; }
+  .ecran iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+  .bas { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .pour { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pour i { font: 800 13px var(--f-texte); font-style: normal; padding: 4px 10px; border-radius: 999px; background: #12161A; color: var(--doux); }
+  .pour i.plus { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; background: #0E1113; border-radius: 10px; overflow: hidden; }
+  td, th { padding: 10px 14px; border-bottom: 1px solid #1B1F21; text-align: left; color: var(--doux); font-size: 16px; }
+  th { font: 800 12px var(--f-texte); letter-spacing: .12em; text-transform: uppercase; }
+  td:first-child { color: var(--texte); font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="reglages">
+  <span>Vue</span>
+  <button class="btn actif" data-moi="Kenai">Joueur (ton perso : Kenai)</button>
+  <button class="btn" data-moi="">MJ</button>
+</div>
+<div class="page">
+  <div class="label">Moodboard · scène JDR</div>
+  <h1>Mordethrhedan à la table</h1>
+  <p class="sous">La scène des parties de jeu de rôle sur <b>CodexVTT</b>, au style néon de la chaîne. Tout vient de CodexVTT tout seul :
+    les personnages (nom, portrait, PV), les jets de dés, les coups, à qui c'est le tour. Tu <b>joues</b> (Patagrain est le MJ) :
+    dans les réglages, tu donnes le nom de <b>ton personnage</b> — sa carte est mise en avant (« toi ») et tes jets sont joués en grand,
+    ceux des autres en petit. Les maquettes tournent en démo (un jet toutes les 6 secondes) ; les ronds avec une lettre seront
+    les vrais portraits de CodexVTT. Le gris, c'est l'endroit où OBS met la capture de CodexVTT (et ta webcam).</p>
+
+  <h2 data-num="A">Table en bas</h2>
+  <p class="sous">La table CodexVTT en grand, les cartes des personnages en rang dessous (la tienne un peu plus haute, marquée « toi »),
+    le nom de la campagne et le chat à droite. Ton jet : un grand compteur néon au milieu, les chiffres défilent puis se posent en même temps que
+    les dés de CodexVTT. Les jets des autres : un petit compteur en haut du chat.</p>
+  <div class="ecran"><iframe data-d="A"></iframe></div>
+  <div class="bas"><div class="pour"><i class="plus">+ la table au plus grand</i><i class="plus">+ le chat garde sa place</i><i>− pas de webcam</i></div><a class="btn" data-ouvrir="A" target="_blank">Ouvrir en grand ↗</a></div>
+
+  <h2 data-num="B">Colonne de vie</h2>
+  <p class="sous">La table CodexVTT en grand, les personnages empilés à droite avec leur barre de PV (comme des splits de speedrun), et en bas
+    le <b>fil des jets</b> : chaque jet s'y ajoute, le plus récent à gauche, avec son verdict. Ton jet passe aussi en grand sur la table.</p>
+  <div class="ecran"><iframe data-d="B"></iframe></div>
+  <div class="bas"><div class="pour"><i class="plus">+ on suit l'historique des jets</i><i class="plus">+ PV très lisibles</i><i>− pas de chat ni de webcam</i></div><a class="btn" data-ouvrir="B" target="_blank">Ouvrir en grand ↗</a></div>
+
+  <h2 data-num="C">Joueur en vedette</h2>
+  <p class="sous">Pensée pour <b>toi qui joues</b> : ta webcam en haut à gauche, <b>ta carte de personnage en grand</b> dessous, puis le chat ;
+    la table CodexVTT à droite, et les autres joueurs en petit en bas. Ton jet s'affiche en grand sur la table ; celui d'un autre joueur
+    s'allume sur sa petite carte. Même disposition que tes scènes « Contenu » et « Speedrun » : on reconnaît la chaîne.</p>
+  <div class="ecran"><iframe data-d="C"></iframe></div>
+  <div class="bas"><div class="pour"><i class="plus">+ ta webcam et ton perso</i><i class="plus">+ dans la famille de tes scènes</i><i>− la table un peu plus petite</i></div><a class="btn" data-ouvrir="C" target="_blank">Ouvrir en grand ↗</a></div>
+
+  <h2 data-num="?">À choisir</h2>
+  <table>
+    <tr><th>Question</th><th>Les choix</th></tr>
+    <tr><td>La disposition</td><td>A, B, C — ou un mélange (ex. la webcam de C avec le fil des jets de B)</td></tr>
+    <tr><td>Les jets</td><td>Le compteur néon qui défile (comme ici) — ou un dé à 20 faces dessiné en néon qui tourne</td></tr>
+    <tr><td>Les autres joueurs</td><td>Leurs jets en petit (A, C) — ou seulement les tiens</td></tr>
+    <tr><td>Les PNJ du MJ</td><td>Pas joués (comme ici) — ou en petit, sans carte</td></tr>
+  </table>
+</div>
+<script>
+  // Les maquettes : design/jdr-maquette.html?d=A|B|C (démo de js/partie.js), chargées quand elles arrivent à l'écran
+  let moi = 'Kenai';
+  const adresse = d => `jdr-maquette.html?d=${d}&test=1&moi=${encodeURIComponent(moi)}`;
+  const charger = f => { f.src = adresse(f.dataset.d); };
+  const vues = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !e.target.src) charger(e.target); }), { rootMargin: '300px' });
+  document.querySelectorAll('iframe[data-d]').forEach(f => vues.observe(f));
+  const liens = () => document.querySelectorAll('[data-ouvrir]').forEach(a => { a.href = adresse(a.dataset.ouvrir); });
+  liens();
+  document.querySelectorAll('[data-moi]').forEach(b => b.addEventListener('click', () => {
+    moi = b.dataset.moi;
+    document.querySelectorAll('[data-moi]').forEach(x => x.classList.toggle('actif', x === b));
+    document.querySelectorAll('iframe[data-d]').forEach(f => { if (f.src) charger(f); });
+    liens();
+  }));
+</script>
+</body>
+</html>

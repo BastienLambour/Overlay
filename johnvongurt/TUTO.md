@@ -264,6 +264,36 @@ Le voyant REC n'est que sur la cam : le cadre du contenu n'en a pas.
 
 ---
 
+### 3.7 🎲 JDR — `scenes/jdr.html` (les parties de jeu de rôle sur CodexVTT)
+
+**À quoi ça sert** : quand tu joues une partie de jeu de rôle (Patagrain est le MJ) sur **CodexVTT**. La table CodexVTT en grand, les **fiches de l'équipage** dessous (le MJ compris), le nom de la campagne et le chat à droite. Tout vient **tout seul** de CodexVTT : les personnages, leurs portraits, leurs PV, les coups et les soins, à qui c'est le tour, et les **jets de dés** (en télémétrie : les chiffres défilent puis se posent en même temps que les dés de CodexVTT, avec « Succès », « Échec », « Critique »). **Ta carte** est marquée « toi » et **tes jets** sont joués en grand sur la table ; ceux des autres en petit, en haut du chat. Sur Discord, « ● Transmission » clignote sur la fiche de **celui qui parle**.
+
+**À régler une fois** (`reglages.html` › **Scène JDR**) :
+1. **Mon personnage** : son nom comme dans CodexVTT (ex. `Kenai`). Vide si tu es le MJ.
+2. **Adresse de CodexVTT** et **Clé spectateur** : demande-les au MJ. C'est la même pour tous ceux qui streament la partie ; la clé ne permet que de regarder.
+3. **Qui joue qui sur Discord** : une ligne par personnage, `Kenai | pseudo Discord` ; et le **pseudo Discord du MJ**.
+4. **Clé du bot Discord** : donnée par Bastien. **Enregistre**.
+
+**Dans OBS :**
+1. **Scènes › +** : « JDR ».
+2. Tes alertes en haut.
+3. Geste A avec `scenes/jdr.html` › « Overlay ».
+4. **+ › Capture de fenêtre** (ou Capture de navigateur) › la fenêtre de CodexVTT, puis geste B :
+
+| Source | Position (x, y) | Taille (l × h) |
+|---|---|---|
+| CodexVTT | `60`, `80` | `1400` × `788` |
+
+5. Ordre final : `Alertes` · `Overlay` · `CodexVTT`.
+
+**Options** : `?chat=0` (pas de chat) · `?moi=Kenai` (ton perso, pour essayer) · `?titre=…` · `?test=1` (une table de démo, des jets et des voix au hasard) · `?journal=1` (l'état des connexions à CodexVTT et à Discord, à l'écran). Dans `reglages.html` › Scène JDR : montrer ou non les jets des autres et des PNJ, la durée d'affichage d'un résultat.
+
+**Vérifier** : avec `?test=1`, les cartes s'affichent et un jet passe toutes les 6 s. En vrai : `?journal=1` doit dire « connecté » pour CodexVTT, et le salon Discord du MJ.
+
+> Les cartes du MJ et des joueurs de la liste « Qui joue qui » s'affichent tout de suite ; leurs PV et portraits arrivent quand CodexVTT est branché. Un personnage de CodexVTT absent de la liste s'ajoute tout seul à la fin.
+
+---
+
 ## 4. Les sources à la carte
 
 À poser **en plus**, dans n'importe quelle scène. Position et taille avec `?x=&y=&l=&h=` (pixels 1920 × 1080).

@@ -1,0 +1,63 @@
+/* =====================================================================
+   SCÈNE JDR (scenes/jdr.html, et la maquette design/jdr-maquette.html) : cartes des personnages,
+   compteur néon des jets, « il parle ». Couleurs du thème (css/theme.css).
+   ===================================================================== */
+/* --- Une carte de personnage (dans un cadre de verre) --- */
+.jc { position: absolute; display: flex; align-items: center; gap: 18px; padding: 0 20px; box-sizing: border-box; transition: opacity .4s; }
+.jc-portrait { flex: none; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: #0B0D0E;
+  box-shadow: 0 0 0 3px var(--accent), 0 0 calc(14px * var(--halo)) var(--accent-halo); }
+.jc-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.jc-portrait b { font: 400 1em/1 var(--f-titre); color: var(--accent); text-shadow: 0 0 calc(12px * var(--halo)) var(--accent-halo); }
+.jc-corps { flex: 1; min-width: 0; }
+.jc-nom { font: 400 30px/1.05 var(--f-titre); color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jc-sous { font: 400 16px var(--f-ecran); color: var(--doux); margin-top: 2px; letter-spacing: .04em; }
+.jc-barre { height: 10px; border-radius: 6px; background: rgba(255,255,255,.08); margin-top: 10px; overflow: hidden; }
+.jc-barre i { display: block; height: 100%; width: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent-halo); transition: width .6s; }
+.jc.bas .jc-barre i { background: #FF4D6D; box-shadow: 0 0 10px rgba(255,77,109,.6); }
+.jc-pv { font: 400 16px var(--f-ecran); color: var(--doux); margin-top: 5px; }
+.jc-tag { position: absolute; top: -16px; right: 18px; font: 400 15px var(--f-titre); padding: 3px 12px; border-radius: 999px;
+  color: #050607; background: var(--accent); box-shadow: 0 0 12px var(--accent-halo); display: none; }
+.jc.moi .jc-tag.toi { display: block; }
+.jc.tour .jc-tag.tour { display: block; right: auto; left: 18px; background: #fff; }
+.jc.a-terre { opacity: .45; }
+.jc.a-terre .jc-nom::after { content: ' · à terre'; color: #FF4D6D; font-size: .6em; }
+.cadre.jc-cadre-moi { box-shadow: 0 0 0 2px var(--accent), 0 0 calc(30px * var(--halo)) var(--accent-halo), inset 0 0 calc(20px * var(--halo)) var(--accent-halo); }
+.jc-coup { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); font: 400 46px var(--f-titre); animation: coup 1.6s ease-out forwards; }
+.jc-coup.blesse { color: #FF4D6D; text-shadow: 0 0 14px rgba(255,77,109,.8); }
+.jc-coup.soin { color: var(--accent); text-shadow: 0 0 14px var(--accent-halo); }
+@keyframes coup { 0% { opacity: 0; transform: translateY(-20%) scale(.6); } 15% { opacity: 1; transform: translateY(-50%) scale(1.15); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-120%); } }
+.jc-flash { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 18px; background: rgba(5,6,7,.82);
+  font: 400 40px var(--f-titre); color: var(--accent); text-shadow: 0 0 14px var(--accent-halo); animation: flash 4s forwards; }
+@keyframes flash { 0%, 100% { opacity: 0; } 8%, 85% { opacity: 1; } }
+
+/* --- Le panneau d'un jet : le compteur néon --- */
+.jet { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; }
+.jet small { font: 400 22px var(--f-ecran); color: var(--doux); letter-spacing: .08em; text-transform: uppercase; }
+.jet .chiffre { font: 400 120px/1 var(--f-titre); color: var(--accent); text-shadow: 0 0 calc(24px * var(--halo)) var(--accent-halo); font-variant-numeric: tabular-nums; }
+.jet .chiffre.roule { opacity: .55; filter: blur(1px); }
+.jet .formule { font: 400 18px var(--f-ecran); color: var(--doux); }
+.jet .mot { font: 400 44px var(--f-titre); color: #fff; text-shadow: 0 0 16px var(--accent-halo); opacity: 0; transform: scale(.7); transition: .3s cubic-bezier(.34,1.56,.64,1); }
+.jet .mot.vu { opacity: 1; transform: none; }
+.jet .mot.rate, .jet .mot.fumble { color: #FF4D6D; text-shadow: 0 0 16px rgba(255,77,109,.7); }
+.jet .mot.crit { color: #FFE066; text-shadow: 0 0 20px rgba(255,224,102,.9); }
+.jet.petit .chiffre { font-size: 80px; } .jet.petit small { font-size: 18px; } .jet.petit .mot { font-size: 32px; }
+.jet.entre { animation: entre .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes entre { from { opacity: 0; transform: scale(.85); } }
+
+/* --- Il parle (Discord) : l'anneau du portrait pulse, la carte s'allume ; les autres s'éteignent un peu --- */
+.jc.parle .jc-portrait { animation: parle .5s ease-in-out infinite alternate; }
+@keyframes parle { from { box-shadow: 0 0 0 3px var(--accent), 0 0 calc(14px * var(--halo)) var(--accent-halo); }
+  to { box-shadow: 0 0 0 6px var(--accent), 0 0 calc(34px * var(--halo)) var(--accent), 0 0 0 14px var(--accent-doux); } }
+.jc.parle .jc-nom { color: var(--accent); text-shadow: 0 0 12px var(--accent-halo); }
+.jdr-parole .jc:not(.parle):not(.moi) { opacity: .7; }
+
+/* --- Le fil des jets (direction B du moodboard) --- */
+.fil { position: absolute; display: flex; gap: 16px; align-items: center; padding: 0 20px; box-sizing: border-box; }
+.fil .puce { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 220px; height: 112px; border-radius: 16px;
+  background: var(--panneau-2); box-shadow: 0 0 0 2px var(--accent-doux); }
+.fil .puce:first-child { box-shadow: 0 0 0 3px var(--accent), 0 0 16px var(--accent-halo); }
+.fil .puce small { font: 400 15px var(--f-ecran); color: var(--doux); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fil .puce b { font: 400 44px/1.05 var(--f-titre); color: var(--accent); }
+.fil .puce i { font: 400 16px var(--f-titre); font-style: normal; color: #fff; }
+.fil .puce i.rate, .fil .puce i.fumble { color: #FF4D6D; } .fil .puce i.crit { color: #FFE066; }
+.fil-titre { position: absolute; font: 400 18px var(--f-ecran); color: var(--doux); letter-spacing: .12em; text-transform: uppercase; }
