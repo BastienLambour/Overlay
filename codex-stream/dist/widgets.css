@@ -1,0 +1,52 @@
+/* =====================================================================
+   WIDGETS de CodexVTT pour OBS — style de base, sobre, à rhabiller à volonté.
+   Réglages par l'adresse : ?accent=FF4FD8&fond=1D0F33&texte=FFFFFF&police=Bungee (couleurs sans #)
+   ou par le « CSS personnalisé » de la source Navigateur d'OBS : toutes les classes commencent par « cs- ».
+   ===================================================================== */
+:root { --cs-accent: #1EE88A; --cs-fond: rgba(14, 16, 20, .88); --cs-texte: #F2F5F3; --cs-doux: #9AA3A0; --cs-alerte: #FF4D6D; --cs-or: #FFE066;
+  --cs-police: 'Segoe UI', system-ui, sans-serif; --cs-rayon: 16px; }
+html, body { margin: 0; background: transparent; color: var(--cs-texte); font-family: var(--cs-police); overflow: hidden; }
+* { box-sizing: border-box; }
+
+/* Une carte de personnage */
+.cs-carte { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--cs-fond); border-radius: var(--cs-rayon);
+  border: 2px solid rgba(255,255,255,.12); min-width: 0; transition: opacity .4s, border-color .3s; position: relative; }
+.cs-carte .cs-portrait { flex: none; width: 76px; height: 76px; border-radius: 50%; overflow: hidden; background: rgba(0,0,0,.3); box-shadow: 0 0 0 3px var(--cs-accent); }
+.cs-carte .cs-corps { flex: 1; min-width: 0; }
+.cs-carte .cs-nom { font-weight: 800; font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cs-carte .cs-barre { height: 10px; border-radius: 6px; background: rgba(255,255,255,.12); margin-top: 8px; overflow: hidden; }
+.cs-carte .cs-barre i { display: block; height: 100%; background: var(--cs-accent); transition: width .6s; }
+.cs-carte.cs-bas .cs-barre i { background: var(--cs-alerte); }
+.cs-carte .cs-pv { font-size: 14px; color: var(--cs-doux); margin-top: 4px; }
+.cs-carte.cs-moi { border-color: var(--cs-accent); }
+.cs-carte.cs-tour { border-color: #fff; }
+.cs-carte.cs-a-terre { opacity: .5; filter: grayscale(.6); }
+.cs-carte.cs-parle .cs-portrait { box-shadow: 0 0 0 5px var(--cs-accent), 0 0 24px var(--cs-accent); }
+.cs-etiquette { position: absolute; top: -12px; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 999px; color: #111; background: var(--cs-accent); display: none; }
+.cs-carte.cs-moi .cs-etiquette.cs-toi { display: block; right: 12px; }
+.cs-carte.cs-tour .cs-etiquette.cs-sontour { display: block; left: 12px; background: #fff; }
+.cs-coup { position: absolute; right: 14px; top: 50%; font-weight: 900; font-size: 34px; animation: cs-coup 1.6s ease-out forwards; }
+.cs-coup.cs-blesse { color: var(--cs-alerte); } .cs-coup.cs-soin { color: var(--cs-accent); }
+@keyframes cs-coup { 0% { opacity: 0; transform: translateY(-20%) scale(.6); } 15% { opacity: 1; transform: translateY(-50%) scale(1.15); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-140%); } }
+
+/* Le résultat d'un jet */
+.cs-jet { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 4px; padding: 16px 20px;
+  background: var(--cs-fond); border-radius: var(--cs-rayon); border: 2px solid var(--cs-accent); animation: cs-entre .35s cubic-bezier(.34,1.56,.64,1); }
+.cs-jet small { font-size: 18px; color: var(--cs-doux); letter-spacing: .06em; text-transform: uppercase; }
+.cs-jet .cs-chiffre { font-size: 96px; font-weight: 900; line-height: 1; color: var(--cs-accent); font-variant-numeric: tabular-nums; }
+.cs-jet .cs-chiffre.cs-roule { opacity: .5; }
+.cs-jet .cs-formule { font-size: 16px; color: var(--cs-doux); }
+.cs-jet .cs-mot { font-size: 30px; font-weight: 900; }
+.cs-jet .cs-mot.cs-rate, .cs-jet .cs-mot.cs-fumble { color: var(--cs-alerte); } .cs-jet .cs-mot.cs-crit { color: var(--cs-or); }
+@keyframes cs-entre { from { opacity: 0; transform: scale(.85); } }
+
+/* L'ordre du combat */
+.cs-combat { display: flex; flex-direction: column; gap: 6px; }
+.cs-combat .cs-ligne { display: flex; gap: 10px; align-items: center; padding: 6px 12px; background: var(--cs-fond); border-radius: 10px; font-weight: 700; }
+.cs-combat .cs-ligne b { min-width: 2.2em; text-align: right; color: var(--cs-doux); }
+.cs-combat .cs-ligne.cs-actif { box-shadow: inset 0 0 0 2px var(--cs-accent); }
+.cs-combat .cs-ligne.cs-pnj { opacity: .7; font-style: italic; }
+.cs-combat .cs-titre { font-size: 14px; color: var(--cs-doux); letter-spacing: .1em; text-transform: uppercase; }
+
+/* Message quand rien n'est réglé (seulement en aperçu, jamais dans OBS en direct) */
+.cs-message { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; color: var(--cs-doux); font-size: 18px; }

@@ -26,7 +26,7 @@
   }
   html, body { width: auto !important; height: auto !important; overflow: auto !important; margin: 0; background: var(--rg-fond) !important; }
   body { font-family: var(--rg-police); color: var(--rg-texte); line-height: 1.45; }
-  .rg-page { max-width: 1060px; margin: 0 auto; padding: 28px 16px 150px; }
+  .rg-page { max-width: 1400px; margin: 0 auto; padding: 28px 16px 150px; }
   .rg-page * { box-sizing: border-box; }
   #rg-logo img { display: block; width: min(420px, 80%); margin: 0 auto 6px; }
   .rg-page h1 { font: 800 54px/1.1 var(--rg-titre); text-align: center; margin: 0; }
@@ -88,6 +88,18 @@
 
   /* Options des scènes : le tableau (interrupteurs) et le bloc de la webcam (plan, préréglages, position perso) */
   .rg-defile { overflow-x: auto; }
+  /* Un tableau trop large pour l'écran devient des FICHES (une par ligne, chaque réglage avec son nom) : pas de défilement de côté
+     (classe posée par js/reglages.js › ajusterTableaux, d'après la place disponible) */
+  .rg-defile.rg-cartes table, .rg-defile.rg-cartes tbody { display: block; }
+  .rg-defile.rg-cartes thead { display: none; }
+  .rg-defile.rg-cartes tr { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px 18px; align-items: start;
+    padding: 14px 16px; margin: 0 0 12px; border-radius: 12px; background: color-mix(in srgb, var(--rg-texte) 5%, transparent); }
+  .rg-defile.rg-cartes tbody th { grid-column: 1 / -1; padding: 0; border: 0; font-size: 18px; white-space: normal; }
+  .rg-defile.rg-cartes td { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 0; border: 0; text-align: left !important; }
+  .rg-defile.rg-cartes td::before { content: attr(data-titre); font-size: 14px; font-weight: 800; color: var(--rg-doux); }
+  .rg-defile.rg-cartes td.rg-vide { display: none; }
+  .rg-defile.rg-cartes td > label:not(.rg-bascule), .rg-defile.rg-cartes td input[type=text], .rg-defile.rg-cartes td select { width: 100%; min-width: 0 !important; }
+  .rg-defile.rg-cartes td.rg-large { grid-column: 1 / -1; }
   .rg-scenes { border-collapse: separate; border-spacing: 0; width: 100%; margin: 4px 0 10px; font-size: 16px; }
   .rg-scenes th, .rg-scenes td { padding: 10px 12px; text-align: center; border-bottom: 1px solid color-mix(in srgb, var(--rg-texte) 14%, transparent); }
   .rg-scenes thead th { font-weight: 800; font-size: 14px; color: var(--rg-doux); white-space: nowrap; }

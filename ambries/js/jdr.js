@@ -77,7 +77,7 @@ const JDR = (() => {
 
   async function jet(ecran, z, j, { petit = false } = {}) {
     const el = Composants.creer(ecran, 'jet entre' + (petit ? ' petit' : ''), `${eclat}<div class="contenu"><small></small><div class="chiffre roule">?</div><div class="formule"></div><div class="mot"></div></div>`, z);
-    el.querySelector('small').textContent = `${j.perso ? j.perso.nom : j.characterName} · ${j.libelle}`;
+    el.querySelector('small').textContent = `${(j.perso || j.inconnu || {}).nom || j.characterName} · ${j.libelle}`;
     const chiffre = el.querySelector('.chiffre');
     const tic = setInterval(() => { chiffre.textContent = 1 + Math.floor(Math.random() * Math.max(2, j.sides || 20)); }, 60);
     await attendre(DENOUEMENT);

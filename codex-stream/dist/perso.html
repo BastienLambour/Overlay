@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CodexVTT — Un personnage</title>
+<link rel="stylesheet" href="widgets.css">
+<style>
+  html, body { width: 100%; height: 100%; }
+  #perso { position: absolute; inset: 0 0 34px 0; transition: opacity .3s; }
+  #perso.cs-cache { opacity: 0; }
+  #nom { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-weight: 900; font-size: 24px; text-shadow: 0 2px 6px rgba(0,0,0,.8); }
+  #nom[hidden] { display: none; }
+  #scene { position: absolute; inset: 0 0 34px 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<!--
+  WIDGET « UN PERSONNAGE » : le personnage dessiné, qui bouge la bouche quand il parle, tombe K.O. à 0 PV,
+  change de forme, et joue SES jets (scénette) à la place de son portrait.
+  OBS : source Navigateur 400 × 500 (ou la taille voulue : le dessin s'adapte).
+  ?perso=Kenai (nom ou id de fiche) · ?nom=0 (sans le nom dessous) · ?cadrage=tete
+  + les paramètres communs (widgets.js) : cle, filtre, accent, fond, texte, police, demo
+-->
+<div id="perso"></div><div id="scene"></div><div id="nom"></div>
+<script type="module">
+  import { params, demarrer } from './widgets.js';
+  const cs = demarrer();
+  const voulu = (params.get('perso') || '').trim().toLowerCase();
+  const boite = document.getElementById('perso'), nom = document.getElementById('nom');
+  nom.hidden = params.get('nom') === '0';
+  let portrait = null, id = null;
+  cs.on('table', persos => {
+    const p = persos.find(x => String(x.id) === voulu || x.nom.toLowerCase().startsWith(voulu)) || (!voulu && persos[0]);
+    if (!p || String(p.id) === String(id)) return;
+    if (portrait) portrait.detruire();
+    id = p.id; nom.textContent = p.nom;
+    portrait = cs.portrait(boite, p.id, { cadrage: params.get('cadrage') || 'buste' });
+  });
+  // SES jets : le portrait s'efface le temps de la scénette
+  cs.scenette(document.getElementById('scene'), { duree: 4000, seulement: j => String(j.persoId) === String(id) });
+  cs.on('jet', j => {
+    if (String(j.persoId) !== String(id)) return;
+    boite.classList.add('cs-cache');
+    clearTimeout(boite.minuteur); boite.minuteur = setTimeout(() => boite.classList.remove('cs-cache'), 6000);
+  });
+</script>
+</body>
+</html>

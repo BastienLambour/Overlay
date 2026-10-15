@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CodexVTT — Les jets</title>
+<link rel="stylesheet" href="widgets.css">
+<style>
+  html, body { width: 100%; height: 100%; }
+  #jets { position: absolute; inset: 12px; display: grid; }
+  #jets .cs-jet { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<!--
+  WIDGET « LES JETS » : le résultat de chaque jet public, un à la fois — les chiffres défilent pendant que les dés
+  roulent dans CodexVTT, puis se posent (avec « Réussite ! », « Échec… », « Critique ! »).
+  OBS : source Navigateur 500 × 300.
+  ?seulement=moi (seulement les jets de « mon » perso, avec ?moi=…) · ?pnj=1 (aussi les jets publics des PNJ) · ?duree=4
+  + les paramètres communs (widgets.js) : cle, moi, accent, fond, texte, police, demo
+-->
+<div id="jets"></div>
+<script type="module">
+  import { params, demarrer, echapper } from './widgets.js';
+  import { CodexStream } from './codex-stream.js';
+  const cs = demarrer();
+  const boite = document.getElementById('jets');
+  const duree = (Number(params.get('duree')) || 4) * 1000;
+  const attendre = ms => new Promise(r => setTimeout(r, ms));
+  const file = []; let occupe = false;
+  async function suivant() {
+    if (occupe || !file.length) return;
+    occupe = true;
+    const j = file.shift();
+    boite.innerHTML = `<div class="cs-jet"><small>${echapper(j.nom)} · ${echapper(j.libelle)}</small><div class="cs-chiffre cs-roule">--</div><div class="cs-formule"></div><div class="cs-mot"></div></div>`;
+    const ch = boite.querySelector('.cs-chiffre');
+    const tic = setInterval(() => { ch.textContent = 1 + Math.floor(Math.random() * j.faces); }, 55);
+    await attendre(CodexStream.DENOUEMENT);
+    clearInterval(tic); ch.classList.remove('cs-roule'); ch.textContent = j.resultat;
+    boite.querySelector('.cs-formule').textContent = `${j.formule ? j.formule + ' = ' : ''}${j.resultat}${j.dd ? ` (DD ${j.dd})` : ''}`;
+    const m = boite.querySelector('.cs-mot'); m.textContent = j.mot; m.className = 'cs-mot cs-' + (j.verdict || 'neutre');
+    await attendre(file.length ? Math.min(duree, 2000) : duree);
+    await boite.firstElementChild.animate([{ opacity: 1 }, { opacity: 0 }], 350).finished;
+    boite.innerHTML = ''; occupe = false; suivant();
+  }
+  cs.on('jet', j => {
+    if (j.pnj && params.get('pnj') !== '1') return;
+    if (params.get('seulement') === 'moi' && !j.moi) return;
+    file.push(j); suivant();
+  });
+</script>
+</body>
+</html>

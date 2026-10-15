@@ -76,8 +76,8 @@
 
   // --- les cartes des héros, en bandeau sous la table ---
   // La table est celle des réglages (jdr.places : le MJ, puis les places 1 à 6), affichée tout de suite, même sans
-  // CodexVTT. Le moteur commun (js/partie.js) la relie aux fiches CodexVTT (par le nom) et y ajoute, à la fin, les
-  // personnages de CodexVTT qui n'ont pas de place (dessinés en « autre » : le portrait de leur fiche).
+  // CodexVTT. Le moteur commun (js/partie.js) la relie aux fiches CodexVTT (par le nom). Les personnages de CodexVTT
+  // qui n'ont pas de place ne s'ajoutent que si jdr.ajouterAutres est coché (dessinés en « autre » : le portrait de leur fiche).
   // Le rang : toute la largeur sous la table, une carte horizontale par personnage (comme les autres overlays)
   const RANG = { x: TABLE.x, y: TABLE.y + TABLE.h + 18, l: TABLE.l, h: 1044 - (TABLE.y + TABLE.h + 18) };
   const bande = document.createElement('div');
@@ -130,9 +130,15 @@
       const el = carte(j.perso);
       if (el) return jets.jouer({ ...j, labelFr: j.libelle, heros: el.dataset.perso, couleur: el.style.getPropertyValue('--c'), portrait: el.dataset.photo || '' });
       // un PNJ ou une créature du MJ (jet PUBLIC) : joué par l'aventurier encapuchonné, à la couleur des PNJ
-      if (j.pnj && PNJ.jouer !== false) jets.jouer({ ...j, labelFr: j.libelle, heros: 'autre', couleur: PNJ.couleur || '#5A2A3A' });
+      if (j.pnj) { if (PNJ.jouer !== false) jets.jouer({ ...j, labelFr: j.libelle, heros: 'autre', couleur: PNJ.couleur || '#5A2A3A' }); return; }
+      // Tous les autres jets sont joués aussi (règle du moteur commun : les cartes = le tableau, les scènes = tout le monde).
+      // Un personnage de joueur SANS carte arrive dans j.inconnu (nom, portrait, apparence) : joué par son héros dessiné
+      // s'il en a un (même nom), sinon par l'aventurier encapuchonné à sa couleur, avec le portrait de sa fiche sur la carte du jet.
+      const q = j.inconnu, nom = (q && q.nom) || j.characterName || 'Aventurier', dessin = JDR.dessinDuNom(nom);
+      jets.jouer({ ...j, labelFr: j.libelle, characterName: nom, heros: dessin || 'autre',
+        couleur: dessin ? JDR.FICHES[dessin].couleur : JDR.teinte(nom), portrait: (q && q.portrait) || '' });
     },
-  }, { places: PLACES });
+  }, { places: PLACES, ajouter: C.ajouterAutres === true });   // par défaut : seulement les places des réglages
 
   // --- Discord (moteur commun, bot « voix » du VPS) : la carte de celui qui parle s'anime ---
   // ?test=1 : la démo du moteur commun (table, PV, un jet toutes les 6 s) et quelqu'un qui parle au hasard.

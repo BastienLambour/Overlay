@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CodexVTT — Le combat</title>
+<link rel="stylesheet" href="widgets.css">
+<style>#combat { padding: 14px; } #combat[hidden] { display: none; }</style>
+</head>
+<body>
+<!--
+  WIDGET « LE COMBAT » : l'ordre d'initiative, avec celui dont c'est le tour en évidence (les PNJ en italique).
+  Invisible quand il n'y a pas de combat. OBS : source Navigateur 360 × 600.
+  ?pnj=0 (cacher les PNJ) + les paramètres communs (widgets.js) : cle, accent, fond, texte, police, demo
+-->
+<div id="combat" class="cs-combat" hidden></div>
+<script type="module">
+  import { params, demarrer, echapper } from './widgets.js';
+  const cs = demarrer();
+  const boite = document.getElementById('combat');
+  cs.on('combat', c => {
+    boite.hidden = !c;
+    if (!c) return;
+    boite.innerHTML = `<div class="cs-titre">Combat · tour ${c.tour || 1}</div>` + c.ordre
+      .filter(x => !(x.pnj && params.get('pnj') === '0'))
+      .map(x => `<div class="cs-ligne${x.id === c.actif ? ' cs-actif' : ''}${x.pnj ? ' cs-pnj' : ''}"><b>${x.init ?? ''}</b><span>${echapper(x.nom)}</span></div>`).join('');
+  });
+</script>
+</body>
+</html>

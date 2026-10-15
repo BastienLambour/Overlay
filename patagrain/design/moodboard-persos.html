@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="sombre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moodboard — style des personnages</title>
+<link rel="stylesheet" href="../css/theme.css">
+<style>
+  /* Page COMMUNE (copie de _modele/design/) : elle prend le thème de l'overlay et ses directions (js/persos-style.js) */
+  html, body { height: auto; overflow: auto; margin: 0; background: var(--fond, #0B0D0E); color: var(--texte, var(--trait, #EEE)); font-family: var(--f-texte, sans-serif); }
+  .page { max-width: 1240px; margin: 0 auto; padding: 30px 20px 90px; }
+  .label { font: 800 13px var(--f-texte, sans-serif); letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
+  h1 { font: 400 60px/1 var(--f-titre, sans-serif); color: var(--accent); margin: 10px 0 14px; }
+  h2 { font: 400 40px/1 var(--f-titre, sans-serif); color: var(--accent); margin: 60px 0 8px; display: flex; gap: 14px; align-items: center; }
+  h2 i { font: 800 15px var(--f-texte, sans-serif); font-style: normal; border: 2px solid var(--accent); border-radius: 8px; padding: 4px 8px; }
+  p { max-width: 80ch; line-height: 1.6; font-size: 17px; opacity: .85; }
+  .rang { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-top: 14px; }
+  .perso { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 14px 10px 10px; text-align: center; }
+  .perso svg { width: 100%; height: 200px; }
+  .perso b { display: block; margin-top: 8px; font-size: 16px; }
+  .perso small { opacity: .65; }
+  .idee { margin-top: 26px; padding: 18px 22px; border: 2px dashed var(--accent); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 14px; }
+  td, th { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.1); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="label">Moodboard · personnages de JDR</div>
+  <h1 id="titre">Les personnages, à ton style</h1>
+  <p>Un personnage n'est plus un dessin : c'est une <b>fiche</b> (sa peau, ses yeux, ses cheveux, ses oreilles, sa tenue, ses accessoires,
+    ses formes). La même fiche, rangée dans le catalogue commun, est dessinée par <b>chaque chaîne à son style</b> : Xaieysi créé chez
+    Patagrain existe aussi chez toi, avec les mêmes traits, mais dans ton univers. Voici deux directions pour ta chaîne, avec les mêmes
+    personnages (Xaieysi est un exemple ; les autres viennent de la table de Patagrain) et leurs expressions pour les scènes (il parle, il rit, K.O.).</p>
+  <div id="directions"></div>
+  <div class="idee"><b>À choisir</b> : la direction (ou un mélange : dis ce que tu aimes dans chacune). Ensuite : le moteur de dessin de ta chaîne,
+    les cartes de ta scène JDR avec ces personnages, et le créateur de personnage.</div>
+</div>
+<script src="../config.js"></script>
+<script src="../js/apparence.js"></script>
+<script src="../js/persos.js"></script>
+<script src="../js/persos-style.js"></script>
+<script>
+  document.getElementById('titre').textContent = `Les personnages, façon ${(window.CONFIG || {}).nomChaine || 'ta chaîne'}`;
+  const extras = [['trayss', { forme: 'Entre deux' }, 'forme « Entre deux »'], ['trayss', { forme: 'Dragon' }, 'forme « Dragon »'],
+    ['xaieysi', { expression: 'parle' }, 'il parle'], ['namerya', { expression: 'rire' }, 'il rit'], ['zokhran', { expression: 'ko' }, 'K.O.']];
+  const parId = id => PERSOS.find(p => p.id === id);
+  const carte = (p, o, sous) => `<div class="perso">${PersosStyle.directions[cle].rendu(p, o)}<b>${p.nom}</b><small>${sous}</small></div>`;
+  let cle;
+  document.getElementById('directions').innerHTML = Object.entries(PersosStyle.directions).map(([k, d]) => {
+    cle = k;
+    return `<h2><i>${k}</i>${d.nom}</h2><p>${d.texte}</p>
+      <div class="rang">${PERSOS.map(p => carte(p, {}, p.titre || '')).join('')}</div>
+      <div class="rang">${extras.map(([id, o, s]) => carte(parId(id), o, s)).join('')}</div>`;
+  }).join('');
+</script>
+</body>
+</html>

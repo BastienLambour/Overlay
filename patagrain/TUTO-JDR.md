@@ -119,6 +119,7 @@ Ouvre `reglages.html` (dans le dossier de l'overlay), section **Scène JDR**.
 | Le résultat d'un jet reste affiché … secondes | une fois les dés posés (4 par défaut ; 2 au plus si d'autres jets attendent) |
 | Jouer aussi les jets de mes PNJ et créatures | tes jets **publics** de PNJ, joués par un aventurier encapuchonné (4.4) |
 | Couleur de la cape des PNJ | bordeaux par défaut |
+| Ajouter aussi les personnages de CodexVTT qui n'ont pas de place | décoché (conseillé) : seules les places du tableau ont une carte (3.4) |
 | Mon personnage (si je joue au lieu d'être MJ) | vide pour toi (tu es le MJ) ; le jour où tu joues dans la partie de quelqu'un d'autre : le nom de ton personnage dans CodexVTT |
 
 ### 3.2 Le tableau « la table de jeu »
@@ -152,10 +153,14 @@ Pas besoin de dessin :
 Par leur **nom** : le nom de la fiche CodexVTT doit commencer comme celui de la carte (« Kenai »,
 « Ba Heng Ze »…). Les accents et les majuscules ne comptent pas.
 
-Un personnage de CodexVTT qui **n'a pas de place** dans le tableau (un nouveau joueur que tu as oublié
-d'ajouter, un invité d'un soir) **s'ajoute tout seul en bout de table**, avec le portrait de sa fiche
-(ou l'aventurier encapuchonné). Pour qu'il ait son pseudo Discord et sa bouche qui bouge, donne-lui
-quand même une place (3.3).
+**Seules les places du tableau ont une carte.** Les autres personnages de ta table CodexVTT (anciens
+personnages, joueurs absents ce soir…) n'ont pas de carte. **Leurs jets de dés, eux, sont toujours joués** dans
+l'arène : par leur héros dessiné s'il en a un (même nom), sinon par l'aventurier encapuchonné à leur couleur. Si tu veux qu'ils s'ajoutent tout seuls en bout
+de table (avec le portrait de leur fiche), coche **« Ajouter aussi les personnages de CodexVTT qui n'ont pas
+de place »** (3.1) ; mieux vaut quand même leur donner une place (3.3), pour le pseudo Discord.
+
+Si un héros a **deux cartes**, ou si sa carte ne bouge pas (PV, jets) : le nom de sa fiche CodexVTT ne
+correspond pas à celui de sa place. Corrige « Nom du personnage » dans le tableau.
 
 ## 4. Brancher CodexVTT
 

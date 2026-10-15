@@ -4,26 +4,52 @@
     {
       "name": "patagrain",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5500", "G:/Projets/Overlay/patagrain"],
+      "runtimeArgs": [
+        "G:/Projets/Overlay/outils/serveur-apercu.mjs",
+        "5500",
+        "G:/Projets/Overlay/patagrain"
+      ],
       "port": 5500
     },
     {
       "name": "johnvongurt",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5501", "G:/Projets/Overlay/johnvongurt"],
+      "runtimeArgs": [
+        "G:/Projets/Overlay/outils/serveur-apercu.mjs",
+        "5501",
+        "G:/Projets/Overlay/johnvongurt"
+      ],
       "port": 5501
     },
     {
       "name": "mordethrhedan",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5502", "G:/Projets/Overlay/mordethrhedan"],
+      "runtimeArgs": [
+        "G:/Projets/Overlay/outils/serveur-apercu.mjs",
+        "5502",
+        "G:/Projets/Overlay/mordethrhedan"
+      ],
       "port": 5502
     },
     {
       "name": "ambries",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["G:/Projets/Overlay/outils/serveur-apercu.mjs", "5503", "G:/Projets/Overlay/ambries"],
+      "runtimeArgs": [
+        "G:/Projets/Overlay/outils/serveur-apercu.mjs",
+        "5503",
+        "G:/Projets/Overlay/ambries"
+      ],
       "port": 5503
+    },
+    {
+      "name": "codex-stream",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "G:/Projets/Overlay/outils/serveur-apercu.mjs",
+        "5510",
+        "G:/Projets/Overlay/codex-stream/dist"
+      ],
+      "port": 5510
     }
   ]
 }

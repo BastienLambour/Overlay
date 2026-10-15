@@ -18,6 +18,7 @@ G:\Projets\Overlay\
 ├── johnvongurt/         ← espace / mission control, le frère (port 5501)
 ├── mordethrhedan/       ← néon + fond cristal à facettes (port 5502)
 └── ambries/             ← néon mauve comics/humour, au stade du moodboard (port 5503)
+codex-stream/            ← boîte à outils de stream LIVRÉE À CodexVTT (port 5510, LISEZMOI.md) : pas un overlay
 ```
 
 - **Un dossier par streamer, nommé d'après son pseudo Twitch** en minuscules (pas d'après le thème).
@@ -124,6 +125,10 @@ Conventions :
   éléments, interrupteurs ; noms dans `ReglagesChamps.scenes` / `.elements`), et pour une webcam à préréglages (js/zones.js) un bloc :
   préréglages avec leurs coordonnées, « Position perso » X/Y/Largeur/Hauteur, « Pas de webcam », plan 16:9 où l'on glisse la cam.
   On n'écrit plus les `options.*` une par une dans reglages-champs.js.
+  Mise en page : un réglage par ligne (nom + aide à gauche, champ à droite), sommaire des sections en haut, champs `avance: true`
+  repliés dans « Réglages avancés » ; clés numériques acceptées (`{ 15: "…" }`).
+  Page large (1400 px max) ; un tableau (scènes, `tableau:`) qui ne tient pas dans la largeur passe en FICHES, une par ligne
+  (`ajusterTableaux`, classe `.rg-cartes`, recalculé au redimensionnement) : jamais de défilement de côté.
   **Image du planning** (champ `chaine.planning` avec `planning: true`) : calendrier de semaine + « 🖼️ Fabriquer l'image du planning ». Une
   page ne lance pas de programme : elle enregistre le planning, dépose `outils/demande.txt` (`quoi=planning`, `semaine=2027-W08`) dans le dossier ;
   `actualiser-obs.lua` (toutes les 2 s, `verifier_demande`) lance `refaire.ps1 -Quoi planning` et répond dans `outils/demande-resultat.txt`
@@ -209,6 +214,9 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   id de fiche : l'overlay d'un JOUEUR met sa carte en avant, `moi: true`, et joue ses jets en grand), lecture des jets (`geste` d'après la
   compétence, `verdict`, `mot`, `resultat`), PNJ, tour de combat, démo `?test=1`. Table RÉGLÉE facultative (`{ places: [{ nom, mj, fiche, …} ] }`) : affichée tout
   de suite même sans CodexVTT, le MJ (`mj: true`) n'étant pas un personnage CodexVTT ; reliée aux fiches par id ou par nom, les autres persos s'ajoutent. Rappels : `table`, `perso`, `coup`, `tour`, `jet`, `etat`.
+  `ajouter` (persos CodexVTT hors des places) : non par défaut s'il y a des places (`jdr.ajouterAutres`), sauf démo sans joueur réglé ;
+  un jet d'un perso de joueur sans carte arrive avec `perso: null`, `pnj: false` et `inconnu: { nom, portrait, apparence, forme… }` :
+  une scène joue TOUS les jets (perso, sinon inconnu, sinon PNJ). Règle : cartes = seulement les persos/joueurs réglés ; scènes = tout jet.
   Chaque overlay DESSINE à son style (cartes, arène des jets). Plusieurs streamers d'une même partie (MJ + joueurs) : même adresse, même clé
   spectateur ; chacun mixe son overlay sur sa vidéo, le retard Twitch est donc le même : rien à synchroniser. Les commandes du chat restent
   propres à chaque chaîne. `js/voix.js` (bot Discord « voix » du VPS) + `Partie.voix((perso, oui) => …)` : qui parle, d'après le champ `discord`
@@ -223,9 +231,8 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   peau, yeux, coupe, oreilles, cornes, dents, pilosité, tenue, accessoires (liste), signe, objet/objet2 pour les gestes, formes ; expressions
   parle|rire|choc|ko ; `Apparence.calques/svg/fusion/trouver(nom)`), `js/persos.js` (window.PERSOS : le CATALOGUE COMMUN, le même partout ; le nom =
   celui de CodexVTT), `js/persos-style.js` (PROPRE à l'overlay : `PersosStyle.rendu(fiche, { expression, forme, cadrage })` — mordethrhedan « trait
-  néon », johnvongurt « écusson de mission », ambries « sticker » ; Patagrain garde ses héros dessinés, avec un traducteur fiche → style Patagrain
-  pour les persos du catalogue sans dessin), `js/scenette.js` (pendant un jet, le perso passe AU-DESSUS DU CHAT, joue son geste puis réagit au
-  verdict), `createur.html` (racine, commun : créateur de personnage, aperçu au style de la chaîne, copier/télécharger la fiche → on la colle dans
+  néon », johnvongurt « écusson de mission », ambries « sticker » ; Patagrain garde ses héros dessinés dans sa scène ; son persos-style.js « Conte » PROVISOIRE sert au créateur), `js/scenette.js` (pendant un jet, le perso passe AU-DESSUS DU CHAT, joue son geste puis réagit au
+  verdict), `createur.html` (racine, commun, lien dans chaque vitrine : créateur de personnage, aperçu au style de la chaîne, copier/télécharger la fiche → on la colle dans
   `_modele/js/persos.js` puis on recopie partout), `design/moodboard-persos.html` (les directions de style). Cartes JDR : apparence liée à la fiche dans le LABO de CodexVTT
   (champ facultatif `appearance` du mode spectateur → `perso.apparence` dans Partie) d'abord, sinon le perso du catalogue =
   son dessin (la bouche bouge quand il parle, K.O. à 0 PV, forme de CodexVTT), sinon le portrait CodexVTT.
@@ -338,3 +345,12 @@ Le chat garde en mémoire ses derniers messages entre les scènes (localStorage 
    Mettre `CONCEPT.md` à jour à chaque étape.
 - Vérification visuelle : si les captures du panneau navigateur échouent (panneau masqué), utiliser
   `node outils/capturer.mjs <page> [instants…]` et lire le PNG.
+
+## codex-stream (la boîte à outils de stream de CodexVTT)
+
+`codex-stream/` : `src/` (apparence.js, exemples.js = copies de `_modele/js/apparence.js` et `persos.js` ; filtres.js ; scenette.js ;
+coeur.js = `CodexStream.brancher`) → `node construire.mjs` → `dist/codex-stream.js` (un module ES, version = date + commit) + widgets
+(table, perso, jets, scenette, combat, demo). `dist/` est copié par la session CodexVTT dans `codex-web/public/stream/` : widgets à coller
+dans OBS par n'importe quel streamer (`?cle=…&filtre=…&moi=…`). Filtres génériques : aplat, neon, sticker, ecusson, vitrail (conte : plus tard,
+avec Patagrain). L'apparence est enregistrée dans CodexVTT (labo, MJ seulement ; champ `appearance` du spectateur). Une modif de
+`_modele/js/apparence.js` → la recopier dans `codex-stream/src/` et reconstruire. Plus tard : nos scènes JDR passeront par ce module.

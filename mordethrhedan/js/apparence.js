@@ -126,7 +126,7 @@ const Apparence = (() => {
     pousser('cou', COU[carrure], 'peau', ombre);
     if (f.cornes && CORNES[f.cornes]) pousser('cornes', CORNES[f.cornes], 'detail', f.couleurCornes || (dragon ? teinte(peau, -.35) : '#E8DCC2'));
     if (dragon) pousser('collerette', COLLERETTE, 'peau', teinte(peau, -.25));
-    else if (!accDos || accDos[0] === 'casque') { const or = OREILLE[f.oreilles] || OREILLE.humaines; pousser('oreille-g', or, 'peau', peau); pousser('oreille-d', miroir(or), 'peau', peau); }
+    else if (!accDos || accDos[0] === 'casque') { const or = OREILLE[f.oreilles] || OREILLE.humaines; pousser('oreille-g', or, 'peau', peau); pousser('oreille-d', or === OREILLE.humaines ? rond(144, 106, 8, 12) : miroir(or), 'peau', peau); }   // (un rond ne se retourne pas avec miroir : ses arcs)
     pousser('visage', VISAGE[tete], 'peau', peau);
     pousser('joue', dragon ? etirer(JOUE, 1.15) : JOUE, 'peau', ombre);
     if (dragon) { pousser('museau', MUSEAU, 'peau', teinte(peau, .18)); pousser('crete', CRETE, 'detail', teinte(peau, -.3)); }

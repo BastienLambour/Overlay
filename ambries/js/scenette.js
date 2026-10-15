@@ -27,7 +27,7 @@ const Scenette = (() => {
   }
   // La fiche à dessiner : celle du catalogue, sinon un aventurier (tunique et capuche à la couleur de sa carte)
   function ficheDe(jet) {
-    const p = jet.perso || {};
+    const p = jet.perso || jet.inconnu || {};   // inconnu : un perso de joueur sans carte (js/partie.js)
     const f = p.apparence || (typeof Apparence !== 'undefined' && Apparence.trouver(p.nom, p.nomCodex, jet.characterName));   // CodexVTT d'abord, puis le catalogue
     if (f) return f;
     const c = p.couleur || '#5A6E8C';
@@ -43,7 +43,7 @@ const Scenette = (() => {
     el.innerHTML = '<div class="sc-fond"></div><div class="sc-carte"></div><div class="sc-perso"></div>';
     ecran.appendChild(el);
     const perso = el.querySelector('.sc-perso');
-    const fiche = ficheDe(jet), forme = (jet.perso || {}).forme || '';
+    const fiche = ficheDe(jet), forme = (jet.perso || jet.inconnu || {}).forme || '';
     const dessin = (expression = '') => { perso.innerHTML = typeof PersosStyle !== 'undefined' ? PersosStyle.rendu(fiche, { forme, expression }) : Apparence.svg(fiche, { forme, expression }); };
     dessin();
     if (carte) carte(el.querySelector('.sc-carte'));

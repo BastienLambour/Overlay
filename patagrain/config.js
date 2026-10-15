@@ -183,6 +183,7 @@ window.CONFIG = {
   jdr: {
     titre: "La Malédiction de Pangée",
     attenue: true,                 // ceux qui se taisent sont un peu éteints
+    ajouterAutres: false,          // true = les personnages de CodexVTT qui n'ont pas de place ont aussi leur carte (en bout de table)
     monPerso: "",                  // ton personnage dans CodexVTT si tu JOUES (pas le MJ) : sa carte en avant. Vide = tu es le MJ.
     dureeResultat: 4,              // secondes : le résultat d'un jet reste affiché dans l'arène une fois les dés posés
     // les jets PUBLICS de tes PNJ et créatures (CodexVTT) : joués dans l'arène par un aventurier encapuchonné à cette couleur

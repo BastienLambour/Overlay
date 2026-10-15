@@ -102,6 +102,7 @@ window.ReglagesChamps = {
       { cle: 'jdr.mj.nom', type: 'texte', label: 'Le MJ : son nom', aide: 'Une carte à son nom (le MJ n’est pas un personnage de CodexVTT). Vide = pas de carte de MJ.' },
       { cle: 'jdr.mj.discord', type: 'texte', label: 'Le MJ : son pseudo Discord', aide: 'Pour animer sa carte quand il parle.' },
       { cle: 'jdr.joueurs', type: 'paires', label: 'Qui joue qui sur Discord', aide: 'Une ligne par personnage : « Kenai | pseudo Discord » (le nom comme dans CodexVTT). Les cartes s’affichent tout de suite, même avant CodexVTT.' },
+      { cle: 'jdr.ajouterAutres', type: 'case', label: 'Ajouter aussi les autres persos de joueurs de la table CodexVTT', aide: 'Décoché (conseillé) : seulement le MJ et les persos de « Qui joue qui ». Coché : tous les persos de joueurs de la table CodexVTT, même les anciens ou les absents, ont une carte en bout de rang.' },
       { cle: 'jdr.autresJets', type: 'case', label: 'Montrer aussi les jets des autres joueurs (en petit)' },
       { cle: 'jdr.pnj', type: 'case', label: 'Montrer les jets publics des PNJ du MJ (en petit)' },
       { cle: 'jdr.dureeResultat', type: 'nombre', label: 'Le résultat d’un jet reste affiché … secondes', min: 1, max: 20 },

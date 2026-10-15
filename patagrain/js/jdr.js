@@ -12,6 +12,7 @@
                             .moi(oui) (« Toi » : le personnage de jdr.monPerso), .dessin(perso) (change de dessin),
                             .photo(adresse) (le portrait de la fiche CodexVTT, pour un personnage « autre »)
    JDR.pied(perso)        → le dessin en pied pour l'arène des jets (« autre » → aventurier)
+   JDR.dessinDuNom(nom)   → le héros dessiné de ce nom (« Kenai le gardien » → kenai), ou null (le MJ n'est jamais rendu)
    JDR.normaliser(texte)  → minuscules sans accents (pour retrouver un personnage par son nom)
    Styles : css/jdr.css.
    ===================================================================== */
@@ -118,5 +119,12 @@ const JDR = (() => {
 
   const normaliser = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
-  return { table, portrait, normaliser, pied: dessine, teinte, FICHES };
+  function dessinDuNom(nom) {
+    const n = normaliser(nom);
+    if (!n) return null;
+    const trouve = Object.entries(FICHES).find(([id, f]) => id !== 'mj' && (n === normaliser(f.nom) || n.startsWith(normaliser(f.nom) + ' ')));
+    return trouve ? trouve[0] : null;
+  }
+
+  return { table, portrait, normaliser, pied: dessine, teinte, dessinDuNom, FICHES };
 })();

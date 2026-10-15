@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CodexVTT — La table</title>
+<link rel="stylesheet" href="widgets.css">
+<style>
+  #table { display: flex; gap: 16px; padding: 18px; }
+  #table.cs-colonne { flex-direction: column; }
+  #table .cs-carte { flex: 1 1 0; max-width: 380px; }
+  #table.cs-colonne .cs-carte { flex: none; max-width: none; }
+</style>
+</head>
+<body>
+<!--
+  WIDGET « LA TABLE » : une carte par personnage (portrait animé, nom, PV, « toi », « son tour », coups et soins).
+  OBS : source Navigateur 1920 × 200 (en ligne) ou 420 × 900 (en colonne : ?disposition=colonne).
+  ?persos=Kenai,Namerya : seulement ces personnages (sinon tous les persos de joueurs de la table)
+  + les paramètres communs (widgets.js) : cle, filtre, moi, accent, fond, texte, police, demo
+-->
+<div id="table"></div>
+<script type="module">
+  import { params, demarrer, echapper } from './widgets.js';
+  const cs = demarrer();
+  const boite = document.getElementById('table');
+  if (params.get('disposition') === 'colonne') boite.classList.add('cs-colonne');
+  const choisis = (params.get('persos') || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  let cartes = new Map(), actif = null;
+  function pv(el, p) {
+    const ok = p.pvMax > 0;
+    el.querySelector('.cs-barre').style.visibility = ok ? '' : 'hidden';
+    el.querySelector('.cs-pv').textContent = ok ? `${p.pv} / ${p.pvMax} PV` : '';
+    if (ok) el.querySelector('.cs-barre i').style.width = Math.max(0, p.pv / p.pvMax * 100) + '%';
+    el.classList.toggle('cs-bas', ok && p.pv <= p.pvMax / 3);
+    el.classList.toggle('cs-a-terre', !!p.aTerre);
+    el.classList.toggle('cs-moi', !!p.moi);
+  }
+  cs.on('table', persos => {
+    cartes.forEach(c => c.portrait.detruire()); cartes = new Map(); boite.innerHTML = '';
+    persos.filter(p => !choisis.length || choisis.some(n => p.nom.toLowerCase().startsWith(n))).forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'cs-carte';
+      el.innerHTML = `<div class="cs-portrait"></div><div class="cs-corps"><div class="cs-nom">${echapper(p.nom)}</div><div class="cs-barre"><i></i></div><div class="cs-pv"></div></div>
+        <span class="cs-etiquette cs-toi">toi</span><span class="cs-etiquette cs-sontour">son tour</span>`;
+      boite.appendChild(el);
+      pv(el, p);
+      cartes.set(String(p.id), { el, portrait: cs.portrait(el.querySelector('.cs-portrait'), p.id, { cadrage: 'tete' }) });
+    });
+    marquerTour();
+  });
+  cs.on('perso', p => { const c = cartes.get(String(p.id)); if (c) pv(c.el, p); });
+  cs.on('coup', (p, d) => {
+    const c = cartes.get(String(p.id)); if (!c) return;
+    const e = document.createElement('div'); e.className = 'cs-coup ' + (d < 0 ? 'cs-blesse' : 'cs-soin'); e.textContent = (d > 0 ? '+' : '') + d;
+    c.el.appendChild(e); setTimeout(() => e.remove(), 1700);
+  });
+  cs.on('parle', (p, oui) => { const c = cartes.get(String(p.id)); if (c) c.el.classList.toggle('cs-parle', oui); });
+  function marquerTour() { cartes.forEach((c, id) => c.el.classList.toggle('cs-tour', id === actif)); }
+  cs.on('combat', c => { const o = c && c.ordre.find(x => x.id === c.actif); actif = o && o.persoId != null ? String(o.persoId) : null; marquerTour(); });
+</script>
+</body>
+</html>

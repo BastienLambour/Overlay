@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>CodexVTT — La scénette</title>
+<link rel="stylesheet" href="widgets.css">
+<style>html, body { width: 100%; height: 100%; } #scene { position: absolute; inset: 0; }</style>
+</head>
+<body>
+<!--
+  WIDGET « LA SCÉNETTE » : à chaque jet, le personnage entre dans le cadre et joue son geste (court, se cache,
+  lance un sort, frappe…), puis réagit au résultat (rit, choqué, K.O., danse au critique). Vide le reste du temps.
+  OBS : source Navigateur 500 × 500 (par exemple au-dessus de ton chat).
+  ?cadre=1 (un fond derrière la scène, à la couleur ?fond=…) · ?pnj=1 (aussi les PNJ) · ?seulement=moi · ?duree=4
+  + les paramètres communs (widgets.js) : cle, filtre, moi, accent, fond, texte, police, demo
+-->
+<div id="scene"></div>
+<script type="module">
+  import { params, demarrer } from './widgets.js';
+  const cs = demarrer();
+  if (params.get('cadre') === '1') {
+    const s = document.createElement('style');
+    s.textContent = '.cs-scenette .cs-fond { background: var(--cs-fond); border-radius: var(--cs-rayon); box-shadow: inset 0 0 0 2px var(--cs-accent); }';
+    document.head.appendChild(s);
+  }
+  cs.scenette(document.getElementById('scene'), {
+    duree: (Number(params.get('duree')) || 4) * 1000, pnj: params.get('pnj') === '1',
+    seulement: params.get('seulement') === 'moi' ? j => j.moi : null,
+  });
+</script>
+</body>
+</html>

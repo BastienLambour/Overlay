@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodexVTT — Widgets de stream (démo)</title>
+<style>
+  body { margin: 0; background: #2A2F3A; color: #EEF; font: 15px/1.5 'Segoe UI', system-ui, sans-serif; }
+  .page { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
+  h1 { margin: 0 0 6px; } p { opacity: .8; max-width: 90ch; }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 24px; align-items: center; }
+  button { font: inherit; font-weight: 700; padding: 6px 14px; border-radius: 999px; border: 2px solid #556; background: #1E222B; color: inherit; cursor: pointer; }
+  button.actif { border-color: #1EE88A; color: #1EE88A; }
+  .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  figure { margin: 0; } figcaption { margin-top: 6px; font-weight: 700; } figcaption code { font-weight: 400; opacity: .7; }
+  iframe { width: 100%; border: 0; border-radius: 10px; background: repeating-conic-gradient(#343a46 0 25%, #2c313b 0 50%) 0 0 / 24px 24px; }
+  .large { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Widgets de stream de CodexVTT</h1>
+  <p>Chaque cadre est une page à coller dans OBS en <b>source Navigateur</b> (fond transparent : le damier ici n'est que pour la démo).
+    Ici, une partie inventée (<code>demo=1</code>) : en vrai, l'adresse contient la clé de la table (<code>cle=…</code>), copiée depuis
+    CodexVTT › labo › Sources pour OBS. Le filtre change le dessin des personnages :</p>
+  <div class="barre" id="filtres"></div>
+  <div class="grille">
+    <figure class="large"><iframe data-w="table.html" style="height:200px"></iframe><figcaption>La table <code>table.html</code> — 1920 × 200</figcaption></figure>
+    <figure><iframe data-w="perso.html" data-p="perso=Kenai" style="height:420px"></iframe><figcaption>Un personnage <code>perso.html?perso=Kenai</code></figcaption></figure>
+    <figure><iframe data-w="scenette.html" data-p="cadre=1" style="height:420px"></iframe><figcaption>La scénette <code>scenette.html</code></figcaption></figure>
+    <figure><iframe data-w="jets.html" style="height:280px"></iframe><figcaption>Les jets <code>jets.html</code></figcaption></figure>
+    <figure><iframe data-w="combat.html" style="height:320px"></iframe><figcaption>Le combat <code>combat.html</code></figcaption></figure>
+  </div>
+</div>
+<script type="module">
+  import { CodexStream } from './codex-stream.js';
+  let filtre = new URLSearchParams(location.search).get('filtre') || 'sticker';
+  const charger = () => document.querySelectorAll('iframe[data-w]').forEach(f => { f.src = `${f.dataset.w}?demo=1&moi=Kenai&filtre=${filtre}${f.dataset.p ? '&' + f.dataset.p : ''}`; });
+  const barre = document.getElementById('filtres');
+  barre.innerHTML = '<b>Filtre :</b> ' + CodexStream.filtres().map(f => `<button data-f="${f.id}" title="${f.texte}">${f.nom}</button>`).join('');
+  const marquer = () => barre.querySelectorAll('button').forEach(b => b.classList.toggle('actif', b.dataset.f === filtre));
+  barre.addEventListener('click', e => { if (!e.target.dataset.f) return; filtre = e.target.dataset.f; marquer(); charger(); });
+  marquer(); charger();
+</script>
+</body>
+</html>

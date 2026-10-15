@@ -57,6 +57,9 @@ window.CONFIG = {
     texte:            "",   // Texte
     doux:             "",   // Texte secondaire
   },
+  // Mes ambiances (créées dans reglages.html › Couleurs › « Sauvegarder ces couleurs ») :
+  // un nom et les couleurs qu'elle remet, ex. { nom: "Batman", valeurs: { "couleurs.accent": "#F5C518", "couleurs.fond": "#0B0B0D" } }
+  ambiances: [],
 
   // ---------------------------------------------------------------------
   // StreamElements (gratuit, par internet) : fait le lien entre Twitch et l'overlay pour les follows,
@@ -174,6 +177,7 @@ window.CONFIG = {
     joueurs: [                     // qui joue qui sur Discord : [nom du perso, pseudo Discord] (les cartes s'affichent tout de suite)
       // ["Kenai", "mordethrhedan"],
     ],
+    ajouterAutres: false,          // les autres persos de joueurs de la table CodexVTT (hors « Qui joue qui ») : une carte chacun ? (non conseillé)
     autresJets: true,              // les jets des autres joueurs, en petit (false = seulement les tiens)
     pnj: false,                    // les jets PUBLICS des PNJ du MJ, en petit
     dureeResultat: 4,              // secondes : le résultat d'un jet reste affiché une fois les dés posés

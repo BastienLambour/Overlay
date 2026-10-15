@@ -18,6 +18,9 @@
      perso = { …ta place, id, nom, nomCodex, portrait (adresse complète ou ''), pv, pvMax, stress, stressMax, forme, aTerre, moi, mj,
                apparence (la fiche d'apparence liée dans le labo de CodexVTT, ou null) }
      Partie.lire(jet) → { …jet, perso, moi, pnj, geste, verdict, mot, libelle, resultat }
+       perso = sa carte ; null si le personnage n'a pas de carte. Alors inconnu = { id, nom, portrait, apparence, forme }
+       si c'est un personnage de joueur de CodexVTT (sans carte, ajouter: false), sinon null (et pnj dit si c'est un PNJ).
+       Une scène joue TOUS les jets : perso, sinon inconnu, sinon PNJ / nom du jet.
        geste   : courir, grimper, cacher, crocheter, lire, observer, menacer, parler, danser, parer, sort, tirer,
                  frapper, soigner, garde, neutre (d'après le libellé de la compétence)
        verdict : crit, fumble, ok, rate, ou '' (pas de difficulté donnée : pas de verdict)
@@ -31,7 +34,8 @@
      ⚠ fiche est RÉSERVÉ : l'id de la fiche CodexVTT (nombre). Tes propres infos (couleur, titre…), range-les sous un autre nom.
      Les places s'affichent TOUT DE SUITE (même sans CodexVTT) ; { mj: true } = une place qui n'est pas un personnage de
      CodexVTT (le MJ). Chaque place se relie à son personnage CodexVTT par fiche (id) ou par le nom, et garde ses champs
-     (dessin, pseudo Discord…). Les personnages de CodexVTT absents des places s'ajoutent à la fin (ajouter: false = non).
+     (dessin, pseudo Discord…). Les personnages de CodexVTT absents des places NE s'ajoutent PAS (anciens persos, absents…) :
+     ajouter: true pour les ajouter à la fin (réglage commun : config.js › jdr.ajouterAutres). Sans places : toute la table.
 
    ?test=1 (ou Partie.brancher(…, { demo: true })) : une table de démo et un jet toutes les 6 s, sans CodexVTT.
    Protocole : G:\Projets\Codex\codex-web\docs\SPECTATEUR.md.
@@ -90,6 +94,9 @@ const Partie = (() => {
   let table = [];                        // les persos affichés
   let reglees = [];                      // la table réglée (copie de départ)
   let ajouter = true;
+  // Les personnages de CodexVTT reçus mais SANS carte (ajouter: false) : gardés à part, pour que leurs jets soient quand
+  // même joués avec leur nom, leur portrait et leur apparence (jet.inconnu)
+  let horsTable = new Map();
   const voulu = String(J.monPerso ?? '').trim();
   function estMoi(nom, id) {
     if (!voulu) return false;
@@ -133,12 +140,19 @@ const Partie = (() => {
     if (!normaliser(jet.characterName)) return null;
     return table.find(p => !p.mj && (memeNom(jet.characterName, p.nom) || (p.nomCodex && memeNom(jet.characterName, p.nomCodex)))) || null;
   }
+  // Un personnage de joueur sans carte : { id, nom, portrait, apparence, forme }, ou null
+  function inconnuDe(jet) {
+    if (jet.sheetId != null && horsTable.has(jet.sheetId)) return horsTable.get(jet.sheetId);
+    if (!normaliser(jet.characterName)) return null;
+    return [...horsTable.values()].find(i => memeNom(jet.characterName, i.nom)) || null;
+  }
   function lire(jet) {
     const perso = persoDe(jet), g = geste(jet), v = verdict(jet);
+    const inconnu = perso ? null : inconnuDe(jet);
     const attaque = jet.kind === 'attack' || jet.kind === 'damage';
     return {
-      ...jet, perso, moi: !!(perso && perso.moi),
-      pnj: jet.isNpc === true || (!perso && jet.isNpc !== false && jet.sheetId != null),
+      ...jet, perso, inconnu, moi: !!(perso && perso.moi),
+      pnj: jet.isNpc === true || (!perso && !inconnu && jet.isNpc !== false && jet.sheetId != null),
       geste: g, verdict: v,
       mot: (attaque && MOTS_ATTAQUE[v]) || MOTS[v] || { hope: 'Espoir', fear: 'Peur' }[jet.dhOutcome] || '',
       libelle: jet.label || 'Jet',
@@ -147,11 +161,14 @@ const Partie = (() => {
   }
 
   // ---------- Brancher ----------
-  // options : demo (défaut : ?test=1), places (la table réglée, voir plus haut), ajouter (les persos de CodexVTT hors des places : oui)
-  function brancher(r = {}, { demo = params.has('test') || params.has('demo'), places = null, ajouter: aj = true } = {}) {
+  // options : demo (défaut : ?test=1), places (la table réglée, voir plus haut), ajouter (les persos de CodexVTT hors des places :
+  // non par défaut quand il y a des places, sinon on aurait une carte par perso de joueur de la table CodexVTT ; jdr.ajouterAutres)
+  function brancher(r = {}, { demo = params.has('test') || params.has('demo'), places = null, ajouter: aj } = {}) {
     const appeler = (nom, ...a) => { if (r[nom]) try { r[nom](...a); } catch (e) { console.error('[Partie]', nom, e); } };
     reglees = Array.isArray(places) ? places.map(copie) : [];
-    ajouter = aj;
+    // (démo sans joueur réglé, seulement le MJ : on ajoute la table de démo, sinon il n'y aurait rien à voir)
+    const joueursRegles = reglees.filter(p => !p.mj).length;
+    ajouter = aj ?? ((demo && !joueursRegles) || (J.ajouterAutres ?? !reglees.length));
     table = depart();
     const majTable = () => appeler('table', liste());
     if (table.length) majTable();                       // la table réglée : tout de suite, avant CodexVTT
@@ -161,7 +178,10 @@ const Partie = (() => {
       const avant = copie(p);
       if (!p) p = placeDe(c);
       if (!p) {
-        if (!ajouter) return;
+        if (!ajouter) {
+          horsTable.set(c.id, poser({ ...VIDE, nom: '' }, c));
+          return;
+        }
         p = { ...VIDE, nom: '' };
         table.push(p);
         poser(p, c);
@@ -175,12 +195,14 @@ const Partie = (() => {
     const rappels = {
       etat: e => {
         table = depart();
+        horsTable = new Map();
         (e.characters || []).forEach(c => recevoir(c, false));
         majTable();
         rappels.combat(e.combat);
       },
       perso: c => recevoir(c, true),
       retire: ({ id }) => {
+        horsTable.delete(id);
         const p = parId(id);
         if (!p) return;
         if (table.indexOf(p) < reglees.length) Object.assign(p, VIDE);   // une place réglée reste (sans fiche)

@@ -109,6 +109,7 @@ window.ReglagesChamps = {
       { cle: 'jdr.attenue', type: 'case', label: 'Ceux qui se taisent sont un peu éteints' },
       { cle: 'jdr.pnj.jouer', type: 'case', label: 'Jouer aussi les jets de mes PNJ et créatures dans l’arène', aide: 'Seulement les jets PUBLICS lancés dans CodexVTT (un jet privé n’arrive jamais à l’overlay). Joués par un aventurier encapuchonné, avec le nom du PNJ.' },
       { cle: 'jdr.pnj.couleur', type: 'couleur', label: 'Couleur de la cape des PNJ' },
+      { cle: 'jdr.ajouterAutres', type: 'case', label: 'Ajouter aussi les personnages de CodexVTT qui n’ont pas de place', aide: 'Décoché (conseillé) : seules les places du tableau ont une carte. Coché : tous les personnages de joueurs de ta table CodexVTT s’ajoutent en bout de table.' },
       { cle: 'jdr.monPerso', type: 'texte', label: 'Mon personnage (si je joue au lieu d’être MJ)', aide: 'Son nom dans CodexVTT. Vide = tu es le maître du jeu (Patagrain).' },
       { cle: 'jdr.dureeResultat', type: 'nombre', label: 'Le résultat d’un jet reste affiché … secondes', min: 1, max: 20, aide: 'Une fois les dés posés. S’il y a d’autres jets qui attendent, il reste moins longtemps (2 secondes au plus).' },
       { cle: 'jdr.codex.actif', type: 'case', label: 'Brancher CodexVTT (jets de dés, PV, combat)' },
