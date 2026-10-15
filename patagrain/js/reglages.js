@@ -444,6 +444,13 @@ window.MES_REGLAGES = ${formater(perso)};
         if (RC.apercuAlerte) return RC.apercuAlerte(cle, { titre: t.titre, nom: ex.nom, message: remplir(t.message, ex) });
         return `<div class="rg-apercu"><small>${echapper(noms[cle] || cle)}</small><b>${echapper(t.titre)}</b><strong>${echapper(ex.nom)}</strong><span>${echapper(remplir(t.message, ex))}</span></div>`;
       }).join('');
+      // reglages-champs.js › apresApercu(boite) : ce que la vraie alerte fait après coup (ex. réduire un titre trop long),
+      // relancé une fois les polices chargées (avant, la police de secours fausse les mesures)
+      if (RC.apresApercu) {
+        const apres = () => { try { RC.apresApercu(boite); } catch (e) { console.error('[Réglages] apresApercu', e); } };
+        apres();
+        if (document.fonts) document.fonts.ready.then(apres);
+      }
     }
 
     // Les ambiances : celles toutes prêtes (reglages-champs.js › ambiances), puis celles créées ici

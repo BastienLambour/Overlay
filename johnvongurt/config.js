@@ -273,6 +273,8 @@ window.CONFIG = {
   // Les CLÉS sont des SECRETS : laisse-les vides ici, colle-les dans reglages.html › Scène JDR (elles vont dans mes-reglages.js).
   jdr: {
     titre: "",                     // le nom de la campagne (en haut à droite)
+    dessin: "ecusson",         // le style des personnages dessinés (boîte à outils de CodexVTT) : neon | sticker | ecusson | vitrail | conte | aplat
+    enPied: false,                 // true = dans les scénettes, le personnage EN PIED (il court, frappe, lève les bras…) au lieu du buste
     monPerso: "",                  // TON personnage dans CodexVTT (son nom, ex. "Kenai") : sa carte en avant (« toi »), tes jets en grand.
                                    // Vide = tu es le MJ, ou tu regardes : toute la table pareil.
     mj: { nom: "Patagrain", discord: "" },  // le MJ : une carte à son nom (il n'est pas un personnage de CodexVTT) ; discord = son pseudo, pour l'animer quand il parle

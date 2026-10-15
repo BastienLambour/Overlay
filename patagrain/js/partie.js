@@ -118,7 +118,7 @@ const Partie = (() => {
       portrait: typeof Codex !== 'undefined' && c.portrait ? Codex.url(c.portrait) : (c.portrait || ''),
       pv: c.hp ?? null, pvMax: c.hpMax ?? null, stress: c.stress ?? null, stressMax: c.stressMax ?? null,
       forme: c.form || '', aTerre: !!c.down || (c.hpMax > 0 && c.hp <= 0),
-      // l'apparence liée à la fiche dans le labo de CodexVTT (champ facultatif « appearance ») : voir js/apparence.js
+      // l'apparence liée à la fiche dans le labo de CodexVTT (champ facultatif « appearance ») : dessinée par js/codex-stream.js (CodexStream.fiche / .dessiner)
       apparence: c.appearance && typeof c.appearance === 'object' ? c.appearance : (p.apparence || null),
     });
     if (!p.nom) p.nom = c.name || 'Aventurier';

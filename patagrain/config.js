@@ -182,6 +182,7 @@ window.CONFIG = {
   //             en attendant, et dans l'arène des jets). nom / titre : vide = ceux du dessin ; pour « autre », nom = celui de la fiche CodexVTT.
   jdr: {
     titre: "La Malédiction de Pangée",
+    dessin: "conte",           // le style des personnages dessinés (boîte à outils de CodexVTT) : neon | sticker | ecusson | vitrail | conte | aplat
     attenue: true,                 // ceux qui se taisent sont un peu éteints
     ajouterAutres: false,          // true = les personnages de CodexVTT qui n'ont pas de place ont aussi leur carte (en bout de table)
     monPerso: "",                  // ton personnage dans CodexVTT si tu JOUES (pas le MJ) : sa carte en avant. Vide = tu es le MJ.

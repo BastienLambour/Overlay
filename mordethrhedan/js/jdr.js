@@ -3,11 +3,14 @@
    Les données viennent du moteur commun js/partie.js (CodexVTT, Discord) : ici, on DESSINE seulement.
      JDR.carte(ecran, zone, perso, { portrait, nom })  → une carte : .maj(perso), .coup(delta), .tour(oui), .parler(oui), .oter()
      JDR.jet(ecran, zone, jet, { petit })              → le compteur néon d'un jet (promesse : finie quand il disparaît)
+     JDR.scenette(ecran, zone, jet, { duree })          → la scénette du jet (le perso joue son geste) au-dessus du chat
      JDR.file(jouer)                                    → une file : un jet à la fois
    Styles : css/jdr.css.
    ===================================================================== */
 const JDR = (() => {
   const J = (window.CONFIG || {}).jdr || {};
+  // Le dessin des personnages : un filtre de la boîte à outils de CodexVTT (js/codex-stream.js) ; réglable (reglages.html › Scène JDR)
+  const DESSIN = J.dessin || 'neon';
   const attendre = ms => new Promise(r => setTimeout(r, ms));
   const DENOUEMENT = 1500;                                    // les dés 3D de CodexVTT se posent ~1,5 s après le lancer
   const DUREE = Math.max(1, Number(J.dureeResultat) || 4) * 1000;
@@ -17,18 +20,18 @@ const JDR = (() => {
     const el = Composants.creer(ecran, 'jc', `<div class="jc-portrait" style="width:${portrait}px;height:${portrait}px;font-size:${portrait * .55}px"></div>
       <div class="jc-corps"><div class="jc-nom" style="font-size:${nom}px"></div><div class="jc-sous"></div><div class="jc-barre"><i></i></div><div class="jc-pv"></div></div>
       <span class="jc-tag toi">toi</span><span class="jc-tag tour">son tour</span>`, z);
-    // Le personnage dessiné (catalogue commun js/persos.js, au style de la chaîne : js/persos-style.js) s'il y est ;
+    // Le personnage dessiné (apparence liée dans CodexVTT, sinon le catalogue provisoire ; dessin : CodexStream, filtre DESSIN) ;
     // sinon le portrait de CodexVTT. Il bouge la bouche quand il parle, K.O. à 0 PV, sa forme (Trayss) suit CodexVTT.
     let fiche = null, dernier = p, bouge = null, ouverte = false;
     const dessiner = q => {
       const b = el.querySelector('.jc-portrait');
       b.classList.add('dessin');
-      b.innerHTML = PersosStyle.rendu(fiche, { forme: q.forme, expression: q.aTerre ? 'ko' : ouverte ? 'parle' : '', cadrage: 'tete' });
+      b.innerHTML = CodexStream.dessiner(fiche, { filtre: DESSIN, forme: q.forme, expression: q.aTerre ? 'ko' : ouverte ? 'parle' : '', cadrage: 'tete' });
     };
     const maj = q => {
       dernier = q;
-      // l'apparence liée dans le labo de CodexVTT d'abord, sinon le catalogue commun (js/persos.js)
-      fiche = typeof PersosStyle !== 'undefined' && typeof Apparence !== 'undefined' ? (q.apparence || Apparence.trouver(q.nom, q.nomCodex)) : null;
+      // l'apparence liée dans le labo de CodexVTT d'abord, sinon le catalogue provisoire (dans js/codex-stream.js)
+      fiche = CodexStream.fiche(q, { aventurier: false });
       el.querySelector('.jc-nom').textContent = q.nom;
       el.querySelector('.jc-sous').textContent = q.mj ? 'Maître du jeu' : (q.forme || '');
       el.classList.toggle('moi', !!q.moi); cadre.classList.toggle('jc-cadre-moi', !!q.moi);
@@ -85,6 +88,14 @@ const JDR = (() => {
     el.remove(); cadre.remove();
   }
 
+  // La scénette d'un jet au-dessus du chat (CodexStream.Scenette) : le perso de la carte, sinon celui qui n'a pas de carte
+  // (jet.inconnu), sinon un aventurier ; au style de la chaîne (DESSIN)
+  function scenette(ecran, z, j, { duree = DUREE, denouement = DENOUEMENT } = {}) {
+    const q = j.perso || j.inconnu || {}, f = CodexStream.fiche(q, { nom: j.characterName });
+    const pied = J.enPied === true;                               // en pied : un pantin qui joue le geste (réglages › Scène JDR)
+    return CodexStream.Scenette.jouer(ecran, j, { zone: z, duree, denouement, pied, dessin: e => CodexStream.dessiner(f, { filtre: DESSIN, forme: q.forme, expression: e, cadrage: pied ? 'pied' : undefined }) });
+  }
+
   function file(jouer) {
     const attente = [];
     let occupe = false;
@@ -96,5 +107,5 @@ const JDR = (() => {
     return j => { attente.push(j); suivant(); };
   }
 
-  return { carte, jet, file, DENOUEMENT };
+  return { carte, jet, scenette, file, DENOUEMENT };
 })();

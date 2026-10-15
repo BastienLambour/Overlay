@@ -312,7 +312,7 @@ Taille de la webcam : `560` × `315` en 1440p, `420` × `236` en 1080p.
 **Tout est dans le tuto à part : `TUTO-JDR.pdf`** (la scène, la table de jeu, CodexVTT, le bot Discord,
 le dépannage). En bref :
 
-**À quoi ça sert** : tes parties de jeu de rôle. Ta table CodexVTT en grand, les **cartes des héros** en dessous (le maître du jeu et chaque personnage, dessinés dans le style de Patagrain), et à droite le **titre de la campagne** puis le **chat** ; pendant un jet de dés, **l'arène** passe par-dessus le chat et le héros y joue son jet.
+**À quoi ça sert** : tes parties de jeu de rôle. Ta table CodexVTT en grand, les **cartes des héros** en dessous (le maître du jeu et chaque personnage, dessinés d'après leur apparence, au style Conte), et à droite le **titre de la campagne** puis le **chat** ; pendant un jet de dés, **l'arène** passe par-dessus le chat et le héros y joue son jet.
 
 **Dans OBS :**
 1. **Scènes › +** : « JDR ».

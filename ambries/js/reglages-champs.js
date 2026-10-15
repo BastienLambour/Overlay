@@ -99,6 +99,8 @@ window.ReglagesChamps = {
     { titre: 'Scène JDR (CodexVTT)', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table, les personnages, leurs PV et les jets viennent tout seuls de CodexVTT. La carte de celui qui parle sur Discord s’anime.', champs: [
       { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne' },
       { cle: 'jdr.monPerso', type: 'texte', label: 'Mon personnage (si je joue)', aide: 'Son nom dans CodexVTT (ex. Kenai) : sa carte est mise en avant (« toi ») et tes jets sont joués en grand. Laisse vide si tu es le MJ.' },
+      { cle: 'jdr.dessin', type: 'choix', label: 'Style des personnages', aide: 'Le dessin des personnages sur les cartes et dans les scénettes. Le même personnage (son apparence dans CodexVTT) est dessiné à ce style.', options: [['neon', 'Néon (traits lumineux)'], ['sticker', 'Sticker (autocollant)'], ['ecusson', 'Écusson (brodé, mission spatiale)'], ['vitrail', 'Vitrail (facettes de cristal)'], ['conte', 'Conte (livre d’images)'], ['aplat', 'Aplat (simple)']] },
+      { cle: 'jdr.enPied', type: 'case', label: 'Personnages en pied dans les scénettes', aide: 'Coché : pendant un jet, le personnage apparaît en entier et joue le geste avec ses bras et ses jambes (il court, frappe, lève les bras pour un sort, se réjouit…). Décoché : le buste, comme avant.' },
       { cle: 'jdr.mj.nom', type: 'texte', label: 'Le MJ : son nom', aide: 'Une carte à son nom (le MJ n’est pas un personnage de CodexVTT). Vide = pas de carte de MJ.' },
       { cle: 'jdr.mj.discord', type: 'texte', label: 'Le MJ : son pseudo Discord', aide: 'Pour animer sa carte quand il parle.' },
       { cle: 'jdr.joueurs', type: 'paires', label: 'Qui joue qui sur Discord', aide: 'Une ligne par personnage : « Kenai | pseudo Discord » (le nom comme dans CodexVTT). Les cartes s’affichent tout de suite, même avant CodexVTT.' },
@@ -134,13 +136,19 @@ window.ReglagesChamps = {
   ],
 
   // Aperçu d'une alerte, avec les mêmes styles et icônes que la vraie source (sources/alertes.html)
+  // L'alerte à sa vraie largeur (900 px, comme sources/alertes.html), réduite pour tenir dans sa case ; puis un titre long
+  // (« Soutien moral officiel ») voit sa police se réduire jusqu’à ce qu’il tienne, comme dans la vraie alerte
+  apresApercu(boite) {
+    boite.querySelectorAll('.apercu-alerte').forEach(a => { a.style.zoom = ''; a.style.zoom = Math.min(.5, a.getBoundingClientRect().width / 960); });
+    boite.querySelectorAll('.alerte-titre').forEach(t => { t.style.fontSize = ''; for (let taille = 64; t.scrollWidth > t.clientWidth - 6 && taille > 34; taille -= 2) t.style.fontSize = taille + 'px'; });
+  },
   apercuAlerte(type, { titre, nom, message }) {
     const ICONES = { follow: 'oeil', sub: 'coeur', resub: 'trophee', giftsub: 'cadeau', giftbomb: 'cadeau', bits: 'piece', raid: 'fusee', don: 'eclair', objectif: 'etoile' };
     const e = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const ico = typeof Commun !== 'undefined' ? (Commun.icones[ICONES[type]] || '') : '';
     const tache = (c, r1, r2, r3) => `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="${r1}" fill="${c}" stroke="var(--encre)" stroke-width="4"/>
       <circle cx="9" cy="48" r="${r2}" fill="${c}" stroke="var(--encre)" stroke-width="3"/><circle cx="51" cy="9" r="${r3}" fill="${c}" stroke="var(--encre)" stroke-width="3"/></svg>`;
-    return `<div style="zoom:.42;padding:34px 30px"><div class="alerte">
+    return `<div class="apercu-alerte" style="zoom:.42;padding:34px 30px"><div class="alerte" style="width:900px;box-sizing:border-box">
       <div class="eclabousse" style="left:-30px;top:-30px;width:70px;height:70px">${tache('#fff', 16, 7, 5)}</div>
       <div class="eclabousse" style="right:-24px;bottom:-32px;width:64px;height:64px">${tache('var(--accent)', 13, 6, 4)}</div>
       <div class="alerte-ic">${ico}</div>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodexVTT — Personnages en pied (démo)</title>
+<style>
+  body { margin: 0; background: #2A2F3A; color: #EEF; font: 15px/1.5 'Segoe UI', system-ui, sans-serif; }
+  .page { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
+  h1 { margin: 0 0 6px; } h2 { margin: 28px 0 8px; } p { opacity: .8; max-width: 90ch; }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; align-items: center; }
+  button { font: inherit; font-weight: 700; padding: 6px 14px; border-radius: 999px; border: 2px solid #556; background: #1E222B; color: inherit; cursor: pointer; }
+  button.actif { border-color: #1EE88A; color: #1EE88A; }
+  .rang { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .perso { background: repeating-conic-gradient(#343a46 0 25%, #2c313b 0 50%) 0 0 / 24px 24px; border-radius: 12px; padding: 10px 10px 4px; text-align: center; }
+  .perso svg { width: 100%; height: 260px; display: block; }
+  .scene { position: relative; height: 460px; border-radius: 14px; overflow: hidden;
+    background: repeating-conic-gradient(#343a46 0 25%, #2c313b 0 50%) 0 0 / 24px 24px; }
+  .scene .cs-scenette .cs-fond { background: rgba(14, 16, 20, .55); }
+  select { font: inherit; padding: 6px 10px; border-radius: 8px; background: #1E222B; color: inherit; border: 2px solid #556; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Personnages en pied</h1>
+  <p>Le même personnage (sa fiche d'apparence) dessiné en entier, sur le squelette du bouffon de Patagrain : les mêmes gestes que lui.
+    Dans la scénette d'un jet, il joue le geste de la compétence (courir, frapper, lancer un sort…), puis réagit au résultat.
+    Widget : <code>scenette.html?pied=1</code>. Le style :</p>
+  <div class="barre" id="filtres"></div>
+  <div class="rang" id="rang"></div>
+
+  <h2>Les gestes</h2>
+  <div class="barre"><b>Qui :</b> <select id="qui"></select> <b>Résultat :</b>
+    <select id="verdict"><option value="ok">Réussite</option><option value="crit">Critique</option><option value="rate">Échec</option><option value="fumble">Échec critique</option></select></div>
+  <div class="barre" id="gestes"></div>
+  <div class="scene" id="scene"></div>
+</div>
+<script type="module">
+  import { CodexStream, Apparence } from './codex-stream.js';
+  const persos = (globalThis.PERSOS || window.PERSOS || []);
+  let filtre = new URLSearchParams(location.search).get('filtre') || 'conte';
+  const GESTES = [['courir', 'Courir (Athlétisme)'], ['frapper', 'Frapper (attaque)'], ['sort', 'Lancer un sort'], ['tirer', 'Tirer à l’arc'],
+    ['parer', 'Parer (sauvegarde)'], ['grimper', 'Grimper'], ['danser', 'Danser (Représentation)'], ['lire', 'Lire (Arcanes)'],
+    ['observer', 'Observer (Perception)'], ['parler', 'Parler (Persuasion)'], ['menacer', 'Menacer (Intimidation)'], ['soigner', 'Soigner'], ['cacher', 'Se cacher (Discrétion)']];
+  const MOTS = { crit: 'Critique !', fumble: 'Échec critique…', ok: 'Réussite !', rate: 'Échec…' };
+  const barre = document.getElementById('filtres');
+  barre.innerHTML = CodexStream.filtres().map(f => `<button data-f="${f.id}" title="${f.texte}">${f.nom}</button>`).join('');
+  const rang = document.getElementById('rang');
+  const dessiner = () => {
+    barre.querySelectorAll('button').forEach(b => b.classList.toggle('actif', b.dataset.f === filtre));
+    rang.innerHTML = persos.map(p => `<div class="perso">${CodexStream.dessiner(p, { filtre, cadrage: 'pied' })}<b>${p.nom}</b></div>`).join('')
+      + (p => `<div class="perso">${CodexStream.dessiner(p, { filtre, cadrage: 'pied' })}<b>${p.nom}</b> <small>(sans apparence)</small></div>`)(CodexStream.fiche({ nom: 'Un inconnu' }));
+  };
+  barre.addEventListener('click', e => { if (e.target.dataset.f) { filtre = e.target.dataset.f; dessiner(); } });
+  dessiner();
+
+  const qui = document.getElementById('qui');
+  qui.innerHTML = persos.map(p => `<option value="${p.id}">${p.nom}</option>`).join('');
+  const gestes = document.getElementById('gestes');
+  gestes.innerHTML = GESTES.map(([g, l]) => `<button data-g="${g}">${l}</button>`).join('');
+  let occupe = false;
+  gestes.addEventListener('click', async e => {
+    const g = e.target.dataset.g; if (!g || occupe) return;
+    occupe = true;
+    const p = persos.find(x => x.id === qui.value), verdict = document.getElementById('verdict').value;
+    const jet = { geste: g, verdict, mot: MOTS[verdict], resultat: 14, nom: p.nom };
+    try {
+      await CodexStream.Scenette.jouer(document.getElementById('scene'), jet, { pied: true, duree: 3000,
+        dessin: ex => CodexStream.dessiner(p, { filtre, cadrage: 'pied', expression: ex }) });
+    } finally { occupe = false; }
+  });
+</script>
+</body>
+</html>

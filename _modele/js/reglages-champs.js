@@ -13,6 +13,7 @@
              et ambiances: [{ nom, valeurs: { 'couleurs.accent': '#…', … } }] pour les boutons en un clic.
    Options : logo (image en haut), scripts / styles (chargés pour l'aperçu),
              apercuAlerte(type, { titre, nom, message }) → HTML d'une alerte aux couleurs de l'overlay
+             apresApercu(boite) (facultatif) → lancé après le dessin des aperçus (ex. réduire un titre trop long, comme la vraie alerte)
    ===================================================================== */
 window.ReglagesChamps = {
   // logo: 'assets/logo.svg',                 // image en haut de la page (si l'overlay a un logo)
@@ -95,6 +96,8 @@ window.ReglagesChamps = {
     { titre: 'Scène JDR (CodexVTT)', icone: '🎲', aide: 'La scène des parties de jeu de rôle (scenes/jdr.html) : la table, les personnages, leurs PV et les jets viennent tout seuls de CodexVTT. La carte de celui qui parle sur Discord s’anime.', champs: [
       { cle: 'jdr.titre', type: 'texte', label: 'Nom de la campagne' },
       { cle: 'jdr.monPerso', type: 'texte', label: 'Mon personnage (si je joue)', aide: 'Son nom dans CodexVTT (ex. Kenai) : sa carte est mise en avant (« toi ») et tes jets sont joués en grand. Laisse vide si tu es le MJ.' },
+      { cle: 'jdr.dessin', type: 'choix', label: 'Style des personnages', aide: 'Le dessin des personnages sur les cartes et dans les scénettes. Le même personnage (son apparence dans CodexVTT) est dessiné à ce style.', options: [['neon', 'Néon (traits lumineux)'], ['sticker', 'Sticker (autocollant)'], ['ecusson', 'Écusson (brodé, mission spatiale)'], ['vitrail', 'Vitrail (facettes de cristal)'], ['conte', 'Conte (livre d’images)'], ['aplat', 'Aplat (simple)']] },
+      { cle: 'jdr.enPied', type: 'case', label: 'Personnages en pied dans les scénettes', aide: 'Coché : pendant un jet, le personnage apparaît en entier et joue le geste avec ses bras et ses jambes (il court, frappe, lève les bras pour un sort, se réjouit…). Décoché : le buste, comme avant.' },
       { cle: 'jdr.mj.nom', type: 'texte', label: 'Le MJ : son nom', aide: 'Une carte à son nom (le MJ n’est pas un personnage de CodexVTT). Vide = pas de carte de MJ.' },
       { cle: 'jdr.mj.discord', type: 'texte', label: 'Le MJ : son pseudo Discord', aide: 'Pour animer sa carte quand il parle.' },
       { cle: 'jdr.joueurs', type: 'paires', label: 'Qui joue qui sur Discord', aide: 'Une ligne par personnage : « Kenai | pseudo Discord » (le nom comme dans CodexVTT). Les cartes s’affichent tout de suite, même avant CodexVTT.' },

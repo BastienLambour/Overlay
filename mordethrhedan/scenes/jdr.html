@@ -37,10 +37,7 @@
 <script src="../js/codex.js"></script>
 <script src="../js/voix.js"></script>
 <script src="../js/partie.js"></script>
-<script src="../js/apparence.js"></script>
-<script src="../js/persos.js"></script>
-<script src="../js/persos-style.js"></script>
-<script src="../js/scenette.js"></script>
+<script src="../js/codex-stream.js"></script>
 <script src="../js/jdr.js"></script>
 <script>
   Commun.demarrer();
@@ -75,13 +72,13 @@
 
   // --- Les jets : le tien en grand sur la table, ceux des autres en petit en haut du chat ---
   // Un jet : le compteur (en grand sur la table si c'est le tien, en petit en haut du chat sinon) et la SCÉNETTE au-dessus
-  // du chat (js/scenette.js) : le personnage joue son geste, puis réagit au résultat
+  // du chat (JDR.scenette : la boîte à outils de CodexVTT) : le personnage joue son geste, puis réagit au résultat
   const DUREE = Math.max(1, Number(J.dureeResultat) || 4) * 1000;
   const SCENE_MOI = { x: CHAT.x, y: CHAT.y, l: CHAT.l, h: 520 };
   const SCENE = { x: CHAT.x, y: AUTRE_JET.y + AUTRE_JET.h + 12, l: CHAT.l, h: 320 };
   const jouer = JDR.file(j => Promise.all([
     JDR.jet(ecran, j.moi ? MON_JET : AUTRE_JET, j, { petit: !j.moi }),
-    J.scenettes === false ? null : Scenette.jouer(ecran, j.moi ? SCENE_MOI : SCENE, j, { duree: DUREE, denouement: JDR.DENOUEMENT }),
+    J.scenettes === false ? null : JDR.scenette(ecran, j.moi ? SCENE_MOI : SCENE, j, { duree: DUREE, denouement: JDR.DENOUEMENT }),
   ]));
 
   Partie.brancher({

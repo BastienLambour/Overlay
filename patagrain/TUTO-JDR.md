@@ -120,6 +120,7 @@ Ouvre `reglages.html` (dans le dossier de l'overlay), section **Scène JDR**.
 | Jouer aussi les jets de mes PNJ et créatures | tes jets **publics** de PNJ, joués par un aventurier encapuchonné (4.4) |
 | Couleur de la cape des PNJ | bordeaux par défaut |
 | Ajouter aussi les personnages de CodexVTT qui n'ont pas de place | décoché (conseillé) : seules les places du tableau ont une carte (3.4) |
+| Style des personnages | la façon de dessiner TOUS les personnages (tes héros compris) : Conte par défaut ; aussi Néon, Sticker, Écusson, Vitrail, Aplat |
 | Mon personnage (si je joue au lieu d'être MJ) | vide pour toi (tu es le MJ) ; le jour où tu joues dans la partie de quelqu'un d'autre : le nom de ton personnage dans CodexVTT |
 
 ### 3.2 Le tableau « la table de jeu »
@@ -130,9 +131,9 @@ Une ligne par place : le maître du jeu, puis les places 1 à 6.
 |---|---|
 | Présent | décoche pour une place vide ce soir (la carte disparaît) |
 | Joueur | son prénom ou pseudo (écrit sous le nom du personnage) |
-| Personnage | le dessin : Patagrain (MJ), Zokhran, Namerya, Kenai, Trayss (dragon, entre les deux, humaine), Ba Heng Ze, Dvergrost, ou **Autre** |
-| Nom du personnage | vide = celui du dessin. Sert à le renommer, et **obligatoire pour « Autre »** |
-| Sous-titre | vide = celui du dessin (« Poète de la marmite »…) |
+| Personnage | le héros : Patagrain (MJ), Zokhran, Namerya, Kenai, Trayss (dragon, entre les deux, humaine), Ba Heng Ze, Dvergrost, ou **Autre** |
+| Nom du personnage | vide = celui du héros. Sert à le renommer, et **obligatoire pour « Autre »** |
+| Sous-titre | vide = celui du héros (« Poète de la marmite »…) |
 | Discord | son **pseudo Discord** (celui de son profil) ou son nom affiché sur ton serveur |
 
 **Clique sur Enregistrer**, puis actualise la source dans OBS (ou le bouton « Actualiser toutes les
@@ -140,13 +141,22 @@ sources Navigateur » du script `actualiser-obs.lua`).
 
 ### 3.3 Un nouveau joueur, un nouveau personnage
 
-Pas besoin de dessin :
+Pas besoin de dessin : chaque personnage est décrit par ses traits (son **apparence**), et l'overlay le dessine.
 
 1. Sur sa ligne, choisis **Personnage › Autre : portrait de sa fiche CodexVTT**.
 2. **Nom du personnage** : exactement le nom de sa fiche CodexVTT. Un début suffit : « Elwen » retrouve
    « Elwen la Rousse ».
-3. Sa carte prend l'**image de sa fiche** dès que CodexVTT est branché. Avant, et dans l'arène des jets,
+3. Si son **apparence** est enregistrée dans CodexVTT (labo, liée à sa fiche), sa carte la montre **dessinée au style
+   Conte** (réglages › Scène JDR › « Style des personnages »), et ce dessin s'affiche aussi sur la carte de ses jets.
+   Sinon, sa carte prend l'**image de sa fiche** dès que CodexVTT est branché. Avant, et dans l'arène des jets,
    c'est un **aventurier encapuchonné** à la couleur de sa carte.
+
+### Les personnages : d'où viennent leurs dessins
+
+Tes héros ne sont plus dessinés à la main : chacun est une **fiche d'apparence** (tête, cheveux, tenue, objets en main…),
+et la boîte à outils de CodexVTT le dessine, en buste sur sa carte et **en pied dans l'arène**, sur le squelette de ton bouffon (les mêmes
+gestes que lui). Pour changer l'allure d'un personnage : **CodexVTT › labo › Personnages** (le créateur), sur sa fiche. Son apparence
+enregistrée là passe avant tout, même pour un héros de la table.
 
 ### 3.4 Comment l'overlay reconnaît les personnages
 
@@ -155,7 +165,7 @@ Par leur **nom** : le nom de la fiche CodexVTT doit commencer comme celui de la 
 
 **Seules les places du tableau ont une carte.** Les autres personnages de ta table CodexVTT (anciens
 personnages, joueurs absents ce soir…) n'ont pas de carte. **Leurs jets de dés, eux, sont toujours joués** dans
-l'arène : par leur héros dessiné s'il en a un (même nom), sinon par l'aventurier encapuchonné à leur couleur. Si tu veux qu'ils s'ajoutent tout seuls en bout
+l'arène : avec leur apparence CodexVTT, sinon le héros du même nom, sinon l'aventurier encapuchonné à leur couleur. Si tu veux qu'ils s'ajoutent tout seuls en bout
 de table (avec le portrait de leur fiche), coche **« Ajouter aussi les personnages de CodexVTT qui n'ont pas
 de place »** (3.1) ; mieux vaut quand même leur donner une place (3.3), pour le pseudo Discord.
 

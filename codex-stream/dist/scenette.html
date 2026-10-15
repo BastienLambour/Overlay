@@ -12,6 +12,7 @@
   lance un sort, frappe…), puis réagit au résultat (rit, choqué, K.O., danse au critique). Vide le reste du temps.
   OBS : source Navigateur 500 × 500 (par exemple au-dessus de ton chat).
   ?cadre=1 (un fond derrière la scène, à la couleur ?fond=…) · ?pnj=1 (aussi les PNJ) · ?seulement=moi · ?duree=4
+  ?pied=1 : le personnage EN PIED (sur le squelette de Patagrain : il court, frappe, lève les bras…) ; OBS : 400 × 600 conseillé
   + les paramètres communs (widgets.js) : cle, filtre, moi, accent, fond, texte, police, demo
 -->
 <div id="scene"></div>
@@ -25,7 +26,7 @@
   }
   cs.scenette(document.getElementById('scene'), {
     duree: (Number(params.get('duree')) || 4) * 1000, pnj: params.get('pnj') === '1',
-    seulement: params.get('seulement') === 'moi' ? j => j.moi : null,
+    seulement: params.get('seulement') === 'moi' ? j => j.moi : null, pied: params.get('pied') === '1',
   });
 </script>
 </body>

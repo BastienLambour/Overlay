@@ -62,5 +62,6 @@
 .jc-portrait.dessin { background: transparent; }
 .jc-portrait.dessin svg { width: 100%; height: 100%; display: block; }
 
-/* --- La scénette au-dessus du chat (js/scenette.js) --- */
-.scenette .sc-fond { background: var(--surface); border: 4px solid #fff; border-radius: 22px; box-shadow: var(--halo); }
+/* --- La scénette au-dessus du chat (JDR.scenette : CodexStream.Scenette) --- */
+.cs-scenette .cs-fond { background: var(--surface); border: 4px solid #fff; border-radius: 22px; box-shadow: var(--halo); }
+.cs-scenette .cs-perso { width: 46%; height: auto; }   /* la taille du perso dans la scénette (comme avant) */

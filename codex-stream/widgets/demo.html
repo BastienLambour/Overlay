@@ -23,6 +23,7 @@
   <p>Chaque cadre est une page à coller dans OBS en <b>source Navigateur</b> (fond transparent : le damier ici n'est que pour la démo).
     Ici, une partie inventée (<code>demo=1</code>) : en vrai, l'adresse contient la clé de la table (<code>cle=…</code>), copiée depuis
     CodexVTT › labo › Sources pour OBS. Le filtre change le dessin des personnages :</p>
+  <div class="barre" id="themes"></div>
   <div class="barre" id="filtres"></div>
   <div class="grille">
     <figure class="large"><iframe data-w="table.html" style="height:200px"></iframe><figcaption>La table <code>table.html</code> — 1920 × 200</figcaption></figure>
@@ -34,8 +35,18 @@
 </div>
 <script type="module">
   import { CodexStream } from './codex-stream.js';
-  let filtre = new URLSearchParams(location.search).get('filtre') || 'sticker';
-  const charger = () => document.querySelectorAll('iframe[data-w]').forEach(f => { f.src = `${f.dataset.w}?demo=1&moi=Kenai&filtre=${filtre}${f.dataset.p ? '&' + f.dataset.p : ''}`; });
+  const FILTRE_DEPART = new URLSearchParams(location.search).get('filtre') || 'sticker';
+  let filtre = FILTRE_DEPART, theme = '';
+  const charger = () => document.querySelectorAll('iframe[data-w]').forEach(f => { f.src = `${f.dataset.w}?demo=1&moi=Kenai&filtre=${filtre}${theme ? '&theme=' + theme : ''}${f.dataset.p ? '&' + f.dataset.p : ''}`; });
+  const bt = document.getElementById('themes');
+  bt.innerHTML = '<b>Thème :</b> <button data-t="" class="actif">aucun</button>' + CodexStream.themes().map(t => `<button data-t="${t.id}">${t.nom}</button>`).join('');
+  bt.addEventListener('click', e => {
+    if (e.target.dataset.t == null) return;
+    theme = e.target.dataset.t; bt.querySelectorAll('button').forEach(b => b.classList.toggle('actif', b === e.target));
+    filtre = theme ? CodexStream.theme(theme).filtre : FILTRE_DEPART;   // « aucun » : plus aucun thème, le dessin de départ revient
+    marquer();
+    charger();
+  });
   const barre = document.getElementById('filtres');
   barre.innerHTML = '<b>Filtre :</b> ' + CodexStream.filtres().map(f => `<button data-f="${f.id}" title="${f.texte}">${f.nom}</button>`).join('');
   const marquer = () => barre.querySelectorAll('button').forEach(b => b.classList.toggle('actif', b.dataset.f === filtre));

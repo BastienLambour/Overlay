@@ -6,17 +6,20 @@
 
 /* ---------- la carte de héros (horizontale) : le héros à gauche, le nom et les PV à droite ----------
    Placée par la scène (left/top/width/height) ; 1em = 1/10 de sa hauteur ; --pw = largeur du médaillon ; --fn = taille du nom */
-.portrait { --c: var(--accent); position: absolute; box-sizing: border-box; display: flex; align-items: center; gap: .7em; padding: .6em .9em .6em .6em;
+.portrait { --c: var(--accent); position: absolute; box-sizing: border-box; display: flex; align-items: stretch; gap: .7em; padding: .6em .9em 0 .6em;
   border-radius: 1em; background: linear-gradient(100deg, color-mix(in srgb, var(--c) 22%, var(--surface)), var(--surface) 55%);
   box-shadow: 0 0 0 .22em #E9D9B0, 0 0 0 .36em #6B4423, 0 .5em 1.1em rgba(0, 0, 0, .45); transition: filter .35s, box-shadow .3s; }
 .pt-cadre { position: relative; flex: none; width: var(--pw, 7em); height: 100%; }
-.pt-image { position: relative; overflow: hidden; width: 100%; height: 100%; border-radius: 50% 50% .45em .45em / 30% 30% .45em .45em;
+/* le médaillon descend jusqu'en bas de la carte : le héros est posé sur le bord (toute la hauteur de la carte pour le dessin) */
+.pt-image { position: relative; overflow: hidden; width: 100%; height: 100%; border-radius: 50% 50% 0 .5em / 30% 30% 0 .5em;
   background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--c) 55%, #1A2234), #0E1422 72%);
   box-shadow: 0 0 0 .14em #E9D9B0, 0 0 0 .26em color-mix(in srgb, var(--c) 75%, #000); }
-.pt-image .heros-svg { position: absolute; left: -22%; width: 144%; height: auto; top: 50%; translate: 0 -40%; }
+#ecran .pt-image .heros-svg { position: absolute; left: -20%; width: 140%; height: auto; bottom: 0; }   /* (#ecran : passe devant css/bouffon.css) */
+.pt-conte { position: absolute; left: -8%; right: -8%; bottom: 0; }
+.pt-conte svg { display: block; width: 100%; height: auto; }
 .pt-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; }
 .pt-vide { position: absolute; inset: 0; display: grid; place-items: center; font: 800 3.5em var(--f-titre); color: #5C6B80; }
-.pt-texte { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: .2em; }
+.pt-texte { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: .2em; padding-bottom: .6em; }
 .pt-nom { font: 800 var(--fn, 1.8em)/1.05 var(--f-titre); color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 .08em .25em #000; }
 .pt-titre { font: 800 .62em/1.2 var(--f-texte); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pt-titre:empty { display: none; }

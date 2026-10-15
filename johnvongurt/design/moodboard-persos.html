@@ -6,7 +6,7 @@
 <title>Moodboard — style des personnages</title>
 <link rel="stylesheet" href="../css/theme.css">
 <style>
-  /* Page COMMUNE (copie de _modele/design/) : elle prend le thème de l'overlay et ses directions (js/persos-style.js) */
+  /* Page COMMUNE (copie de _modele/design/) : elle prend le thème de l'overlay et les styles de la boîte à outils de CodexVTT (js/codex-stream.js) */
   html, body { height: auto; overflow: auto; margin: 0; background: var(--fond, #0B0D0E); color: var(--texte, var(--trait, #EEE)); font-family: var(--f-texte, sans-serif); }
   .page { max-width: 1240px; margin: 0 auto; padding: 30px 20px 90px; }
   .label { font: 800 13px var(--f-texte, sans-serif); letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
@@ -33,14 +33,15 @@
     Patagrain existe aussi chez toi, avec les mêmes traits, mais dans ton univers. Voici deux directions pour ta chaîne, avec les mêmes
     personnages (Xaieysi est un exemple ; les autres viennent de la table de Patagrain) et leurs expressions pour les scènes (il parle, il rit, K.O.).</p>
   <div id="directions"></div>
-  <div class="idee"><b>À choisir</b> : la direction (ou un mélange : dis ce que tu aimes dans chacune). Ensuite : le moteur de dessin de ta chaîne,
-    les cartes de ta scène JDR avec ces personnages, et le créateur de personnage.</div>
+  <div class="idee"><b>Les styles de personnages</b> de la boîte à outils de CodexVTT : les mêmes traits, dessinés de six façons. Le style de ta chaîne se change dans reglages.html › Scène JDR › « Style des personnages ».</div>
 </div>
 <script src="../config.js"></script>
-<script src="../js/apparence.js"></script>
-<script src="../js/persos.js"></script>
-<script src="../js/persos-style.js"></script>
+<script src="../js/codex-stream.js"></script>
 <script>
+  // Les directions = les filtres de la boîte à outils de CodexVTT ; celui de la chaîne (config.js › jdr.dessin) en premier
+  const choisi = ((window.CONFIG || {}).jdr || {}).dessin || '';
+  const PersosStyle = { directions: Object.fromEntries([...CodexStream.Filtres.liste].sort((a, b) => (b.id === choisi) - (a.id === choisi))
+    .map(f => [f.id === choisi ? '✓' : f.id.charAt(0).toUpperCase(), { nom: f.nom + (f.id === choisi ? ' (le style de ta chaîne)' : ''), texte: f.texte, rendu: (p, o) => CodexStream.dessiner(p, { ...o, filtre: f.id }) }])) };
   document.getElementById('titre').textContent = `Les personnages, façon ${(window.CONFIG || {}).nomChaine || 'ta chaîne'}`;
   const extras = [['trayss', { forme: 'Entre deux' }, 'forme « Entre deux »'], ['trayss', { forme: 'Dragon' }, 'forme « Dragon »'],
     ['xaieysi', { expression: 'parle' }, 'il parle'], ['namerya', { expression: 'rire' }, 'il rit'], ['zokhran', { expression: 'ko' }, 'K.O.']];

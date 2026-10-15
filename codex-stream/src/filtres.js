@@ -3,15 +3,17 @@
    Les mêmes traits partout : « cheveux longs blonds » est UN trait, que chaque filtre dessine à sa façon.
      Filtres.liste                       → [{ id, nom, texte }]
      Filtres.rendu(id, fiche, options)   → <svg>
-       options : { expression: '' | 'parle' | 'rire' | 'choc' | 'ko', forme, cadrage: 'buste' | 'tete', accent: '#…' }
+       options : { expression: '' | 'parle' | 'rire' | 'choc' | 'ko', forme, cadrage: 'buste' | 'tete' | 'mi-corps' | 'pied', accent: '#…' }
+       'pied' : le personnage EN PIED, sur le squelette du bouffon de Patagrain (src/squelette.js : mêmes articulations .bf-…,
+       mêmes gestes). Un filtre qui ne se découpe pas en morceaux (écusson) dessine le pied en aplat.
    Venus des overlays de la famille : Néon (Mordethrhedan), Sticker (Ambries), Écusson (John Von Gurt),
-   Vitrail (les facettes de cristal), Aplat (le dessin de base). Conte (Patagrain) viendra plus tard.
+   Vitrail (les facettes de cristal), Aplat (le dessin de base), Conte (le bouffon de Patagrain : aplats sans contour).
    ===================================================================== */
 const Filtres = (() => {
   const T = Apparence.teinte;
   let n = 0;
   const ENCRE = '#140A24';
-  const CADRAGES = { buste: '0 0 200 240', tete: '18 2 164 172' };
+  const CADRAGES = { buste: '0 0 200 240', tete: '18 2 164 172', squelette: '0 -110 400 920' };
   const vb = o => CADRAGES[o.cadrage] || CADRAGES.buste;
   const esc = t => String(t || '').replace(/[&<>"]/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[x]));
   const attr = (c, fond, trait, ep) => `d="${c.d}" fill="${fond || 'none'}" ${trait ? `stroke="${trait}" stroke-width="${ep}" stroke-linecap="round" stroke-linejoin="round"` : ''}`;
@@ -38,7 +40,7 @@ const Filtres = (() => {
       nom: 'Sticker', texte: 'En autocollant découpé : contour noir, grosse bordure blanche, ombre portée, légère inclinaison.',
       rendu(f, o) {
         const tout = Apparence.calques(f, o), pleins = tout.filter(c => c.fond);
-        const rot = ((String(f.id || f.nom || '').length % 5) - 2) * 2;
+        const rot = o.cadrage === 'squelette' || o.sans || o.seulement ? 0 : ((String(f.id || f.nom || '').length % 5) - 2) * 2;   // (en pied : pas d'inclinaison, les membres ne s'aligneraient plus)
         const plein = c => `<path d="${c.d}" fill="${c.fond || 'none'}" stroke="${c.trait || ENCRE}" stroke-width="${c.trait ? c.epaisseur + 1 : 4}" stroke-linecap="round" stroke-linejoin="round" paint-order="stroke fill"/>`;
         return svg(o, `<g transform="rotate(${rot} 100 120)">
           <g transform="translate(6 6)">${pleins.map(c => `<path d="${c.d}" fill="${ENCRE}" stroke="${ENCRE}" stroke-width="18" stroke-linejoin="round"/>`).join('')}</g>
@@ -47,6 +49,7 @@ const Filtres = (() => {
       },
     },
     ecusson: {
+      pied: false,                                       // un écusson ne se découpe pas en membres : en pied, c'est l'aplat
       nom: 'Écusson', texte: 'Un écusson brodé, comme ceux des combinaisons d’astronaute : le buste dans un rond, le nom autour.',
       rendu(f, o) {
         const id = 'cs-ecusson' + (n++), accent = o.accent || '#FF9F1C';
@@ -77,11 +80,26 @@ const Filtres = (() => {
           <g filter="url(#${id}h)">${L.filter(c => c.id === 'epaules').map(c => `<path d="${c.d}" fill="none" stroke="${accent}" stroke-width="2.4"/>`).join('')}</g>`);
       },
     },
+    conte: {
+      nom: 'Conte', texte: 'Le style du bouffon de Patagrain : des aplats de couleur francs, SANS contour ; seuls les traits du visage (sourcils, nez, bouche, lunettes) sont dessinés au trait fin.',
+      // Les formes pleines : la couleur seule (aucun contour) ; les traits (calques sans fond) : leur couleur, un peu plus fins
+      rendu: (f, o) => svg(o, Apparence.calques(f, o).map(c => `<path ${c.fond ? `d="${c.d}" fill="${c.fond}"` : attr(c, null, c.trait, Math.max(2, c.epaisseur * .9))}/>`).join('')),
+    },
   };
+
+  // ---------- En pied : le squelette de Patagrain, habillé des traits (src/squelette.js) ; chaque morceau dessiné par le filtre ----------
+  // Un filtre qui ne se découpe pas en morceaux (l'écusson) dessine le pied en aplat.
+  function pied(id, fiche, o) {
+    const F = FILTRES[id] && FILTRES[id].pied !== false ? FILTRES[id] : FILTRES.aplat;
+    return Squelette.svg(fiche, o, oo => F.rendu(fiche, { ...o, ...oo }));
+  }
 
   return {
     liste: Object.entries(FILTRES).map(([id, f]) => ({ id, nom: f.nom, texte: f.texte })),
     existe: id => !!FILTRES[id],
-    rendu: (id, fiche, o = {}) => (FILTRES[id] || FILTRES.aplat).rendu(fiche, o),
+    rendu: (id, fiche, o = {}) => o.cadrage === 'pied' && !o.partie ? pied(id, fiche, o)
+      // mi-corps : le personnage du squelette, cadré de la tête à la taille (silhouette élancée, comme les anciens héros de Patagrain)
+      : o.cadrage === 'mi-corps' ? pied(id, fiche, { ...o, cadrage: 'pied' }).replace('viewBox="0 -110 400 920"', 'viewBox="50 80 300 440"')
+      : (FILTRES[id] || FILTRES.aplat).rendu(fiche, o),
   };
 })();

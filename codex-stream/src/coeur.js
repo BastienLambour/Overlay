@@ -13,8 +13,11 @@
      cs.on('combat', c => …)        { tour, actif, ordre: [{ id, nom, init, pnj, persoId }] } ou null
      cs.on('parle', (perso, oui) => …)
      const p = cs.portrait(el, persoId, { cadrage })  le personnage dessiné dans el, animé tout seul (parle, K.O., forme) ; p.detruire()
-     const s = cs.scenette(el, { duree, pnj, seulement }) joue chaque jet dans le rectangle el (un à la fois) ; s.detruire()
+     const s = cs.scenette(el, { duree, pnj, seulement, pied }) joue chaque jet dans le rectangle el (un à la fois) ; s.detruire()
+       (pied: true → le personnage en pied, sur le squelette de Patagrain : la mise en scène de l'arène)
      cs.parle(persoId, oui)                           relai d'un bot Discord ; cs.dessin(persoId, options) → <svg> ; cs.fermer()
+   Sans se brancher : CodexStream.fiche(perso) · CodexStream.dessiner(fiche, { filtre, expression, forme, cadrage })
+     CodexStream.Scenette.jouer(el, jet, { dessin, zone, carte }) · CodexStream.themes() / .theme(id) · .Filtres · .Apparence
    ===================================================================== */
 const CodexStream = (() => {
   const normaliser = t => String(t ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -52,7 +55,7 @@ const CodexStream = (() => {
 
   // Un aventurier encapuchonné, à une couleur tirée de son nom, pour un perso sans apparence
   const TEINTES = ['#4F7CAC', '#2F7A4F', '#8E3A3A', '#7A5A9C', '#B07A2E', '#2E8A8A', '#9C4F7A', '#5E6E8C'];
-  const aventurier = nom => ({ id: 'aventurier', nom, tenue: { type: 'cape', couleur: TEINTES[[...String(nom)].reduce((s, c) => (s * 31 + c.charCodeAt(0)) % 9973, 7) % TEINTES.length] },
+  const aventurier = (nom, couleur) => ({ id: 'aventurier', nom, tenue: { type: 'cape', couleur: couleur || TEINTES[[...String(nom)].reduce((s, c) => (s * 31 + c.charCodeAt(0)) % 9973, 7) % TEINTES.length] },
     accessoire: 'capuche', yeux: { couleur: '#3A2A1A' } });
 
   // Le client Socket.IO : déjà là (window.io), sinon le fichier livré à côté de ce module
@@ -192,13 +195,13 @@ const CodexStream = (() => {
         return p;
       },
       // Joue chaque jet dans el, un à la fois
-      scenette(el, { duree = 4000, pnj = false, seulement = null } = {}) {   // seulement : j => true pour garder ce jet (ex. un seul perso)
+      scenette(el, { duree = 4000, pnj = false, seulement = null, pied = false } = {}) {   // seulement : j => true pour garder ce jet (ex. un seul perso)
         const file = []; let occupe = false, vivant = true;
         const suivant = async () => {
           if (occupe || !file.length || !vivant) return;
           occupe = true;
           const j = file.shift(), p = trouver(j.persoId) || { nom: j.nom, forme: '' };
-          try { await Scenette.jouer(el, j, { duree: file.length ? Math.min(duree, 2500) : duree, denouement: DENOUEMENT, dessin: e => dessin(p, { expression: e }) }); }
+          try { await Scenette.jouer(el, j, { duree: file.length ? Math.min(duree, 2500) : duree, denouement: DENOUEMENT, pied, dessin: e => dessin(p, { expression: e, cadrage: pied ? 'pied' : undefined }) }); }
           catch (e) { console.error('[CodexStream] scénette', e); }
           finally { occupe = false; suivant(); }
         };
@@ -218,5 +221,26 @@ const CodexStream = (() => {
     return api;
   }
 
-  return { brancher, filtres: () => Filtres.liste, version: typeof VERSION !== 'undefined' ? VERSION : 'dev', DENOUEMENT };
+  // ---------- Dessiner SANS se brancher (les overlays de la famille ont leur propre moteur, js/partie.js) ----------
+  // fiche(perso, { catalogue, nom }) → l'apparence à dessiner : celle de CodexVTT (perso.apparence), sinon le catalogue
+  //   (par le nom : Apparence.trouver, catalogue PROVISOIRE en attendant le créateur de CodexVTT), sinon un aventurier encapuchonné
+  //   (à la couleur perso.couleur, ou tirée de son nom)
+  // dessiner(fiche, { filtre, expression, forme, cadrage, accent }) → <svg>
+  //   (aventurier: false → null à la place : l'appelant garde alors le portrait de la fiche CodexVTT)
+  function fiche(p = {}, { catalogue = true, nom = '', aventurier: secours = true } = {}) {
+    return p.apparence || (catalogue && Apparence.trouver(p.nom, p.nomCodex, nom)) || (secours ? aventurier(p.nom || nom || '?', p.couleur) : null);
+  }
+  const dessiner = (f, { filtre = 'aplat', ...o } = {}) => Filtres.rendu(filtre, f, o);
+
+  // ---------- Thèmes : couleurs, police et filtre d'un coup (widgets : ?theme=…) ; noms génériques ----------
+  const THEMES = {
+    neon: { nom: 'Néon', filtre: 'neon', accent: '#1EE88A', fond: '#050607', texte: '#F2F5F3', police: 'Righteous' },
+    conte: { nom: 'Conte', filtre: 'conte', accent: '#F5B82E', fond: '#152238', texte: '#FFF3DC', police: 'Grenze Gotisch' },
+    mission: { nom: 'Mission', filtre: 'ecusson', accent: '#FF9F1C', fond: '#0B0E13', texte: '#E6EAEE', police: 'Barlow Condensed' },
+    comics: { nom: 'Comics', filtre: 'sticker', accent: '#FF4FD8', fond: '#12081F', texte: '#F6EEFF', police: 'Bungee' },
+  };
+
+  return { brancher, filtres: () => Filtres.liste, themes: () => Object.entries(THEMES).map(([id, t]) => ({ id, ...t })), theme: id => THEMES[id] || null,
+    fiche, dessiner, Scenette, Filtres, Apparence, Squelette, Arene,
+    version: typeof VERSION !== 'undefined' ? VERSION : 'dev', DENOUEMENT };
 })();

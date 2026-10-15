@@ -111,6 +111,7 @@ window.ReglagesChamps = {
       { cle: 'jdr.pnj.couleur', type: 'couleur', label: 'Couleur de la cape des PNJ' },
       { cle: 'jdr.ajouterAutres', type: 'case', label: 'Ajouter aussi les personnages de CodexVTT qui n’ont pas de place', aide: 'Décoché (conseillé) : seules les places du tableau ont une carte. Coché : tous les personnages de joueurs de ta table CodexVTT s’ajoutent en bout de table.' },
       { cle: 'jdr.monPerso', type: 'texte', label: 'Mon personnage (si je joue au lieu d’être MJ)', aide: 'Son nom dans CodexVTT. Vide = tu es le maître du jeu (Patagrain).' },
+      { cle: 'jdr.dessin', type: 'choix', label: 'Style des personnages', aide: 'La façon de dessiner tous les personnages (cartes et arène) : le même personnage, son apparence, dessiné autrement.', options: [['neon', 'Néon (traits lumineux)'], ['sticker', 'Sticker (autocollant)'], ['ecusson', 'Écusson (brodé, mission spatiale)'], ['vitrail', 'Vitrail (facettes de cristal)'], ['conte', 'Conte (livre d’images)'], ['aplat', 'Aplat (simple)']] },
       { cle: 'jdr.dureeResultat', type: 'nombre', label: 'Le résultat d’un jet reste affiché … secondes', min: 1, max: 20, aide: 'Une fois les dés posés. S’il y a d’autres jets qui attendent, il reste moins longtemps (2 secondes au plus).' },
       { cle: 'jdr.codex.actif', type: 'case', label: 'Brancher CodexVTT (jets de dés, PV, combat)' },
       { cle: 'jdr.codex.adresse', type: 'texte', label: 'Adresse de CodexVTT', aide: 'Celle que tu tapes dans ton navigateur pour jouer, ex. https://codex.exemple.fr (sans rien après).' },
@@ -119,7 +120,7 @@ window.ReglagesChamps = {
       { cle: 'jdr.discord.adresse', type: 'texte', label: 'Adresse du bot Discord', aide: 'Vide = celle du serveur des mises à jour (wss://overlays.bastien-lambour.fr/voix). À changer seulement si le bot est ailleurs.' },
       { cle: 'jdr.discord.cle', type: 'secret', label: 'Clé du bot Discord', aide: 'Affichée à la fin de l’installation du bot sur le VPS (serveur/voix/installer-voix.sh), et dans /etc/overlays-voix.env (CLE=…).' },
     ] },
-    { titre: 'Scène JDR : la table de jeu', icone: '🧙', aide: 'Nom et sous-titre vides = ceux du dessin. Un nouveau personnage sans dessin : choisis « Autre » et écris son nom exactement comme sur sa fiche CodexVTT ; sa carte prend le portrait de la fiche (un aventurier encapuchonné tant que CodexVTT n’est pas branché).', tableau: {
+    { titre: 'Scène JDR : la table de jeu', icone: '🧙', aide: 'Nom et sous-titre vides = ceux du héros. Un nouveau personnage : choisis « Autre » et écris son nom exactement comme sur sa fiche CodexVTT ; il est dessiné d’après son apparence enregistrée dans CodexVTT (labo › Personnages), sinon sa carte prend le portrait de la fiche (un aventurier encapuchonné tant que CodexVTT n’est pas branché).', tableau: {
       lignes: [['jdr.places.mj', '👑 Maître du jeu'], ['jdr.places.p1', 'Place 1'], ['jdr.places.p2', 'Place 2'], ['jdr.places.p3', 'Place 3'],
         ['jdr.places.p4', 'Place 4'], ['jdr.places.p5', 'Place 5'], ['jdr.places.p6', 'Place 6']],
       colonnes: [

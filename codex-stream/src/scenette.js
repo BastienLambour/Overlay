@@ -2,9 +2,13 @@
    SCÉNETTE — pendant un jet de dés, le personnage entre dans un rectangle de la page et joue son geste
    (court, se cache, lance un sort, frappe, pare…), puis il réagit au résultat : il rit à la réussite,
    il est choqué à l'échec, il tombe K.O. à l'échec critique, il danse au critique.
-     Scenette.jouer(conteneur, jet, { dessin(expression) → <svg>, duree, denouement }) → promesse (finie quand il disparaît)
-   conteneur : n'importe quel élément de la page (on y pose un calque qui le remplit).
-   Classes (pour le CSS personnalisé d'OBS) : .cs-scenette, .cs-fond, .cs-perso, .cs-effet
+     Scenette.jouer(conteneur, jet, { dessin(expression) → <svg>, duree, denouement, zone, carte, pied }) → promesse (finie quand il disparaît)
+   pied: true → le personnage EN PIED (squelette de Patagrain, Filtres.rendu(…, { cadrage: 'pied' })) joue le jet avec la mise en scène
+   de l'ARÈNE (src/arene.js) : il court, se cache, lance un sort, frappe…, puis saute de joie ou tombe.
+   conteneur : n'importe quel élément de la page (on y pose un calque qui le remplit) ;
+   zone : { x, y, l, h } en pixels (la scénette se pose à cet endroit du conteneur, au-dessus du reste : scènes des overlays) ;
+   carte(el) : pour remplir le bandeau du haut (.cs-carte), ex. le compteur du jet.
+   Classes (pour le CSS personnalisé d'OBS, ou le css/jdr.css d'un overlay) : .cs-scenette, .cs-fond, .cs-carte, .cs-perso, .cs-effet
    ===================================================================== */
 const Scenette = (() => {
   const attendre = ms => new Promise(r => setTimeout(r, ms));
@@ -14,21 +18,38 @@ const Scenette = (() => {
     if (style || typeof document === 'undefined') return; style = true;
     const s = document.createElement('style');
     s.textContent = `.cs-scenette { position: absolute; inset: 0; overflow: hidden; }
+      .cs-scenette.cs-zone { inset: auto; z-index: 20; }
       .cs-scenette .cs-fond { position: absolute; inset: 0; }
+      .cs-scenette .cs-carte { position: absolute; left: 0; right: 0; top: 0; }
       .cs-scenette .cs-perso { position: absolute; left: 50%; bottom: 0; height: 92%; aspect-ratio: 200 / 240; transform-origin: 50% 100%; }
       .cs-scenette .cs-perso svg { width: 100%; height: 100%; display: block; overflow: visible; }
       .cs-scenette .cs-effet { position: absolute; font-size: 44px; line-height: 1; pointer-events: none; }`;
     document.head.appendChild(s);
   }
 
-  async function jouer(conteneur, jet, { dessin, duree = 4000, denouement = 1500 } = {}) {
+  async function jouer(conteneur, jet, { dessin, duree = 4000, denouement = 1500, zone = null, carte = null, pied = false } = {}) {
     poserStyle();
+    if (pied) {                                    // en pied : la mise en scène de l'arène, dans le même rectangle
+      if (getComputedStyle(conteneur).position === 'static') conteneur.style.position = 'relative';
+      const el = document.createElement('div');
+      el.className = 'cs-scenette cs-pied' + (zone ? ' cs-zone' : '');
+      if (zone) Object.assign(el.style, { left: zone.x + 'px', top: zone.y + 'px', width: zone.l + 'px', height: zone.h + 'px' });
+      el.innerHTML = '<div class="cs-fond"></div>';
+      conteneur.appendChild(el);
+      const scene = document.createElement('div'); scene.style.cssText = 'position:absolute;inset:0';
+      el.appendChild(scene);
+      try { await Arene.jouer(scene, jet, { dessin, carte: false, duree, denouement }); } finally { el.remove(); }
+      return;
+    }
     if (getComputedStyle(conteneur).position === 'static') conteneur.style.position = 'relative';
     const t0 = performance.now();
     const el = document.createElement('div');
-    el.className = 'cs-scenette';
-    el.innerHTML = '<div class="cs-fond"></div><div class="cs-perso"></div>';
+    el.className = 'cs-scenette' + (zone ? ' cs-zone' : '');
+    if (zone) Object.assign(el.style, { left: zone.x + 'px', top: zone.y + 'px', width: zone.l + 'px', height: zone.h + 'px' });
+    el.innerHTML = '<div class="cs-fond"></div><div class="cs-carte"></div><div class="cs-perso"></div>';
     conteneur.appendChild(el);
+    el.querySelector('.cs-fond').animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'forwards' });
+    if (carte) carte(el.querySelector('.cs-carte'));
     const perso = el.querySelector('.cs-perso');
     const dessiner = (e = '') => { perso.innerHTML = dessin(e); };
     dessiner();

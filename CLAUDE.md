@@ -227,22 +227,34 @@ Si on les améliore, on modifie `_modele/` puis on recopie partout.
   en grand, cartes dessous, titre + chat à droite) dans mordethrhedan (néon), johnvongurt (mission control), ambries (comics) : chacun a `css/jdr.css`
   + `js/jdr.js` avec la MÊME interface `JDR.carte(ecran, z, perso, opts)` (.maj .coup .tour .parler .oter), `JDR.jet(ecran, z, jet, { petit })`,
   `JDR.file(jouer)` : seul le dessin change. Patagrain garde sa scène (héros dessinés, arène), branchée sur le même moteur.
-- **Personnages (module JDR)** : `js/apparence.js` (une FICHE de traits → les formes d'un buste 200×240 : tête humaine|orc|draconide, carrure,
-  peau, yeux, coupe, oreilles, cornes, dents, pilosité, tenue, accessoires (liste), signe, objet/objet2 pour les gestes, formes ; expressions
-  parle|rire|choc|ko ; `Apparence.calques/svg/fusion/trouver(nom)`), `js/persos.js` (window.PERSOS : le CATALOGUE COMMUN, le même partout ; le nom =
-  celui de CodexVTT), `js/persos-style.js` (PROPRE à l'overlay : `PersosStyle.rendu(fiche, { expression, forme, cadrage })` — mordethrhedan « trait
-  néon », johnvongurt « écusson de mission », ambries « sticker » ; Patagrain garde ses héros dessinés dans sa scène ; son persos-style.js « Conte » PROVISOIRE sert au créateur), `js/scenette.js` (pendant un jet, le perso passe AU-DESSUS DU CHAT, joue son geste puis réagit au
-  verdict), `createur.html` (racine, commun, lien dans chaque vitrine : créateur de personnage, aperçu au style de la chaîne, copier/télécharger la fiche → on la colle dans
-  `_modele/js/persos.js` puis on recopie partout), `design/moodboard-persos.html` (les directions de style). Cartes JDR : apparence liée à la fiche dans le LABO de CodexVTT
-  (champ facultatif `appearance` du mode spectateur → `perso.apparence` dans Partie) d'abord, sinon le perso du catalogue =
-  son dessin (la bouche bouge quand il parle, K.O. à 0 PV, forme de CodexVTT), sinon le portrait CodexVTT.
+- **Personnages (module JDR)** : AUCUNE logique de dessin dans les overlays. Tout vient de `js/codex-stream.js` (FICHIER COMMUN GÉNÉRÉ :
+  la version classique de la boîte à outils `codex-stream/`, voir plus bas ; donne `CodexStream`, `Apparence`, `Filtres`, `Scenette`,
+  `window.PERSOS` = catalogue PROVISOIRE). Les scènes JDR : `CodexStream.fiche(perso, { aventurier })` (apparence liée dans le LABO de
+  CodexVTT, champ `appearance` → `perso.apparence` dans Partie ; sinon le catalogue par le nom ; sinon aventurier, ou null pour garder le portrait
+  CodexVTT), `CodexStream.dessiner(fiche, { filtre, expression, forme, cadrage })` (la bouche bouge quand il parle, K.O. à 0 PV, forme de CodexVTT),
+  `JDR.scenette(ecran, zone, jet)` → `CodexStream.Scenette.jouer` (pendant un jet, le perso passe AU-DESSUS DU CHAT, joue son geste puis réagit ;
+  classes `.cs-scenette .cs-fond .cs-carte .cs-perso .cs-effet` habillées dans `css/jdr.css`). Le style = `config.js › jdr.dessin` (réglages ›
+  Scène JDR › « Style des personnages ») : mordethrhedan neon, johnvongurt ecusson, ambries sticker, patagrain conte.
+  EN PIED = LE SQUELETTE DU BOUFFON DE PATAGRAIN (`cadrage: 'pied'`, codex-stream/src/squelette.js) : la fiche est HABILLÉE sur ses articulations
+  (.bf-tout › .bf-hanche-g/d › .bf-genou-g/d · .bf-haut › .bf-cheveux, .bf-tete · .bf-epaule-g/d › .bf-coude-g/d ; tête = le buste sans le corps ;
+  corps d'après tenue, carrure, taille, objets). Le MOTEUR DES GESTES (marche, saute, chute, hop, danse, salut, attaque, gj-courir, gj-sort… :
+  codex-stream/src/squelette.css → `css/squelette.css`, FICHIER COMMUN GÉNÉRÉ, aussi embarqué dans js/codex-stream.js) est le MÊME pour les
+  personnages et pour le bouffon : les pages de Patagrain chargent css/squelette.css AVANT css/bouffon.css (qui ne garde que chapeau, grelots,
+  décors). L'ARÈNE (`CodexStream.Arene` : le personnage en pied joue le geste du jet puis réagit ; classes .arene-perso, .arene-carte…, habillées
+  par l'overlay) = la mise en scène de l'ancienne arène de Patagrain. Patagrain : PLUS AUCUN DESSIN de personnage (heros.js, dessins-jdr.js, jets.js,
+  generer-heros.mjs retirés) : cartes en buste et arène en pied par la boîte à outils, ses héros = des fiches du catalogue (patagrain, zokhran,
+  namerya, kenai, trayss [formes Dragon / Humaine / Entre deux], baheng, dvergrost), refaites avec les traits. Cartes : médaillon posé en bas.
+  Option `jdr.enPied` (Mordeth, John, Ambries ; réglages « Personnages en pied dans les scénettes », non par défaut) : la scénette = l'arène, en pied.
+  LE CRÉATEUR DE PERSONNAGE est dans CodexVTT (/labo/persos) : plus de createur.html dans les overlays (retiré le 2026-10-15).
+  `design/moodboard-persos.html` (les 6 styles) dessine via codex-stream.
 - `chaine/reseaux.js` : logos des réseaux (Discord, YouTube, TikTok, Instagram, X, Twitch, Kick, Bluesky), d'une couleur
   (currentColor) ; `Reseaux.svg(titre, taille, style)` → le logo si le titre d'un panneau est un réseau, sinon '' (l'overlay garde
   alors son icône) ; `Reseaux.cle(titre)`. Chargé par `kit.html` avant `elements.js`.
 - `chaine/kit.js` + `chaine/kit.css` : moteur de la page kit (galerie, ou un seul élément avec
   `?seul=<id>&taille=<px>` pour l'export).
 - `config.js` : gabarit avec toutes les clés standard.
-- `reglages.html` + `js/reglages.js` : la page de réglages (identiques partout) ; `js/reglages-champs.js` : gabarit
+- `reglages.html` + `js/reglages.js` : la page de réglages (identiques partout ; `ReglagesChamps.apresApercu(boite)` facultatif : lancé après le
+  dessin des aperçus d'alertes, ex. Ambries réduit ses titres trop longs comme la vraie alerte) ; `js/reglages-champs.js` : gabarit
   des libellés, à adapter dans chaque overlay (un réglage ajouté à config.js → l'ajouter là aussi, dans la bonne section).
 - `CONCEPT.md`, `TUTO.md` : gabarits des documents.
 - `mettre-a-jour.cmd` (racine de l'overlay) + `outils/mettre-a-jour.ps1` (UTF-8 AVEC BOM, PowerShell 5.1) : télécharge
@@ -348,9 +360,14 @@ Le chat garde en mémoire ses derniers messages entre les scènes (localStorage 
 
 ## codex-stream (la boîte à outils de stream de CodexVTT)
 
-`codex-stream/` : `src/` (apparence.js, exemples.js = copies de `_modele/js/apparence.js` et `persos.js` ; filtres.js ; scenette.js ;
-coeur.js = `CodexStream.brancher`) → `node construire.mjs` → `dist/codex-stream.js` (un module ES, version = date + commit) + widgets
-(table, perso, jets, scenette, combat, demo). `dist/` est copié par la session CodexVTT dans `codex-web/public/stream/` : widgets à coller
-dans OBS par n'importe quel streamer (`?cle=…&filtre=…&moi=…`). Filtres génériques : aplat, neon, sticker, ecusson, vitrail (conte : plus tard,
-avec Patagrain). L'apparence est enregistrée dans CodexVTT (labo, MJ seulement ; champ `appearance` du spectateur). Une modif de
-`_modele/js/apparence.js` → la recopier dans `codex-stream/src/` et reconstruire. Plus tard : nos scènes JDR passeront par ce module.
+`codex-stream/` : `src/` (apparence.js = la fiche de traits → formes d'un buste 200×240 ; exemples.js = le catalogue PROVISOIRE ;
+filtres.js ; scenette.js ; squelette.js + squelette.css (en pied, moteur des gestes) ; arene.js ; coeur.js = `CodexStream.brancher` + `fiche`/`dessiner`/thèmes) → `node construire.mjs` → `dist/codex-stream.js`
+(un module ES, version = date + commit) + widgets (table, perso, jets, scenette, combat, demo), ET `_modele/js/codex-stream.js` (version
+classique, un `<script>` ordinaire : à recopier dans les 4 overlays après chaque construction). SEULE source du dessin des personnages : on
+modifie `codex-stream/src/`, jamais une copie. `dist/` est copié par la session CodexVTT dans `codex-web/public/stream/` : widgets à coller
+dans OBS par n'importe quel streamer (`?cle=…&filtre=…&moi=…`). Filtres génériques : aplat, neon, sticker, ecusson, vitrail, conte ; thèmes
+(`?theme=`, `CodexStream.themes()`) : neon, conte, mission, comics (couleurs + police Google Fonts + filtre). L'apparence est enregistrée dans CodexVTT (labo, MJ seulement ; champ `appearance` du spectateur). Nos scènes JDR passent par ce module
+(version classique).
+DÉCIDÉ (2026-10-15) : le créateur de personnage sera UNIQUEMENT dans CodexVTT (interface graphique du labo, apparence liée à la fiche).
+Le catalogue (`codex-stream/src/exemples.js`, les héros de Patagrain refaits avec les traits) est PROVISOIRE : on le retire quand leurs
+apparences sont enregistrées dans le créateur de CodexVTT et liées à leurs fiches.
