@@ -17,6 +17,7 @@
        (pied: true → le personnage en pied, sur le squelette de Patagrain : la mise en scène de l'arène)
      cs.parle(persoId, oui)                           relai d'un bot Discord ; cs.dessin(persoId, options) → <svg> ; cs.fermer()
    Sans se brancher : CodexStream.fiche(perso) · CodexStream.dessiner(fiche, { filtre, expression, forme, cadrage })
+     CodexStream.code(fiche) → « PERSO1-… » (l'apparence en une ligne) · CodexStream.depuisCode(texte) → la fiche (ou null)
      CodexStream.Scenette.jouer(el, jet, { dessin, zone, carte }) · CodexStream.themes() / .theme(id) · .Filtres · .Apparence
    ===================================================================== */
 const CodexStream = (() => {
@@ -241,6 +242,6 @@ const CodexStream = (() => {
   };
 
   return { brancher, filtres: () => Filtres.liste, themes: () => Object.entries(THEMES).map(([id, t]) => ({ id, ...t })), theme: id => THEMES[id] || null,
-    fiche, dessiner, Scenette, Filtres, Apparence, Squelette, Arene,
+    fiche, dessiner, code: f => Apparence.code(f), depuisCode: t => Apparence.depuisCode(t), Scenette, Filtres, Apparence, Squelette, Arene,
     version: typeof VERSION !== 'undefined' ? VERSION : 'dev', DENOUEMENT };
 })();

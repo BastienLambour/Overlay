@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodexVTT — Codes des personnages</title>
+<style>
+  body { margin: 0; background: #2A2F3A; color: #EEF; font: 15px/1.5 'Segoe UI', system-ui, sans-serif; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+  h1 { margin: 0 0 6px; } p { opacity: .85; max-width: 90ch; }
+  .perso { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; background: #1E222B; border-radius: 14px; padding: 12px 16px; margin: 12px 0; }
+  .perso svg { width: 110px; height: 132px; display: block; }
+  .perso b { font-size: 18px; } .perso small { opacity: .7; }
+  textarea { width: 100%; box-sizing: border-box; height: 64px; margin-top: 6px; font: 12px ui-monospace, Consolas, monospace; background: #12151B; color: #CFE; border: 1px solid #445; border-radius: 8px; padding: 8px; resize: vertical; }
+  button { font: inherit; font-weight: 700; padding: 6px 14px; border-radius: 999px; border: 2px solid #1EE88A; background: #1E222B; color: #1EE88A; cursor: pointer; margin-top: 6px; }
+  .essai { background: #1E222B; border-radius: 14px; padding: 14px 16px; margin-top: 28px; }
+  .essai .rendu svg { width: 140px; height: 168px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Codes des personnages</h1>
+  <p>Le <b>code</b> d'un personnage contient toute son apparence en une ligne. Copie-le, puis colle-le dans le créateur de CodexVTT
+    (<b>labo › Personnages › Coller un code</b>) d'une autre table : le personnage arrive à l'identique. Ci-dessous, les héros de la
+    table de Patagrain (le catalogue des overlays), prêts à être recréés dans CodexVTT.</p>
+  <div id="liste"></div>
+  <div class="essai">
+    <b>Essayer un code</b> <small>(colle un code, ou une fiche en JSON)</small>
+    <textarea id="colle" placeholder="PERSO1-…"></textarea>
+    <div class="rendu" id="rendu"></div>
+  </div>
+</div>
+<script type="module">
+  import { CodexStream } from './codex-stream.js';
+  const persos = window.PERSOS || [];
+  const echapper = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.getElementById('liste').innerHTML = persos.map((p, i) => `<div class="perso">${CodexStream.dessiner(p, { filtre: 'conte' })}
+    <div><b>${echapper(p.nom)}</b> <small>${echapper(p.titre || '')}</small>
+      <textarea readonly id="code${i}">${CodexStream.code(p)}</textarea>
+      <button data-i="${i}">Copier le code</button></div></div>`).join('');
+  document.getElementById('liste').addEventListener('click', async e => {
+    const i = e.target.dataset.i; if (i == null) return;
+    const zone = document.getElementById('code' + i);
+    try { await navigator.clipboard.writeText(zone.value); } catch { zone.select(); document.execCommand('copy'); }
+    e.target.textContent = 'Copié ✓'; setTimeout(() => { e.target.textContent = 'Copier le code'; }, 1500);
+  });
+  document.getElementById('colle').addEventListener('input', e => {
+    const f = CodexStream.depuisCode(e.target.value);
+    document.getElementById('rendu').innerHTML = f ? CodexStream.dessiner(f, { filtre: 'conte' }) + ' ' + CodexStream.dessiner(f, { filtre: 'conte', cadrage: 'pied' }) : (e.target.value.trim() ? '<small>Code illisible.</small>' : '');
+  });
+</script>
+</body>
+</html>

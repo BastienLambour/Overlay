@@ -369,5 +369,7 @@ dans OBS par n'importe quel streamer (`?cle=…&filtre=…&moi=…`). Filtres g�
 (`?theme=`, `CodexStream.themes()`) : neon, conte, mission, comics (couleurs + police Google Fonts + filtre). L'apparence est enregistrée dans CodexVTT (labo, MJ seulement ; champ `appearance` du spectateur). Nos scènes JDR passent par ce module
 (version classique).
 DÉCIDÉ (2026-10-15) : le créateur de personnage sera UNIQUEMENT dans CodexVTT (interface graphique du labo, apparence liée à la fiche).
+CODE DE PERSONNAGE : `CodexStream.code(fiche)` → « PERSO1-… » (l'apparence en une ligne, à passer d'une table à l'autre ; page dist/codes.html),
+`CodexStream.depuisCode(texte)`. Toute fiche est nettoyée avant d'être dessinée (`Apparence.nettoyer` : traits connus, couleurs #…, noms courts).
 Le catalogue (`codex-stream/src/exemples.js`, les héros de Patagrain refaits avec les traits) est PROVISOIRE : on le retire quand leurs
 apparences sont enregistrées dans le créateur de CodexVTT et liées à leurs fiches.

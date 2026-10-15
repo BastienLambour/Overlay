@@ -58,6 +58,7 @@ Adresse : `https://<codexvtt>/stream/<page>.html?cle=<clé spectateur>&filtre=st
 | `combat.html` | l'ordre d'initiative, le tour en cours | 360 × 600 | `pnj=0` |
 | `demo.html` | la galerie de tous les widgets, avec le choix du filtre (pas pour OBS) | — | `filtre=…` |
 | `pied.html` | les personnages EN PIED et leurs gestes (démo, pas pour OBS) | — | `filtre=…` |
+| `codes.html` | le CODE de chaque personnage du catalogue (à copier dans le créateur d'une autre table), et un essai de code | — | — |
 
 Paramètres communs (toutes les pages) :
 
@@ -101,6 +102,10 @@ Aussi exportés : `Apparence` (la fiche → calques), `Filtres` (`Filtres.liste`
 `CodexStream.fiche(perso, { aventurier })` (l'apparence à dessiner : CodexVTT, sinon le catalogue provisoire, sinon un aventurier),
 `CodexStream.dessiner(fiche, { filtre, expression, forme, cadrage })`, `CodexStream.Scenette.jouer(el, jet, { dessin, zone, carte, duree })`,
 `CodexStream.themes()` / `CodexStream.theme(id)`.
+
+**Le code d'un personnage** : `CodexStream.code(fiche)` → « PERSO1-… » (toute l'apparence en une ligne, à passer d'une table à l'autre) ;
+`CodexStream.depuisCode(texte)` → la fiche, ou null. Toute fiche est NETTOYÉE avant d'être dessinée (`Apparence.nettoyer` : seulement des traits
+connus, des couleurs `#…`, des noms courts) : un code collé, ou une apparence de CodexVTT, ne peut rien injecter dans la page.
 
 **Cadrages** : `buste` (défaut), `tete` (cartes), `mi-corps` (le personnage du squelette, de la tête à la taille : silhouette élancée,
 les cartes de Patagrain), `pied`.

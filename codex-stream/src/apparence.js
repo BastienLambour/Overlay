@@ -33,6 +33,8 @@
        → les calques d'un morceau (torse, bras-g, avant-bras-g, main-g, objet-g, cuisse-g, tibia-g…, dos) ; la tête = le buste sans le corps.
      Apparence.svg(fiche, options) → un dessin simple et neutre (pour l'aperçu) ; chaque overlay a son propre rendu
      Apparence.fusion(fiche, forme) → la fiche avec les traits de la forme
+     Apparence.code(fiche) → « PERSO1-… » (toute l'apparence en une ligne, à copier d'une table à l'autre) ; Apparence.depuisCode(texte) → la fiche
+     Apparence.nettoyer(fiche) → la fiche sans rien d'inconnu (fait aussi à chaque dessin : un code ou une fiche ne peut rien injecter)
      Apparence.trouver(nom, …)  → la fiche du catalogue de ce personnage (par son nom ou son id ; « Kenai le gardien » → Kenai), sinon null
    FICHIER COMMUN : identique dans tous les overlays (copie de _modele/js/).
    ===================================================================== */
@@ -161,7 +163,62 @@ const Apparence = (() => {
   // Carrure : les épaules plus larges ou plus étroites (transformation des formes autour du milieu)
   const etirer = (d, k) => d.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (_, x, y) => `${+(100 + (parseFloat(x) - 100) * k).toFixed(1)} ${y}`);
 
+  // ---------- Nettoyer une fiche : seulement des traits connus, des couleurs valides, des noms courts ----------
+  // (une fiche peut venir d'un CODE collé depuis une autre table, ou de CodexVTT : rien ne doit pouvoir s'injecter dans le dessin)
+  const COULEUR = /^#[0-9a-fA-F]{3,8}$/, MOT = /^[a-z0-9-]{0,32}$/;
+  const C_COULEURS = ['couleur', 'peau', 'couleurCornes', 'couleurCoiffe', 'couleurObjet', 'bouche'];
+  const C_MOTS = ['tete', 'museau', 'carrure', 'taille', 'oreilles', 'cornes', 'dents', 'signe', 'objet', 'objet2'];
+  const SOUS = { yeux: { couleur: 'c', forme: 'm', lueur: 'b' }, cheveux: { coupe: 'm', couleur: 'c', meche: 'c' },
+    pilosite: { type: 'm', couleur: 'c' }, tenue: { type: 'm', couleur: 'c', couleur2: 'c' } };
+  const texte = (v, n) => String(v ?? '').replace(/[\u0000-\u001f<>]/g, '').slice(0, n);
+  function nettoyer(f, avecFormes = true) {
+    if (!f || typeof f !== 'object') return {};
+    const r = {};
+    if (f.id != null && /^[A-Za-z0-9_-]{1,40}$/.test(String(f.id))) r.id = String(f.id);
+    if (f.nom != null) r.nom = texte(f.nom, 60);
+    if (f.titre != null) r.titre = texte(f.titre, 80);
+    C_COULEURS.forEach(k => { if (typeof f[k] === 'string' && (COULEUR.test(f[k]) || f[k] === '')) r[k] = f[k]; });
+    C_MOTS.forEach(k => { if (typeof f[k] === 'string' && MOT.test(f[k])) r[k] = f[k]; });
+    Object.entries(SOUS).forEach(([k, champs]) => {
+      const v = f[k];
+      if (k === 'pilosite' && typeof v === 'string') { if (MOT.test(v)) r.pilosite = v; return; }
+      if (!v || typeof v !== 'object') return;
+      const o = {};
+      Object.entries(champs).forEach(([c, t]) => {
+        const x = v[c];
+        if (t === 'c' && typeof x === 'string' && (COULEUR.test(x) || x === '')) o[c] = x;
+        if (t === 'm' && typeof x === 'string' && MOT.test(x)) o[c] = x;
+        if (t === 'b' && typeof x === 'boolean') o[c] = x;
+      });
+      r[k] = o;
+    });
+    const accs = (Array.isArray(f.accessoire) ? f.accessoire : f.accessoire != null ? [f.accessoire] : []).filter(a => typeof a === 'string' && MOT.test(a)).slice(0, 12);
+    if (f.accessoire != null) r.accessoire = Array.isArray(f.accessoire) ? accs : (accs[0] ?? '');
+    if (avecFormes && f.formes && typeof f.formes === 'object') {
+      r.formes = {};
+      Object.entries(f.formes).slice(0, 8).forEach(([n, sous]) => { r.formes[texte(n, 40)] = nettoyer(sous, false); });
+    }
+    return r;
+  }
+
+  // ---------- Le CODE d'un personnage : toute son apparence en une ligne, à copier d'une table à l'autre ----------
+  //   Apparence.code(fiche) → « PERSO1-… » ; Apparence.depuisCode(texte) → la fiche (nettoyée), ou null si le code est illisible.
+  //   (le texte peut aussi être la fiche en JSON)
+  const PREFIXE = 'PERSO1-';
+  const versBase64 = t => { const o = new TextEncoder().encode(t); let b = ''; o.forEach(x => { b += String.fromCharCode(x); }); return btoa(b).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  const depuisBase64 = t => { const b = atob(t.replace(/-/g, '+').replace(/_/g, '/')); return new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0))); };
+  const code = fiche => PREFIXE + versBase64(JSON.stringify(nettoyer(fiche)));
+  function depuisCode(t) {
+    const brut = String(t || '').replace(/\s+/g, '');
+    try {
+      const json = brut.startsWith('{') ? brut : depuisBase64(brut.startsWith(PREFIXE) ? brut.slice(PREFIXE.length) : brut);
+      const f = JSON.parse(json);
+      return f && typeof f === 'object' && !Array.isArray(f) ? nettoyer(f) : null;
+    } catch { return null; }
+  }
+
   function calques(fiche0, { expression = '', forme = '', cadrage = '', partie = '', sans = null, seulement = null } = {}) {
+    fiche0 = nettoyer(fiche0);
     if (cadrage === 'squelette' && partie) return Squelette.pieces(fusion(fiche0 || {}, forme), partie);   // en pied : src/squelette.js
     const L = calquesBuste(fiche0, { expression, forme });
     return seulement ? L.filter(c => seulement.includes(c.id)) : sans ? L.filter(c => !sans.includes(c.id)) : L;
@@ -260,5 +317,5 @@ const Apparence = (() => {
     return null;
   }
 
-  return { calques, svg, fusion, teinte, trouver };
+  return { calques, svg, fusion, teinte, trouver, nettoyer, code, depuisCode };
 })();
